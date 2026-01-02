@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="container">
   <div class="card">
     <h1>نتيجة الطالب</h1>
@@ -15,25 +14,27 @@
     <a href="check.html" class="btn" style="margin-top:15px;">رجوع</a>
   </div>
 </div>
-
 <script>
 // بيانات تجريبية (سنستبدلها لاحقًا)
 const students = {
-  "101": { name:"أحمد محمد", total:280 },
-  "102": { name:"علي صالح", total:300 },
-  "103": { name:"منى عبدالله", total:270 }
+  "101": { name: "أحمد محمد", total: 280 },
+  "102": { name: "علي صالح", total: 300 },
+  "103": { name: "منى عبدالله", total: 270 }
 };
 
 const seat = localStorage.getItem("seat");
 const box = document.getElementById("result");
 
-if(students[seat]){
+// تحقق مما إذا كان رقم الجلوس موجودًا
+if (!seat) {
+  box.innerHTML = "❌ لم يتم العثور على رقم جلوس. الرجاء إدخال رقم الجلوس أولاً.";
+} else if (students[seat]) {
   box.innerHTML = `
     <p><strong>الاسم:</strong> ${students[seat].name}</p>
     <p><strong>المجموع:</strong> ${students[seat].total}</p>
   `;
-}else{
-  box.innerHTML = "❌ رقم الجلوس غير موجود";
+} else {
+  box.innerHTML = "❌ رقم الجلوس غير موجود في قاعدة البيانات";
 }
 </script>
 
