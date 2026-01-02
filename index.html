@@ -2,24 +2,93 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>مدرسة الفتح بطنة قدس </title>
+<title>مدرسة الفتح بطنة قدس</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    text-align: center;
+  }
+
+  .card {
+    background: #ffffff;
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+
+  h1 {
+    color: #00796b;
+    margin-bottom: 30px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #0288d1;
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background: #01579b;
+  }
+</style>
 </head>
 <body>
 
 <div class="container">
   <div class="card">
-    <!-- الشعار -->
-    <img src="logo.png" alt="شعار المدرسة" class="logo">
-
-    <!-- اسم المدرسة -->
-    <h1>مدرسة الفتح بطنة قدس  </h1>
-    <p>بوابة نتائج الطلاب</p>
+    <h1>مرحبا بكم في نتائج المدرسة</h1>
 
     <!-- زر الدخول -->
-    <a href="check.html" class="btn">الدخول إلى النتائج</a>
+    <div class="btn" id="enterBtn">الدخول إلى النتائج</div>
   </div>
 </div>
+
+<script>
+document.getElementById('enterBtn').addEventListener('click', function() {
+    // قائمة الأماكن الممكنة لملف check.html
+    const paths = [
+        'check.html',          // نفس المجلد
+        './check.html',        // نفس المجلد (صيغة بديلة)
+        'pages/check.html',    // داخل مجلد pages
+        'results/check.html'   // داخل مجلد results
+    ];
+
+    let opened = false;
+
+    for (let i = 0; i < paths.length; i++) {
+        fetch(paths[i], { method: 'HEAD' })
+        .then(response => {
+            if (response.ok && !opened) {
+                opened = true;
+                window.location.href = paths[i]; // افتح الملف إذا موجود
+            }
+        })
+        .catch(err => {
+            // إذا الملف غير موجود لا يحدث شيء، يجرب المسار التالي
+        });
+    }
+
+    if (!opened) {
+        alert('عذراً، لم يتم العثور على صفحة النتائج!');
+    }
+});
+</script>
+
 </body>
 </html>
