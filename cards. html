@@ -1,0 +1,61 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تفعيل الكرت</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <h1>تفعيل الكرت</h1>
+
+    <input type="text" id="card" placeholder="أدخل كود الكرت">
+
+    <button class="btn" onclick="activate()">تفعيل</button>
+
+    <p id="msg" style="color:red;margin-top:10px;"></p>
+  </div>
+</div>
+
+<script>
+let cards = JSON.parse(localStorage.getItem("cards")) || {
+  "ABC123": false,
+  "DEF456": false,
+  "GHI789": false
+};
+// false = غير مستخدم | true = مستخدم
+
+function activate(){
+  const card = document.getElementById("card").value.trim();
+  const msg = document.getElementById("msg");
+
+  if(card === ""){
+    msg.textContent = "يرجى إدخال كود الكرت";
+    return;
+  }
+
+  if(!(card in cards)){
+    msg.textContent = "❌ كود غير صحيح";
+    return;
+  }
+
+  if(cards[card] === true){
+    msg.textContent = "❌ هذا الكرت مستخدم مسبقًا";
+    return;
+  }
+
+  // تفعيل الكرت
+  cards[card] = true;
+  localStorage.setItem("cards", JSON.stringify(cards));
+  localStorage.setItem("activated", "yes");
+
+  // الانتقال لرقم الجلوس
+  window.location.href = "check.html";
+}
+</script>
+
+</body>
+</html>
