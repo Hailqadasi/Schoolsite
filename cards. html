@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -6,57 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 <style>
-:root{
-  --main:#7a1f2b;
-  --main-dark:#5f1822;
-}
-body{
-  background:#f9f2f2;
-  font-family: "Tahoma", Arial;
-}
-.container{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-.card{
-  background:white;
-  padding:30px;
-  border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  text-align:center;
-  width:300px;
-}
-.card h1{
-  margin-bottom:20px;
-  color:var(--main);
-}
-input{
-  width:100%;
-  padding:10px;
-  margin-bottom:15px;
-  border-radius:6px;
-  border:1px solid #ccc;
-  font-size:16px;
-}
-.btn{
-  width:100%;
-  padding:10px;
-  font-size:16px;
-  border:none;
-  border-radius:6px;
-  background:var(--main);
-  color:white;
-  cursor:pointer;
-}
-.btn:hover{
-  background:var(--main-dark);
-}
-#msg{
-  margin-top:10px;
-  color:red;
-}
+:root{ --main:#7a1f2b; --main-dark:#5f1822; }
+body{ background:#f9f2f2; font-family:"Tahoma", Arial; }
+.container{ display:flex; justify-content:center; align-items:center; height:100vh; }
+.card{ background:white; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; width:300px; }
+.card h1{ margin-bottom:20px; color:var(--main); }
+input{ width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc; font-size:16px; }
+.btn{ width:100%; padding:10px; font-size:16px; border:none; border-radius:6px; background:var(--main); color:white; cursor:pointer; }
+.btn:hover{ background:var(--main-dark); }
+#msg{ margin-top:10px; color:red; }
 </style>
 </head>
 <body>
@@ -71,7 +29,6 @@ input{
 </div>
 
 <script>
-/* ===== الكروت الثابتة ===== */
 let cards = {
 "18452": false,"39587": false,"46210": false,"57834": false,"61429": false,
 "72901": false,"83546": false,"90217": false,"17358": false,"28461": false,
@@ -98,12 +55,10 @@ let cards = {
 "43619": false,"54732": false,"65804": false,"76915": false,"87023": false,"98104": false
 };
 
-/* ===== تخزين الكروت في localStorage عند أول تحميل ===== */
 if(!localStorage.getItem("cards")){
   localStorage.setItem("cards", JSON.stringify(cards));
 }
 
-/* ===== تفعيل الكرت ===== */
 function activate(){
   const card = document.getElementById("card").value.trim();
   const msg = document.getElementById("msg");
@@ -113,23 +68,19 @@ function activate(){
     msg.textContent = "يرجى إدخال كود الكرت";
     return;
   }
-
   if(!(card in storedCards)){
     msg.textContent = "❌ كود الكرت غير صحيح";
     return;
   }
-
   if(storedCards[card] === true){
     msg.textContent = "❌ هذا الكرت مستخدم مسبقًا";
     return;
   }
 
-  // تفعيل الكرت
   storedCards[card] = true;
   localStorage.setItem("cards", JSON.stringify(storedCards));
   localStorage.setItem("activated", "yes");
 
-  // الانتقال لصفحة رقم الجلوس
   window.location.href = "check.html";
 }
 </script>
