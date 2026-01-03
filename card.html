@@ -28,30 +28,28 @@ input{ width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1
 </div>
 
 <script>
+// المئة كرت الصحيحة (5 أرقام)
 let cards = {
-"18452": false,"39587": false,"46210": false,"57834": false,"61429": false,
-"72901": false,"83546": false,"90217": false,"17358": false,"28461": false,
-"39512": false,"47638": false,"51804": false,"60279": false,"73485": false,
-"84126": false,"90243": false,"12356": false,"23648": false,"35791": false,
-"46820": false,"57913": false,"60184": false,"71825": false,"82367": false,
-"94012": false,"15429": false,"26738": false,"37841": false,"48925": false,
-"51267": false,"62384": false,"73419": false,"84502": false,"95618": false,
-"10734": false,"21856": false,"32947": false,"43085": false,"54126": false,
-"65230": false,"76318": false,"87409": false,"98521": false,"10637": false,
-"21749": false,"32856": false,"43902": false,"54019": false,"65123": false,
-"76248": false,"87315": false,"98420": false,"10536": false,"21648": false,
-"32791": false,"43805": false,"54912": false,"65037": false,"76184": false,
-"87205": false,"98316": false,"10429": false,"21538": false,"32647": false,
-"43791": false,"54820": false,"65913": false,"76048": false,"87125": false,
-"98204": false,"10358": false,"21469": false,"32580": false,"43617": false,
-"54792": false,"65813": false,"76902": false,"87045": false,"98136": false,
-"10247": false,"21358": false,"32469": false,"43501": false,"54628": false,
-"65713": false,"76804": false,"87915": false,"98023": false,"10136": false,
-"21249": false,"32358": false,"43407": false,"54519": false,"65638": false,
-"76704": false,"87825": false,"98914": false,"10258": false,"21369": false,
-"32407": false,"43512": false,"54603": false,"65724": false,"76835": false,
-"87902": false,"99013": false,"10325": false,"21487": false,"32560": false,
-"43619": false,"54732": false,"65804": false,"76915": false,"87023": false,"98104": false
+"10001": false,"10002": false,"10003": false,"10004": false,"10005": false,
+"10006": false,"10007": false,"10008": false,"10009": false,"10010": false,
+"10011": false,"10012": false,"10013": false,"10014": false,"10015": false,
+"10016": false,"10017": false,"10018": false,"10019": false,"10020": false,
+"10021": false,"10022": false,"10023": false,"10024": false,"10025": false,
+"10026": false,"10027": false,"10028": false,"10029": false,"10030": false,
+"10031": false,"10032": false,"10033": false,"10034": false,"10035": false,
+"10036": false,"10037": false,"10038": false,"10039": false,"10040": false,
+"10041": false,"10042": false,"10043": false,"10044": false,"10045": false,
+"10046": false,"10047": false,"10048": false,"10049": false,"10050": false,
+"10051": false,"10052": false,"10053": false,"10054": false,"10055": false,
+"10056": false,"10057": false,"10058": false,"10059": false,"10060": false,
+"10061": false,"10062": false,"10063": false,"10064": false,"10065": false,
+"10066": false,"10067": false,"10068": false,"10069": false,"10070": false,
+"10071": false,"10072": false,"10073": false,"10074": false,"10075": false,
+"10076": false,"10077": false,"10078": false,"10079": false,"10080": false,
+"10081": false,"10082": false,"10083": false,"10084": false,"10085": false,
+"10086": false,"10087": false,"10088": false,"10089": false,"10090": false,
+"10091": false,"10092": false,"10093": false,"10094": false,"10095": false,
+"10096": false,"10097": false,"10098": false,"10099": false,"10100": false
 };
 
 if(!localStorage.getItem("cards")){
@@ -80,6 +78,7 @@ function activate(){
   localStorage.setItem("cards", JSON.stringify(storedCards));
   localStorage.setItem("activated", "yes");
 
+  // الانتقال لصفحة إدخال رقم الجلوس
   window.location.href = "check.html";
 }
 </script>
