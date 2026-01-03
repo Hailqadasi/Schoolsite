@@ -5,66 +5,28 @@
 <title>مدرسة الفتح – بطنة قدس</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
+<style>
+body{ font-family:"Tahoma", Arial; background:#f9f2f2; }
+.container{ display:flex; justify-content:center; align-items:center; height:100vh; }
+.card{ background:white; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; width:300px; }
+.card h1{ color:#7a1f2b; margin-bottom:10px; }
+.card h2{ color:#7a1f2b; margin-bottom:20px; }
+.btn{ display:inline-block; padding:10px 20px; background:#7a1f2b; color:white; border:none; border-radius:6px; cursor:pointer; text-decoration:none; }
+.btn:hover{ background:#5f1822; }
+</style>
 </head>
 <body>
 
 <div class="container">
   <div class="card">
+    <h1>مرحبًا بكم</h1>
+    <h2>في مدرسة الفتح</h2>
+    <p style="color:#555;margin-bottom:20px;">بطنة قدس</p>
 
-    <!-- اسم المدرسة -->
-    <h1 style="color:#1e3a8a;">مرحبًا بكم</h1>
-    <h2 style="margin-top:5px;">في مدرسة الفتح</h2>
-    <p style="margin-bottom:20px;color:#555;">بطنة قدس</p>
-
-    <!-- إدخال الكرت -->
-    <input type="text" id="card" placeholder="أدخل كود الكرت">
-
-    <button class="btn" onclick="activate()">دخول</button>
-
-    <p id="msg" style="color:red;margin-top:10px;"></p>
+    <a href="card.html" class="btn">الدخول إلى النتائج</a>
 
   </div>
 </div>
-
-<script>
-/* ===== كروت التفعيل ===== */
-let cards = JSON.parse(localStorage.getItem("cards")) || {
-  "ABC123": false,
-  "DEF456": false,
-  "GHI789": false,
-  "JKL321": false,
-  "MNO654": false
-};
-
-/* ===== تفعيل الكرت ===== */
-function activate(){
-  const card = document.getElementById("card").value.trim();
-  const msg = document.getElementById("msg");
-
-  if(card === ""){
-    msg.textContent = "يرجى إدخال كود الكرت";
-    return;
-  }
-
-  if(!(card in cards)){
-    msg.textContent = "❌ كود الكرت غير صحيح";
-    return;
-  }
-
-  if(cards[card] === true){
-    msg.textContent = "❌ هذا الكرت مستخدم مسبقًا";
-    return;
-  }
-
-  // تفعيل الكرت
-  cards[card] = true;
-  localStorage.setItem("cards", JSON.stringify(cards));
-  localStorage.setItem("activated", "yes");
-
-  // الانتقال لإدخال رقم الجلوس
-  window.location.href = "check.html";
-}
-</script>
 
 </body>
 </html>
