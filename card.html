@@ -5,81 +5,93 @@
 <title>تفعيل الكرت</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-:root{ --main:#7a1f2b; --main-dark:#5f1822; }
-body{ background:#f9f2f2; font-family:"Tahoma", Arial; margin:0; }
-.container{ display:flex; justify-content:center; align-items:center; height:100vh; }
-.card{ background:white; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; width:320px; }
-.card h1{ margin-bottom:20px; color:var(--main); }
-input{ width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc; font-size:16px; }
-.btn{ width:100%; padding:12px; font-size:16px; border:none; border-radius:6px; background:var(--main); color:white; cursor:pointer; }
-.btn:hover{ background:var(--main-dark); }
-#msg{ margin-top:10px; color:red; }
+body{
+  font-family:"Tahoma", Arial;
+  background:#f9f2f2;
+  margin:0;
+}
+.container{
+  max-width:600px;
+  margin:30px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+h1{ text-align:center; color:#7a1f2b; }
+input{
+  width:100%;
+  padding:10px;
+  font-size:16px;
+  margin:15px 0;
+}
+button{
+  width:100%;
+  padding:12px;
+  background:#7a1f2b;
+  color:#fff;
+  border:none;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:6px;
+}
+button:hover{ background:#5f1822; }
+#msg{ margin-top:10px; color:red; text-align:center; }
+
+.cards{
+  margin-top:25px;
+  padding:15px;
+  background:#f3f3f3;
+  border-radius:6px;
+  font-size:15px;
+}
+.card-num{
+  display:inline-block;
+  background:#7a1f2b;
+  color:white;
+  padding:6px 10px;
+  margin:5px;
+  border-radius:4px;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="card">
-    <h1>تفعيل الكرت</h1>
-    <input type="text" id="card" placeholder="أدخل كود الكرت">
-    <button class="btn" onclick="activate()">تفعيل</button>
-    <p id="msg"></p>
+  <h1>تفعيل الكرت</h1>
+
+  <input type="text" id="card" placeholder="أدخل رقم الكرت">
+  <button onclick="checkCard()">تفعيل</button>
+  <div id="msg"></div>
+
+  <div class="cards">
+    <strong>الكروت الصحيحة:</strong><br><br>
+    <span class="card-num">48392</span>
+    <span class="card-num">72915</span>
+    <span class="card-num">10483</span>
+    <span class="card-num">58271</span>
+    <span class="card-num">93640</span>
+    <span class="card-num">27194</span>
+    <span class="card-num">68420</span>
+    <span class="card-num">39571</span>
+    <span class="card-num">81046</span>
+    <span class="card-num">54729</span>
   </div>
 </div>
 
 <script>
-// المئة كرت الصحيحة (5 أرقام)
-let cards = {
-"10001": false,"10002": false,"10003": false,"10004": false,"10005": false,
-"10006": false,"10007": false,"10008": false,"10009": false,"10010": false,
-"10011": false,"10012": false,"10013": false,"10014": false,"10015": false,
-"10016": false,"10017": false,"10018": false,"10019": false,"10020": false,
-"10021": false,"10022": false,"10023": false,"10024": false,"10025": false,
-"10026": false,"10027": false,"10028": false,"10029": false,"10030": false,
-"10031": false,"10032": false,"10033": false,"10034": false,"10035": false,
-"10036": false,"10037": false,"10038": false,"10039": false,"10040": false,
-"10041": false,"10042": false,"10043": false,"10044": false,"10045": false,
-"10046": false,"10047": false,"10048": false,"10049": false,"10050": false,
-"10051": false,"10052": false,"10053": false,"10054": false,"10055": false,
-"10056": false,"10057": false,"10058": false,"10059": false,"10060": false,
-"10061": false,"10062": false,"10063": false,"10064": false,"10065": false,
-"10066": false,"10067": false,"10068": false,"10069": false,"10070": false,
-"10071": false,"10072": false,"10073": false,"10074": false,"10075": false,
-"10076": false,"10077": false,"10078": false,"10079": false,"10080": false,
-"10081": false,"10082": false,"10083": false,"10084": false,"10085": false,
-"10086": false,"10087": false,"10088": false,"10089": false,"10090": false,
-"10091": false,"10092": false,"10093": false,"10094": false,"10095": false,
-"10096": false,"10097": false,"10098": false,"10099": false,"10100": false
-};
+const cards = [
+  "48392","72915","10483","58271","93640",
+  "27194","68420","39571","81046","54729"
+];
 
-if(!localStorage.getItem("cards")){
-  localStorage.setItem("cards", JSON.stringify(cards));
-}
-
-function activate(){
-  const card = document.getElementById("card").value.trim();
-  const msg = document.getElementById("msg");
-  let storedCards = JSON.parse(localStorage.getItem("cards"));
-
-  if(card === ""){
-    msg.textContent = "يرجى إدخال كود الكرت";
-    return;
+function checkCard(){
+  const value = document.getElementById("card").value.trim();
+  if(cards.includes(value)){
+    window.location.href = "check.html";
+  }else{
+    document.getElementById("msg").textContent = "❌ كود الكرت غير صحيح";
   }
-  if(!(card in storedCards)){
-    msg.textContent = "❌ كود الكرت غير صحيح";
-    return;
-  }
-  if(storedCards[card] === true){
-    msg.textContent = "❌ هذا الكرت مستخدم مسبقًا";
-    return;
-  }
-
-  storedCards[card] = true;
-  localStorage.setItem("cards", JSON.stringify(storedCards));
-  localStorage.setItem("activated", "yes");
-
-  // الانتقال لصفحة إدخال رقم الجلوس
-  window.location.href = "check.html";
 }
 </script>
 
