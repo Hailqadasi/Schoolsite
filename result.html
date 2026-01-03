@@ -3,32 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نتائج الطلاب</title>
+<title>نتائج الطلاب - الفصلين الأول والثاني</title>
 <style>
 body{
     font-family: "Tahoma", Arial;
     background: linear-gradient(135deg,#eef2f3,#d9e4ec);
     padding:15px;
+    margin:0;
+}
+.container{
+    max-width:1200px;
+    margin:0 auto;
 }
 .header{
     text-align:center;
-    margin-bottom:15px;
+    margin-bottom:20px;
+    padding:20px;
+    background:white;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.header h1{
+    color:#2c3e50;
+    margin-bottom:10px;
 }
 .header h2{
-    color:#2c3e50;
+    color:#2980b9;
+    margin-top:20px;
+    padding:10px;
+    background:#f8f9fa;
+    border-radius:10px;
 }
-input,button{
+.header-controls{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    justify-content:center;
+}
+.control-group{
+    background:#f8f9fa;
+    padding:15px;
+    border-radius:10px;
+    min-width:300px;
+}
+input, select, button{
     width:100%;
     padding:12px;
     margin-top:8px;
     font-size:16px;
     border-radius:10px;
+    box-sizing:border-box;
 }
 input{border:1px solid #ccc;}
+select{
+    border:1px solid #ccc;
+    background:white;
+}
 button{
     background:#3498db;
     color:#fff;
     border:none;
+    cursor:pointer;
+    transition:background .3s;
+}
+button:hover{
+    background:#2980b9;
 }
 .card{
     margin-top:20px;
@@ -55,18 +94,21 @@ button{
 }
 .grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
     gap:10px;
+    margin-bottom:15px;
 }
 .item{
     background:#f4f6f7;
-    padding:8px;
+    padding:10px;
     border-radius:8px;
     font-size:14px;
+    text-align:center;
 }
 .item strong{
     display:block;
     color:#2c3e50;
+    margin-bottom:5px;
 }
 .total{
     margin-top:15px;
@@ -79,374 +121,416 @@ button{
     font-weight:bold;
 }
 .error{
-    color:red;
+    color:#e74c3c;
     text-align:center;
     margin-top:15px;
     font-size:16px;
+    padding:10px;
+    background:#fff;
+    border-radius:10px;
+}
+.class-badge{
+    display:inline-block;
+    padding:5px 10px;
+    background:#e74c3c;
+    color:white;
+    border-radius:20px;
+    font-size:12px;
+    margin-right:10px;
+}
+.second-class{
+    background:#9b59b6;
+}
+.result-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+.result-table th, .result-table td{
+    padding:12px;
+    text-align:right;
+    border-bottom:1px solid #eee;
+}
+.result-table th{
+    background:#f8f9fa;
+    color:#2c3e50;
+    font-weight:600;
+}
+.result-table tr:hover{
+    background:#f9f9f9;
+}
+@media (max-width:768px){
+    .header-controls{
+        flex-direction:column;
+    }
+    .control-group{
+        min-width:auto;
+    }
+    .grid{
+        grid-template-columns:1fr 1fr;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h2>الاستعلام عن نتيجة الطالب</h2>
-    <input type="number" id="seat" placeholder="أدخل رقم الجلوس">
-    <button onclick="search()">عرض النتيجة</button>
+<div class="container">
+    <div class="header">
+        <h1>نتائج الطلاب - الصف الأول الثانوي</h1>
+        <div class="header-controls">
+            <div class="control-group">
+                <label for="seat">رقم الجلوس</label>
+                <input type="number" id="seat" placeholder="أدخل رقم الجلوس">
+            </div>
+            <div class="control-group">
+                <label for="classSelect">اختر الفصل (اختياري)</label>
+                <select id="classSelect">
+                    <option value="all">كل الفصول</option>
+                    <option value="1">الفصل الأول</option>
+                    <option value="2">الفصل الثاني</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>&nbsp;</label>
+                <button onclick="search()">عرض النتيجة</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result"></div>
 </div>
 
-<div id="result"></div>
-
 <script>
-const students = [
-{seat:719,name:"احمد محمد طربوش احمد",q:39,i:33,a:33,e:39,m:34,p:29,c:41,b:42,t:290},
-{seat:720,name:"احمد منصور عبدالقادر محمد",q:31,i:17,a:23,e:31,m:31,p:28,c:29,b:22,t:212},
-{seat:721,name:"اسامة فهد احمد قاسم",q:35,i:37,a:38,e:43,m:36,p:36,c:42,b:42,t:309},
-{seat:722,name:"البراء عبدالرزاق عبدالعزيز محمد",q:50,i:48,a:50,e:50,m:50,p:48,c:50,b:50,t:396},
-{seat:723,name:"امير عبدالله سلطان عبدالجبار",q:31,i:26,a:29,e:26,m:26,p:23,c:29,b:31,t:221},
-{seat:724,name:"امير ياسر محمود محمد",q:13,i:11,a:12,e:10,m:9,p:9,c:10,b:null,t:null},
-{seat:725,name:"امين مراد عبد الله سيف",q:34,i:21,a:39,e:35,m:27,p:27,c:33,b:39,t:255},
-{seat:726,name:"ايمن داوود محسن قاسم",q:49,i:49,a:49,e:46,m:42,p:45,c:50,b:50,t:380},
-{seat:727,name:"بركان عادل احمد عبده",q:37,i:31,a:43,e:31,m:36,p:32,c:37,b:39,t:286},
-{seat:728,name:"حمود طارش حمود محمد",q:30,i:38,a:31,e:26,m:25,p:21,c:29,b:41,t:241},
-{seat:729,name:"زكريا سمير سعيد فارع غالب",q:32,i:21,a:40,e:37,m:29,p:26,c:38,b:43,t:266},
-{seat:730,name:"شعيب داوود محمد شمسان",q:34,i:38,a:33,e:32,m:36,p:27,c:31,b:36,t:267},
-{seat:731,name:"عامر شهاب عامر محمد سيف",q:44,i:43,a:48,e:43,m:41,p:42,c:43,b:50,t:354},
-{seat:732,name:"عبدالرحمن عبدالحكيم احمد قاسم",q:47,i:44,a:49,e:46,m:45,p:42,c:47,b:50,t:370},
-{seat:733,name:"عبدالرحمن مشتاق اسماعيل عثمان",q:31,i:18,a:31,e:25,m:25,p:22,c:23,b:33,t:208},
-{seat:734,name:"عبدالفتاح عبدالله احمد علي",q:34,i:20,a:34,e:27,m:26,p:30,c:31,b:36,t:238},
-{seat:735,name:"عبدالقادر نجيب علي عبد القادر",q:36,i:30,a:34,e:26,m:24,p:25,c:32,b:44,t:251},
-{seat:736,name:"عبدالقوي احمد محمد احمد",q:39,i:26,a:43,e:30,m:28,p:28,c:42,b:42,t:278},
-{seat:737,name:"عبدالله ابوبكر عبدالباقي عبدالوهاب",q:29,i:19,a:25,e:24,m:27,p:21,c:26,b:42,t:213},
-{seat:738,name:"عبدالله امين عبدالله احمد",q:32,i:20,a:27,e:23,m:22,p:22,c:28,b:39,t:213},
-{seat:739,name:"عبدالله عبدالعزيز عباس عبده",q:48,i:36,a:47,e:30,m:37,p:32,c:39,b:46,t:315},
-{seat:740,name:"عبدالله عصام شرف محمد",q:31,i:18,a:24,e:30,m:23,p:25,c:30,b:28,t:209},
-{seat:741,name:"عبدالله لطف عبدالله احمد مقبل",q:29,i:20,a:24,e:30,m:24,p:24,c:23,b:24,t:198},
-{seat:742,name:"عبدالناصر محمد نعمان علي",q:44,i:36,a:42,e:43,m:44,p:44,c:46,b:46,t:345},
-{seat:743,name:"عمار محمد قائد محمد",q:35,i:25,a:28,e:38,m:26,p:38,c:33,b:27,t:250},
-{seat:744,name:"عمار ياسر محمد قاسم",q:48,i:44,a:47,e:45,m:45,p:44,c:47,b:47,t:367},
-{seat:745,name:"فؤاد احمد احمد عبدالجبار",q:44,i:42,a:45,e:45,m:45,p:42,c:44,b:47,t:354},
-{seat:746,name:"لؤي علي نور الدين سعد",q:41,i:27,a:21,e:32,m:42,p:27,c:23,b:39,t:252},
-{seat:747,name:"مجد عارف سامي احمد عبدالله",q:31,i:16,a:24,e:24,m:35,p:26,c:26,b:40,t:222},
-{seat:748,name:"محمد رفيق عبدالرقيب هائل",q:32,i:29,a:36,e:36,m:24,p:28,c:36,b:43,t:264},
-{seat:749,name:"محمود حلمي سيف حزام",q:44,i:36,a:39,e:40,m:35,p:39,c:40,b:43,t:316},
-{seat:750,name:"مشعل فهيم غالب احمد",q:38,i:31,a:25,e:35,m:33,p:30,c:36,b:47,t:275},
-{seat:751,name:"معتز عبدالرحمن عبدالرب صالح",q:33,i:21,a:25,e:38,m:26,p:24,c:32,b:41,t:240},
-{seat:752,name:"مميز عبدالباسط صالح عون",q:42,i:32,a:34,e:32,m:32,p:29,c:35,b:45,t:281},
-{seat:753,name:"مهند عبدالجليل سيف مقبل",q:46,i:38,a:47,e:47,m:28,p:31,c:40,b:43,t:320},
-{seat:754,name:"موسى شاكر احمد علي حسن",q:33,i:25,a:35,e:34,m:29,p:25,c:35,b:38,t:254},
-{seat:755,name:"موسى مدين غالب احمد",q:48,i:40,a:49,e:45,m:48,p:34,c:50,b:50,t:364},
-{seat:756,name:"نبيل وسيم عبدالباري نور الدين",q:47,i:40,a:43,e:40,m:36,p:35,c:47,b:50,t:338},
-{seat:757,name:"نصر حمود علي عقلان",q:35,i:25,a:24,e:23,m:26,p:18,c:30,b:46,t:227},
-{seat:758,name:"نوح عبدالله سعيد جميل",q:37,i:29,a:31,e:35,m:33,p:30,c:39,b:41,t:275},
-{seat:759,name:"وسام عماد علي محمد الصلاحي",q:39,i:27,a:25,e:29,m:20,p:21,c:37,b:41,t:239},
-{seat:760,name:"وسيم سمير سعيد محمد",q:45,i:43,a:49,e:45,m:42,p:35,c:45,b:50,t:354},
-{seat:761,name:"وهاج توفيق علي محمد الكلي",q:33,i:23,a:27,e:32,m:25,p:30,c:30,b:37,t:237},
-{seat:762,name:"يوسف العزي محمد احمد",q:39,i:23,a:25,e:32,m:24,p:29,c:27,b:34,t:233},
-{seat:763,name:"ابرار امين شرف حسين",q:33,i:20,a:30,e:29,m:31,p:24,c:30,b:37,t:234},
-{seat:764,name:"ازهار محمد احمد مقبل",q:36,i:34,a:31,e:31,m:29,p:27,c:29,b:39,t:256},
-{seat:765,name:"الاء عصام محمد محمد",q:46,i:38,a:45,e:41,m:29,p:33,c:43,b:47,t:322},
-{seat:766,name:"اماني عبدالحافظ عبدالرب صالح",q:37,i:24,a:35,e:38,m:25,p:25,c:34,b:38,t:256},
-{seat:767,name:"امة الله وليد علي عبد الله",q:40,i:26,a:43,e:38,m:33,p:32,c:38,b:41,t:291},
-{seat:768,name:"ايات فارس علي سيف",q:35,i:24,a:30,e:31,m:26,p:21,c:32,b:30,t:229},
-{seat:769,name:"اية خالد غالب علي",q:38,i:23,a:23,e:28,m:30,p:24,c:30,b:35,t:231},
-{seat:770,name:"ايمان كارم درهم احمد غالب",q:45,i:36,a:45,e:47,m:41,p:39,c:44,b:46,t:343},
-{seat:771,name:"بثينة محمد احمد سلام",q:40,i:27,a:47,e:37,m:33,p:27,c:36,b:40,t:287},
-{seat:772,name:"براءة فتحي عبد الوهاب سعيد",q:47,i:44,a:47,e:47,m:49,p:41,c:47,b:47,t:369},
-{seat:773,name:"بشرى صلاح عبدالله محمد",q:32,i:27,a:29,e:29,m:24,p:23,c:28,b:33,t:225},
-{seat:774,name:"بيان نبيل منصور سعيد",q:41,i:34,a:40,e:42,m:47,p:33,c:40,b:43,t:320},
-{seat:775,name:"تيسير احمد شرف عبده",q:31,i:18,a:39,e:31,m:29,p:19,c:26,b:33,t:226},
-{seat:776,name:"حنين وسام احمد سلطان",q:47,i:40,a:46,e:46,m:41,p:42,c:46,b:44,t:352},
-{seat:777,name:"خولة وهيب ياسين احمد",q:40,i:30,a:40,e:39,m:33,p:28,c:36,b:43,t:289},
-{seat:778,name:"رانية عزيز عبدالرحمن مهيوب",q:37,i:28,a:30,e:43,m:25,p:29,c:41,b:45,t:278},
-{seat:779,name:"ربا عبدالعزيز عثمان حسن",q:49,i:46,a:47,e:49,m:43,p:41,c:48,b:48,t:371},
-{seat:780,name:"رحمة نبيل احمد محمد",q:36,i:33,a:27,e:35,m:36,p:24,c:29,b:40,t:260},
-{seat:781,name:"ردينة عبدالله عقلان علي",q:30,i:24,a:33,e:27,m:26,p:30,c:29,b:35,t:234},
-{seat:782,name:"رغد على عبدالله علي",q:29,i:17,a:19,e:22,m:24,p:20,c:32,b:26,t:189},
-{seat:783,name:"رنا رشاد سعد علي",q:34,i:28,a:38,e:29,m:26,p:28,c:39,b:34,t:256},
-{seat:784,name:"رنا رفيق محمد عبدالله نعمان",q:31,i:22,a:26,e:20,m:25,p:28,c:32,b:30,t:214},
-{seat:785,name:"رهام محمد عبدالجبار ثابت",q:31,i:17,a:32,e:29,m:26,p:22,c:26,b:37,t:220},
-{seat:786,name:"رؤية وجدي عبدالقادر حمود",q:29,i:21,a:32,e:30,m:22,p:20,c:23,b:34,t:211},
-{seat:787,name:"زينب عبدالله محمد احمد",q:34,i:24,a:35,e:32,m:27,p:27,c:29,b:39,t:247},
-{seat:788,name:"سناء شكري عبده احمد",q:34,i:28,a:31,e:34,m:29,p:27,c:32,b:38,t:253},
-{seat:789,name:"شذى محمد عبدالوهاب سعيد",q:31,i:21,a:24,e:34,m:27,p:26,c:25,b:36,t:224},
-{seat:790,name:"شذى معاذ عبدالودود عبدالواحد",q:39,i:26,a:34,e:38,m:28,p:25,c:32,b:43,t:265},
-{seat:791,name:"شهد نشوان محمود مجاهد",q:14,i:14,a:17,e:13,m:18,p:16,c:17,b:0,t:0},
-{seat:792,name:"شيماء هاني عبدالله محمد",q:38,i:33,a:38,e:39,m:38,p:28,c:38,b:43,t:295},
-{seat:793,name:"عديلة عبدالرزاق محمد محمد قاسم",q:42,i:39,a:40,e:37,m:36,p:28,c:40,b:45,t:307},
-{seat:794,name:"عهود فهمي عبد الله نعمان",q:32,i:26,a:31,e:32,m:25,p:29,c:29,b:36,t:240},
-{seat:795,name:"عواطف فتح عبدالباقي عبدالواحد",q:31,i:22,a:28,e:20,m:29,p:24,c:19,b:39,t:212},
-{seat:796,name:"فاطمة جواد ناجي عبدالله",q:33,i:22,a:36,e:34,m:40,p:29,c:30,b:41,t:265},
-{seat:797,name:"فائزة طارق فؤاد اسماعيل",q:31,i:19,a:28,e:31,m:27,p:26,c:31,b:32,t:225},
-{seat:798,name:"فرح محمد عبدالقادر نعمان",q:38,i:28,a:41,e:29,m:33,p:31,c:34,b:43,t:277},
-{seat:799,name:"كفاء وضاح عبدالله محمد",q:31,i:23,a:35,e:34,m:30,p:26,c:29,b:38,t:246},
-{seat:800,name:"لميس عبدالله قائد سعيد",q:37,i:25,a:34,e:32,m:44,p:29,c:32,b:38,t:271},
-{seat:801,name:"ملاك احمد سلطان نعمان",q:42,i:28,a:39,e:28,m:29,p:29,c:33,b:40,t:268},
-{seat:802,name:"ملاك باسم احمد مقبل",q:37,i:25,a:40,e:34,m:44,p:26,c:34,b:39,t:279},
-{seat:803,name:"ملاك طارق احمد محمد",q:38,i:29,a:31,e:27,m:28,p:23,c:31,b:31,t:238},
-{seat:804,name:"ملاك طه محمد سعيد المدحجي",q:42,i:38,a:36,e:40,m:40,p:34,c:47,b:47,t:324},
-{seat:805,name:"ملاك عماد عبدالله سعيد",q:38,i:29,a:36,e:28,m:24,p:22,c:31,b:35,t:243},
-{seat:806,name:"ملاك مروان عبدالعزير عبدالتواب",q:47,i:41,a:43,e:43,m:46,p:40,c:49,b:44,t:353},
-{seat:807,name:"منار بشير فارع محمد احمد",q:49,i:43,a:49,e:49,m:49,p:42,c:50,b:47,t:378},
-{seat:808,name:"هداية فهمي حمود غالب",q:29,i:21,a:32,e:30,m:31,p:25,c:27,b:36,t:231},
-{seat:809,name:"هدى مختار عبدالباري محمد",q:40,i:30,a:33,e:26,m:36,p:26,c:39,b:33,t:263},
-{seat:810,name:"ورود وهيب سيف سعيد",q:49,i:42,a:41,e:45,m:45,p:42,c:50,b:46,t:360},  <!-- تم إضافة الفاصلة هنا -->
-{seat:811,name:"وفاء ناصر عبدالله محمد",q:32,i:26,a:35,e:28,m:28,p:28,c:34,b:35,t:246}
+// بيانات الفصل الأول
+const class1Students = [
+    {seat:719,name:"احمد محمد طربوش احمد",class:"1",q:39,i:33,a:33,e:39,m:34,p:29,c:41,b:42,t:290},
+    {seat:720,name:"احمد منصور عبدالقادر محمد",class:"1",q:31,i:17,a:23,e:31,m:31,p:28,c:29,b:22,t:212},
+    {seat:721,name:"اسامة فهد احمد قاسم",class:"1",q:35,i:37,a:38,e:43,m:36,p:36,c:42,b:42,t:309},
+    {seat:722,name:"البراء عبدالرزاق عبدالعزيز محمد",class:"1",q:50,i:48,a:50,e:50,m:50,p:48,c:50,b:50,t:396},
+    {seat:723,name:"امير عبدالله سلطان عبدالجبار",class:"1",q:31,i:26,a:29,e:26,m:26,p:23,c:29,b:31,t:221},
+    {seat:724,name:"امير ياسر محمود محمد",class:"1",q:13,i:11,a:12,e:10,m:9,p:9,c:10,b:null,t:null},
+    {seat:725,name:"امين مراد عبد الله سيف",class:"1",q:34,i:21,a:39,e:35,m:27,p:27,c:33,b:39,t:255},
+    {seat:726,name:"ايمن داوود محسن قاسم",class:"1",q:49,i:49,a:49,e:46,m:42,p:45,c:50,b:50,t:380},
+    {seat:727,name:"بركان عادل احمد عبده",class:"1",q:37,i:31,a:43,e:31,m:36,p:32,c:37,b:39,t:286},
+    {seat:728,name:"حمود طارش حمود محمد",class:"1",q:30,i:38,a:31,e:26,m:25,p:21,c:29,b:41,t:241},
+    {seat:729,name:"زكريا سمير سعيد فارع غالب",class:"1",q:32,i:21,a:40,e:37,m:29,p:26,c:38,b:43,t:266},
+    {seat:730,name:"شعيب داوود محمد شمسان",class:"1",q:34,i:38,a:33,e:32,m:36,p:27,c:31,b:36,t:267},
+    {seat:731,name:"عامر شهاب عامر محمد سيف",class:"1",q:44,i:43,a:48,e:43,m:41,p:42,c:43,b:50,t:354},
+    {seat:732,name:"عبدالرحمن عبدالحكيم احمد قاسم",class:"1",q:47,i:44,a:49,e:46,m:45,p:42,c:47,b:50,t:370},
+    {seat:733,name:"عبدالرحمن مشتاق اسماعيل عثمان",class:"1",q:31,i:18,a:31,e:25,m:25,p:22,c:23,b:33,t:208},
+    {seat:734,name:"عبدالفتاح عبدالله احمد علي",class:"1",q:34,i:20,a:34,e:27,m:26,p:30,c:31,b:36,t:238},
+    {seat:735,name:"عبدالقادر نجيب علي عبد القادر",class:"1",q:36,i:30,a:34,e:26,m:24,p:25,c:32,b:44,t:251},
+    {seat:736,name:"عبدالقوي احمد محمد احمد",class:"1",q:39,i:26,a:43,e:30,m:28,p:28,c:42,b:42,t:278},
+    {seat:737,name:"عبدالله ابوبكر عبدالباقي عبدالوهاب",class:"1",q:29,i:19,a:25,e:24,m:27,p:21,c:26,b:42,t:213},
+    {seat:738,name:"عبدالله امين عبدالله احمد",class:"1",q:32,i:20,a:27,e:23,m:22,p:22,c:28,b:39,t:213},
+    {seat:739,name:"عبدالله عبدالعزيز عباس عبده",class:"1",q:48,i:36,a:47,e:30,m:37,p:32,c:39,b:46,t:315},
+    {seat:740,name:"عبدالله عصام شرف محمد",class:"1",q:31,i:18,a:24,e:30,m:23,p:25,c:30,b:28,t:209},
+    {seat:741,name:"عبدالله لطف عبدالله احمد مقبل",class:"1",q:29,i:20,a:24,e:30,m:24,p:24,c:23,b:24,t:198},
+    {seat:742,name:"عبدالناصر محمد نعمان علي",class:"1",q:44,i:36,a:42,e:43,m:44,p:44,c:46,b:46,t:345},
+    {seat:743,name:"عمار محمد قائد محمد",class:"1",q:35,i:25,a:28,e:38,m:26,p:38,c:33,b:27,t:250},
+    {seat:744,name:"عمار ياسر محمد قاسم",class:"1",q:48,i:44,a:47,e:45,m:45,p:44,c:47,b:47,t:367},
+    {seat:745,name:"فؤاد احمد احمد عبدالجبار",class:"1",q:44,i:42,a:45,e:45,m:45,p:42,c:44,b:47,t:354},
+    {seat:746,name:"لؤي علي نور الدين سعد",class:"1",q:41,i:27,a:21,e:32,m:42,p:27,c:23,b:39,t:252},
+    {seat:747,name:"مجد عارف سامي احمد عبدالله",class:"1",q:31,i:16,a:24,e:24,m:35,p:26,c:26,b:40,t:222},
+    {seat:748,name:"محمد رفيق عبدالرقيب هائل",class:"1",q:32,i:29,a:36,e:36,m:24,p:28,c:36,b:43,t:264},
+    {seat:749,name:"محمود حلمي سيف حزام",class:"1",q:44,i:36,a:39,e:40,m:35,p:39,c:40,b:43,t:316},
+    {seat:750,name:"مشعل فهيم غالب احمد",class:"1",q:38,i:31,a:25,e:35,m:33,p:30,c:36,b:47,t:275},
+    {seat:751,name:"معتز عبدالرحمن عبدالرب صالح",class:"1",q:33,i:21,a:25,e:38,m:26,p:24,c:32,b:41,t:240},
+    {seat:752,name:"مميز عبدالباسط صالح عون",class:"1",q:42,i:32,a:34,e:32,m:32,p:29,c:35,b:45,t:281},
+    {seat:753,name:"مهند عبدالجليل سيف مقبل",class:"1",q:46,i:38,a:47,e:47,m:28,p:31,c:40,b:43,t:320},
+    {seat:754,name:"موسى شاكر احمد علي حسن",class:"1",q:33,i:25,a:35,e:34,m:29,p:25,c:35,b:38,t:254},
+    {seat:755,name:"موسى مدين غالب احمد",class:"1",q:48,i:40,a:49,e:45,m:48,p:34,c:50,b:50,t:364},
+    {seat:756,name:"نبيل وسيم عبدالباري نور الدين",class:"1",q:47,i:40,a:43,e:40,m:36,p:35,c:47,b:50,t:338},
+    {seat:757,name:"نصر حمود علي عقلان",class:"1",q:35,i:25,a:24,e:23,m:26,p:18,c:30,b:46,t:227},
+    {seat:758,name:"نوح عبدالله سعيد جميل",class:"1",q:37,i:29,a:31,e:35,m:33,p:30,c:39,b:41,t:275},
+    {seat:759,name:"وسام عماد علي محمد الصلاحي",class:"1",q:39,i:27,a:25,e:29,m:20,p:21,c:37,b:41,t:239},
+    {seat:760,name:"وسيم سمير سعيد محمد",class:"1",q:45,i:43,a:49,e:45,m:42,p:35,c:45,b:50,t:354},
+    {seat:761,name:"وهاج توفيق علي محمد الكلي",class:"1",q:33,i:23,a:27,e:32,m:25,p:30,c:30,b:37,t:237},
+    {seat:762,name:"يوسف العزي محمد احمد",class:"1",q:39,i:23,a:25,e:32,m:24,p:29,c:27,b:34,t:233},
+    {seat:763,name:"ابرار امين شرف حسين",class:"1",q:33,i:20,a:30,e:29,m:31,p:24,c:30,b:37,t:234},
+    {seat:764,name:"ازهار محمد احمد مقبل",class:"1",q:36,i:34,a:31,e:31,m:29,p:27,c:29,b:39,t:256},
+    {seat:765,name:"الاء عصام محمد محمد",class:"1",q:46,i:38,a:45,e:41,m:29,p:33,c:43,b:47,t:322},
+    {seat:766,name:"اماني عبدالحافظ عبدالرب صالح",class:"1",q:37,i:24,a:35,e:38,m:25,p:25,c:34,b:38,t:256},
+    {seat:767,name:"امة الله وليد علي عبد الله",class:"1",q:40,i:26,a:43,e:38,m:33,p:32,c:38,b:41,t:291},
+    {seat:768,name:"ايات فارس علي سيف",class:"1",q:35,i:24,a:30,e:31,m:26,p:21,c:32,b:30,t:229},
+    {seat:769,name:"اية خالد غالب علي",class:"1",q:38,i:23,a:23,e:28,m:30,p:24,c:30,b:35,t:231},
+    {seat:770,name:"ايمان كارم درهم احمد غالب",class:"1",q:45,i:36,a:45,e:47,m:41,p:39,c:44,b:46,t:343},
+    {seat:771,name:"بثينة محمد احمد سلام",class:"1",q:40,i:27,a:47,e:37,m:33,p:27,c:36,b:40,t:287},
+    {seat:772,name:"براءة فتحي عبد الوهاب سعيد",class:"1",q:47,i:44,a:47,e:47,m:49,p:41,c:47,b:47,t:369},
+    {seat:773,name:"بشرى صلاح عبدالله محمد",class:"1",q:32,i:27,a:29,e:29,m:24,p:23,c:28,b:33,t:225},
+    {seat:774,name:"بيان نبيل منصور سعيد",class:"1",q:41,i:34,a:40,e:42,m:47,p:33,c:40,b:43,t:320},
+    {seat:775,name:"تيسير احمد شرف عبده",class:"1",q:31,i:18,a:39,e:31,m:29,p:19,c:26,b:33,t:226},
+    {seat:776,name:"حنين وسام احمد سلطان",class:"1",q:47,i:40,a:46,e:46,m:41,p:42,c:46,b:44,t:352},
+    {seat:777,name:"خولة وهيب ياسين احمد",class:"1",q:40,i:30,a:40,e:39,m:33,p:28,c:36,b:43,t:289},
+    {seat:778,name:"رانية عزيز عبدالرحمن مهيوب",class:"1",q:37,i:28,a:30,e:43,m:25,p:29,c:41,b:45,t:278},
+    {seat:779,name:"ربا عبدالعزيز عثمان حسن",class:"1",q:49,i:46,a:47,e:49,m:43,p:41,c:48,b:48,t:371},
+    {seat:780,name:"رحمة نبيل احمد محمد",class:"1",q:36,i:33,a:27,e:35,m:36,p:24,c:29,b:40,t:260},
+    {seat:781,name:"ردينة عبدالله عقلان علي",class:"1",q:30,i:24,a:33,e:27,m:26,p:30,c:29,b:35,t:234},
+    {seat:782,name:"رغد على عبدالله علي",class:"1",q:29,i:17,a:19,e:22,m:24,p:20,c:32,b:26,t:189},
+    {seat:783,name:"رنا رشاد سعد علي",class:"1",q:34,i:28,a:38,e:29,m:26,p:28,c:39,b:34,t:256},
+    {seat:784,name:"رنا رفيق محمد عبدالله نعمان",class:"1",q:31,i:22,a:26,e:20,m:25,p:28,c:32,b:30,t:214},
+    {seat:785,name:"رهام محمد عبدالجبار ثابت",class:"1",q:31,i:17,a:32,e:29,m:26,p:22,c:26,b:37,t:220},
+    {seat:786,name:"رؤية وجدي عبدالقادر حمود",class:"1",q:29,i:21,a:32,e:30,m:22,p:20,c:23,b:34,t:211},
+    {seat:787,name:"زينب عبدالله محمد احمد",class:"1",q:34,i:24,a:35,e:32,m:27,p:27,c:29,b:39,t:247},
+    {seat:788,name:"سناء شكري عبده احمد",class:"1",q:34,i:28,a:31,e:34,m:29,p:27,c:32,b:38,t:253},
+    {seat:789,name:"شذى محمد عبدالوهاب سعيد",class:"1",q:31,i:21,a:24,e:34,m:27,p:26,c:25,b:36,t:224},
+    {seat:790,name:"شذى معاذ عبدالودود عبدالواحد",class:"1",q:39,i:26,a:34,e:38,m:28,p:25,c:32,b:43,t:265},
+    {seat:791,name:"شهد نشوان محمود مجاهد",class:"1",q:14,i:14,a:17,e:13,m:18,p:16,c:17,b:0,t:0},
+    {seat:792,name:"شيماء هاني عبدالله محمد",class:"1",q:38,i:33,a:38,e:39,m:38,p:28,c:38,b:43,t:295},
+    {seat:793,name:"عديلة عبدالرزاق محمد محمد قاسم",class:"1",q:42,i:39,a:40,e:37,m:36,p:28,c:40,b:45,t:307},
+    {seat:794,name:"عهود فهمي عبد الله نعمان",class:"1",q:32,i:26,a:31,e:32,m:25,p:29,c:29,b:36,t:240},
+    {seat:795,name:"عواطف فتح عبدالباقي عبدالواحد",class:"1",q:31,i:22,a:28,e:20,m:29,p:24,c:19,b:39,t:212},
+    {seat:796,name:"فاطمة جواد ناجي عبدالله",class:"1",q:33,i:22,a:36,e:34,m:40,p:29,c:30,b:41,t:265},
+    {seat:797,name:"فائزة طارق فؤاد اسماعيل",class:"1",q:31,i:19,a:28,e:31,m:27,p:26,c:31,b:32,t:225},
+    {seat:798,name:"فرح محمد عبدالقادر نعمان",class:"1",q:38,i:28,a:41,e:29,m:33,p:31,c:34,b:43,t:277},
+    {seat:799,name:"كفاء وضاح عبدالله محمد",class:"1",q:31,i:23,a:35,e:34,m:30,p:26,c:29,b:38,t:246},
+    {seat:800,name:"لميس عبدالله قائد سعيد",class:"1",q:37,i:25,a:34,e:32,m:44,p:29,c:32,b:38,t:271},
+    {seat:801,name:"ملاك احمد سلطان نعمان",class:"1",q:42,i:28,a:39,e:28,m:29,p:29,c:33,b:40,t:268},
+    {seat:802,name:"ملاك باسم احمد مقبل",class:"1",q:37,i:25,a:40,e:34,m:44,p:26,c:34,b:39,t:279},
+    {seat:803,name:"ملاك طارق احمد محمد",class:"1",q:38,i:29,a:31,e:27,m:28,p:23,c:31,b:31,t:238},
+    {seat:804,name:"ملاك طه محمد سعيد المدحجي",class:"1",q:42,i:38,a:36,e:40,m:40,p:34,c:47,b:47,t:324},
+    {seat:805,name:"ملاك عماد عبدالله سعيد",class:"1",q:38,i:29,a:36,e:28,m:24,p:22,c:31,b:35,t:243},
+    {seat:806,name:"ملاك مروان عبدالعزير عبدالتواب",class:"1",q:47,i:41,a:43,e:43,m:46,p:40,c:49,b:44,t:353},
+    {seat:807,name:"منار بشير فارع محمد احمد",class:"1",q:49,i:43,a:49,e:49,m:49,p:42,c:50,b:47,t:378},
+    {seat:808,name:"هداية فهمي حمود غالب",class:"1",q:29,i:21,a:32,e:30,m:31,p:25,c:27,b:36,t:231},
+    {seat:809,name:"هدى مختار عبدالباري محمد",class:"1",q:40,i:30,a:33,e:26,m:36,p:26,c:39,b:33,t:263},
+    {seat:810,name:"ورود وهيب سيف سعيد",class:"1",q:49,i:42,a:41,e:45,m:45,p:42,c:50,b:46,t:360},
+    {seat:811,name:"وفاء ناصر عبدالله محمد",class:"1",q:32,i:26,a:35,e:28,m:28,p:28,c:34,b:35,t:246}
 ];
+
+// بيانات الفصل الثاني
+const class2Students = {
+    612: {name:"ابراهيم عمار هائل حمود", class:"2", quran:31, islamic:32, arabic:28, english:29, math:32, physics:28, chemistry:35, biology:26, geo:47, history:24, society:37, total:349},
+    613: {name:"احمد منصور عبدالله طربوش", class:"2", quran:48, islamic:41, arabic:48, english:42, math:49, physics:42, chemistry:43, biology:46, geo:50, history:48, society:50, total:507},
+    614: {name:"ادهم خالد عبدالله نعمان", class:"2", quran:44, islamic:43, arabic:44, english:38, math:41, physics:39, chemistry:47, biology:41, geo:49, history:47, society:47, total:480},
+    615: {name:"اسعد نبيل احمد سعيد", class:"2", quran:28, islamic:39, arabic:27, english:32, math:34, physics:26, chemistry:29, biology:34, geo:50, history:44, society:50, total:393},
+    616: {name:"اسيد ياسر علي محمد هلال", class:"2", quran:26, islamic:25, arabic:37, english:28, math:30, physics:34, chemistry:36, biology:23, geo:49, history:41, society:48, total:377},
+    617: {name:"اصيل ماجد عبدالله سيف", class:"2", quran:40, islamic:32, arabic:27, english:24, math:41, physics:27, chemistry:35, biology:29, geo:47, history:39, society:43, total:384},
+    618: {name:"المعتصم فهيم علي محمد", class:"2", quran:48, islamic:37, arabic:41, english:38, math:49, physics:45, chemistry:44, biology:40, geo:50, history:47, society:47, total:486},
+    619: {name:"الياس امين طارش عبدالله", class:"2", quran:23, islamic:42, arabic:25, english:32, math:42, physics:36, chemistry:34, biology:35, geo:48, history:39, society:49, total:405},
+    620: {name:"امجد امين عبده سعيد", class:"2", quran:37, islamic:40, arabic:36, english:34, math:45, physics:40, chemistry:44, biology:38, geo:37, history:33, society:47, total:431},
+    621: {name:"امير ايوب طارش حمود", class:"2", quran:30, islamic:32, arabic:27, english:26, math:28, physics:34, chemistry:32, biology:33, geo:40, history:31, society:38, total:351},
+    622: {name:"امير توفيق احمد عامر", class:"2", quran:36, islamic:36, arabic:25, english:24, math:36, physics:38, chemistry:34, biology:38, geo:41, history:43, society:42, total:393},
+    623: {name:"انس احمد احمد غالب", class:"2", quran:49, islamic:45, arabic:46, english:43, math:50, physics:46, chemistry:45, biology:44, geo:48, history:48, society:50, total:514},
+    624: {name:"ايمن امين عبدالله هلال المذحجي", class:"2", quran:18, islamic:27, arabic:14, english:22, math:28, physics:25, chemistry:15, biology:26, geo:44, history:25, society:38, total:282},
+    625: {name:"ايمن نبيل احمد سعيد", class:"2", quran:31, islamic:39, arabic:37, english:41, math:42, physics:42, chemistry:38, biology:41, geo:50, history:44, society:44, total:449},
+    626: {name:"حلمي حميد ياسين احمد شرف", class:"2", quran:16, islamic:23, arabic:16, english:16, math:31, physics:18, chemistry:22, biology:23, geo:39, history:29, society:30, total:263},
+    627: {name:"حمزة عبدالحميد محمد مقبل", class:"2", quran:26, islamic:29, arabic:26, english:22, math:35, physics:21, chemistry:35, biology:35, geo:41, history:31, society:38, total:339},
+    628: {name:"خالد فهمي شمسان سيف", class:"2", quran:34, islamic:34, arabic:27, english:26, math:34, physics:25, chemistry:28, biology:38, geo:48, history:34, society:42, total:370},
+    629: {name:"ربيع شاكر عبدالعزيز محمد", class:"2", quran:22, islamic:27, arabic:20, english:20, math:34, physics:22, chemistry:25, biology:38, geo:42, history:19, society:28, total:297},
+    630: {name:"رياض رضوان محمد قائد", class:"2", quran:22, islamic:31, arabic:22, english:20, math:30, physics:20, chemistry:23, biology:32, geo:40, history:17, society:30, total:287},
+    631: {name:"زهير باسم ياسين سيف", class:"2", quran:40, islamic:42, arabic:50, english:42, math:46, physics:43, chemistry:45, biology:44, geo:50, history:41, society:50, total:493},
+    632: {name:"زيد عبدالرحمن عبدالله احمد", class:"2", quran:28, islamic:36, arabic:40, english:29, math:35, physics:25, chemistry:39, biology:37, geo:40, history:41, society:44, total:394},
+    633: {name:"شعيب امين احمد عقلان", class:"2", quran:25, islamic:27, arabic:30, english:21, math:29, physics:30, chemistry:22, biology:23, geo:38, history:21, society:30, total:296},
+    634: {name:"شعيب عبدالله عقلان علي", class:"2", quran:27, islamic:29, arabic:22, english:24, math:24, physics:29, chemistry:28, biology:26, geo:39, history:19, society:33, total:300},
+    635: {name:"شهاب وضاح شرف محمد احمد", class:"2", quran:33, islamic:31, arabic:35, english:29, math:40, physics:32, chemistry:37, biology:36, geo:48, history:29, society:48, total:398},
+    636: {name:"صهيب عبدالجليل علي محمد", class:"2", quran:34, islamic:30, arabic:26, english:17, math:33, physics:26, chemistry:27, biology:27, geo:41, history:32, society:36, total:329},
+    637: {name:"عبدالجليل محمد عبدالجليل غرسان", class:"2", quran:19, islamic:38, arabic:28, english:28, math:39, physics:30, chemistry:22, biology:31, geo:41, history:30, society:33, total:339},
+    638: {name:"عبدالرحمن عصام محمد محمد", class:"2", quran:26, islamic:29, arabic:24, english:21, math:30, physics:28, chemistry:33, biology:25, geo:42, history:17, society:36, total:311},
+    639: {name:"عبدالقوي ياسر عبدالقوي بجاش حميد", class:"2", quran:39, islamic:35, arabic:30, english:29, math:36, physics:30, chemistry:33, biology:35, geo:45, history:27, society:47, total:386},
+    640: {name:"عبدالله شكيب عبدالله قائد حيدر", class:"2", quran:26, islamic:28, arabic:22, english:23, math:31, physics:25, chemistry:23, biology:26, geo:43, history:22, society:32, total:301},
+    641: {name:"عبدالله شهاب عبدالله احمد", class:"2", quran:17, islamic:36, arabic:25, english:22, math:37, physics:24, chemistry:32, biology:31, geo:45, history:20, society:36, total:325},
+    642: {name:"عبدالله فؤاد عبدالله محمد", class:"2", quran:8, islamic:11, arabic:10, english:9, math:9, physics:8, chemistry:11, biology:12, geo:13, history:12, society:13, total:116},
+    643: {name:"عبدالله ياسر عبدالله ثابت", class:"2", quran:32, islamic:38, arabic:38, english:20, math:38, physics:24, chemistry:30, biology:35, geo:49, history:29, society:38, total:371},
+    644: {name:"عبدالملك مروان عبدالحميد عبدالواحد", class:"2", quran:48, islamic:40, arabic:48, english:47, math:48, physics:47, chemistry:43, biology:42, geo:50, history:40, society:50, total:503},
+    645: {name:"علي عبدالرب جميل عبدالرب", class:"2", quran:27, islamic:28, arabic:22, english:23, math:29, physics:27, chemistry:14, biology:21, geo:40, history:18, society:36, total:285},
+    646: {name:"عمار سلطان قائد محمد", class:"2", quran:23, islamic:35, arabic:19, english:25, math:20, physics:27, chemistry:14, biology:21, geo:39, history:18, society:45, total:286},
+    647: {name:"عمار وهبي سعيد مهيوب", class:"2", quran:50, islamic:44, arabic:43, english:43, math:32, physics:34, chemistry:38, biology:38, geo:50, history:42, society:49, total:463},
+    648: {name:"عمر عادل علي سعيد المعمري", class:"2", quran:46, islamic:37, arabic:35, english:30, math:28, physics:37, chemistry:33, biology:30, geo:38, history:29, society:31, total:374},
+    649: {name:"عمر عزيز عبدالقادر نعمان", class:"2", quran:50, islamic:43, arabic:48, english:45, math:46, physics:49, chemistry:47, biology:45, geo:50, history:46, society:50, total:519},
+    650: {name:"عمرو عبدالوكيل عبده عون", class:"2", quran:38, islamic:38, arabic:24, english:22, math:20, physics:24, chemistry:19, biology:24, geo:42, history:19, society:37, total:307},
+    651: {name:"عيسى عبدالحكيم احمد محمد", class:"2", quran:40, islamic:36, arabic:21, english:27, math:18, physics:29, chemistry:17, biology:25, geo:40, history:27, society:40, total:320},
+    652: {name:"فراس عبدالوكيل احمد سعيد", class:"2", quran:20, islamic:28, arabic:23, english:23, math:25, physics:19, chemistry:25, biology:19, geo:37, history:21, society:30, total:270},
+    653: {name:"كارم عبدالرحمن احمد سعيد", class:"2", quran:47, islamic:44, arabic:47, english:47, math:49, physics:41, chemistry:47, biology:46, geo:50, history:45, society:50, total:513},
+    654: {name:"كرم عرفان احمد عقلان", class:"2", quran:40, islamic:22, arabic:25, english:32, math:22, physics:19, chemistry:24, biology:40, geo:41, history:24, society:37, total:326},
+    655: {name:"مجد ثابت محمد احمد", class:"2", quran:17, islamic:26, arabic:17, english:23, math:17, physics:16, chemistry:25, biology:18, geo:34, history:19, society:25, total:237},
+    656: {name:"محمد طارق فؤاد اسماعيل", class:"2", quran:23, islamic:33, arabic:31, english:26, math:34, physics:22, chemistry:26, biology:26, geo:37, history:23, society:38, total:319},
+    657: {name:"محمد منير احمد عامر", class:"2", quran:26, islamic:32, arabic:27, english:23, math:21, physics:20, chemistry:21, biology:18, geo:37, history:32, society:45, total:302},
+    658: {name:"مكرم صلاح درهم حزام", class:"2", quran:30, islamic:24, arabic:19, english:31, math:19, physics:20, chemistry:14, biology:25, geo:39, history:16, society:35, total:272},
+    659: {name:"موسى عبدالحكيم احمد محمد", class:"2", quran:36, islamic:33, arabic:25, english:20, math:26, physics:26, chemistry:22, biology:30, geo:38, history:31, society:40, total:327},
+    660: {name:"مؤيد باسم سيف محمد", class:"2", quran:43, islamic:36, arabic:41, english:38, math:46, physics:42, chemistry:40, biology:40, geo:50, history:33, society:50, total:459},
+    661: {name:"مؤيد رفيق علي احمد", class:"2", quran:46, islamic:37, arabic:43, english:35, math:43, physics:40, chemistry:34, biology:39, geo:42, history:33, society:45, total:437},
+    662: {name:"مؤيد صابر علي سفيان", class:"2", quran:35, islamic:34, arabic:28, english:28, math:22, physics:27, chemistry:23, biology:28, geo:46, history:31, society:43, total:345},
+    663: {name:"مؤيد محمود حزام سعيد", class:"2", quran:42, islamic:38, arabic:37, english:31, math:36, physics:35, chemistry:36, biology:39, geo:50, history:29, society:50, total:423},
+    664: {name:"نبيل عبدالجبار ثابت مسعود", class:"2", quran:41, islamic:32, arabic:28, english:28, math:39, physics:27, chemistry:32, biology:25, geo:46, history:30, society:45, total:373},
+    665: {name:"نوار ثابت محمد احمد", class:"2", quran:20, islamic:33, arabic:25, english:27, math:20, physics:29, chemistry:27, biology:32, geo:41, history:23, society:36, total:313},
+    666: {name:"وائل محمد امين عبده احمد", class:"2", quran:34, islamic:28, arabic:31, english:19, math:43, physics:28, chemistry:29, biology:32, geo:46, history:40, society:38, total:368},
+    667: {name:"وسيم فهيم علي فارع", class:"2", quran:18, islamic:26, arabic:22, english:20, math:23, physics:25, chemistry:15, biology:18, geo:43, history:18, society:35, total:263},
+    668: {name:"وليد عبدالواسع عبده منصر", class:"2", quran:36, islamic:30, arabic:31, english:23, math:27, physics:21, chemistry:26, biology:29, geo:47, history:24, society:50, total:344},
+    669: {name:"ابرار شكيب محمد علي", class:"2", quran:17, islamic:27, arabic:19, english:24, math:19, physics:21, chemistry:14, biology:21, geo:42, history:38, society:49, total:291},
+    670: {name:"ابرار عارف سامي احمد عبدالله", class:"2", quran:25, islamic:32, arabic:21, english:30, math:37, physics:29, chemistry:23, biology:20, geo:43, history:32, society:50, total:342},
+    671: {name:"احلام خالد علي سعيد", class:"2", quran:37, islamic:35, arabic:31, english:32, math:21, physics:33, chemistry:31, biology:32, geo:48, history:35, society:42, total:377},
+    672: {name:"ازال امين غالب نعمان", class:"2", quran:48, islamic:37, arabic:41, english:38, math:35, physics:38, chemistry:39, biology:43, geo:47, history:45, society:50, total:461},
+    673: {name:"اسرار احمد عبده قاسم ثابت", class:"2", quran:31, islamic:33, arabic:26, english:29, math:33, physics:32, chemistry:31, biology:31, geo:49, history:34, society:47, total:376},
+    674: {name:"اشواق حزام عبدالله احمد", class:"2", quran:46, islamic:37, arabic:37, english:37, math:35, physics:35, chemistry:40, biology:33, geo:49, history:43, society:45, total:437},
+    675: {name:"اماني رياض عبده احمد", class:"2", quran:41, islamic:35, arabic:31, english:26, math:27, physics:25, chemistry:31, biology:33, geo:49, history:38, society:46, total:382},
+    676: {name:"ايات رياض مقبل احمد", class:"2", quran:38, islamic:34, arabic:31, english:30, math:28, physics:25, chemistry:36, biology:34, geo:49, history:28, society:45, total:378},
+    677: {name:"اية محمد عبدالرقيب هائل", class:"2", quran:31, islamic:32, arabic:26, english:31, math:24, physics:20, chemistry:25, biology:24, geo:42, history:30, society:44, total:329},
+    678: {name:"براءة خالد عبدالله محمد", class:"2", quran:42, islamic:33, arabic:34, english:30, math:38, physics:29, chemistry:35, biology:33, geo:50, history:28, society:44, total:396},
+    679: {name:"بسمة وهيب هائل حميد", class:"2", quran:44, islamic:34, arabic:38, english:32, math:44, physics:31, chemistry:33, biology:32, geo:50, history:29, society:49, total:416},
+    680: {name:"بشرى بشير نعمان احمد", class:"2", quran:34, islamic:36, arabic:41, english:32, math:44, physics:29, chemistry:40, biology:32, geo:49, history:24, society:46, total:407},
+    681: {name:"بشرى محمد عبده عون", class:"2", quran:36, islamic:28, arabic:27, english:30, math:36, physics:22, chemistry:23, biology:24, geo:41, history:18, society:42, total:327},
+    682: {name:"تسبيح عبدالله عبدالرقيب هائل", class:"2", quran:23, islamic:37, arabic:27, english:35, math:40, physics:31, chemistry:36, biology:33, geo:41, history:20, society:41, total:364},
+    683: {name:"تسنيم رشاد عبدالله ثابت", class:"2", quran:35, islamic:35, arabic:32, english:30, math:35, physics:34, chemistry:31, biology:35, geo:49, history:33, society:49, total:398},
+    684: {name:"خديجة نجيب عبدالغني محمد", class:"2", quran:25, islamic:29, arabic:16, english:27, math:25, physics:21, chemistry:21, biology:22, geo:45, history:20, society:39, total:290},
+    685: {name:"دعاء حلمي عبده علي نعمان", class:"2", quran:35, islamic:27, arabic:33, english:30, math:36, physics:27, chemistry:30, biology:28, geo:49, history:25, society:47, total:367},
+    686: {name:"رزان جهاد علي محمد الصلاحي", class:"2", quran:49, islamic:49, arabic:50, english:48, math:49, physics:49, chemistry:48, biology:45, geo:50, history:46, society:50, total:533},
+    687: {name:"رضية علي احمد عبده", class:"2", quran:15, islamic:14, arabic:17, english:15, math:17, physics:15, chemistry:15, biology:19, geo:19, history:14, society:19, total:179},
+    688: {name:"رغد الجحدري منصورعبدالعزيز", class:"2", quran:36, islamic:31, arabic:25, english:23, math:27, physics:19, chemistry:36, biology:26, geo:44, history:30, society:40, total:337},
+    689: {name:"رغد عارف محمد شمسان", class:"2", quran:34, islamic:35, arabic:34, english:35, math:48, physics:34, chemistry:41, biology:32, geo:50, history:24, society:49, total:416},
+    690: {name:"رفيدة بدري محمد احمد الزريقي", class:"2", quran:39, islamic:31, arabic:30, english:30, math:44, physics:31, chemistry:39, biology:37, geo:43, history:30, society:44, total:398},
+    691: {name:"رميلة نبيل محمد هائل", class:"2", quran:45, islamic:44, arabic:44, english:45, math:44, physics:42, chemistry:47, biology:44, geo:46, history:35, society:50, total:486},
+    692: {name:"روان محمود عبده علي", class:"2", quran:22, islamic:36, arabic:30, english:23, math:35, physics:23, chemistry:23, biology:31, geo:49, history:20, society:44, total:336},
+    693: {name:"زهره امين احمد سلطان", class:"2", quran:46, islamic:42, arabic:45, english:41, math:47, physics:42, chemistry:47, biology:44, geo:44, history:40, society:47, total:485},
+    694: {name:"زينب محمد نعمان علي", class:"2", quran:41, islamic:39, arabic:36, english:41, math:43, physics:28, chemistry:34, biology:34, geo:45, history:29, society:50, total:420},
+    695: {name:"سترالله منصور احمد مقبل", class:"2", quran:26, islamic:29, arabic:19, english:25, math:25, physics:21, chemistry:23, biology:29, geo:42, history:21, society:46, total:306},
+    696: {name:"سهاد عبدالحافظ عبده عون", class:"2", quran:25, islamic:26, arabic:19, english:28, math:25, physics:22, chemistry:22, biology:25, geo:42, history:20, society:42, total:296},
+    697: {name:"شذى جميل عبدالرقيب سيف", class:"2", quran:37, islamic:30, arabic:32, english:32, math:39, physics:21, chemistry:27, biology:29, geo:39, history:28, society:49, total:363},
+    698: {name:"عُلا علي امين عبده احمد", class:"2", quran:44, islamic:31, arabic:35, english:36, math:39, physics:28, chemistry:34, biology:30, geo:42, history:32, society:49, total:400},
+    699: {name:"عبير فتح عبدالباقي عبدالواحد", class:"2", quran:31, islamic:31, arabic:20, english:28, math:23, physics:25, chemistry:26, biology:28, geo:43, history:29, society:48, total:332},
+    700: {name:"غيداء ناصرسعيد محمد", class:"2", quran:31, islamic:34, arabic:27, english:28, math:26, physics:28, chemistry:29, biology:29, geo:47, history:22, society:38, total:339},
+    701: {name:"فاطمة علي محمد مقبل", class:"2", quran:42, islamic:38, arabic:34, english:26, math:25, physics:28, chemistry:29, biology:32, geo:49, history:26, society:47, total:376},
+    702: {name:"مارية عارف عبدالباقي محمد", class:"2", quran:43, islamic:42, arabic:44, english:40, math:43, physics:38, chemistry:39, biology:34, geo:50, history:31, society:48, total:452},
+    703: {name:"مرام خالد نعمان احمد سعيد", class:"2", quran:36, islamic:36, arabic:32, english:34, math:42, physics:33, chemistry:39, biology:35, geo:50, history:32, society:46, total:415},
+    704: {name:"مروة عبدالحكيم احمد محمد", class:"2", quran:28, islamic:36, arabic:27, english:21, math:27, physics:22, chemistry:23, biology:24, geo:44, history:19, society:35, total:306},
+    705: {name:"مريم يوسف احمد عبدالله", class:"2", quran:43, islamic:44, arabic:48, english:42, math:41, physics:41, chemistry:46, biology:46, geo:49, history:45, society:50, total:495},
+    706: {name:"ملاك وليد عبدالرقيب محمد", class:"2", quran:50, islamic:47, arabic:49, english:48, math:49, physics:49, chemistry:47, biology:46, geo:50, history:48, society:50, total:533},
+    707: {name:"ملكة ماجد محمد مقبل", class:"2", quran:34, islamic:36, arabic:24, english:26, math:37, physics:18, chemistry:17, biology:22, geo:42, history:18, society:40, total:314},
+    708: {name:"منار خالد قاسم ثابت", class:"2", quran:45, islamic:27, arabic:31, english:32, math:23, physics:24, chemistry:21, biology:34, geo:49, history:30, society:48, total:364},
+    709: {name:"منار منصور عبدالقادر محمد", class:"2", quran:34, islamic:29, arabic:31, english:23, math:22, physics:20, chemistry:21, biology:28, geo:44, history:36, society:49, total:337},
+    710: {name:"منتهى حميد عقلان علي", class:"2", quran:43, islamic:34, arabic:38, english:31, math:39, physics:25, chemistry:38, biology:38, geo:44, history:32, society:49, total:411},
+    711: {name:"نسيبة عبدالجواد محمد هائل", class:"2", quran:50, islamic:48, arabic:50, english:50, math:50, physics:50, chemistry:50, biology:48, geo:50, history:50, society:50, total:546},
+    712: {name:"نسيمة محمد عبدالله احمد", class:"2", quran:33, islamic:30, arabic:28, english:34, math:40, physics:26, chemistry:40, biology:29, geo:44, history:27, society:48, total:379},
+    713: {name:"نوران عائد محمد عبدالله", class:"2", quran:32, islamic:33, arabic:30, english:36, math:32, physics:21, chemistry:36, biology:30, geo:42, history:31, society:47, total:370},
+    714: {name:"نوران عبدالعالم عبده عون", class:"2", quran:46, islamic:37, arabic:34, english:35, math:41, physics:34, chemistry:39, biology:34, geo:50, history:36, society:50, total:436},
+    715: {name:"هبة فهمي حمود غالب", class:"2", quran:34, islamic:33, arabic:27, english:33, math:30, physics:24, chemistry:28, biology:25, geo:45, history:21, society:39, total:339}
+};
 
 // دالة لعرض "غير مكتمل" إذا كانت القيمة null
 function v(x){ return x===null ? "غير مكتمل" : x; }
 
 function search(){
-    const s = document.getElementById("seat").value;
-    const st = students.find(x=>x.seat==s);
+    const seat = document.getElementById("seat").value;
+    const classSelect = document.getElementById("classSelect").value;
     const r = document.getElementById("result");
-
-    if(!st){
+    
+    if(!seat){
+        r.innerHTML = "<p class='error'>الرجاء إدخال رقم الجلوس</p>";
+        return;
+    }
+    
+    let student = null;
+    let classType = "";
+    
+    // البحث في الفصل الأول
+    if(classSelect === "all" || classSelect === "1"){
+        student = class1Students.find(x => x.seat == seat);
+        if(student) classType = "1";
+    }
+    
+    // البحث في الفصل الثاني إذا لم يتم العثور في الأول
+    if(!student && (classSelect === "all" || classSelect === "2")){
+        student = class2Students[seat];
+        if(student) classType = "2";
+    }
+    
+    if(!student){
         r.innerHTML = "<p class='error'>رقم الجلوس غير موجود</p>";
         return;
     }
-
-    r.innerHTML = `
-    <div class="card">
-        <div class="card-header">
-            <h3>${st.name}</h3>
-            <span>رقم الجلوس: ${st.seat}</span>
-        </div>
-
-        <div class="card-body">
-            <div class="grid">
-                <div class="item"><strong>القرآن</strong>${v(st.q)}</div>
-                <div class="item"><strong>الإسلامية</strong>${v(st.i)}</div>
-                <div class="item"><strong>العربي</strong>${v(st.a)}</div>
-                <div class="item"><strong>الإنجليزي</strong>${v(st.e)}</div>
-                <div class="item"><strong>الرياضيات</strong>${v(st.m)}</div>
-                <div class="item"><strong>الفيزياء</strong>${v(st.p)}</div>
-                <div class="item"><strong>الكيمياء</strong>${v(st.c)}</div>
-                <div class="item"><strong>الأحياء</strong>${v(st.b)}</div>
+    
+    let resultHTML = "";
+    
+    if(classType === "1"){
+        // عرض نتيجة الفصل الأول
+        resultHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h3>${student.name} <span class="class-badge">الفصل الأول</span></h3>
+                <span>رقم الجلوس: ${student.seat}</span>
             </div>
-
-            <div class="total">
-                المجموع الكلي : ${v(st.t)}
+            <div class="card-body">
+                <div class="grid">
+                    <div class="item"><strong>القرآن</strong>${v(student.q)}</div>
+                    <div class="item"><strong>الإسلامية</strong>${v(student.i)}</div>
+                    <div class="item"><strong>العربي</strong>${v(student.a)}</div>
+                    <div class="item"><strong>الإنجليزي</strong>${v(student.e)}</div>
+                    <div class="item"><strong>الرياضيات</strong>${v(student.m)}</div>
+                    <div class="item"><strong>الفيزياء</strong>${v(student.p)}</div>
+                    <div class="item"><strong>الكيمياء</strong>${v(student.c)}</div>
+                    <div class="item"><strong>الأحياء</strong>${v(student.b)}</div>
+                </div>
+                <div class="total">
+                    المجموع الكلي : ${v(student.t)}
+                </div>
             </div>
-        </div>
-    </div>`;
-}
-</script>
-
-</body>
-</html>
-<div class="container">
-  <h1>نتيجة الطالب</h1>
-  <input type="number" id="seat" placeholder="أدخل رقم الجلوس">
-  <button onclick="showResult()">عرض النتيجة</button>
-  <div class="error" id="error"></div>
-  <div class="result" id="result">
-    <table>
-      <tr>
-        <th>رقم الجلوس</th>
-        <td id="r_seat"></td>
-      </tr>
-      <tr>
-        <th>الاسم</th>
-        <td id="r_name"></td>
-      </tr>
-      <tr>
-        <th>الصف</th>
-        <td>الأول الثانوي</td>
-      </tr>
-      <tr>
-        <th>قرآن</th>
-        <td id="r_quran"></td>
-      </tr>
-      <tr>
-        <th>إسلامية</th>
-        <td id="r_islamic"></td>
-      </tr>
-      <tr>
-        <th>عربي</th>
-        <td id="r_arabic"></td>
-      </tr>
-      <tr>
-        <th>انجليزي</th>
-        <td id="r_english"></td>
-      </tr>
-      <tr>
-        <th>رياضيات</th>
-        <td id="r_math"></td>
-      </tr>
-      <tr>
-        <th>فيزياء</th>
-        <td id="r_physics"></td>
-      </tr>
-      <tr>
-        <th>كيمياء</th>
-        <td id="r_chemistry"></td>
-      </tr>
-      <tr>
-        <th>أحياء</th>
-        <td id="r_biology"></td>
-      </tr>
-      <tr>
-        <th>جغرافيا</th>
-        <td id="r_geo"></td>
-      </tr>
-      <tr>
-        <th>تاريخ</th>
-        <td id="r_history"></td>
-      </tr>
-      <tr>
-        <th>مجتمع</th>
-        <td id="r_society"></td>
-      </tr>
-      <tr>
-        <th>المجموع الكلي</th>
-        <td id="r_total"></td>
-      </tr>
-    </table>
-  </div>
-</div>
-
-<script>
-const students = {
-  612: {name:"ابراهيم عمار هائل حمود", quran:31, islamic:32, arabic:28, english:29, math:32, physics:28, chemistry:35, biology:26, geo:47, history:24, society:37, total:349},
-  613: {name:"احمد منصور عبدالله طربوش", quran:48, islamic:41, arabic:48, english:42, math:49, physics:42, chemistry:43, biology:46, geo:50, history:48, society:50, total:507},
-  614: {name:"ادهم خالد عبدالله نعمان", quran:44, islamic:43, arabic:44, english:38, math:41, physics:39, chemistry:47, biology:41, geo:49, history:47, society:47, total:480},
-  615: {name:"اسعد نبيل احمد سعيد", quran:28, islamic:39, arabic:27, english:32, math:34, physics:26, chemistry:29, biology:34, geo:50, history:44, society:50, total:393},
-  616: {name:"اسيد ياسر علي محمد هلال", quran:26, islamic:25, arabic:37, english:28, math:30, physics:34, chemistry:36, biology:23, geo:49, history:41, society:48, total:377},
-  617: {name:"اصيل ماجد عبدالله سيف", quran:40, islamic:32, arabic:27, english:24, math:41, physics:27, chemistry:35, biology:29, geo:47, history:39, society:43, total:384},
-  618: {name:"المعتصم فهيم علي محمد", quran:48, islamic:37, arabic:41, english:38, math:49, physics:45, chemistry:44, biology:40, geo:50, history:47, society:47, total:486},
-  619: {name:"الياس امين طارش عبدالله", quran:23, islamic:42, arabic:25, english:32, math:42, physics:36, chemistry:34, biology:35, geo:48, history:39, society:49, total:405},
-  620: {name:"امجد امين عبده سعيد", quran:37, islamic:40, arabic:36, english:34, math:45, physics:40, chemistry:44, biology:38, geo:37, history:33, society:47, total:431},
-  621: {name:"امير ايوب طارش حمود", quran:30, islamic:32, arabic:27, english:26, math:28, physics:34, chemistry:32, biology:33, geo:40, history:31, society:38, total:351},
-  622: {name:"امير توفيق احمد عامر", quran:36, islamic:36, arabic:25, english:24, math:36, physics:38, chemistry:34, biology:38, geo:41, history:43, society:42, total:393},
-  623: {name:"انس احمد احمد غالب", quran:49, islamic:45, arabic:46, english:43, math:50, physics:46, chemistry:45, biology:44, geo:48, history:48, society:50, total:514},
-  624: {name:"ايمن امين عبدالله هلال المذحجي", quran:18, islamic:27, arabic:14, english:22, math:28, physics:25, chemistry:15, biology:26, geo:44, history:25, society:38, total:282},
-  625: {name:"ايمن نبيل احمد سعيد", quran:31, islamic:39, arabic:37, english:41, math:42, physics:42, chemistry:38, biology:41, geo:50, history:44, society:44, total:449},
-  626: {name:"حلمي حميد ياسين احمد شرف", quran:16, islamic:23, arabic:16, english:16, math:31, physics:18, chemistry:22, biology:23, geo:39, history:29, society:30, total:263},
-  627: {name:"حمزة عبدالحميد محمد مقبل", quran:26, islamic:29, arabic:26, english:22, math:35, physics:21, chemistry:35, biology:35, geo:41, history:31, society:38, total:339},
-  628: {name:"خالد فهمي شمسان سيف", quran:34, islamic:34, arabic:27, english:26, math:34, physics:25, chemistry:28, biology:38, geo:48, history:34, society:42, total:370},
-  629: {name:"ربيع شاكر عبدالعزيز محمد", quran:22, islamic:27, arabic:20, english:20, math:34, physics:22, chemistry:25, biology:38, geo:42, history:19, society:28, total:297},
-  630: {name:"رياض رضوان محمد قائد", quran:22, islamic:31, arabic:22, english:20, math:30, physics:20, chemistry:23, biology:32, geo:40, history:17, society:30, total:287},
-  631: {name:"زهير باسم ياسين سيف", quran:40, islamic:42, arabic:50, english:42, math:46, physics:43, chemistry:45, biology:44, geo:50, history:41, society:50, total:493},
-  632: {name:"زيد عبدالرحمن عبدالله احمد", quran:28, islamic:36, arabic:40, english:29, math:35, physics:25, chemistry:39, biology:37, geo:40, history:41, society:44, total:394},
-  633: {name:"شعيب امين احمد عقلان", quran:25, islamic:27, arabic:30, english:21, math:29, physics:30, chemistry:22, biology:23, geo:38, history:21, society:30, total:296},
-  634: {name:"شعيب عبدالله عقلان علي", quran:27, islamic:29, arabic:22, english:24, math:24, physics:29, chemistry:28, biology:26, geo:39, history:19, society:33, total:300},
-  635: {name:"شهاب وضاح شرف محمد احمد", quran:33, islamic:31, arabic:35, english:29, math:40, physics:32, chemistry:37, biology:36, geo:48, history:29, society:48, total:398},
-  636: {name:"صهيب عبدالجليل علي محمد", quran:34, islamic:30, arabic:26, english:17, math:33, physics:26, chemistry:27, biology:27, geo:41, history:32, society:36, total:329},
-  637: {name:"عبدالجليل محمد عبدالجليل غرسان", quran:19, islamic:38, arabic:28, english:28, math:39, physics:30, chemistry:22, biology:31, geo:41, history:30, society:33, total:339},
-  638: {name:"عبدالرحمن عصام محمد محمد", quran:26, islamic:29, arabic:24, english:21, math:30, physics:28, chemistry:33, biology:25, geo:42, history:17, society:36, total:311},
-  639: {name:"عبدالقوي ياسر عبدالقوي بجاش حميد", quran:39, islamic:35, arabic:30, english:29, math:36, physics:30, chemistry:33, biology:35, geo:45, history:27, society:47, total:386},
-  640: {name:"عبدالله شكيب عبدالله قائد حيدر", quran:26, islamic:28, arabic:22, english:23, math:31, physics:25, chemistry:23, biology:26, geo:43, history:22, society:32, total:301},
-  641: {name:"عبدالله شهاب عبدالله احمد", quran:17, islamic:36, arabic:25, english:22, math:37, physics:24, chemistry:32, biology:31, geo:45, history:20, society:36, total:325},
-  642: {name:"عبدالله فؤاد عبدالله محمد", quran:8, islamic:11, arabic:10, english:9, math:9, physics:8, chemistry:11, biology:12, geo:13, history:12, society:13, total:116},
-  643: {name:"عبدالله ياسر عبدالله ثابت", quran:32, islamic:38, arabic:38, english:20, math:38, physics:24, chemistry:30, biology:35, geo:49, history:29, society:38, total:371},
-  644: {name:"عبدالملك مروان عبدالحميد عبدالواحد", quran:48, islamic:40, arabic:48, english:47, math:48, physics:47, chemistry:43, biology:42, geo:50, history:40, society:50, total:503},
-  645: {name:"علي عبدالرب جميل عبدالرب", quran:27, islamic:28, arabic:22, english:23, math:29, physics:27, chemistry:14, biology:21, geo:40, history:18, society:36, total:285},
-  646: {name:"عمار سلطان قائد محمد", quran:23, islamic:35, arabic:19, english:25, math:20, physics:27, chemistry:14, biology:21, geo:39, history:18, society:45, total:286},
-  647: {name:"عمار وهبي سعيد مهيوب", quran:50, islamic:44, arabic:43, english:43, math:32, physics:34, chemistry:38, biology:38, geo:50, history:42, society:49, total:463},
-  648: {name:"عمر عادل علي سعيد المعمري", quran:46, islamic:37, arabic:35, english:30, math:28, physics:37, chemistry:33, biology:30, geo:38, history:29, society:31, total:374},
-  649: {name:"عمر عزيز عبدالقادر نعمان", quran:50, islamic:43, arabic:48, english:45, math:46, physics:49, chemistry:47, biology:45, geo:50, history:46, society:50, total:519},
-  650: {name:"عمرو عبدالوكيل عبده عون", quran:38, islamic:38, arabic:24, english:22, math:20, physics:24, chemistry:19, biology:24, geo:42, history:19, society:37, total:307},
-  651: {name:"عيسى عبدالحكيم احمد محمد", quran:40, islamic:36, arabic:21, english:27, math:18, physics:29, chemistry:17, biology:25, geo:40, history:27, society:40, total:320},
-  652: {name:"فراس عبدالوكيل احمد سعيد", quran:20, islamic:28, arabic:23, english:23, math:25, physics:19, chemistry:25, biology:19, geo:37, history:21, society:30, total:270},
-  653: {name:"كارم عبدالرحمن احمد سعيد", quran:47, islamic:44, arabic:47, english:47, math:49, physics:41, chemistry:47, biology:46, geo:50, history:45, society:50, total:513},
-  654: {name:"كرم عرفان احمد عقلان", quran:40, islamic:22, arabic:25, english:32, math:22, physics:19, chemistry:24, biology:40, geo:41, history:24, society:37, total:326},
-  655: {name:"مجد ثابت محمد احمد", quran:17, islamic:26, arabic:17, english:23, math:17, physics:16, chemistry:25, biology:18, geo:34, history:19, society:25, total:237},
-  656: {name:"محمد طارق فؤاد اسماعيل", quran:23, islamic:33, arabic:31, english:26, math:34, physics:22, chemistry:26, biology:26, geo:37, history:23, society:38, total:319},
-  657: {name:"محمد منير احمد عامر", quran:26, islamic:32, arabic:27, english:23, math:21, physics:20, chemistry:21, biology:18, geo:37, history:32, society:45, total:302},
-  658: {name:"مكرم صلاح درهم حزام", quran:30, islamic:24, arabic:19, english:31, math:19, physics:20, chemistry:14, biology:25, geo:39, history:16, society:35, total:272},
-  659: {name:"موسى عبدالحكيم احمد محمد", quran:36, islamic:33, arabic:25, english:20, math:26, physics:26, chemistry:22, biology:30, geo:38, history:31, society:40, total:327},
-  660: {name:"مؤيد باسم سيف محمد", quran:43, islamic:36, arabic:41, english:38, math:46, physics:42, chemistry:40, biology:40, geo:50, history:33, society:50, total:459},
-  661: {name:"مؤيد رفيق علي احمد", quran:46, islamic:37, arabic:43, english:35, math:43, physics:40, chemistry:34, biology:39, geo:42, history:33, society:45, total:437},
-  662: {name:"مؤيد صابر علي سفيان", quran:35, islamic:34, arabic:28, english:28, math:22, physics:27, chemistry:23, biology:28, geo:46, history:31, society:43, total:345},
-  663: {name:"مؤيد محمود حزام سعيد", quran:42, islamic:38, arabic:37, english:31, math:36, physics:35, chemistry:36, biology:39, geo:50, history:29, society:50, total:423},
-  664: {name:"نبيل عبدالجبار ثابت مسعود", quran:41, islamic:32, arabic:28, english:28, math:39, physics:27, chemistry:32, biology:25, geo:46, history:30, society:45, total:373},
-  665: {name:"نوار ثابت محمد احمد", quran:20, islamic:33, arabic:25, english:27, math:20, physics:29, chemistry:27, biology:32, geo:41, history:23, society:36, total:313},
-  666: {name:"وائل محمد امين عبده احمد", quran:34, islamic:28, arabic:31, english:19, math:43, physics:28, chemistry:29, biology:32, geo:46, history:40, society:38, total:368},
-  667: {name:"وسيم فهيم علي فارع", quran:18, islamic:26, arabic:22, english:20, math:23, physics:25, chemistry:15, biology:18, geo:43, history:18, society:35, total:263},
-  668: {name:"وليد عبدالواسع عبده منصر", quran:36, islamic:30, arabic:31, english:23, math:27, physics:21, chemistry:26, biology:29, geo:47, history:24, society:50, total:344},
-  669: {name:"ابرار شكيب محمد علي", quran:17, islamic:27, arabic:19, english:24, math:19, physics:21, chemistry:14, biology:21, geo:42, history:38, society:49, total:291},
-  670: {name:"ابرار عارف سامي احمد عبدالله", quran:25, islamic:32, arabic:21, english:30, math:37, physics:29, chemistry:23, biology:20, geo:43, history:32, society:50, total:342},
-  671: {name:"احلام خالد علي سعيد", quran:37, islamic:35, arabic:31, english:32, math:21, physics:33, chemistry:31, biology:32, geo:48, history:35, society:42, total:377},
-  672: {name:"ازال امين غالب نعمان", quran:48, islamic:37, arabic:41, english:38, math:35, physics:38, chemistry:39, biology:43, geo:47, history:45, society:50, total:461},
-  673: {name:"اسرار احمد عبده قاسم ثابت", quran:31, islamic:33, arabic:26, english:29, math:33, physics:32, chemistry:31, biology:31, geo:49, history:34, society:47, total:376},
-  674: {name:"اشواق حزام عبدالله احمد", quran:46, islamic:37, arabic:37, english:37, math:35, physics:35, chemistry:40, biology:33, geo:49, history:43, society:45, total:437},
-  675: {name:"اماني رياض عبده احمد", quran:41, islamic:35, arabic:31, english:26, math:27, physics:25, chemistry:31, biology:33, geo:49, history:38, society:46, total:382},
-  676: {name:"ايات رياض مقبل احمد", quran:38, islamic:34, arabic:31, english:30, math:28, physics:25, chemistry:36, biology:34, geo:49, history:28, society:45, total:378},
-  677: {name:"اية محمد عبدالرقيب هائل", quran:31, islamic:32, arabic:26, english:31, math:24, physics:20, chemistry:25, biology:24, geo:42, history:30, society:44, total:329},
-  678: {name:"براءة خالد عبدالله محمد", quran:42, islamic:33, arabic:34, english:30, math:38, physics:29, chemistry:35, biology:33, geo:50, history:28, society:44, total:396},
-  679: {name:"بسمة وهيب هائل حميد", quran:44, islamic:34, arabic:38, english:32, math:44, physics:31, chemistry:33, biology:32, geo:50, history:29, society:49, total:416},
-  680: {name:"بشرى بشير نعمان احمد", quran:34, islamic:36, arabic:41, english:32, math:44, physics:29, chemistry:40, biology:32, geo:49, history:24, society:46, total:407},
-  681: {name:"بشرى محمد عبده عون", quran:36, islamic:28, arabic:27, english:30, math:36, physics:22, chemistry:23, biology:24, geo:41, history:18, society:42, total:327},
-  682: {name:"تسبيح عبدالله عبدالرقيب هائل", quran:23, islamic:37, arabic:27, english:35, math:40, physics:31, chemistry:36, biology:33, geo:41, history:20, society:41, total:364},
-  683: {name:"تسنيم رشاد عبدالله ثابت", quran:35, islamic:35, arabic:32, english:30, math:35, physics:34, chemistry:31, biology:35, geo:49, history:33, society:49, total:398},
-  684: {name:"خديجة نجيب عبدالغني محمد", quran:25, islamic:29, arabic:16, english:27, math:25, physics:21, chemistry:21, biology:22, geo:45, history:20, society:39, total:290},
-  685: {name:"دعاء حلمي عبده علي نعمان", quran:35, islamic:27, arabic:33, english:30, math:36, physics:27, chemistry:30, biology:28, geo:49, history:25, society:47, total:367},
-  686: {name:"رزان جهاد علي محمد الصلاحي", quran:49, islamic:49, arabic:50, english:48, math:49, physics:49, chemistry:48, biology:45, geo:50, history:46, society:50, total:533},
-  687: {name:"رضية علي احمد عبده", quran:15, islamic:14, arabic:17, english:15, math:17, physics:15, chemistry:15, biology:19, geo:19, history:14, society:19, total:179},
-  688: {name:"رغد الجحدري منصورعبدالعزيز", quran:36, islamic:31, arabic:25, english:23, math:27, physics:19, chemistry:36, biology:26, geo:44, history:30, society:40, total:337},
-  689: {name:"رغد عارف محمد شمسان", quran:34, islamic:35, arabic:34, english:35, math:48, physics:34, chemistry:41, biology:32, geo:50, history:24, society:49, total:416},
-  690: {name:"رفيدة بدري محمد احمد الزريقي", quran:39, islamic:31, arabic:30, english:30, math:44, physics:31, chemistry:39, biology:37, geo:43, history:30, society:44, total:398},
-  691: {name:"رميلة نبيل محمد هائل", quran:45, islamic:44, arabic:44, english:45, math:44, physics:42, chemistry:47, biology:44, geo:46, history:35, society:50, total:486},
-  692: {name:"روان محمود عبده علي", quran:22, islamic:36, arabic:30, english:23, math:35, physics:23, chemistry:23, biology:31, geo:49, history:20, society:44, total:336},
-  693: {name:"زهره امين احمد سلطان", quran:46, islamic:42, arabic:45, english:41, math:47, physics:42, chemistry:47, biology:44, geo:44, history:40, society:47, total:485},
-  694: {name:"زينب محمد نعمان علي", quran:41, islamic:39, arabic:36, english:41, math:43, physics:28, chemistry:34, biology:34, geo:45, history:29, society:50, total:420},
-  695: {name:"سترالله منصور احمد مقبل", quran:26, islamic:29, arabic:19, english:25, math:25, physics:21, chemistry:23, biology:29, geo:42, history:21, society:46, total:306},
-  696: {name:"سهاد عبدالحافظ عبده عون", quran:25, islamic:26, arabic:19, english:28, math:25, physics:22, chemistry:22, biology:25, geo:42, history:20, society:42, total:296},
-  697: {name:"شذى جميل عبدالرقيب سيف", quran:37, islamic:30, arabic:32, english:32, math:39, physics:21, chemistry:27, biology:29, geo:39, history:28, society:49, total:363},
-  698: {name:"عُلا علي امين عبده احمد", quran:44, islamic:31, arabic:35, english:36, math:39, physics:28, chemistry:34, biology:30, geo:42, history:32, society:49, total:400},
-  699: {name:"عبير فتح عبدالباقي عبدالواحد", quran:31, islamic:31, arabic:20, english:28, math:23, physics:25, chemistry:26, biology:28, geo:43, history:29, society:48, total:332},
-  700: {name:"غيداء ناصرسعيد محمد", quran:31, islamic:34, arabic:27, english:28, math:26, physics:28, chemistry:29, biology:29, geo:47, history:22, society:38, total:339},
-  701: {name:"فاطمة علي محمد مقبل", quran:42, islamic:38, arabic:34, english:26, math:25, physics:28, chemistry:29, biology:32, geo:49, history:26, society:47, total:376},
-  702: {name:"مارية عارف عبدالباقي محمد", quran:43, islamic:42, arabic:44, english:40, math:43, physics:38, chemistry:39, biology:34, geo:50, history:31, society:48, total:452},
-  703: {name:"مرام خالد نعمان احمد سعيد", quran:36, islamic:36, arabic:32, english:34, math:42, physics:33, chemistry:39, biology:35, geo:50, history:32, society:46, total:415},
-  704: {name:"مروة عبدالحكيم احمد محمد", quran:28, islamic:36, arabic:27, english:21, math:27, physics:22, chemistry:23, biology:24, geo:44, history:19, society:35, total:306},
-  705: {name:"مريم يوسف احمد عبدالله", quran:43, islamic:44, arabic:48, english:42, math:41, physics:41, chemistry:46, biology:46, geo:49, history:45, society:50, total:495},
-  706: {name:"ملاك وليد عبدالرقيب محمد", quran:50, islamic:47, arabic:49, english:48, math:49, physics:49, chemistry:47, biology:46, geo:50, history:48, society:50, total:533},
-  707: {name:"ملكة ماجد محمد مقبل", quran:34, islamic:36, arabic:24, english:26, math:37, physics:18, chemistry:17, biology:22, geo:42, history:18, society:40, total:314},
-  708: {name:"منار خالد قاسم ثابت", quran:45, islamic:27, arabic:31, english:32, math:23, physics:24, chemistry:21, biology:34, geo:49, history:30, society:48, total:364},
-  709: {name:"منار منصور عبدالقادر محمد", quran:34, islamic:29, arabic:31, english:23, math:22, physics:20, chemistry:21, biology:28, geo:44, history:36, society:49, total:337},
-  710: {name:"منتهى حميد عقلان علي", quran:43, islamic:34, arabic:38, english:31, math:39, physics:25, chemistry:38, biology:38, geo:44, history:32, society:49, total:411},
-  711: {name:"نسيبة عبدالجواد محمد هائل", quran:50, islamic:48, arabic:50, english:50, math:50, physics:50, chemistry:50, biology:48, geo:50, history:50, society:50, total:546},
-  712: {name:"نسيمة محمد عبدالله احمد", quran:33, islamic:30, arabic:28, english:34, math:40, physics:26, chemistry:40, biology:29, geo:44, history:27, society:48, total:379},
-  713: {name:"نوران عائد محمد عبدالله", quran:32, islamic:33, arabic:30, english:36, math:32, physics:21, chemistry:36, biology:30, geo:42, history:31, society:47, total:370},
-  714: {name:"نوران عبدالعالم عبده عون", quran:46, islamic:37, arabic:34, english:35, math:41, physics:34, chemistry:39, biology:34, geo:50, history:36, society:50, total:436},
-  715: {name:"هبة فهمي حمود غالب", quran:34, islamic:33, arabic:27, english:33, math:30, physics:24, chemistry:28, biology:25, geo:45, history:21, society:39, total:339}
-};
-
-function showResult() {
-  const seat = document.getElementById("seat").value;
-  const student = students[seat];
-  const resultDiv = document.getElementById("result");
-  const errorDiv = document.getElementById("error");
-
-  if(student) {
-    errorDiv.innerText = "";
-    resultDiv.style.display = "block";
-    document.getElementById("r_seat").innerText = seat;
-    document.getElementById("r_name").innerText = student.name;
-    document.getElementById("r_quran").innerText = student.quran;
-    document.getElementById("r_islamic").innerText = student.islamic;
-    document.getElementById("r_arabic").innerText = student.arabic;
-    document.getElementById("r_english").innerText = student.english;
-    document.getElementById("r_math").innerText = student.math;
-    document.getElementById("r_physics").innerText = student.physics;
-    document.getElementById("r_chemistry").innerText = student.chemistry;
-    document.getElementById("r_biology").innerText = student.biology;
-    document.getElementById("r_geo").innerText = student.geo;
-    document.getElementById("r_history").innerText = student.history;
-    document.getElementById("r_society").innerText = student.society;
-    document.getElementById("r_total").innerText = student.total;
-  } else {
-    resultDiv.style.display = "none";
-    errorDiv.innerText = "رقم الجلوس غير موجود!";
-  }
+        </div>`;
+    } else if(classType === "2"){
+        // عرض نتيجة الفصل الثاني
+        resultHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h3>${student.name} <span class="class-badge second-class">الفصل الثاني</span></h3>
+                <span>رقم الجلوس: ${seat}</span>
+            </div>
+            <div class="card-body">
+                <table class="result-table">
+                    <tr>
+                        <th>رقم الجلوس</th>
+                        <td>${seat}</td>
+                        <th>الصف</th>
+                        <td>الأول الثانوي</td>
+                    </tr>
+                    <tr>
+                        <th>الاسم</th>
+                        <td colspan="3">${student.name}</td>
+                    </tr>
+                    <tr>
+                        <th>قرآن</th>
+                        <td>${student.quran}</td>
+                        <th>إسلامية</th>
+                        <td>${student.islamic}</td>
+                    </tr>
+                    <tr>
+                        <th>عربي</th>
+                        <td>${student.arabic}</td>
+                        <th>انجليزي</th>
+                        <td>${student.english}</td>
+                    </tr>
+                    <tr>
+                        <th>رياضيات</th>
+                        <td>${student.math}</td>
+                        <th>فيزياء</th>
+                        <td>${student.physics}</td>
+                    </tr>
+                    <tr>
+                        <th>كيمياء</th>
+                        <td>${student.chemistry}</td>
+                        <th>أحياء</th>
+                        <td>${student.biology}</td>
+                    </tr>
+                    <tr>
+                        <th>جغرافيا</th>
+                        <td>${student.geo}</td>
+                        <th>تاريخ</th>
+                        <td>${student.history}</td>
+                    </tr>
+                    <tr>
+                        <th>مجتمع</th>
+                        <td>${student.society}</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </table>
+                <div class="total">
+                    المجموع الكلي : ${student.total}
+                </div>
+            </div>
+        </div>`;
+    }
+    
+    r.innerHTML = resultHTML;
 }
 </script>
 </body>
 </html>
-
-
-
-
