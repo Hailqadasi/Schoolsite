@@ -11,78 +11,77 @@ body{
   margin:0;
 }
 .container{
-  max-width:600px;
-  margin:30px auto;
-  background:#fff;
-  padding:25px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
-h1{ text-align:center; color:#7a1f2b; }
+.card{
+  background:#fff;
+  padding:30px;
+  width:330px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  text-align:center;
+}
+h1{ color:#7a1f2b; margin-bottom:20px; }
 input{
   width:100%;
   padding:10px;
   font-size:16px;
-  margin:15px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
+  margin-bottom:15px;
 }
 button{
   width:100%;
   padding:12px;
+  font-size:16px;
+  border:none;
+  border-radius:6px;
   background:#7a1f2b;
   color:#fff;
-  border:none;
-  font-size:16px;
   cursor:pointer;
-  border-radius:6px;
 }
 button:hover{ background:#5f1822; }
-#msg{ margin-top:10px; color:red; text-align:center; }
-
-.cards{
-  margin-top:25px;
-  padding:15px;
-  background:#f3f3f3;
-  border-radius:6px;
-  font-size:15px;
-}
-.card-num{
-  display:inline-block;
-  background:#7a1f2b;
-  color:white;
-  padding:6px 10px;
-  margin:5px;
-  border-radius:4px;
-}
+#msg{ margin-top:10px; color:red; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>تفعيل الكرت</h1>
+  <div class="card">
+    <h1>تفعيل الكرت</h1>
+    <input type="text" id="card" placeholder="أدخل رقم الكرت">
+    <button onclick="checkCard()">تفعيل</button>
+    <p id="msg"></p>
+  </div>
+</div>
 
-  <input type="text" id="card" placeholder="أدخل رقم الكرت">
-  <button onclick="checkCard()">تفعيل</button>
-  <div id="msg"></div>
+<script>
+// 🔐 كروت عشوائية (5 أرقام) – غير ظاهرة
+const validCards = [
+"48392","71946","20583","86420","59371",
+"10468","92735","38104","75029","64218",
+"91835","27046","50619","83472","12984",
+"69027","47290","35814","94106","72583",
+"81469","39057","26084","50731","96842",
+"17429","85260","40697","73951","61804"
+];
 
-  <div class="cards">
-    <strong>الكروت الصحيحة:</strong><br><br>
-    <span class="card-num">48392</span>
-    <span class="card-num">72915</span>
-    <span class="card-num">10483</span>
-    <span class="card-num">58271</span>
-    <span class="card-num">93640</span>
-    <span class="card-num">27194</span>
-    <span class="card-num">68420</span>
-    <span class="card-num">39571</span>
-    <span class="card-num">81046</span>
-    <span class="card-num">54729</span>
-  
 function checkCard(){
   const value = document.getElementById("card").value.trim();
-  if(cards.includes(value)){
+  const msg = document.getElementById("msg");
+
+  if(value === ""){
+    msg.textContent = "يرجى إدخال رقم الكرت";
+    return;
+  }
+
+  if(validCards.includes(value)){
     window.location.href = "check.html";
   }else{
-    document.getElementById("msg").textContent = "❌ كود الكرت غير صحيح";
+    msg.textContent = "❌ كود الكرت غير صحيح";
   }
 }
 </script>
