@@ -1,66 +1,63 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>إدخال البيانات</title>
+<title>إدخال رقم الجلوس</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
+
+<style>
+/* ألوان قرمزية هادئة */
+:root{
+  --main:#7a1f2b;
+  --main-dark:#5f1822;
+}
+.card h1{ color:var(--main); }
+.btn{
+  background:var(--main);
+}
+.btn:hover{
+  background:var(--main-dark);
+}
+</style>
+
 </head>
 <body>
 
 <div class="container">
   <div class="card">
-    <h1>بوابة النتائج</h1>
+
+    <h1>إدخال رقم الجلوس</h1>
+    <p style="color:#555;margin-bottom:20px;">
+      يرجى إدخال رقم الجلوس لعرض النتيجة
+    </p>
 
     <input type="number" id="seat" placeholder="رقم الجلوس">
 
-    <input type="text" id="card" placeholder="كود الكرت">
-
     <button class="btn" onclick="go()">عرض النتيجة</button>
 
-    <p id="msg" style="color:red;margin-top:10px;"></p>
+    <p id="msg" style="color:#7a1f2b;margin-top:10px;"></p>
+
   </div>
 </div>
 
 <script>
-/* ====== كروت التفعيل ====== */
-let cards = JSON.parse(localStorage.getItem("cards")) || {
-  "ABC123": false,
-  "DEF456": false,
-  "GHI789": false,
-  "JKL321": false,
-  "MNO654": false
-};
-// false = غير مستخدم | true = مستخدم
+/* ===== حماية الصفحة ===== */
+if(localStorage.getItem("activated") !== "yes"){
+  window.location.href = "index.html";
+}
 
+/* ===== الانتقال للنتيجة ===== */
 function go(){
   const seat = document.getElementById("seat").value;
-  const card = document.getElementById("card").value.trim();
   const msg = document.getElementById("msg");
 
-  if(seat === "" || card === ""){
-    msg.textContent = "يرجى إدخال رقم الجلوس وكود الكرت";
+  if(seat === ""){
+    msg.textContent = "يرجى إدخال رقم الجلوس";
     return;
   }
 
-  if(!(card in cards)){
-    msg.textContent = "❌ كود الكرت غير صحيح";
-    return;
-  }
-
-  if(cards[card] === true){
-    msg.textContent = "❌ هذا الكرت مستخدم مسبقًا";
-    return;
-  }
-
-  // تفعيل الكرت
-  cards[card] = true;
-  localStorage.setItem("cards", JSON.stringify(cards));
-
-  // حفظ رقم الجلوس
   localStorage.setItem("seat", seat);
-
-  // الانتقال للنتيجة
   window.location.href = "result.html";
 }
 </script>
