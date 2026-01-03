@@ -1,60 +1,236 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>نتيجة الطالب</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نتائج الطلاب</title>
 <style>
-:root{ --main:#7a1f2b; --main-dark:#5f1822; }
-body{ background:#f9f2f2; font-family:"Tahoma", Arial; margin:0; }
-.container{ display:flex; justify-content:center; align-items:center; height:100vh; }
-.card{ background:white; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; width:320px; }
-.card h1{ color:var(--main); margin-bottom:15px; }
-.btn{ margin-top:15px; padding:10px 20px; background:var(--main); color:white; border:none; border-radius:6px; cursor:pointer; }
-.btn:hover{ background:var(--main-dark); }
-#result p{ margin:8px 0; }
+body{
+    font-family: "Tahoma", Arial;
+    background: linear-gradient(135deg,#eef2f3,#d9e4ec);
+    padding:15px;
+}
+.header{
+    text-align:center;
+    margin-bottom:15px;
+}
+.header h2{
+    color:#2c3e50;
+}
+input,button{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    font-size:16px;
+    border-radius:10px;
+}
+input{border:1px solid #ccc;}
+button{
+    background:#3498db;
+    color:#fff;
+    border:none;
+}
+.card{
+    margin-top:20px;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+    overflow:hidden;
+}
+.card-header{
+    background:#2980b9;
+    color:#fff;
+    padding:15px;
+}
+.card-header h3{
+    margin:0;
+    font-size:18px;
+}
+.card-header span{
+    font-size:14px;
+    opacity:.9;
+}
+.card-body{
+    padding:15px;
+}
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+.item{
+    background:#f4f6f7;
+    padding:8px;
+    border-radius:8px;
+    font-size:14px;
+}
+.item strong{
+    display:block;
+    color:#2c3e50;
+}
+.total{
+    margin-top:15px;
+    background:#27ae60;
+    color:#fff;
+    text-align:center;
+    padding:12px;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+.error{
+    color:red;
+    text-align:center;
+    margin-top:15px;
+    font-size:16px;
+}
 </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="card">
-    <h1>نتيجة الطالب</h1>
-    <div id="result">جاري تحميل النتيجة...</div>
-    <button class="btn" onclick="back()">رجوع</button>
-  </div>
+<div class="header">
+    <h2>الاستعلام عن نتيجة الطالب</h2>
+    <input type="number" id="seat" placeholder="أدخل رقم الجلوس">
+    <button onclick="search()">عرض النتيجة</button>
 </div>
 
+<div id="result"></div>
+
 <script>
-if(localStorage.getItem("activated") !== "yes" || !localStorage.getItem("seat")){
-  window.location.href = "index.html";
-}
+const students = [
+{seat:719,name:"احمد محمد طربوش احمد",q:39,i:33,a:33,e:39,m:34,p:29,c:41,b:42,t:290},
+{seat:720,name:"احمد منصور عبدالقادر محمد",q:31,i:17,a:23,e:31,m:31,p:28,c:29,b:22,t:212},
+{seat:721,name:"اسامة فهد احمد قاسم",q:35,i:37,a:38,e:43,m:36,p:36,c:42,b:42,t:309},
+{seat:722,name:"البراء عبدالرزاق عبدالعزيز محمد",q:50,i:48,a:50,e:50,m:50,p:48,c:50,b:50,t:396},
+{seat:723,name:"امير عبدالله سلطان عبدالجبار",q:31,i:26,a:29,e:26,m:26,p:23,c:29,b:31,t:221},
+{seat:724,name:"امير ياسر محمود محمد",q:13,i:11,a:12,e:10,m:9,p:9,c:10,b:null,t:null},
+{seat:725,name:"امين مراد عبد الله سيف",q:34,i:21,a:39,e:35,m:27,p:27,c:33,b:39,t:255},
+{seat:726,name:"ايمن داوود محسن قاسم",q:49,i:49,a:49,e:46,m:42,p:45,c:50,b:50,t:380},
+{seat:727,name:"بركان عادل احمد عبده",q:37,i:31,a:43,e:31,m:36,p:32,c:37,b:39,t:286},
+{seat:728,name:"حمود طارش حمود محمد",q:30,i:38,a:31,e:26,m:25,p:21,c:29,b:41,t:241},
+{seat:729,name:"زكريا سمير سعيد فارع غالب",q:32,i:21,a:40,e:37,m:29,p:26,c:38,b:43,t:266},
+{seat:730,name:"شعيب داوود محمد شمسان",q:34,i:38,a:33,e:32,m:36,p:27,c:31,b:36,t:267},
+{seat:731,name:"عامر شهاب عامر محمد سيف",q:44,i:43,a:48,e:43,m:41,p:42,c:43,b:50,t:354},
+{seat:732,name:"عبدالرحمن عبدالحكيم احمد قاسم",q:47,i:44,a:49,e:46,m:45,p:42,c:47,b:50,t:370},
+{seat:733,name:"عبدالرحمن مشتاق اسماعيل عثمان",q:31,i:18,a:31,e:25,m:25,p:22,c:23,b:33,t:208},
+{seat:734,name:"عبدالفتاح عبدالله احمد علي",q:34,i:20,a:34,e:27,m:26,p:30,c:31,b:36,t:238},
+{seat:735,name:"عبدالقادر نجيب علي عبد القادر",q:36,i:30,a:34,e:26,m:24,p:25,c:32,b:44,t:251},
+{seat:736,name:"عبدالقوي احمد محمد احمد",q:39,i:26,a:43,e:30,m:28,p:28,c:42,b:42,t:278},
+{seat:737,name:"عبدالله ابوبكر عبدالباقي عبدالوهاب",q:29,i:19,a:25,e:24,m:27,p:21,c:26,b:42,t:213},
+{seat:738,name:"عبدالله امين عبدالله احمد",q:32,i:20,a:27,e:23,m:22,p:22,c:28,b:39,t:213},
+{seat:739,name:"عبدالله عبدالعزيز عباس عبده",q:48,i:36,a:47,e:30,m:37,p:32,c:39,b:46,t:315},
+{seat:740,name:"عبدالله عصام شرف محمد",q:31,i:18,a:24,e:30,m:23,p:25,c:30,b:28,t:209},
+{seat:741,name:"عبدالله لطف عبدالله احمد مقبل",q:29,i:20,a:24,e:30,m:24,p:24,c:23,b:24,t:198},
+{seat:742,name:"عبدالناصر محمد نعمان علي",q:44,i:36,a:42,e:43,m:44,p:44,c:46,b:46,t:345},
+{seat:743,name:"عمار محمد قائد محمد",q:35,i:25,a:28,e:38,m:26,p:38,c:33,b:27,t:250},
+{seat:744,name:"عمار ياسر محمد قاسم",q:48,i:44,a:47,e:45,m:45,p:44,c:47,b:47,t:367},
+{seat:745,name:"فؤاد احمد احمد عبدالجبار",q:44,i:42,a:45,e:45,m:45,p:42,c:44,b:47,t:354},
+{seat:746,name:"لؤي علي نور الدين سعد",q:41,i:27,a:21,e:32,m:42,p:27,c:23,b:39,t:252},
+{seat:747,name:"مجد عارف سامي احمد عبدالله",q:31,i:16,a:24,e:24,m:35,p:26,c:26,b:40,t:222},
+{seat:748,name:"محمد رفيق عبدالرقيب هائل",q:32,i:29,a:36,e:36,m:24,p:28,c:36,b:43,t:264},
+{seat:749,name:"محمود حلمي سيف حزام",q:44,i:36,a:39,e:40,m:35,p:39,c:40,b:43,t:316},
+{seat:750,name:"مشعل فهيم غالب احمد",q:38,i:31,a:25,e:35,m:33,p:30,c:36,b:47,t:275},
+{seat:751,name:"معتز عبدالرحمن عبدالرب صالح",q:33,i:21,a:25,e:38,m:26,p:24,c:32,b:41,t:240},
+{seat:752,name:"مميز عبدالباسط صالح عون",q:42,i:32,a:34,e:32,m:32,p:29,c:35,b:45,t:281},
+{seat:753,name:"مهند عبدالجليل سيف مقبل",q:46,i:38,a:47,e:47,m:28,p:31,c:40,b:43,t:320},
+{seat:754,name:"موسى شاكر احمد علي حسن",q:33,i:25,a:35,e:34,m:29,p:25,c:35,b:38,t:254},
+{seat:755,name:"موسى مدين غالب احمد",q:48,i:40,a:49,e:45,m:48,p:34,c:50,b:50,t:364},
+{seat:756,name:"نبيل وسيم عبدالباري نور الدين",q:47,i:40,a:43,e:40,m:36,p:35,c:47,b:50,t:338},
+{seat:757,name:"نصر حمود علي عقلان",q:35,i:25,a:24,e:23,m:26,p:18,c:30,b:46,t:227},
+{seat:758,name:"نوح عبدالله سعيد جميل",q:37,i:29,a:31,e:35,m:33,p:30,c:39,b:41,t:275},
+{seat:759,name:"وسام عماد علي محمد الصلاحي",q:39,i:27,a:25,e:29,m:20,p:21,c:37,b:41,t:239},
+{seat:760,name:"وسيم سمير سعيد محمد",q:45,i:43,a:49,e:45,m:42,p:35,c:45,b:50,t:354},
+{seat:761,name:"وهاج توفيق علي محمد الكلي",q:33,i:23,a:27,e:32,m:25,p:30,c:30,b:37,t:237},
+{seat:762,name:"يوسف العزي محمد احمد",q:39,i:23,a:25,e:32,m:24,p:29,c:27,b:34,t:233},
+{seat:763,name:"ابرار امين شرف حسين",q:33,i:20,a:30,e:29,m:31,p:24,c:30,b:37,t:234},
+{seat:764,name:"ازهار محمد احمد مقبل",q:36,i:34,a:31,e:31,m:29,p:27,c:29,b:39,t:256},
+{seat:765,name:"الاء عصام محمد محمد",q:46,i:38,a:45,e:41,m:29,p:33,c:43,b:47,t:322},
+{seat:766,name:"اماني عبدالحافظ عبدالرب صالح",q:37,i:24,a:35,e:38,m:25,p:25,c:34,b:38,t:256},
+{seat:767,name:"امة الله وليد علي عبد الله",q:40,i:26,a:43,e:38,m:33,p:32,c:38,b:41,t:291},
+{seat:768,name:"ايات فارس علي سيف",q:35,i:24,a:30,e:31,m:26,p:21,c:32,b:30,t:229},
+{seat:769,name:"اية خالد غالب علي",q:38,i:23,a:23,e:28,m:30,p:24,c:30,b:35,t:231},
+{seat:770,name:"ايمان كارم درهم احمد غالب",q:45,i:36,a:45,e:47,m:41,p:39,c:44,b:46,t:343},
+{seat:771,name:"بثينة محمد احمد سلام",q:40,i:27,a:47,e:37,m:33,p:27,c:36,b:40,t:287},
+{seat:772,name:"براءة فتحي عبد الوهاب سعيد",q:47,i:44,a:47,e:47,m:49,p:41,c:47,b:47,t:369},
+{seat:773,name:"بشرى صلاح عبدالله محمد",q:32,i:27,a:29,e:29,m:24,p:23,c:28,b:33,t:225},
+{seat:774,name:"بيان نبيل منصور سعيد",q:41,i:34,a:40,e:42,m:47,p:33,c:40,b:43,t:320},
+{seat:775,name:"تيسير احمد شرف عبده",q:31,i:18,a:39,e:31,m:29,p:19,c:26,b:33,t:226},
+{seat:776,name:"حنين وسام احمد سلطان",q:47,i:40,a:46,e:46,m:41,p:42,c:46,b:44,t:352},
+{seat:777,name:"خولة وهيب ياسين احمد",q:40,i:30,a:40,e:39,m:33,p:28,c:36,b:43,t:289},
+{seat:778,name:"رانية عزيز عبدالرحمن مهيوب",q:37,i:28,a:30,e:43,m:25,p:29,c:41,b:45,t:278},
+{seat:779,name:"ربا عبدالعزيز عثمان حسن",q:49,i:46,a:47,e:49,m:43,p:41,c:48,b:48,t:371},
+{seat:780,name:"رحمة نبيل احمد محمد",q:36,i:33,a:27,e:35,m:36,p:24,c:29,b:40,t:260},
+{seat:781,name:"ردينة عبدالله عقلان علي",q:30,i:24,a:33,e:27,m:26,p:30,c:29,b:35,t:234},
+{seat:782,name:"رغد على عبدالله علي",q:29,i:17,a:19,e:22,m:24,p:20,c:32,b:26,t:189},
+{seat:783,name:"رنا رشاد سعد علي",q:34,i:28,a:38,e:29,m:26,p:28,c:39,b:34,t:256},
+{seat:784,name:"رنا رفيق محمد عبدالله نعمان",q:31,i:22,a:26,e:20,m:25,p:28,c:32,b:30,t:214},
+{seat:785,name:"رهام محمد عبدالجبار ثابت",q:31,i:17,a:32,e:29,m:26,p:22,c:26,b:37,t:220},
+{seat:786,name:"رؤية وجدي عبدالقادر حمود",q:29,i:21,a:32,e:30,m:22,p:20,c:23,b:34,t:211},
+{seat:787,name:"زينب عبدالله محمد احمد",q:34,i:24,a:35,e:32,m:27,p:27,c:29,b:39,t:247},
+{seat:788,name:"سناء شكري عبده احمد",q:34,i:28,a:31,e:34,m:29,p:27,c:32,b:38,t:253},
+{seat:789,name:"شذى محمد عبدالوهاب سعيد",q:31,i:21,a:24,e:34,m:27,p:26,c:25,b:36,t:224},
+{seat:790,name:"شذى معاذ عبدالودود عبدالواحد",q:39,i:26,a:34,e:38,m:28,p:25,c:32,b:43,t:265},
+{seat:791,name:"شهد نشوان محمود مجاهد",q:14,i:14,a:17,e:13,m:18,p:16,c:17,b:0,t:0},
+{seat:792,name:"شيماء هاني عبدالله محمد",q:38,i:33,a:38,e:39,m:38,p:28,c:38,b:43,t:295},
+{seat:793,name:"عديلة عبدالرزاق محمد محمد قاسم",q:42,i:39,a:40,e:37,m:36,p:28,c:40,b:45,t:307},
+{seat:794,name:"عهود فهمي عبد الله نعمان",q:32,i:26,a:31,e:32,m:25,p:29,c:29,b:36,t:240},
+{seat:795,name:"عواطف فتح عبدالباقي عبدالواحد",q:31,i:22,a:28,e:20,m:29,p:24,c:19,b:39,t:212},
+{seat:796,name:"فاطمة جواد ناجي عبدالله",q:33,i:22,a:36,e:34,m:40,p:29,c:30,b:41,t:265},
+{seat:797,name:"فائزة طارق فؤاد اسماعيل",q:31,i:19,a:28,e:31,m:27,p:26,c:31,b:32,t:225},
+{seat:798,name:"فرح محمد عبدالقادر نعمان",q:38,i:28,a:41,e:29,m:33,p:31,c:34,b:43,t:277},
+{seat:799,name:"كفاء وضاح عبدالله محمد",q:31,i:23,a:35,e:34,m:30,p:26,c:29,b:38,t:246},
+{seat:800,name:"لميس عبدالله قائد سعيد",q:37,i:25,a:34,e:32,m:44,p:29,c:32,b:38,t:271},
+{seat:801,name:"ملاك احمد سلطان نعمان",q:42,i:28,a:39,e:28,m:29,p:29,c:33,b:40,t:268},
+{seat:802,name:"ملاك باسم احمد مقبل",q:37,i:25,a:40,e:34,m:44,p:26,c:34,b:39,t:279},
+{seat:803,name:"ملاك طارق احمد محمد",q:38,i:29,a:31,e:27,m:28,p:23,c:31,b:31,t:238},
+{seat:804,name:"ملاك طه محمد سعيد المدحجي",q:42,i:38,a:36,e:40,m:40,p:34,c:47,b:47,t:324},
+{seat:805,name:"ملاك عماد عبدالله سعيد",q:38,i:29,a:36,e:28,m:24,p:22,c:31,b:35,t:243},
+{seat:806,name:"ملاك مروان عبدالعزير عبدالتواب",q:47,i:41,a:43,e:43,m:46,p:40,c:49,b:44,t:353},
+{seat:807,name:"منار بشير فارع محمد احمد",q:49,i:43,a:49,e:49,m:49,p:42,c:50,b:47,t:378},
+{seat:808,name:"هداية فهمي حمود غالب",q:29,i:21,a:32,e:30,m:31,p:25,c:27,b:36,t:231},
+{seat:809,name:"هدى مختار عبدالباري محمد",q:40,i:30,a:33,e:26,m:36,p:26,c:39,b:33,t:263},
+{seat:810,name:"ورود وهيب سيف سعيد",q:49,i:42,a:41,e:45,m:45,p:42,c:50,b:46,t:360},  <!-- تم إضافة الفاصلة هنا -->
+{seat:811,name:"وفاء ناصر عبدالله محمد",q:32,i:26,a:35,e:28,m:28,p:28,c:34,b:35,t:246}
+];
 
-const students = {
-  "1": { name:"بشائر صلاح عبدالله محمد", total:202 },
-  "2": { name:"بشائر عمار نبيل عبده", total:264 },
-  "3": { name:"محمد منير احمد عامر", total:302 },
-  "4": { name:"مكرم صلاح درهم حزام", total:179 },
-  "5": { name:"ماهر هيثم حمود عبدالباري", total:242 },
-  "6": { name:"محمد خالد شمسان محمد", total:147 }
-};
+// دالة لعرض "غير مكتمل" إذا كانت القيمة null
+function v(x){ return x===null ? "غير مكتمل" : x; }
 
-const seat = localStorage.getItem("seat");
-const resultBox = document.getElementById("result");
+function search(){
+    const s = document.getElementById("seat").value;
+    const st = students.find(x=>x.seat==s);
+    const r = document.getElementById("result");
 
-if(seat && students[seat]){
-  resultBox.innerHTML = `
-    <p><strong>رقم الجلوس:</strong> ${seat}</p>
-    <p><strong>الاسم:</strong> ${students[seat].name}</p>
-    <p><strong>المجموع:</strong> ${students[seat].total}</p>
-  `;
-}else{
-  resultBox.innerHTML = "❌ رقم الجلوس غير موجود";
-}
+    if(!st){
+        r.innerHTML = "<p class='error'>رقم الجلوس غير موجود</p>";
+        return;
+    }
 
-function back(){
-  localStorage.removeItem("seat");
-  window.location.href = "check.html";
+    r.innerHTML = `
+    <div class="card">
+        <div class="card-header">
+            <h3>${st.name}</h3>
+            <span>رقم الجلوس: ${st.seat}</span>
+        </div>
+
+        <div class="card-body">
+            <div class="grid">
+                <div class="item"><strong>القرآن</strong>${v(st.q)}</div>
+                <div class="item"><strong>الإسلامية</strong>${v(st.i)}</div>
+                <div class="item"><strong>العربي</strong>${v(st.a)}</div>
+                <div class="item"><strong>الإنجليزي</strong>${v(st.e)}</div>
+                <div class="item"><strong>الرياضيات</strong>${v(st.m)}</div>
+                <div class="item"><strong>الفيزياء</strong>${v(st.p)}</div>
+                <div class="item"><strong>الكيمياء</strong>${v(st.c)}</div>
+                <div class="item"><strong>الأحياء</strong>${v(st.b)}</div>
+            </div>
+
+            <div class="total">
+                المجموع الكلي : ${v(st.t)}
+            </div>
+        </div>
+    </div>`;
 }
 </script>
 
