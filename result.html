@@ -21,6 +21,11 @@
 </div>
 
 <script>
+ <script>
+// حماية الصفحة (لا تفتح بدون إدخال كرت)
+if(!localStorage.getItem("seat")){
+  window.location.href = "check.html";
+}
 /* ====== بيانات الطلاب ====== */
 const students = {
   "1": { name:"بشائر صلاح عبدالله محمد", total:202 },
