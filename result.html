@@ -1,33 +1,36 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <title>نتيجة الطالب</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
+<style>
+:root{ --main:#7a1f2b; --main-dark:#5f1822; }
+body{ background:#f9f2f2; font-family:"Tahoma", Arial; }
+.container{ display:flex; justify-content:center; align-items:center; height:100vh; }
+.card{ background:white; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; width:300px; }
+.card h1{ color:var(--main); margin-bottom:15px; }
+.btn{ margin-top:15px; padding:10px 20px; background:var(--main); color:white; border:none; border-radius:6px; cursor:pointer; }
+.btn:hover{ background:var(--main-dark); }
+#result p{ margin:8px 0; }
+</style>
 </head>
 <body>
 
 <div class="container">
   <div class="card">
     <h1>نتيجة الطالب</h1>
-
     <div id="result">جاري تحميل النتيجة...</div>
-
-    <button class="btn" onclick="back()" style="margin-top:15px;">
-      رجوع
-    </button>
+    <button class="btn" onclick="back()">رجوع</button>
   </div>
 </div>
 
 <script>
-/* ================== حماية الصفحة ================== */
-// لا تفتح صفحة النتائج إلا بعد تفعيل الكرت
-if(localStorage.getItem("activated") !== "yes"){
-  window.location.href = "card.html";
+if(localStorage.getItem("activated") !== "yes" || !localStorage.getItem("seat")){
+  window.location.href = "index.html";
 }
 
-/* ================== بيانات الطلاب ================== */
 const students = {
   "1": { name:"بشائر صلاح عبدالله محمد", total:202 },
   "2": { name:"بشائر عمار نبيل عبده", total:264 },
@@ -35,10 +38,8 @@ const students = {
   "4": { name:"مكرم صلاح درهم حزام", total:179 },
   "5": { name:"ماهر هيثم حمود عبدالباري", total:242 },
   "6": { name:"محمد خالد شمسان محمد", total:147 }
-  // أضف بقية الطلاب هنا
 };
 
-/* ================== عرض النتيجة ================== */
 const seat = localStorage.getItem("seat");
 const resultBox = document.getElementById("result");
 
@@ -52,9 +53,7 @@ if(seat && students[seat]){
   resultBox.innerHTML = "❌ رقم الجلوس غير موجود";
 }
 
-/* ================== زر الرجوع ================== */
 function back(){
-  // حذف رقم الجلوس فقط (الكرت يبقى مفعّل)
   localStorage.removeItem("seat");
   window.location.href = "check.html";
 }
