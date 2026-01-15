@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>من سيربح المليون - جميع الأسئلة</title>
+<style>
+body { font-family: Arial, sans-serif; background: linear-gradient(to bottom, #0b3d91, #1e50a2); color:#fff; margin:0; padding:0; }
+.card { background-color:#001f4d; width:90%; margin:20px auto; padding:25px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.5); text-align:center; }
+.lifelines { display:flex; justify-content:space-around; margin-bottom:20px; flex-wrap:wrap; }
+.lifelines button { padding:10px 15px; font-size:16px; border-radius:8px; border:none; cursor:pointer; background-color:#ffc107; color:#001f4d; font-weight:bold; margin:5px; }
+.lifelines button:hover { background-color:#ffdb58; transform:scale(1.05); }
+.lifelines .disabled { opacity:0.5; cursor:not-allowed; }
+.question { font-size:22px; margin-bottom:20px; }
+.options button { width:100%; padding:15px; margin:10px 0; font-size:18px; border-radius:10px; border:none; cursor:pointer; background-color:#1e3c72; color:#fff; }
+.options button:hover { background-color:#3455a1; }
+.correct { background-color:#28a745 !important; }
+.wrong { background-color:#dc3545 !important; }
+.score { font-size:22px; margin-top:20px; color:#ffd700; font-weight:bold; cursor:pointer; }
+#clear-questions-btn { display:none; position:absolute; top:10px; right:10px; padding:5px 10px; background:red; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="lifelines">
+    <button id="fifty" onclick="useFifty()">حذف خيارين</button>
+    <button id="audience" onclick="useAudience()">استشارة الجمهور</button>
+    <button id="skip" onclick="useSkip()">تخطي سؤال</button>
+  </div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <div class="score" id="score">الجائزة: 0 ريال</div>
+</div>
+
+<button id="clear-questions-btn">مسح جميع الأسئلة</button>
+
+<script>
+let currentQuestion = 0;
+let prize = 0;
+let lifelines = {fifty:true, audience:true, skip:true};
+
+// جميع الأسئلة منظمة بشكل صحيح
+let questions = [
+  { question:"حكم الاستئذان عند دخول بيوت الغير", options:["واجب","سنة","مستحب","مباح"], answer:"واجب" },
+  { question:"قرأت كتب الحديث إلا كتابين المستثنى منه؟", options:["حديثين","كتابين","جزأين","بابين"], answer:"كتابين" },
+  { question:"الإيمان بالغيب من صفات المتقين", options:["خطأ","صح","ممكن","غير معروف"], answer:"صح" },
+  { question:"ما هو الجزء المسؤول عن التحكم في جميع أنشطة الخلية؟", options:["السيتوبلازم","النواة","الميتوكوندريا","الجدار الخلوي"], answer:"النواة" },
+  { question:"ما اسم العملية التي ينتقل فيها الماء من الجذور إلى الأوراق؟", options:["النتح","الانتشار","الأسموزية","النقل النشط"], answer:"النتح" },
+  { question:"جسمان كتلة كلٍّ منهما (20) كجم، أحدهما يتحرك بسرعة (40) م/ث والآخر ساكن. إذا تصادما تصادمًا التحاميًا، فإن طاقة حركة الجسم المتكوّن بعد التصادم تساوي:", options:["1000 جول","1600 جول","2000 جول","3200 جول"], answer:"2000 جول" },
+  { question:"توضع الأقمار الصناعية على ارتفاع يقارب (270) كم من سطح الأرض وذلك من أجل:", options:["زيادة الجاذبية الأرضية","تقليل سرعة القمر","الابتعاد عن مقاومة الهواء","زيادة طاقة الوضع"], answer:"الابتعاد عن مقاومة الهواء" },
+  { question:"في التصادم غير المرن فإن:", options:["كمية التحرك لا تحفظ","طاقة الحركة قبل التصادم أكبر منها بعد التصادم","طاقة الحركة محفوظة","لا يحدث فقد للطاقة"], answer:"طاقة الحركة قبل التصادم أكبر منها بعد التصادم" },
+  { question:"يعتمد مقدار السرعة المدارية للقمر الصناعي حول الأرض على:", options:["كتلة القمر فقط","عجلة الجاذبية فقط","نصف قطر المدار","شكل القمر"], answer:"نصف قطر المدار" },
+  { question:"كمية التحرك الخطي تساوي:", options:["حاصل ضرب الكتلة في العجلة","حاصل ضرب القوة في الزمن","حاصل ضرب الكتلة في السرعة","حاصل ضرب السرعة في الزمن"], answer:"حاصل ضرب الكتلة في السرعة" },
+  { question:"كمية التحرك الزاوي تساوي:", options:["عزم القوة × الزمن","عزم القصور الذاتي × السرعة الزاوية","الكتلة × السرعة","القوة × نصف القطر"], answer:"عزم القصور الذاتي × السرعة الزاوية" },
+  { question:"تؤثر على القمر الصناعي الذي يدور حول الأرض قوتان هما:", options:["الجاذبية والمغناطيسية","الجاذبية والاحتكاك","الجذب والطرد الناتج عن الدوران","الدفع والمقاومة"], answer:"الجذب والطرد الناتج عن الدوران" },
+  { question:"سرعة الإفلات هي:", options:["أكبر سرعة يكتسبها الجسم","سرعة الدوران حول الأرض","أقل سرعة تمكّن الجسم من التغلب على جذب الأرض والخروج من مجالها","سرعة السقوط الحر"], answer:"أقل سرعة تمكّن الجسم من التغلب على جذب الأرض والخروج من مجالها" },
+  { question:"لكي يفلت جسم من الجاذبية الأرضية يجب إعطاؤه سرعة مقدارها تقريبًا:", options:["8000 م/ث","9000 م/ث","10000 م/ث","11200 م/ث"], answer:"11200 م/ث" },
+  { question:"في التصادم غير المرن تكون كمية التحرك للأجسام المتصادمة:", options:["غير محفوظة","محفوظة قبل وبعد التصادم","تساوي صفرًا","تعتمد على نوع التصادم"], answer:"محفوظة قبل وبعد التصادم" },
+  { question:"يستخدم الصاروخ ذاتي الدفع قوة دفعه نتيجة:", options:["سقوطه الحر","مقاومة الهواء","اندفاع الغازات الساخنة عالية السرعة للخلف","قوة الطرد المركزي"], answer:"اندفاع الغازات الساخنة عالية السرعة للخلف" },
+  { question:"لماذا تبقى سرعة دوران القمر ثابتة بالرغم من الجاذبية؟", options:["لأنه خفيف الوزن","لأن سرعته متعامدة مع الجاذبية","لأنه بعيد عن الأرض","لأنه يدور بسرعة كبيرة جدًا"], answer:"لأن سرعته متعامدة مع الجاذبية" },
+  { question:"ماذا يحدث عند فتح بالون ممتلئ بالهواء؟", options:["بسبب وزن الهواء داخل البالون","بسبب ضغط الهواء الجوي","بسبب فعل الهواء الخارج (فعل ورد فعل)","بسبب حرارة الهواء"], answer:"بسبب فعل الهواء الخارج (فعل ورد فعل)" }
+];
+
+// خلط الأسئلة عشوائيًا
+questions = questions.sort(() => Math.random() - 0.5);
+
+function showQuestion() {
+  if (currentQuestion >= questions.length) {
+    document.getElementById('question').innerHTML = "لقد أنهيت جميع الأسئلة!";
+    document.getElementById('options').innerHTML = "";
+    document.getElementById('score').innerHTML = `الجائزة النهائية: ${prize} ريال`;
+    return;
+  }
+  
+  const q = questions[currentQuestion];
+  document.getElementById('question').innerHTML = q.question;
+  
+  let optionsHTML = "";
+  q.options.forEach(option => {
+    optionsHTML += `<button onclick="checkAnswer('${option}')">${option}</button>`;
+  });
+  document.getElementById('options').innerHTML = optionsHTML;
+  
+  // تحديث حالة أزرار المساعدة
+  document.getElementById('fifty').disabled = !lifelines.fifty;
+  document.getElementById('audience').disabled = !lifelines.audience;
+  document.getElementById('skip').disabled = !lifelines.skip;
+  
+  if (!lifelines.fifty) document.getElementById('fifty').classList.add('disabled');
+  else document.getElementById('fifty').classList.remove('disabled');
+  
+  if (!lifelines.audience) document.getElementById('audience').classList.add('disabled');
+  else document.getElementById('audience').classList.remove('disabled');
+  
+  if (!lifelines.skip) document.getElementById('skip').classList.add('disabled');
+  else document.getElementById('skip').classList.remove('disabled');
+}
+
+function checkAnswer(selected) {
+  const q = questions[currentQuestion];
+  const buttons = document.querySelectorAll('.options button');
+  let correctIndex = -1;
+  
+  buttons.forEach((btn, index) => {
+    if (btn.textContent === q.answer) {
+      correctIndex = index;
+    }
+    btn.disabled = true;
+  });
+  
+  if (selected === q.answer) {
+    document.querySelectorAll('.options button')[correctIndex].classList.add('correct');
+    prize += 1000;
+    document.getElementById('score').innerHTML = `الجائزة: ${prize} ريال`;
+    setTimeout(() => {
+      currentQuestion++;
+      showQuestion();
+    }, 1500);
+  } else {
+    document.querySelectorAll('.options button')[correctIndex].classList.add('correct');
+    buttons.forEach((btn, index) => {
+      if (btn.textContent === selected) {
+        btn.classList.add('wrong');
+      }
+    });
+    setTimeout(() => {
+      document.getElementById('question').innerHTML = "انتهت اللعبة!";
+      document.getElementById('options').innerHTML = "";
+      document.getElementById('score').innerHTML = `الجائزة النهائية: ${prize} ريال`;
+    }, 1500);
+  }
+}
+
+function useFifty() {
+  if (!lifelines.fifty) return;
+  
+  const q = questions[currentQuestion];
+  const buttons = document.querySelectorAll('.options button');
+  const wrongOptions = [];
+  
+  buttons.forEach((btn, index) => {
+    if (btn.textContent !== q.answer) {
+      wrongOptions.push(index);
+    }
+  });
+  
+  // حذف خيارين عشوائيين خاطئين
+  for (let i = 0; i < 2; i++) {
+    const randomIndex = Math.floor(Math.random() * wrongOptions.length);
+    const btnIndex = wrongOptions[randomIndex];
+    buttons[btnIndex].style.display = 'none';
+    wrongOptions.splice(randomIndex, 1);
+  }
+  
+  lifelines.fifty = false;
+  document.getElementById('fifty').classList.add('disabled');
+}
+
+function useAudience() {
+  if (!lifelines.audience) return;
+  
+  alert("استشارة الجمهور: الجمهور يفضل الخيار الأول بنسبة 60%");
+  lifelines.audience = false;
+  document.getElementById('audience').classList.add('disabled');
+}
+
+function useSkip() {
+  if (!lifelines.skip) return;
+  
+  currentQuestion++;
+  showQuestion();
+  lifelines.skip = false;
+  document.getElementById('skip').classList.add('disabled');
+}
+
+// زر مسح الأسئلة (للمشرف)
+document.getElementById('clear-questions-btn').addEventListener('click', function() {
+  if (confirm("هل أنت متأكد من مسح جميع الأسئلة؟")) {
+    localStorage.removeItem('questions');
+    alert("تم مسح جميع الأسئلة");
+  }
+});
+
+// بدء اللعبة
+showQuestion();
+</script>
+</body>
+</html>
