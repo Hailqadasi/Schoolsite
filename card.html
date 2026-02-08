@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>تفعيل التطبيق</title>
+<title>تفعيل البرنامج </title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -27,9 +27,9 @@ button{background:#28a745;color:#fff;border:0;cursor:pointer}
 
 <div class="box" id="acSection">
   <h3>قسم AC</h3>
-  <p>✅ تم تفعيل التطبيق</p>
+  <p>✅ تم تفعيل البرنامج </p>
   <div id="timeLeft"></div>
-  <button id="goAcBtn">الدخول</button>
+  <button id="gowinnerBtn">الدخول</button>
 </div>
 
 <script>
@@ -108,7 +108,7 @@ window.onload = async function(){
       code: code
     }));
 
-    openAc();
+    openwinner();
     sessionStart = Date.now();
     startTimer();
   };
@@ -146,8 +146,8 @@ window.onload = async function(){
     timeLeft.innerHTML = "";
   }
 
-  // 👁️ فتح قسم who is the winner 
-  function openAc(){
+  // 👁️ فتح قسم winner. Html  
+  function openwinner.html(){
     activationBox.style.display="none";
     acSection.style.display="block";
     msg.innerHTML = "";
@@ -162,7 +162,7 @@ window.onload = async function(){
   });
 
   // زر الدخول
-  goAcBtn.onclick = ()=> location="go:g";
+  gowinner.hmtlBtn.onclick = ()=> location="go:winner.html";
 };
 </script>
 
