@@ -1,89 +1,169 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>تفعيل الكرت</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تفعيل التطبيق</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-body{
-  font-family:"Tahoma", Arial;
-  background:#f9f2f2;
-  margin:0;
-}
-.container{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-.card{
-  background:#fff;
-  padding:30px;
-  width:330px;
-  border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
-  text-align:center;
-}
-h1{ color:#7a1f2b; margin-bottom:20px; }
-input{
-  width:100%;
-  padding:10px;
-  font-size:16px;
-  border-radius:6px;
-  border:1px solid #ccc;
-  margin-bottom:15px;
-}
-button{
-  width:100%;
-  padding:12px;
-  font-size:16px;
-  border:none;
-  border-radius:6px;
-  background:#7a1f2b;
-  color:#fff;
-  cursor:pointer;
-}
-button:hover{ background:#5f1822; }
-#msg{ margin-top:10px; color:red; }
+body{font-family:tahoma;text-align:center;background:#f5f5f5}
+.box{margin:50px auto;width:300px;background:#fff;padding:20px;border-radius:8px}
+input,button{width:100%;padding:10px;margin-top:10px}
+button{background:#28a745;color:#fff;border:0;cursor:pointer}
+#acSection{display:none}
+#timeLeft{color:#555;font-size:14px;margin-top:15px;background:#f9f9f9;padding:8px;border-radius:4px;direction:ltr}
 </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="card">
-    <h1>تفعيل الكرت</h1>
-    <input type="text" id="card" placeholder="أدخل رقم الكرت">
-    <button onclick="checkCard()">تفعيل</button>
-    <p id="msg"></p>
-  </div>
+<div class="box" id="activationBox">
+  <h3>أدخل كود التفعيل</h3>
+  <input id="code" placeholder="كود الكرت">
+  <button id="activateBtn">تفعيل</button>
+  <p id="msg"></p>
+</div>
+
+<div class="box" id="acSection">
+  <h3>قسم AC</h3>
+  <p>✅ تم تفعيل التطبيق</p>
+  <div id="timeLeft"></div>
+  <button id="goAcBtn">الدخول</button>
 </div>
 
 <script>
-// 🔐 كروت عشوائية (5 أرقام) – غير ظاهرة
-const validCards = [
-"25809","71946","20583","86420","59371",
-"10468","92735","38104","75029","64218",
-"91835","27046","50619","83472","12984",
-"69027","47290","35814","94106","72583",
-"81469","39057","26084","50731","96842",
-"17429","85260","40697","73951","61804"
-];
+window.onload = async function(){
 
-function checkCard(){
-  const value = document.getElementById("card").value.trim();
+  const { createClient } = supabase;
+
+  const client = createClient(
+    "https://lhzyuezkfnsdkufvatzu.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxoenl1ZXprZm5zZGt1ZnZhdHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDYzOTYsImV4cCI6MjA4MTgyMjM5Nn0.1Bdzz52Abm3PSlnzOWlSKS2RVMqgkiOekA38abGScKA"
+  );
+
+  const activationBox = document.getElementById("activationBox");
+  const acSection = document.getElementById("acSection");
+  const activateBtn = document.getElementById("activateBtn");
+  const goAcBtn = document.getElementById("goAcBtn");
   const msg = document.getElementById("msg");
+  const timeLeft = document.getElementById("timeLeft");
 
-  if(value === ""){
-    msg.textContent = "يرجى إدخال رقم الكرت";
-    return;
+  const MAX_TIME = 1 * 60 * 60 * 1000; // 1 ساعة
+  let sessionStart = Date.now();
+  let timer;
+
+  // 🔁 استرجاع بيانات التفعيل من الجهاز
+  const saved = JSON.parse(localStorage.getItem("activation_data"));
+  if(saved && saved.usedTime < MAX_TIME){
+    openAc();
+    sessionStart = Date.now();
+    startTimer();
+  } else if(saved && saved.usedTime >= MAX_TIME){
+    msg.innerHTML = "⛔ انتهت صلاحية الكرت";
   }
 
-  if(validCards.includes(value)){
-    window.location.href = "index2.html";
-  }else{
-    msg.textContent = "❌ كود الكرت غير صحيح";
+  // 🔘 زر التفعيل
+  activateBtn.onclick = async () => {
+    msg.innerHTML = "⏳ جاري التحقق...";
+    const code = document.getElementById("code").value.trim().toUpperCase();
+
+    if(!code){
+      msg.innerHTML = "❌ أدخل كود الكرت";
+      return;
+    }
+
+    // ✅ التحقق من وجود الكرت
+    const { data: card, error: selectError } = await client
+      .from("cards")
+      .select("*")
+      .eq("code", code)
+      .limit(1)
+      .single();
+
+    if(selectError || !card){
+      msg.innerHTML = "❌ الكرت غير موجود";
+      return;
+    }
+
+    if(card.used === true){
+      msg.innerHTML = "❌ الكرت مستخدم مسبقًا";
+      return;
+    }
+
+    // 🔄 تحديث الكرت إلى مستخدم
+    const { error: updateError } = await client
+      .from("cards")
+      .update({ used: true })
+      .eq("id", card.id);
+
+    if(updateError){
+      msg.innerHTML = "❌ لا يمكن تفعيل الكرت (تحقق من RLS)";
+      return;
+    }
+
+    // 💾 حفظ التفعيل على الجهاز لمنع إعادة الاستخدام
+    localStorage.setItem("activation_data", JSON.stringify({
+      usedTime: 0,
+      code: code
+    }));
+
+    openAc();
+    sessionStart = Date.now();
+    startTimer();
+  };
+
+  // ⏱ تشغيل العداد
+  function startTimer(){
+    clearInterval(timer);
+    timer = setInterval(()=>{
+      const data = JSON.parse(localStorage.getItem("activation_data"));
+      if(!data) return;
+
+      const used = data.usedTime + (Date.now() - sessionStart);
+      const remaining = MAX_TIME - used;
+
+      if(remaining <= 0){
+        endActivation();
+        return;
+      }
+
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
+
+      timeLeft.innerHTML = `⏳ المتبقي: ${h} س ${m} د ${s} ث`;
+    },1000);
   }
 
+  // ⛔ انتهاء التفعيل
+  function endActivation(){
+    clearInterval(timer);
+    localStorage.removeItem("activation_data");
+    activationBox.style.display="block";
+    acSection.style.display="none";
+    msg.innerHTML = "⛔ انتهت صلاحية الكرت";
+    timeLeft.innerHTML = "";
+  }
+
+  // 👁️ فتح قسم who is the winner 
+  function openAc(){
+    activationBox.style.display="none";
+    acSection.style.display="block";
+    msg.innerHTML = "";
+  }
+
+  // 💾 حفظ الوقت عند الخروج أو إعادة تحميل الصفحة
+  window.addEventListener("beforeunload", ()=>{
+    const data = JSON.parse(localStorage.getItem("activation_data"));
+    if(!data) return;
+    data.usedTime += Date.now() - sessionStart;
+    localStorage.setItem("activation_data", JSON.stringify(data));
+  });
+
+  // زر الدخول
+  goAcBtn.onclick = ()=> location="go:g";
+};
 </script>
 
 </body>
