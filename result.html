@@ -4,111 +4,131 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>من سيربح المليون</title>
-
 <style>
 body{
-  font-family: Tahoma, Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background: linear-gradient(to bottom, #0b3d91, #1e50a2);
-  color:#fff;
-  margin:0;
+  color:#fff; margin:0; padding:0;
 }
-
-/* بطاقة اللعبة */
-#card{
-  max-width:650px;
-  margin:30px auto;
-  background:#001f54;
-  padding:25px;
-  border-radius:18px;
+.card{
+  background:#001f4d;
+  width:90%; max-width:800px; margin:20px auto; padding:25px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.5);
   text-align:center;
 }
-
-/* السؤال */
-#question{
-  font-size:28px;          /* 🔥 تكبير خط السؤال */
+.start-btn{
+  padding:12px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#ffc107;
+  color:#001f4d;
   font-weight:bold;
-  margin-bottom:25px;
+  cursor:pointer;
+  margin:5px;
+  transition:0.3s;
+}
+.start-btn:hover{
+  background:#ffca2c;
+  transform:scale(1.05);
+}
+.question{
+  font-size:22px; 
+  margin-bottom:20px;
   line-height:1.6;
 }
-
-/* الخيارات */
 .options button{
   width:100%;
-  margin:12px 0;
-  padding:16px;
-  font-size:22px;          /* 🔥 تكبير خط الخيارات */
-  font-weight:bold;
+  padding:15px;
+  margin:8px 0;
+  font-size:22px;
+  border-radius:12px;
   border:none;
-  border-radius:14px;
   cursor:pointer;
-  background:#ffffff;
-  color:#001f54;
+  background:#1e3c72;
+  color:#fff;
+  transition:0.3s;
 }
-
-/* عند الإجابة */
-.correct{
-  background:#28a745 !important;
-  color:#fff !important;
+.options button:hover{
+  background:#2a4a8a;
 }
-.wrong{
-  background:#dc3545 !important;
-  color:#fff !important;
+.correct{background:#28a745!important;}
+.wrong{background:#dc3545!important;}
+.score{
+  font-size:24px; 
+  margin-top:20px; 
+  color:#ffd700;
+  font-weight:bold;
 }
-
-/* المؤقت */
 #timer{
-  font-size:20px;
   margin-bottom:15px;
-}
-
-/* الجائزة */
-#score{
   font-size:20px;
-  margin-top:20px;
   color:#ffd700;
 }
-
-/* زر البدء */
-.start-btn{
-  padding:16px 25px;
-  font-size:22px;
+.checkpoint{
+  color:#28a745;
   font-weight:bold;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
+  background: rgba(40, 167, 69, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 5px 0;
+}
+.game-title{
+  color:#ffc107;
+  margin-bottom:20px;
+}
+.prize-ladder {
+  margin: 20px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.prize-ladder h4 {
+  margin-bottom: 10px;
+  color: #ffc107;
+}
+.ladder-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  margin: 3px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+.ladder-item.highlight {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid #ffc107;
 }
 </style>
 </head>
-
 <body>
-
-<div id="card">
-  <button class="start-btn" onclick="startGame()">ابدأ اللعبة</button>
-</div>
 <div class="card" id="card">
-  <div class="lifelines">
-    <button id="fifty" onclick="useFifty()">حذف خيارين</button>
-    <button id="audience" onclick="useAudience()">استشارة الجمهور</button>
-    <button id="skip" onclick="useSkip()">تخطي سؤال</button>
+  <h2 class="game-title">🎮 من سيربح المليون</h2>
+  <div class="prize-ladder">
+    <h4>🔝 سلم الجوائز</h4>
+    <div class="ladder-item highlight"><span>السؤال 200</span><span>2000 ريال ✓</span></div>
+    <div class="ladder-item"><span>السؤال 100</span><span>1000ريال ✓</span></div>
+    <div class="ladder-item"><span>السؤال 50</span><span>500ريال ✓</span></div>
+    <div class="ladder-item"><span>البداية</span><span>0 ريال</span></div>
   </div>
-  <div class="question" id="question"></div>
-  <div class="options" id="options"></div>
-  <div class="score" id="score">الجائزة: 0 ريال</div>
+  <button class="start-btn" onclick="startGame()">ابدأ اللعب</button>
 </div>
 <script>
 // ===== بنك الأسئلة =====
 let allQuestions = [
-  {
-    question: "ما هي اللغة الرسمية في البرازيل؟",
-    options: ["الإسبانية","الإنجليزية","البرتغالية","الفرنسية"],
-    answer: "البرتغالية"
-  },
-  {
-    question: "ما هو أسرع حيوان بري في العالم؟",
-    options: ["الفهد","الأسد","النمر","الظبي"],
-    answer: "الفهد"
-  }, 
-  // 🔹 أضف باقي الأسئلة
+  {
+    question: "ما هي اللغة الرسمية في البرازيل؟",
+    options: ["الإسبانية","الإنجليزية","البرتغالية","الفرنسية"],
+    answer: "البرتغالية"
+  },
+  {
+    question: "ما هو أسرع حيوان بري في العالم؟",
+    options: ["الفهد","الأسد","النمر","الظبي"],
+    answer: "الفهد"
+  }, 
+  // 🔹 أضف باقي الأسئلة
 
 
   {
@@ -3206,206 +3226,206 @@ let allQuestions = [
     options: ["الإسبانية", "الإنجليزية", "البرتغالية", "الفرنسية"],
     answer: "البرتغالية"
   }, 
-  {
-    question: "أي عبارة أدق في تعريف توحيد الألوهية؟",
-    options: [
-      "الإيمان بأن الله خالق كل شيء",
-      "إفراد الله بأفعاله",
-      "إفراد الله بجميع أنواع العبادة الظاهرة والباطنة",
-      "إثبات صفات الكمال لله"
-    ],
-    answer: "إفراد الله بجميع أنواع العبادة الظاهرة والباطنة"
-  },
-  {
-    question: "أي الأقسام أنكره مشركو قريش غالبًا رغم إقرارهم بغيره؟",
-    options: [
-      "توحيد الربوبية",
-      "توحيد الأسماء والصفات",
-      "توحيد الألوهية",
-      "توحيد الإيمان"
-    ],
-    answer: "توحيد الألوهية"
-  },
-  {
-    question: "أي مما يلي يُعد خللًا في توحيد الأسماء والصفات؟",
-    options: [
-      "إثبات الصفات الواردة دون تشبيه",
-      "نفي الصفات بدعوى التنزيه",
-      "الإيمان بأسماء الله الحسنى",
-      "الإقرار بكمال الله"
-    ],
-    answer: "نفي الصفات بدعوى التنزيه"
-  },
-  {
-    question: "أي نوع من الشرك لا يُخرج من الملة لكنه ينافي كمال التوحيد؟",
-    options: [
-      "الشرك الأكبر",
-      "الشرك الخفي",
-      "الشرك الأصغر",
-      "الشرك الاعتقادي"
-    ],
-    answer: "الشرك الأصغر"
-  },
-  {
-    question: "تعليق التمائم اعتقادًا أنها سبب فقط دون تأثير ذاتي يدخل في:",
-    options: [
-      "شرك أكبر",
-      "شرك أصغر",
-      "كفر أكبر",
-      "بدعة حسنة"
-    ],
-    answer: "شرك أصغر"
-  },
-  {
-    question: "أي علاقة صحيحة بين توحيد الربوبية وتوحيد الألوهية؟",
-    options: [
-      "كل من حقق الألوهية فقد حقق الربوبية",
-      "يمكن تحقيق الألوهية دون الربوبية",
-      "الربوبية أوسع من الألوهية",
-      "لا علاقة بينهما"
-    ],
-    answer: "كل من حقق الألوهية فقد حقق الربوبية"
-  },
-  {
-    question: "أي عمل يُعد ناقضًا لتوحيد الألوهية ولو مع الاعتراف بأن الله هو الخالق؟",
-    options: [
-      "التوكل على الله",
-      "الاستعانة بالله",
-      "دعاء غير الله فيما لا يقدر عليه إلا الله",
-      "الخوف الطبيعي"
-    ],
-    answer: "دعاء غير الله فيما لا يقدر عليه إلا الله"
-  },
-  {
-    question: "الإيمان بأن الله يسمع كل الأصوات على اختلافها بلا اختلاط يدخل في:",
-    options: [
-      "توحيد الربوبية",
-      "توحيد الألوهية",
-      "توحيد الأسماء والصفات",
-      "توحيد العبادة"
-    ],
-    answer: "توحيد الأسماء والصفات"
-  },
-  {
-    question: "أي قاعدة صحيحة في باب الأسماء والصفات؟",
-    options: [
-      "الإثبات مع التمثيل",
-      "النفي المطلق للصفات",
-      "الإثبات بلا تكييف ولا تمثيل",
-      "التأويل واجب في كل الصفات"
-    ],
-    answer: "الإثبات بلا تكييف ولا تمثيل"
-  },
-  {
-    question: "أي عبارة أدق في بيان خطأ المشركين الأولين؟",
-    options: [
-      "كانوا ينكرون وجود الله",
-      "كانوا ينكرون الخلق والرزق",
-      "جعلوا وسائط بينهم وبين الله في العبادة",
-      "أنكروا البعث فقط"
-    ],
-    answer: "جعلوا وسائط بينهم وبين الله في العبادة"
-  }, 
-  {
-    question: "ما هو الضوء؟",
-    options: [
-      "موجات صوتية",
-      "نوع من الطاقة",
-      "مادة صلبة",
-      "تيار كهربائي"
-    ],
-    answer: "نوع من الطاقة"
-  },
-  {
-    question: "ما سرعة الضوء في الفراغ تقريبًا؟",
-    options: [
-      "300 كم/ث",
-      "3000 كم/ث",
-      "300,000 كم/ث",
-      "3,000,000 كم/ث"
-    ],
-    answer: "300,000 كم/ث"
-  },
-  {
-    question: "أي مما يلي يُعد مصدرًا طبيعيًا للضوء؟",
-    options: [
-      "المصباح الكهربائي",
-      "الشمعة",
-      "الشمس",
-      "شاشة الهاتف"
-    ],
-    answer: "الشمس"
-  },
-  {
-    question: "ماذا يحدث للضوء عندما يسقط على مرآة مستوية؟",
-    options: [
-      "ينكسر",
-      "يمتص",
-      "ينعكس",
-      "يختفي"
-    ],
-    answer: "ينعكس"
-  },
-  {
-    question: "الظل يتكون عندما؟",
-    options: [
-      "يمر الضوء في الهواء",
-      "يمر الضوء في الماء",
-      "يعترض جسمٌ غير شفاف مسار الضوء",
-      "ينكسر الضوء"
-    ],
-    answer: "يعترض جسمٌ غير شفاف مسار الضوء"
-  },
-  {
-    question: "أي الأجسام التالية يسمح بمرور الضوء كليًا؟",
-    options: [
-      "الخشب",
-      "الزجاج الشفاف",
-      "الحديد",
-      "البلاستيك المعتم"
-    ],
-    answer: "الزجاج الشفاف"
-  },
-  {
-    question: "انكسار الضوء يحدث عندما؟",
-    options: [
-      "يسير في خط مستقيم",
-      "ينعكس عن سطح",
-      "ينتقل من وسط شفاف إلى وسط شفاف آخر",
-      "يُمتص بالكامل"
-    ],
-    answer: "ينتقل من وسط شفاف إلى وسط شفاف آخر"
-  },
-  {
-    question: "ما لون الضوء الذي ينكسر أكثر عند مروره في المنشور؟",
-    options: [
-      "الأحمر",
-      "الأصفر",
-      "الأخضر",
-      "البنفسجي"
-    ],
-    answer: "البنفسجي"
-  },
-  {
-    question: "أي مما يلي ليس من خصائص الضوء؟",
-    options: [
-      "يسير في خطوط مستقيمة",
-      "يمكن أن ينعكس",
-      "له كتلة كبيرة",
-      "يمكن أن ينكسر"
-    ],
-    answer: "له كتلة كبيرة"
-  },
-  {
-    question: "لماذا نرى الأجسام؟",
-    options: [
-      "لأنها تصدر حرارة",
-      "لأنها تعكس الضوء إلى أعيننا",
-      "لأنها تمتص الضوء",
-      "لأنها شفافة"
-    ],
-    answer: "لأنها تعكس الضوء إلى أعيننا"
-  }, 
+  {
+    question: "أي عبارة أدق في تعريف توحيد الألوهية؟",
+    options: [
+      "الإيمان بأن الله خالق كل شيء",
+      "إفراد الله بأفعاله",
+      "إفراد الله بجميع أنواع العبادة الظاهرة والباطنة",
+      "إثبات صفات الكمال لله"
+    ],
+    answer: "إفراد الله بجميع أنواع العبادة الظاهرة والباطنة"
+  },
+  {
+    question: "أي الأقسام أنكره مشركو قريش غالبًا رغم إقرارهم بغيره؟",
+    options: [
+      "توحيد الربوبية",
+      "توحيد الأسماء والصفات",
+      "توحيد الألوهية",
+      "توحيد الإيمان"
+    ],
+    answer: "توحيد الألوهية"
+  },
+  {
+    question: "أي مما يلي يُعد خللًا في توحيد الأسماء والصفات؟",
+    options: [
+      "إثبات الصفات الواردة دون تشبيه",
+      "نفي الصفات بدعوى التنزيه",
+      "الإيمان بأسماء الله الحسنى",
+      "الإقرار بكمال الله"
+    ],
+    answer: "نفي الصفات بدعوى التنزيه"
+  },
+  {
+    question: "أي نوع من الشرك لا يُخرج من الملة لكنه ينافي كمال التوحيد؟",
+    options: [
+      "الشرك الأكبر",
+      "الشرك الخفي",
+      "الشرك الأصغر",
+      "الشرك الاعتقادي"
+    ],
+    answer: "الشرك الأصغر"
+  },
+  {
+    question: "تعليق التمائم اعتقادًا أنها سبب فقط دون تأثير ذاتي يدخل في:",
+    options: [
+      "شرك أكبر",
+      "شرك أصغر",
+      "كفر أكبر",
+      "بدعة حسنة"
+    ],
+    answer: "شرك أصغر"
+  },
+  {
+    question: "أي علاقة صحيحة بين توحيد الربوبية وتوحيد الألوهية؟",
+    options: [
+      "كل من حقق الألوهية فقد حقق الربوبية",
+      "يمكن تحقيق الألوهية دون الربوبية",
+      "الربوبية أوسع من الألوهية",
+      "لا علاقة بينهما"
+    ],
+    answer: "كل من حقق الألوهية فقد حقق الربوبية"
+  },
+  {
+    question: "أي عمل يُعد ناقضًا لتوحيد الألوهية ولو مع الاعتراف بأن الله هو الخالق؟",
+    options: [
+      "التوكل على الله",
+      "الاستعانة بالله",
+      "دعاء غير الله فيما لا يقدر عليه إلا الله",
+      "الخوف الطبيعي"
+    ],
+    answer: "دعاء غير الله فيما لا يقدر عليه إلا الله"
+  },
+  {
+    question: "الإيمان بأن الله يسمع كل الأصوات على اختلافها بلا اختلاط يدخل في:",
+    options: [
+      "توحيد الربوبية",
+      "توحيد الألوهية",
+      "توحيد الأسماء والصفات",
+      "توحيد العبادة"
+    ],
+    answer: "توحيد الأسماء والصفات"
+  },
+  {
+    question: "أي قاعدة صحيحة في باب الأسماء والصفات؟",
+    options: [
+      "الإثبات مع التمثيل",
+      "النفي المطلق للصفات",
+      "الإثبات بلا تكييف ولا تمثيل",
+      "التأويل واجب في كل الصفات"
+    ],
+    answer: "الإثبات بلا تكييف ولا تمثيل"
+  },
+  {
+    question: "أي عبارة أدق في بيان خطأ المشركين الأولين؟",
+    options: [
+      "كانوا ينكرون وجود الله",
+      "كانوا ينكرون الخلق والرزق",
+      "جعلوا وسائط بينهم وبين الله في العبادة",
+      "أنكروا البعث فقط"
+    ],
+    answer: "جعلوا وسائط بينهم وبين الله في العبادة"
+  }, 
+  {
+    question: "ما هو الضوء؟",
+    options: [
+      "موجات صوتية",
+      "نوع من الطاقة",
+      "مادة صلبة",
+      "تيار كهربائي"
+    ],
+    answer: "نوع من الطاقة"
+  },
+  {
+    question: "ما سرعة الضوء في الفراغ تقريبًا؟",
+    options: [
+      "300 كم/ث",
+      "3000 كم/ث",
+      "300,000 كم/ث",
+      "3,000,000 كم/ث"
+    ],
+    answer: "300,000 كم/ث"
+  },
+  {
+    question: "أي مما يلي يُعد مصدرًا طبيعيًا للضوء؟",
+    options: [
+      "المصباح الكهربائي",
+      "الشمعة",
+      "الشمس",
+      "شاشة الهاتف"
+    ],
+    answer: "الشمس"
+  },
+  {
+    question: "ماذا يحدث للضوء عندما يسقط على مرآة مستوية؟",
+    options: [
+      "ينكسر",
+      "يمتص",
+      "ينعكس",
+      "يختفي"
+    ],
+    answer: "ينعكس"
+  },
+  {
+    question: "الظل يتكون عندما؟",
+    options: [
+      "يمر الضوء في الهواء",
+      "يمر الضوء في الماء",
+      "يعترض جسمٌ غير شفاف مسار الضوء",
+      "ينكسر الضوء"
+    ],
+    answer: "يعترض جسمٌ غير شفاف مسار الضوء"
+  },
+  {
+    question: "أي الأجسام التالية يسمح بمرور الضوء كليًا؟",
+    options: [
+      "الخشب",
+      "الزجاج الشفاف",
+      "الحديد",
+      "البلاستيك المعتم"
+    ],
+    answer: "الزجاج الشفاف"
+  },
+  {
+    question: "انكسار الضوء يحدث عندما؟",
+    options: [
+      "يسير في خط مستقيم",
+      "ينعكس عن سطح",
+      "ينتقل من وسط شفاف إلى وسط شفاف آخر",
+      "يُمتص بالكامل"
+    ],
+    answer: "ينتقل من وسط شفاف إلى وسط شفاف آخر"
+  },
+  {
+    question: "ما لون الضوء الذي ينكسر أكثر عند مروره في المنشور؟",
+    options: [
+      "الأحمر",
+      "الأصفر",
+      "الأخضر",
+      "البنفسجي"
+    ],
+    answer: "البنفسجي"
+  },
+  {
+    question: "أي مما يلي ليس من خصائص الضوء؟",
+    options: [
+      "يسير في خطوط مستقيمة",
+      "يمكن أن ينعكس",
+      "له كتلة كبيرة",
+      "يمكن أن ينكسر"
+    ],
+    answer: "له كتلة كبيرة"
+  },
+  {
+    question: "لماذا نرى الأجسام؟",
+    options: [
+      "لأنها تصدر حرارة",
+      "لأنها تعكس الضوء إلى أعيننا",
+      "لأنها تمتص الضوء",
+      "لأنها شفافة"
+    ],
+    answer: "لأنها تعكس الضوء إلى أعيننا"
+  }, 
 ];
 
 // ===== متغيرات =====
@@ -3417,155 +3437,132 @@ let questionTime = 10;
 
 // ===== التخزين =====
 function getUsedQuestions(){
-  return JSON.parse(localStorage.getItem("usedQuestions")) || [];
+  return JSON.parse(localStorage.getItem("usedQuestions")) || [];
 }
 function saveUsedQuestions(arr){
-  localStorage.setItem("usedQuestions", JSON.stringify(arr));
+  localStorage.setItem("usedQuestions", JSON.stringify(arr));
 }
 
 // ===== خلط =====
 function shuffleArray(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    let j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
+  for(let i = arr.length - 1; i > 0; i--){
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
 // ===== بدء اللعبة =====
 function startGame(){
-  let used = getUsedQuestions();
+  let used = getUsedQuestions();
 
-  if(used.length >= allQuestions.length){
-    used = [];
-    saveUsedQuestions([]);
-  }
+  if(used.length >= allQuestions.length){
+    used = [];
+    saveUsedQuestions([]);
+  }
 
-  let available = allQuestions.filter((q,i)=>!used.includes(i));
-  questions = shuffleArray(available);
+  let available = allQuestions.filter((q,i)=>!used.includes(i));
+  questions = shuffleArray(available);
 
-  currentQuestion = 0;
-  prize = 0;
+  currentQuestion = 0;
+  prize = 0;
 
-  document.getElementById("card").innerHTML = `
-    <div id="timer">⏱️ الوقت المتبقي: 10</div>
-    <div id="question"></div>
-    <div class="options" id="options"></div>
-    <div id="score">الجائزة: 0 ريال</div>
-  `;
+  document.getElementById("card").innerHTML = `
+    <div id="timer">⏱️ الوقت المتبقي: 30</div>
+    <div id="question"></div>
+    <div class="options" id="options"></div>
+    <div id="score">الجائزة: 0 ريال</div>
+  `;
 
-  showQuestion();
+  showQuestion();
 }
 
 // ===== المؤقت =====
 function startTimer(){
-  clearInterval(timerInterval);
-  questionTime = 10;
+  clearInterval(timerInterval);
+  questionTime = 30;
 
-  timerInterval = setInterval(()=>{
-    document.getElementById("timer").innerText =
-      `⏱️ الوقت المتبقي: ${questionTime}`;
+  timerInterval = setInterval(()=>{
+    document.getElementById("timer").innerText =
+      `⏱️ الوقت المتبقي: ${questionTime}`;
 
-    if(questionTime <= 0){
-      clearInterval(timerInterval);
-      endGame("⏰ انتهى الوقت!");
-    }
-    questionTime--;
-  },1000);
+    if(questionTime <= 0){
+      clearInterval(timerInterval);
+      endGame("⏰ انتهى الوقت!");
+    }
+    questionTime--;
+  },1000);
 }
 
 // ===== عرض السؤال =====
 function showQuestion(){
-  if(currentQuestion >= questions.length){
-    showWinner();
-    return;
-  }
+  if(currentQuestion >= questions.length){
+    showWinner();
+    return;
+  }
 
-  document.getElementById("question").innerHTML =
-    `سؤال ${currentQuestion + 1}<br><br>${questions[currentQuestion].question}`;
+  document.getElementById("question").innerHTML =
+    `سؤال ${currentQuestion + 1}<br><br>${questions[currentQuestion].question}`;
 
-  let optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
+  let optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
 
-  shuffleArray(questions[currentQuestion].options).forEach(opt=>{
-    let btn = document.createElement("button");
-    btn.innerText = opt;
-    btn.onclick = ()=>checkAnswer(opt);
-    optionsDiv.appendChild(btn);
-  });
+  shuffleArray(questions[currentQuestion].options).forEach(opt=>{
+    let btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = ()=>checkAnswer(opt);
+    optionsDiv.appendChild(btn);
+  });
 
-  startTimer();
+  startTimer();
 }
 
 // ===== التحقق =====
 function checkAnswer(selected){
-  clearInterval(timerInterval);
-  let correct = questions[currentQuestion].answer;
-  let buttons = document.querySelectorAll(".options button");
+  clearInterval(timerInterval);
+  let correct = questions[currentQuestion].answer;
+  let buttons = document.querySelectorAll(".options button");
 
-  buttons.forEach(btn=>{
-    if(btn.innerText === correct) btn.classList.add("correct");
-    if(btn.innerText === selected && selected !== correct)
-      btn.classList.add("wrong");
-    btn.disabled = true;
-  });
+  buttons.forEach(btn=>{
+    if(btn.innerText === correct) btn.classList.add("correct");
+    if(btn.innerText === selected && selected !== correct)
+      btn.classList.add("wrong");
+    btn.disabled = true;
+  });
 
-  if(selected === correct){
-    prize += 20;
+  if(selected === correct){
+    prize += 20;
 
-    let index = allQuestions.findIndex(q=>q.question===questions[currentQuestion].question);
-    let used = getUsedQuestions();
-    if(!used.includes(index)){
-      used.push(index);
-      saveUsedQuestions(used);
-    }
+    let index = allQuestions.findIndex(q=>q.question===questions[currentQuestion].question);
+    let used = getUsedQuestions();
+    if(!used.includes(index)){
+      used.push(index);
+      saveUsedQuestions(used);
+    }
 
-    currentQuestion++;
-    document.getElementById("score").innerText = `الجائزة: ${prize} ريال`;
-    setTimeout(showQuestion,1200);
-  }else{
-    setTimeout(()=>endGame("❌ إجابة خاطئة!"),1200);
-function useFifty(){
-if(!lifelines.fifty)return;
-lifelines.fifty=false;fifty.classList.add("disabled");
-let cor=questions[currentQuestion].a;
-[...document.querySelectorAll("#options button")]
-.filter(b=>b.innerText!==cor)
-.sort(()=>0.5-Math.random()).slice(0,2)
-.forEach(b=>b.style.display="none");
-}
-
-function useAudience(){
-if(!lifelines.audience)return;
-lifelines.audience=false;audience.classList.add("disabled");
-alert("الجمهور يرجح الإجابة الصحيحة 😉");
-}
-
-function useSkip(){
-if(!lifelines.skip)return;
-lifelines.skip=false;skip.classList.add("disabled");
-prize+=100;
-currentQuestion++;
-showQuestion();
-}
-  }
+    currentQuestion++;
+    document.getElementById("score").innerText = `الجائزة: ${prize} ريال`;
+    setTimeout(showQuestion,1200);
+  }else{
+    setTimeout(()=>endGame("❌ إجابة خاطئة!"),1200);
+  }
 }
 
 // ===== النهاية =====
 function showWinner(){
-  document.getElementById("card").innerHTML = `
-    <h2 style="font-size:30px">🏆 انتهت الأسئلة</h2>
-    <p style="font-size:24px">الجائزة: ${prize} ريال</p>
-    <button class="start-btn" onclick="startGame()">إعادة اللعب</button>
-  `;
+  document.getElementById("card").innerHTML = `
+    <h2 style="font-size:30px">🏆 انتهت الأسئلة</h2>
+    <p style="font-size:24px">الجائزة: ${prize} ريال</p>
+    <button class="start-btn" onclick="startGame()">إعادة اللعب</button>
+  `;
 }
 
 function endGame(msg){
-  document.getElementById("card").innerHTML = `
-    <h2 style="font-size:28px">${msg}</h2>
-    <p style="font-size:24px">الجائزة: ${prize} ريال</p>
-    <button class="start-btn" onclick="startGame()">إعادة اللعب</button>
-  `;
+  document.getElementById("card").innerHTML = `
+    <h2 style="font-size:28px">${msg}</h2>
+    <p style="font-size:24px">الجائزة: ${prize} ريال</p>
+    <button class="start-btn" onclick="startGame()">إعادة اللعب</button>
+  `;
 }
 </script>
 
