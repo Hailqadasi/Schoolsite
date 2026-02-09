@@ -3525,6 +3525,29 @@ function checkAnswer(selected){
     setTimeout(showQuestion,1200);
   }else{
     setTimeout(()=>endGame("❌ إجابة خاطئة!"),1200);
+function useFifty(){
+if(!lifelines.fifty)return;
+lifelines.fifty=false;fifty.classList.add("disabled");
+let cor=questions[currentQuestion].a;
+[...document.querySelectorAll("#options button")]
+.filter(b=>b.innerText!==cor)
+.sort(()=>0.5-Math.random()).slice(0,2)
+.forEach(b=>b.style.display="none");
+}
+
+function useAudience(){
+if(!lifelines.audience)return;
+lifelines.audience=false;audience.classList.add("disabled");
+alert("الجمهور يرجح الإجابة الصحيحة 😉");
+}
+
+function useSkip(){
+if(!lifelines.skip)return;
+lifelines.skip=false;skip.classList.add("disabled");
+prize+=100;
+currentQuestion++;
+showQuestion();
+}
   }
 }
 
