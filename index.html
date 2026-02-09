@@ -1,172 +1,139 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>تفعيل التطبيق</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسابقة أجمل صورة</title>
 
 <style>
-body{font-family:tahoma;text-align:center;background:#f5f5f5}
-.box{margin:50px auto;width:300px;background:#fff;padding:20px;border-radius:8px}
-input,button{width:100%;padding:10px;margin-top:10px}
-button{background:#28a745;color:#fff;border:0;cursor:pointer}
-#acSection{display:none}
-#timeLeft{color:#555;font-size:14px;margin-top:15px;background:#f9f9f9;padding:8px;border-radius:4px;direction:ltr}
+body{
+    font-family: Arial;
+    background:#f5f5f5;
+    margin:0;
+    padding:15px;
+}
+h2{text-align:center}
+.box{
+    background:#fff;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+img{
+    max-width:100%;
+    border-radius:10px;
+}
+button{
+    padding:8px 15px;
+    border:none;
+    border-radius:6px;
+    background:#007bff;
+    color:#fff;
+    cursor:pointer;
+}
+.vote{
+    background:#28a745;
+}
+.best{
+    border:3px solid gold;
+}
 </style>
 </head>
 
 <body>
 
-<div class="box" id="activationBox">
-  <h3>أدخل كود التفعيل</h3>
-  <input id="code" placeholder="كود الكرت">
-  <button id="activateBtn">تفعيل</button>
-  <p id="msg"></p>
+<h2>📸 مسابقة أجمل صورة</h2>
+
+<!-- رفع صورة -->
+<div class="box">
+    <input type="file" id="imageInput" accept="image/*" capture="environment">
+    <br><br>
+    <button onclick="addImage()">نشر الصورة</button>
 </div>
 
-<div class="box" id="acSection">
-  <h3>قسم AC</h3>
-  <p>✅ تم تفعيل التطبيق</p>
-  <div id="timeLeft"></div>
-  <button id="goAcBtn">الدخول</button>
+<!-- أجمل صورة -->
+<div class="box">
+    <h3>🏆 أجمل صورة</h3>
+    <div id="bestImage">لا توجد صور بعد</div>
+</div>
+
+<!-- كل الصور -->
+<div class="box">
+    <h3>⭐ الصور المشاركة</h3>
+    <div id="images"></div>
 </div>
 
 <script>
-window.onload = async function(){
+let images = JSON.parse(localStorage.getItem("images") || "[]");
+const voterId = localStorage.getItem("voterId") || Date.now().toString();
+localStorage.setItem("voterId", voterId);
 
-  const { createClient } = supabase;
+// إضافة صورة
+function addImage(){
+    const file = imageInput.files[0];
+    if(!file){ alert("اختر صورة"); return; }
 
-  const client = createClient(
-    "https://lhzyuezkfnsdkufvatzu.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxoenl1ZXprZm5zZGt1ZnZhdHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDYzOTYsImV4cCI6MjA4MTgyMjM5Nn0.1Bdzz52Abm3PSlnzOWlSKS2RVMqgkiOekA38abGScKA"
-  );
+    const reader = new FileReader();
+    reader.onload = () => {
+        images.push({
+            id: Date.now(),
+            src: reader.result,
+            votes: 0,
+            voters: []
+        });
+        save();
+        imageInput.value = "";
+    };
+    reader.readAsDataURL(file);
+}
 
-  const activationBox = document.getElementById("activationBox");
-  const acSection = document.getElementById("acSection");
-  const activateBtn = document.getElementById("activateBtn");
-  const goAcBtn = document.getElementById("goAcBtn");
-  const msg = document.getElementById("msg");
-  const timeLeft = document.getElementById("timeLeft");
-
-  const MAX_TIME = 1 * 60 * 60 * 1000; // 1 ساعة
-  let sessionStart = Date.now();
-  let timer;
-
-  // 🔁 استرجاع بيانات التفعيل من الجهاز
-  const saved = JSON.parse(localStorage.getItem("activation_data"));
-  if(saved && saved.usedTime < MAX_TIME){
-    openAc();
-    sessionStart = Date.now();
-    startTimer();
-  } else if(saved && saved.usedTime >= MAX_TIME){
-    msg.innerHTML = "⛔ انتهت صلاحية الكرت";
-  }
-
-  // 🔘 زر التفعيل
-  activateBtn.onclick = async () => {
-    msg.innerHTML = "⏳ جاري التحقق...";
-    const code = document.getElementById("code").value.trim().toUpperCase();
-
-    if(!code){
-      msg.innerHTML = "❌ أدخل كود الكرت";
-      return;
-    }
-
-    // ✅ التحقق من وجود الكرت
-    const { data: card, error: selectError } = await client
-      .from("cards")
-      .select("*")
-      .eq("code", code)
-      .limit(1)
-      .single();
-
-    if(selectError || !card){
-      msg.innerHTML = "❌ الكرت غير موجود";
-      return;
-    }
-
-    if(card.used === true){
-      msg.innerHTML = "❌ الكرت مستخدم مسبقًا";
-      return;
-    }
-
-    // 🔄 تحديث الكرت إلى مستخدم
-    const { error: updateError } = await client
-      .from("cards")
-      .update({ used: true })
-      .eq("id", card.id);
-
-    if(updateError){
-      msg.innerHTML = "❌ لا يمكن تفعيل الكرت (تحقق من RLS)";
-      return;
-    }
-
-    // 💾 حفظ التفعيل على الجهاز
-    localStorage.setItem("activation_data", JSON.stringify({
-      usedTime: 0,
-      code: code
-    }));
-
-    openAc();
-    sessionStart = Date.now();
-    startTimer();
-  };
-
-  // ⏱ تشغيل العداد
-  function startTimer(){
-    clearInterval(timer);
-    timer = setInterval(()=>{
-      const data = JSON.parse(localStorage.getItem("activation_data"));
-      if(!data) return;
-
-      const used = data.usedTime + (Date.now() - sessionStart);
-      const remaining = MAX_TIME - used;
-
-      if(remaining <= 0){
-        endActivation();
+// تصويت
+function vote(id){
+    const img = images.find(i => i.id === id);
+    if(img.voters.includes(voterId)){
+        alert("لقد صوّت مسبقًا");
         return;
-      }
+    }
+    img.votes++;
+    img.voters.push(voterId);
+    save();
+}
 
-      const h = Math.floor(remaining / 3600000);
-      const m = Math.floor((remaining % 3600000) / 60000);
-      const s = Math.floor((remaining % 60000) / 1000);
+// حفظ وتحديث
+function save(){
+    localStorage.setItem("images", JSON.stringify(images));
+    render();
+}
 
-      timeLeft.innerHTML = `⏳ المتبقي: ${h} س ${m} د ${s} ث`;
-    },1000);
-  }
+// عرض
+function render(){
+    const imagesDiv = document.getElementById("images");
+    const bestDiv = document.getElementById("bestImage");
 
-  // ⛔ انتهاء التفعيل
-  function endActivation(){
-    clearInterval(timer);
-    localStorage.removeItem("activation_data");
-    activationBox.style.display="block";
-    acSection.style.display="none";
-    msg.innerHTML = "⛔ انتهت صلاحية الكرت";
-    timeLeft.innerHTML = "";
-  }
+    if(images.length === 0){
+        imagesDiv.innerHTML = "لا توجد صور";
+        bestDiv.innerHTML = "لا توجد صور";
+        return;
+    }
 
-  // 👁️ فتح قسم AC
-  function openAc(){
-    activationBox.style.display="none";
-    acSection.style.display="block";
-    msg.innerHTML = "";
-  }
+    // أجمل صورة
+    const best = [...images].sort((a,b)=>b.votes-a.votes)[0];
+    bestDiv.innerHTML = `
+        <img src="${best.src}">
+        <p>⭐ ${best.votes} تصويت</p>
+    `;
 
-  // 💾 حفظ الوقت عند الخروج
-  window.addEventListener("beforeunload", ()=>{
-    const data = JSON.parse(localStorage.getItem("activation_data"));
-    if(!data) return;
-    data.usedTime += Date.now() - sessionStart;
-    localStorage.setItem("activation_data", JSON.stringify(data));
-  });
+    // كل الصور
+    imagesDiv.innerHTML = images.map(img => `
+        <div class="box ${img.id===best.id?'best':''}">
+            <img src="${img.src}">
+            <p>⭐ ${img.votes}</p>
+            <button class="vote" onclick="vote(${img.id})">تصويت</button>
+        </div>
+    `).join("");
+}
 
-  // ✅ زر الدخول → فتح result.html
-  goAcBtn.onclick = () => {
-    window.location.href = "result.html";
-  };
-
-};
+render();
 </script>
 
 </body>
