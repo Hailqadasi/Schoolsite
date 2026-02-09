@@ -5,35 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مسابقة أجمل صورة</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-body{
-    font-family: Arial;
-    background:#f5f5f5;
-    margin:0;
-    padding:15px;
-}
+body{font-family:tahoma;background:#f5f5f5;margin:0;padding:10px}
 h2{text-align:center}
-.box{
-    background:#fff;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:20px;
-}
-img{
-    max-width:100%;
-    border-radius:10px;
-}
-button{
-    padding:8px 15px;
-    border:none;
-    border-radius:6px;
-    background:#007bff;
-    color:#fff;
-    cursor:pointer;
-    margin:5px;
-}
-.vote{background:#28a745}
-.delete{background:#dc3545}
+.card{background:#fff;padding:10px;margin:10px 0;border-radius:6px}
+img{max-width:100%;border-radius:6px}
+button{padding:8px 15px;margin-top:5px}
+.ad{background:#ffeeba;padding:15px;text-align:center;margin:15px 0}
 .best{border:3px solid gold}
 </style>
 </head>
@@ -42,140 +22,108 @@ button{
 
 <h2>📸 مسابقة أجمل صورة</h2>
 
-<!-- دخول المشرف -->
-<div style="text-align:center;margin-bottom:15px">
-    <button onclick="adminLogin()">🔐 دخول المشرف</button>
-</div>
+<input type="file" accept="image/*" capture="environment" id="img">
+<button onclick="upload()">📤 رفع الصورة</button>
 
-<!-- رفع صورة -->
-<div class="box">
-    <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
-    <input type="file" id="galleryInput" accept="image/*" hidden>
-
-    <button onclick="cameraInput.click()">📷 التقاط صورة</button>
-    <button onclick="galleryInput.click()">🖼️ اختيار من الجوال</button>
-</div>
-
-<!-- أجمل صورة -->
-<div class="box">
-    <h3>🏆 أجمل صورة</h3>
-    <div id="bestImage">لا توجد صور بعد</div>
-</div>
-
-<!-- الصور -->
-<div class="box">
-    <h3>⭐ الصور المشاركة</h3>
-    <div id="images"></div>
-</div>
+<div id="bestImage"></div>
+<div id="photos"></div>
 
 <script>
-let images = JSON.parse(localStorage.getItem("images") || "[]");
-let isAdmin = localStorage.getItem("isAdmin") === "true";
-const today = new Date().toDateString();
+// 🔹 ربط Supabase
+const supabase = supabase.createClient(
+  "https://hzuogtisbufdjmphgzic.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dW9ndGlzYnVmZGptcGhnemljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NTI5MTgsImV4cCI6MjA4NjIyODkxOH0.m4EYcTVIvuuxoTLIFLBuVVNdj6Fx2Af-KBv30EHIkOQ"
+);
 
-// معرف تصويت لكل جهاز
-const voterId = localStorage.getItem("voterId") || Date.now().toString();
-localStorage.setItem("voterId", voterId);
+// معرف المستخدم مؤقت
+const username = "user_" + Math.floor(Math.random()*10000);
 
-// أحداث اختيار الصور
-cameraInput.onchange = e => handleImage(e.target.files[0]);
-galleryInput.onchange = e => handleImage(e.target.files[0]);
+// رفع صورة واحدة باليوم
+async function upload(){
+    const file = img.files[0];
+    if(!file) return alert("اختر صورة");
 
-// رفع صورة (صورة واحدة يوميًا)
-function handleImage(file){
-    if(!file) return;
+    const today = new Date().toISOString().slice(0,10);
 
-    const lastUploadDay = localStorage.getItem("lastUploadDay");
-    if(lastUploadDay === today){
-        alert("❌ يمكنك إرسال صورة واحدة فقط في اليوم");
-        return;
+    // تحقق من صورة اليوم
+    const { data:existing } = await supabase
+      .from("photos")
+      .select("*")
+      .eq("username", username)
+      .eq("created_at", today);
+
+    if(existing.length>0){
+        return alert("❌ يمكنك إرسال صورة واحدة فقط اليوم");
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-        images.push({
-            id: Date.now(),
-            src: reader.result,
-            votes: 0,
-            voters: []
-        });
-        localStorage.setItem("lastUploadDay", today);
-        save();
-    };
-    reader.readAsDataURL(file);
+    const path = `${Date.now()}_${file.name}`;
+    await supabase.storage.from("photos").upload(path, file);
+
+    const url = supabase.storage.from("photos").getPublicUrl(path).data.publicUrl;
+
+    await supabase.from("photos").insert({
+        username,
+        image_url: url,
+        created_at: today
+    });
+
+    alert("✅ تم رفع الصورة");
+    loadPhotos();
 }
 
-// تصويت
-function vote(id){
-    const img = images.find(i => i.id === id);
-    if(img.voters.includes(voterId)){
-        alert("❌ لقد صوّت مسبقًا");
-        return;
-    }
-    img.votes++;
-    img.voters.push(voterId);
-    save();
-}
+// تحميل الصور وعرض أجمل صورة
+async function loadPhotos(){
+    const { data } = await supabase
+      .from("photos")
+      .select("*")
+      .order("votes",{ascending:false});
 
-// حذف صورة (للمشرف)
-function deleteImage(id){
-    if(!isAdmin) return;
-    if(!confirm("هل تريد حذف هذه الصورة؟")) return;
-
-    images = images.filter(img => img.id !== id);
-    localStorage.setItem("images", JSON.stringify(images));
-    render();
-}
-
-// دخول المشرف
-function adminLogin(){
-    const pass = prompt("أدخل كلمة مرور المشرف");
-    if(pass === "1234"){ // ← غيرها
-        isAdmin = true;
-        localStorage.setItem("isAdmin","true");
-        alert("✅ تم تفعيل وضع المشرف");
-        render();
-    }else{
-        alert("❌ كلمة المرور غير صحيحة");
-    }
-}
-
-// حفظ وعرض
-function save(){
-    localStorage.setItem("images", JSON.stringify(images));
-    render();
-}
-
-// عرض الصور
-function render(){
-    const imagesDiv = document.getElementById("images");
+    const photosDiv = document.getElementById("photos");
     const bestDiv = document.getElementById("bestImage");
 
-    if(images.length === 0){
-        imagesDiv.innerHTML = "لا توجد صور";
-        bestDiv.innerHTML = "لا توجد صور";
+    if(!data || data.length===0){
+        photosDiv.innerHTML = "لا توجد صور بعد";
+        bestDiv.innerHTML = "";
         return;
     }
 
     // أجمل صورة
-    const best = [...images].sort((a,b)=>b.votes-a.votes)[0];
+    const best = data[0];
     bestDiv.innerHTML = `
-        <img src="${best.src}">
+      <h3>🏆 أجمل صورة</h3>
+      <div class="card best">
+        <img src="${best.image_url}">
         <p>⭐ ${best.votes} تصويت</p>
+      </div>
     `;
 
-    imagesDiv.innerHTML = images.map(img => `
-        <div class="box ${img.id===best.id?'best':''}">
-            <img src="${img.src}">
-            <p>⭐ ${img.votes}</p>
-            <button class="vote" onclick="vote(${img.id})">تصويت</button>
-            ${isAdmin ? `<button class="delete" onclick="deleteImage(${img.id})">🗑️ حذف</button>` : ""}
+    let html = "";
+    data.forEach((p,i)=>{
+        if(i>0 && i%2===0){
+            html += `<div class="ad">📢 إعلانك هنا</div>`;
+        }
+
+        html += `
+        <div class="card">
+          <img src="${p.image_url}">
+          <p>❤️ ${p.votes}</p>
+          <button onclick="vote('${p.id}')">تصويت</button>
         </div>
-    `).join("");
+        `;
+    });
+
+    photosDiv.innerHTML = html;
 }
 
-render();
+// تصويت
+async function vote(id){
+    await supabase.rpc("increment_vote",{photo_id:id});
+    loadPhotos();
+}
+
+// تحميل عند فتح الصفحة
+loadPhotos();
 </script>
 
 </body>
-</html> 
+</html>
