@@ -30,13 +30,10 @@ button{
     background:#007bff;
     color:#fff;
     cursor:pointer;
+    margin:5px;
 }
-.vote{
-    background:#28a745;
-}
-.best{
-    border:3px solid gold;
-}
+.vote{background:#28a745}
+.best{border:3px solid gold}
 </style>
 </head>
 
@@ -46,9 +43,13 @@ button{
 
 <!-- رفع صورة -->
 <div class="box">
-    <input type="file" id="imageInput" accept="image/*" capture="environment">
-    <br><br>
-    <button onclick="addImage()">نشر الصورة</button>
+    <!-- كاميرا -->
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+    <!-- معرض -->
+    <input type="file" id="galleryInput" accept="image/*" hidden>
+
+    <button onclick="cameraInput.click()">📷 التقاط صورة</button>
+    <button onclick="galleryInput.click()">🖼️ اختيار من الجوال</button>
 </div>
 
 <!-- أجمل صورة -->
@@ -68,11 +69,11 @@ let images = JSON.parse(localStorage.getItem("images") || "[]");
 const voterId = localStorage.getItem("voterId") || Date.now().toString();
 localStorage.setItem("voterId", voterId);
 
-// إضافة صورة
-function addImage(){
-    const file = imageInput.files[0];
-    if(!file){ alert("اختر صورة"); return; }
+cameraInput.onchange = e => handleImage(e.target.files[0]);
+galleryInput.onchange = e => handleImage(e.target.files[0]);
 
+function handleImage(file){
+    if(!file) return;
     const reader = new FileReader();
     reader.onload = () => {
         images.push({
@@ -82,7 +83,6 @@ function addImage(){
             voters: []
         });
         save();
-        imageInput.value = "";
     };
     reader.readAsDataURL(file);
 }
@@ -91,7 +91,7 @@ function addImage(){
 function vote(id){
     const img = images.find(i => i.id === id);
     if(img.voters.includes(voterId)){
-        alert("لقد صوّت مسبقًا");
+        alert("❌ لقد صوّت مسبقًا");
         return;
     }
     img.votes++;
@@ -99,13 +99,12 @@ function vote(id){
     save();
 }
 
-// حفظ وتحديث
+// حفظ وعرض
 function save(){
     localStorage.setItem("images", JSON.stringify(images));
     render();
 }
 
-// عرض
 function render(){
     const imagesDiv = document.getElementById("images");
     const bestDiv = document.getElementById("bestImage");
@@ -116,14 +115,13 @@ function render(){
         return;
     }
 
-    // أجمل صورة
     const best = [...images].sort((a,b)=>b.votes-a.votes)[0];
+
     bestDiv.innerHTML = `
         <img src="${best.src}">
         <p>⭐ ${best.votes} تصويت</p>
     `;
 
-    // كل الصور
     imagesDiv.innerHTML = images.map(img => `
         <div class="box ${img.id===best.id?'best':''}">
             <img src="${img.src}">
