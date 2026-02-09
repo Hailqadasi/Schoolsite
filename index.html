@@ -33,6 +33,7 @@ button{
     margin:5px;
 }
 .vote{background:#28a745}
+.delete{background:#dc3545}
 .best{border:3px solid gold}
 </style>
 </head>
@@ -41,11 +42,14 @@ button{
 
 <h2>📸 مسابقة أجمل صورة</h2>
 
+<!-- دخول المشرف -->
+<div style="text-align:center;margin-bottom:15px">
+    <button onclick="adminLogin()">🔐 دخول المشرف</button>
+</div>
+
 <!-- رفع صورة -->
 <div class="box">
-    <!-- كاميرا -->
     <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
-    <!-- معرض -->
     <input type="file" id="galleryInput" accept="image/*" hidden>
 
     <button onclick="cameraInput.click()">📷 التقاط صورة</button>
@@ -58,7 +62,7 @@ button{
     <div id="bestImage">لا توجد صور بعد</div>
 </div>
 
-<!-- كل الصور -->
+<!-- الصور -->
 <div class="box">
     <h3>⭐ الصور المشاركة</h3>
     <div id="images"></div>
@@ -66,14 +70,27 @@ button{
 
 <script>
 let images = JSON.parse(localStorage.getItem("images") || "[]");
+let isAdmin = localStorage.getItem("isAdmin") === "true";
+const today = new Date().toDateString();
+
+// معرف تصويت لكل جهاز
 const voterId = localStorage.getItem("voterId") || Date.now().toString();
 localStorage.setItem("voterId", voterId);
 
+// أحداث اختيار الصور
 cameraInput.onchange = e => handleImage(e.target.files[0]);
 galleryInput.onchange = e => handleImage(e.target.files[0]);
 
+// رفع صورة (صورة واحدة يوميًا)
 function handleImage(file){
     if(!file) return;
+
+    const lastUploadDay = localStorage.getItem("lastUploadDay");
+    if(lastUploadDay === today){
+        alert("❌ يمكنك إرسال صورة واحدة فقط في اليوم");
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
         images.push({
@@ -82,6 +99,7 @@ function handleImage(file){
             votes: 0,
             voters: []
         });
+        localStorage.setItem("lastUploadDay", today);
         save();
     };
     reader.readAsDataURL(file);
@@ -99,12 +117,36 @@ function vote(id){
     save();
 }
 
+// حذف صورة (للمشرف)
+function deleteImage(id){
+    if(!isAdmin) return;
+    if(!confirm("هل تريد حذف هذه الصورة؟")) return;
+
+    images = images.filter(img => img.id !== id);
+    localStorage.setItem("images", JSON.stringify(images));
+    render();
+}
+
+// دخول المشرف
+function adminLogin(){
+    const pass = prompt("أدخل كلمة مرور المشرف");
+    if(pass === "1234"){ // ← غيرها
+        isAdmin = true;
+        localStorage.setItem("isAdmin","true");
+        alert("✅ تم تفعيل وضع المشرف");
+        render();
+    }else{
+        alert("❌ كلمة المرور غير صحيحة");
+    }
+}
+
 // حفظ وعرض
 function save(){
     localStorage.setItem("images", JSON.stringify(images));
     render();
 }
 
+// عرض الصور
 function render(){
     const imagesDiv = document.getElementById("images");
     const bestDiv = document.getElementById("bestImage");
@@ -115,8 +157,8 @@ function render(){
         return;
     }
 
+    // أجمل صورة
     const best = [...images].sort((a,b)=>b.votes-a.votes)[0];
-
     bestDiv.innerHTML = `
         <img src="${best.src}">
         <p>⭐ ${best.votes} تصويت</p>
@@ -127,6 +169,7 @@ function render(){
             <img src="${img.src}">
             <p>⭐ ${img.votes}</p>
             <button class="vote" onclick="vote(${img.id})">تصويت</button>
+            ${isAdmin ? `<button class="delete" onclick="deleteImage(${img.id})">🗑️ حذف</button>` : ""}
         </div>
     `).join("");
 }
@@ -135,4 +178,4 @@ render();
 </script>
 
 </body>
-</html>
+</html> 
