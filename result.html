@@ -85,7 +85,16 @@ body{
 <div id="card">
   <button class="start-btn" onclick="startGame()">ابدأ اللعبة</button>
 </div>
-
+<div class="card" id="card">
+  <div class="lifelines">
+    <button id="fifty" onclick="useFifty()">حذف خيارين</button>
+    <button id="audience" onclick="useAudience()">استشارة الجمهور</button>
+    <button id="skip" onclick="useSkip()">تخطي سؤال</button>
+  </div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <div class="score" id="score">الجائزة: 0 ريال</div>
+</div>
 <script>
 // ===== بنك الأسئلة =====
 let allQuestions = [
