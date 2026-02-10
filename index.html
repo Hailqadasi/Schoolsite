@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -10,11 +10,12 @@
 <style>
 body{font-family:tahoma;background:#f5f5f5;margin:0;padding:10px}
 h2{text-align:center}
-.card{background:#fff;padding:10px;margin:10px 0;border-radius:6px}
+.card{background:#fff;padding:10px;margin:10px 0;border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.2);}
 img{max-width:100%;border-radius:6px}
-button{padding:8px 15px;margin-top:5px}
+button{padding:8px 15px;margin-top:5px; cursor:pointer;}
 .ad{background:#ffeeba;padding:15px;text-align:center;margin:15px 0}
 .best{border:3px solid gold}
+.delete-btn{background:#dc3545;color:#fff;border:none;padding:5px 10px;margin-top:5px;border-radius:4px; cursor:pointer;}
 </style>
 </head>
 
@@ -35,7 +36,7 @@ const supabase = supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dW9ndGlzYnVmZGptcGhnemljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NTI5MTgsImV4cCI6MjA4NjIyODkxOH0.m4EYcTVIvuuxoTLIFLBuVVNdj6Fx2Af-KBv30EHIkOQ"
 );
 
-// معرف المستخدم مؤقت
+// معرف المستخدم مؤقت (يمكن تغييره بنظام تسجيل الدخول لاحقاً)
 const username = "user_" + Math.floor(Math.random()*10000);
 
 // رفع صورة واحدة باليوم
@@ -56,18 +57,23 @@ async function upload(){
         return alert("❌ يمكنك إرسال صورة واحدة فقط اليوم");
     }
 
+    // رفع الصورة للـ Storage
     const path = `${Date.now()}_${file.name}`;
-    await supabase.storage.from("photos").upload(path, file);
+    const { error: uploadError } = await supabase.storage.from("photos").upload(path, file);
+    if(uploadError) return alert("خطأ في رفع الصورة: " + uploadError.message);
 
-    const url = supabase.storage.from("photos").getPublicUrl(path).data.publicUrl;
+    const { data: urlData, error: urlError } = supabase.storage.from("photos").getPublicUrl(path);
+    if(urlError) return alert("خطأ في الحصول على رابط الصورة: " + urlError.message);
 
     await supabase.from("photos").insert({
         username,
-        image_url: url,
+        image_url: urlData.publicUrl,
+        votes: 0,
         created_at: today
     });
 
     alert("✅ تم رفع الصورة");
+    img.value = ""; // إعادة تعيين الحقل
     loadPhotos();
 }
 
@@ -93,12 +99,13 @@ async function loadPhotos(){
       <h3>🏆 أجمل صورة</h3>
       <div class="card best">
         <img src="${best.image_url}">
-        <p>⭐ ${best.votes} تصويت</p>
+        <p>⭐ ${best.votes || 0} تصويت</p>
       </div>
     `;
 
     let html = "";
     data.forEach((p,i)=>{
+        // إعلان بعد كل صورتين
         if(i>0 && i%2===0){
             html += `<div class="ad">📢 إعلانك هنا</div>`;
         }
@@ -106,8 +113,9 @@ async function loadPhotos(){
         html += `
         <div class="card">
           <img src="${p.image_url}">
-          <p>❤️ ${p.votes}</p>
+          <p>❤️ ${p.votes || 0}</p>
           <button onclick="vote('${p.id}')">تصويت</button>
+          <button class="delete-btn" onclick="deletePhoto('${p.id}')">حذف كمشرف</button>
         </div>
         `;
     });
@@ -115,13 +123,20 @@ async function loadPhotos(){
     photosDiv.innerHTML = html;
 }
 
-// تصويت
+// التصويت
 async function vote(id){
     await supabase.rpc("increment_vote",{photo_id:id});
     loadPhotos();
 }
 
-// تحميل عند فتح الصفحة
+// حذف الصورة كمشرف
+async function deletePhoto(id){
+    if(!confirm("هل تريد حذف هذه الصورة؟")) return;
+    await supabase.from("photos").delete().eq("id",id);
+    loadPhotos();
+}
+
+// تحميل الصور عند فتح الصفحة
 loadPhotos();
 </script>
 
