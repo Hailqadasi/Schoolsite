@@ -115,6 +115,12 @@ body{
   </div>
   <button class="start-btn" onclick="startGame()">ابدأ اللعب</button>
 </div>
+ <div class="card" id="card">
+  <div class="lifelines">
+    <button id="fifty" onclick="useFifty()">حذف خيارين</button>
+    <button id="audience" onclick="useAudience()">استشارة الجمهور</button>
+    <button id="skip" onclick="useSkip()">تخطي سؤال</button>
+  </div>
 <script>
 // ===== بنك الأسئلة =====
 let allQuestions = [
@@ -3546,6 +3552,64 @@ function checkAnswer(selected){
   }else{
     setTimeout(()=>endGame("❌ إجابة خاطئة!"),1200);
   }
+}
+// وسائل المساعدة
+function useFifty(){
+  if(!lifelines.fifty) return;
+  lifelines.fifty = false;
+  document.getElementById("fifty").classList.add("disabled");
+
+  let correct = questions[currentQuestion].answer;
+  let buttons = Array.from(document.querySelectorAll("#options button"));
+
+  let wrongs = buttons.filter(b => b.innerText !== correct && b.style.display !== "none");
+
+  wrongs.sort(() => 0.5 - Math.random());
+  wrongs.slice(0,2).forEach(b => b.style.display = "none");
+}
+
+function useAudience(){
+  if(!lifelines.audience) return;
+  lifelines.audience = false;
+  document.getElementById("audience").classList.add("disabled");
+
+  const correct = questions[currentQuestion].answer;
+  const buttons = Array.from(document.querySelectorAll("#options button")).filter(b => b.style.display !== "none");
+
+  let percentages = [];
+  let correctPercentage = Math.floor(Math.random() * 31) + 60;
+  let remaining = 100 - correctPercentage;
+
+  let wrongs = buttons.filter(b => b.innerText !== correct);
+  wrongs.forEach((b, i) => {
+    if(i === wrongs.length - 1){
+      percentages.push(remaining);
+    } else {
+      let val = Math.floor(Math.random() * (remaining + 1));
+      percentages.push(val);
+      remaining -= val;
+    }
+  });
+
+  let message = "استشارة الجمهور:\n";
+  buttons.forEach(b => {
+    if(b.innerText === correct){
+      message += `${b.innerText}: ${correctPercentage}%\n`;
+    } else {
+      message += `${b.innerText}: ${percentages.shift()}%\n`;
+    }
+  });
+
+  alert(message);
+}
+
+function useSkip(){
+  if(!lifelines.skip) return;
+  lifelines.skip = false;
+  document.getElementById("skip").classList.add("disabled");
+  prize += 100;
+  currentQuestion++;
+  showQuestion();
 }
 
 // ===== النهاية =====
