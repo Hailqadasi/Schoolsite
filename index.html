@@ -3,144 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مسابقة أجمل صورة</title>
+<title>تفعيل التطبيق</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-body{font-family:tahoma;background:#f5f5f5;margin:0;padding:10px}
-h2{text-align:center;margin-bottom:20px;}
-.card{background:#fff;padding:10px;margin:10px 0;border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.2);}
-img{max-width:100%;border-radius:6px; display:block;}
-button{padding:8px 15px;margin-top:5px; cursor:pointer;}
-.ad{background:#ffeeba;padding:15px;text-align:center;margin:15px 0;}
-.best{border:3px solid gold;}
-.delete-btn{background:#dc3545;color:#fff;border:none;padding:5px 10px;margin-top:5px;border-radius:4px; cursor:pointer;}
-.vote-btn{background:#007bff;color:#fff;border:none;padding:5px 10px;margin-top:5px;border-radius:4px; cursor:pointer;}
-#img{margin-bottom:10px;}
+body{font-family:tahoma;text-align:center;background:#f5f5f5;margin:0;padding:0}
+.box{margin:50px auto;width:90%;max-width:350px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.1)}
+input,button{width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:5px}
+input{border:1px solid #ccc}
+button{background:#28a745;color:#fff;border:0;cursor:pointer}
+button:hover{background:#218838}
+#acSection{display:none}
+#timeLeft{color:#555;font-size:14px;margin-top:15px;background:#f9f9f9;padding:8px;border-radius:4px;direction:ltr}
+#msg{margin-top:15px;font-weight:bold;color:#333}
 </style>
 </head>
 
 <body>
 
-<h2>📸 مسابقة أجمل صورة</h2>
+<div class="box" id="activationBox">
+  <h3>أدخل كود التفعيل</h3>
+  <input id="code" placeholder="كود الكرت">
+  <button id="activateBtn">تفعيل</button>
+  <p id="msg"></p>
+</div>
 
-<!-- زر اختيار صورة من الجوال -->
-<input type="file" accept="image/*" capture="environment" id="img">
-<button onclick="upload()">📤 رفع الصورة</button>
-
-<div id="bestImage"></div>
-<div id="photos"></div>
+<div class="box" id="acSection">
+  <h3>قسم AC</h3>
+  <p>✅ تم تفعيل التطبيق بنجاح</p>
+  <div id="timeLeft"></div>
+  <button id="goAcBtn">الدخول</button>
+</div>
 
 <script>
-// 🔹 ربط Supabase
-const supabase = supabase.createClient(
-  "https://hzuogtisbufdjmphgzic.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dW9ndGlzYnVmZGptcGhnemljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NTI5MTgsImV4cCI6MjA4NjIyODkxOH0.m4EYcTVIvuuxoTLIFLBuVVNdj6Fx2Af-KBv30EHIkOQ"
-);
+window.onload = async function(){
 
-// معرف المستخدم مؤقت (يمكن تغييره بنظام تسجيل دخول لاحقاً)
-const username = "user_" + Math.floor(Math.random()*10000);
+  const { createClient } = supabase;
 
-// رفع صورة واحدة باليوم
-async function upload(){
-    const file = img.files[0];
-    if(!file) return alert("اختر صورة");
+  const client = createClient(
+    "https://lhzyuezkfnsdkufvatzu.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxoenl1ZXprZm5zZGt1ZnZhdHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDYzOTYsImV4cCI6MjA4MTgyMjM5Nn0.1Bdzz52Abm3PSlnzOWlSKS2RVMqgkiOekA38abGScKA"
+  );
 
-    const today = new Date().toISOString().slice(0,10);
+  const activationBox = document.getElementById("activationBox");
+  const acSection = document.getElementById("acSection");
+  const activateBtn = document.getElementById("activateBtn");
+  const goAcBtn = document.getElementById("goAcBtn");
+  const msg = document.getElementById("msg");
+  const timeLeft = document.getElementById("timeLeft");
 
-    // تحقق من صورة اليوم
-    const { data:existing } = await supabase
-      .from("photos")
-      .select("*")
-      .eq("username", username)
-      .eq("created_at", today);
+  const MAX_TIME = 1 * 60 * 60 * 1000; // 1 ساعة
+  let sessionStart = Date.now();
+  let timer;
 
-    if(existing.length>0){
-        return alert("❌ يمكنك إرسال صورة واحدة فقط اليوم");
+  // 🔁 استرجاع بيانات التفعيل من الجهاز
+  const saved = JSON.parse(localStorage.getItem("activation_data"));
+  if(saved && saved.usedTime < MAX_TIME){
+    openAc();
+    sessionStart = Date.now();
+    startTimer();
+  } else if(saved && saved.usedTime >= MAX_TIME){
+    msg.innerHTML = "⛔ انتهت صلاحية الكرت";
+  }
+
+  // 🔘 زر التفعيل
+  activateBtn.onclick = async () => {
+    msg.innerHTML = "⏳ جاري التحقق...";
+    const code = document.getElementById("code").value.trim().toUpperCase();
+
+    if(!code){
+      msg.innerHTML = "❌ الرجاء إدخال كود الكرت";
+      return;
     }
 
-    // رفع الصورة للـ Storage
-    const path = `${Date.now()}_${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("photos").upload(path, file);
-    if(uploadError) return alert("خطأ في رفع الصورة: " + uploadError.message);
-
-    const { data: urlData, error: urlError } = supabase.storage.from("photos").getPublicUrl(path);
-    if(urlError) return alert("خطأ في الحصول على رابط الصورة: " + urlError.message);
-
-    await supabase.from("photos").insert({
-        username,
-        image_url: urlData.publicUrl,
-        votes: 0,
-        created_at: today
-    });
-
-    alert("✅ تم رفع الصورة");
-    img.value = ""; // إعادة تعيين الحقل
-    loadPhotos();
-}
-
-// تحميل الصور وعرضها مع زر التصويت وزر حذف المشرف
-async function loadPhotos(){
-    const { data } = await supabase
-      .from("photos")
+    // ✅ التحقق من وجود الكرت
+    const { data: card, error: selectError } = await client
+      .from("cards")
       .select("*")
-      .order("votes",{ascending:false});
+      .eq("code", code)
+      .limit(1)
+      .single();
 
-    const photosDiv = document.getElementById("photos");
-    const bestDiv = document.getElementById("bestImage");
+    if(selectError || !card){
+      msg.innerHTML = "❌ الكرت غير موجود";
+      return;
+    }
 
-    if(!data || data.length===0){
-        photosDiv.innerHTML = "لا توجد صور بعد";
-        bestDiv.innerHTML = "";
+    if(card.used === true){
+      msg.innerHTML = "❌ تم استخدام هذا الكرت مسبقًا";
+      return;
+    }
+
+    // 🔄 تحديث الكرت إلى مستخدم
+    const { error: updateError } = await client
+      .from("cards")
+      .update({ used: true })
+      .eq("id", card.id);
+
+    if(updateError){
+      msg.innerHTML = "❌ لا يمكن تفعيل الكرت (تحقق من RLS)";
+      return;
+    }
+
+    // 💾 حفظ التفعيل على الجهاز
+    localStorage.setItem("activation_data", JSON.stringify({
+      usedTime: 0,
+      code: code
+    }));
+
+    openAc();
+    sessionStart = Date.now();
+    startTimer();
+  };
+
+  // ⏱ تشغيل العداد
+  function startTimer(){
+    clearInterval(timer);
+    timer = setInterval(()=>{
+      const data = JSON.parse(localStorage.getItem("activation_data"));
+      if(!data) return;
+
+      const used = data.usedTime + (Date.now() - sessionStart);
+      const remaining = MAX_TIME - used;
+
+      if(remaining <= 0){
+        endActivation();
         return;
-    }
+      }
 
-    // أجمل صورة
-    const best = data[0];
-    bestDiv.innerHTML = `
-      <h3>🏆 أجمل صورة</h3>
-      <div class="card best">
-        <img src="${best.image_url}">
-        <p>⭐ ${best.votes || 0} تصويت</p>
-      </div>
-    `;
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
 
-    let html = "";
-    data.forEach((p,i)=>{
-        // إعلان بعد كل صورتين
-        if(i>0 && i%2===0){
-            html += `<div class="ad">📢 إعلانك هنا</div>`;
-        }
+      timeLeft.innerHTML = `⏳ المتبقي: ${h} س ${m} د ${s} ث`;
+    },1000);
+  }
 
-        html += `
-        <div class="card">
-          <img src="${p.image_url}">
-          <p>❤️ ${p.votes || 0}</p>
-          <button class="vote-btn" onclick="vote('${p.id}')">تصويت</button>
-          <button class="delete-btn" onclick="deletePhoto('${p.id}')">حذف كمشرف</button>
-        </div>
-        `;
-    });
+  // ⛔ انتهاء التفعيل
+  function endActivation(){
+    clearInterval(timer);
+    localStorage.removeItem("activation_data");
+    activationBox.style.display="block";
+    acSection.style.display="none";
+    msg.innerHTML = "⛔ انتهت صلاحية الكرت";
+    timeLeft.innerHTML = "";
+  }
 
-    photosDiv.innerHTML = html;
-}
+  // 👁️ فتح قسم AC
+  function openAc(){
+    activationBox.style.display="none";
+    acSection.style.display="block";
+    msg.innerHTML = "";
+  }
 
-// التصويت
-async function vote(id){
-    await supabase.rpc("increment_vote",{photo_id:id});
-    loadPhotos();
-}
+  // 💾 حفظ الوقت عند الخروج أو إعادة تحميل الصفحة
+  window.addEventListener("beforeunload", ()=>{
+    const data = JSON.parse(localStorage.getItem("activation_data"));
+    if(!data) return;
+    data.usedTime += Date.now() - sessionStart;
+    localStorage.setItem("activation_data", JSON.stringify(data));
+  });
 
-// حذف الصورة كمشرف
-async function deletePhoto(id){
-    if(!confirm("هل تريد حذف هذه الصورة؟")) return;
-    await supabase.from("photos").delete().eq("id",id);
-    loadPhotos();
-}
-
-// تحميل الصور عند فتح الصفحة
-loadPhotos();
+  // زر الدخول - ضع هنا رابط القسم المطلوب
+  goAcBtn.onclick = ()=> location.href="https://your-site-link.com";
+};
 </script>
 
 </body>
