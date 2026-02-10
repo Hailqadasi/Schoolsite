@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -9,13 +9,15 @@
 
 <style>
 body{font-family:tahoma;background:#f5f5f5;margin:0;padding:10px}
-h2{text-align:center}
+h2{text-align:center;margin-bottom:20px;}
 .card{background:#fff;padding:10px;margin:10px 0;border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.2);}
-img{max-width:100%;border-radius:6px}
+img{max-width:100%;border-radius:6px; display:block;}
 button{padding:8px 15px;margin-top:5px; cursor:pointer;}
-.ad{background:#ffeeba;padding:15px;text-align:center;margin:15px 0}
-.best{border:3px solid gold}
+.ad{background:#ffeeba;padding:15px;text-align:center;margin:15px 0;}
+.best{border:3px solid gold;}
 .delete-btn{background:#dc3545;color:#fff;border:none;padding:5px 10px;margin-top:5px;border-radius:4px; cursor:pointer;}
+.vote-btn{background:#007bff;color:#fff;border:none;padding:5px 10px;margin-top:5px;border-radius:4px; cursor:pointer;}
+#img{margin-bottom:10px;}
 </style>
 </head>
 
@@ -23,6 +25,7 @@ button{padding:8px 15px;margin-top:5px; cursor:pointer;}
 
 <h2>📸 مسابقة أجمل صورة</h2>
 
+<!-- زر اختيار صورة من الجوال -->
 <input type="file" accept="image/*" capture="environment" id="img">
 <button onclick="upload()">📤 رفع الصورة</button>
 
@@ -36,7 +39,7 @@ const supabase = supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dW9ndGlzYnVmZGptcGhnemljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NTI5MTgsImV4cCI6MjA4NjIyODkxOH0.m4EYcTVIvuuxoTLIFLBuVVNdj6Fx2Af-KBv30EHIkOQ"
 );
 
-// معرف المستخدم مؤقت (يمكن تغييره بنظام تسجيل الدخول لاحقاً)
+// معرف المستخدم مؤقت (يمكن تغييره بنظام تسجيل دخول لاحقاً)
 const username = "user_" + Math.floor(Math.random()*10000);
 
 // رفع صورة واحدة باليوم
@@ -77,7 +80,7 @@ async function upload(){
     loadPhotos();
 }
 
-// تحميل الصور وعرض أجمل صورة
+// تحميل الصور وعرضها مع زر التصويت وزر حذف المشرف
 async function loadPhotos(){
     const { data } = await supabase
       .from("photos")
@@ -114,7 +117,7 @@ async function loadPhotos(){
         <div class="card">
           <img src="${p.image_url}">
           <p>❤️ ${p.votes || 0}</p>
-          <button onclick="vote('${p.id}')">تصويت</button>
+          <button class="vote-btn" onclick="vote('${p.id}')">تصويت</button>
           <button class="delete-btn" onclick="deletePhoto('${p.id}')">حذف كمشرف</button>
         </div>
         `;
