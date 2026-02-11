@@ -4,88 +4,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>من سيربح المليون</title>
-
 <style>
 body{
-  font-family: Tahoma, Arial, sans-serif;
-  background: linear-gradient(to bottom, #0b3d91, #1e50a2);
-  color:#fff;
-  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #0b3d91, #1e50a2);
+  color:#fff; margin:0; padding:0;
 }
-
-/* بطاقة اللعبة */
-#card{
-  max-width:650px;
-  margin:30px auto;
-  background:#001f54;
-  padding:25px;
-  border-radius:18px;
-  text-align:center;
+.card{
+  background:#001f4d;
+  width:90%; max-width:800px; margin:20px auto; padding:25px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.5);
+  text-align:center;
 }
-
-/* السؤال */
-#question{
-  font-size:28px;          /* 🔥 تكبير خط السؤال */
-  font-weight:bold;
-  margin-bottom:25px;
-  line-height:1.6;
-}
-
-/* الخيارات */
-.options button{
-  width:100%;
-  margin:12px 0;
-  padding:16px;
-  font-size:22px;          /* 🔥 تكبير خط الخيارات */
-  font-weight:bold;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  background:#ffffff;
-  color:#001f54;
-}
-
-/* عند الإجابة */
-.correct{
-  background:#28a745 !important;
-  color:#fff !important;
-}
-.wrong{
-  background:#dc3545 !important;
-  color:#fff !important;
-}
-
-/* المؤقت */
-#timer{
-  font-size:20px;
-  margin-bottom:15px;
-}
-
-/* الجائزة */
-#score{
-  font-size:20px;
-  margin-top:20px;
-  color:#ffd700;
-}
-
-/* زر البدء */
 .start-btn{
-  padding:16px 25px;
-  font-size:22px;
-  font-weight:bold;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
+  padding:12px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#ffc107;
+  color:#001f4d;
+  font-weight:bold;
+  cursor:pointer;
+  margin:5px;
+  transition:0.3s;
+}
+.start-btn:hover{
+  background:#ffca2c;
+  transform:scale(1.05);
+}
+.question{
+  font-size:22px; 
+  margin-bottom:20px;
+  line-height:1.6;
+}
+.options button{
+  width:100%;
+  padding:15px;
+  margin:8px 0;
+  font-size:18px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:#1e3c72;
+  color:#fff;
+  transition:0.3s;
+}
+.options button:hover{
+  background:#2a4a8a;
+}
+.correct{background:#28a745!important;}
+.wrong{background:#dc3545!important;}
+.score{
+  font-size:24px; 
+  margin-top:20px; 
+  color:#ffd700;
+  font-weight:bold;
+}
+#timer{
+  margin-bottom:15px;
+  font-size:20px;
+  color:#ffd700;
+}
+.checkpoint{
+  color:#28a745;
+  font-weight:bold;
+  background: rgba(40, 167, 69, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 5px 0;
+}
+.game-title{
+  color:#ffc107;
+  margin-bottom:20px;
+}
+.prize-ladder {
+  margin: 20px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.prize-ladder h4 {
+  margin-bottom: 10px;
+  color: #ffc107;
+}
+.ladder-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  margin: 3px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+.ladder-item.highlight {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid #ffc107;
 }
 </style>
 </head>
-
 <body>
-
-<div id="card">
-  <button class="start-btn" onclick="startGame()">ابدأ اللعبة</button>
+<div class="card" id="card">
+  <h2 class="game-title">🎮 من سيربح المليون</h2>
+  <div class="prize-ladder">
+    <h4>🔝 سلم الجوائز</h4>
+    <div class="ladder-item highlight"><span>السؤال 200</span><span>2000 ريال ✓</span></div>
+    <div class="ladder-item"><span>السؤال 100</span><span>1000ريال ✓</span></div>
+    <div class="ladder-item"><span>السؤال 50</span><span>500ريال ✓</span></div>
+    <div class="ladder-item"><span>البداية</span><span>0 ريال</span></div>
+  </div>
+  <button class="start-btn" onclick="startGame()">ابدأ اللعب</button>
 </div>
-
 <script>
 // ===== بنك الأسئلة =====
 let allQuestions = [
