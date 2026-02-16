@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>النتيجة النهائية</title>
+
+<style>
+body{
+    font-family:tahoma;
+    background:linear-gradient(to bottom,#0b3d91,#1e50a2);
+    text-align:center;
+    color:white;
+    padding-top:100px;
+}
+.box{
+    background:white;
+    color:black;
+    width:350px;
+    margin:auto;
+    padding:25px;
+    border-radius:15px;
+}
+button{
+    margin-top:15px;
+    padding:10px 20px;
+    font-size:16px;
+    background:#0b3d91;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+button:hover{
+    background:#062b66;
+}
+.score{
+    font-size:22px;
+    margin:15px 0;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<h1>النتيجة النهائية</h1>
+
+<div class="box">
+    <div id="phone"></div>
+    <div class="score" id="score"></div>
+    <div id="message"></div>
+
+    <button onclick="playAgain()">إعادة اللعب</button>
+    <button onclick="goHome()">الصفحة الرئيسية</button>
+</div>
+
+<script>
+let phone = localStorage.getItem("playerPhone");
+let score = localStorage.getItem("finalScore");
+
+if(!phone || score === null){
+    window.location.href = "index.html";
+}
+
+document.getElementById("phone").innerText = "رقم المتسابق: " + phone;
+document.getElementById("score").innerText = "مجموع النقاط: " + score;
+
+// رسالة حسب النقاط
+let message = "";
+
+if(score >= 50){
+    message = "🏆 أداء ممتاز! أنت بطل المسابقة!";
+}else if(score >= 30){
+    message = "👏 أداء جيد جداً!";
+}else if(score >= 10){
+    message = "👍 نتيجة جيدة، حاول مرة أخرى!";
+}else{
+    message = "😅 حظ أوفر في المرة القادمة!";
+}
+
+document.getElementById("message").innerText = message;
+
+function playAgain(){
+    localStorage.removeItem("finalScore");
+    window.location.href = "game.html";
+}
+
+function goHome(){
+    localStorage.clear();
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
