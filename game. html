@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>من سيربح المليون</title>
+
+<style>
+body{
+    font-family:tahoma;
+    background:linear-gradient(to bottom,#0b3d91,#1e50a2);
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+.box{
+    background:white;
+    color:black;
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+}
+button{
+    display:block;
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+.option{
+    background:#eee;
+}
+.option:hover{
+    background:#d4d4d4;
+}
+.correct{
+    background:green !important;
+    color:white;
+}
+.wrong{
+    background:red !important;
+    color:white;
+}
+.lifeline{
+    width:auto;
+    display:inline-block;
+    margin:5px;
+    background:orange;
+    color:black;
+    font-weight:bold;
+}
+.used{
+    background:gray !important;
+    pointer-events:none;
+}
+#score{
+    margin-top:15px;
+    font-size:18px;
+}
+</style>
+</head>
+<body>
+
+<h2>من سيربح المليون</h2>
+
+<div class="box">
+
+<div>
+    <button class="lifeline" id="fifty">50:50</button>
+    <button class="lifeline" id="audience">سؤال الجمهور</button>
+    <button class="lifeline" id="change">تبديل السؤال</button>
+</div>
+
+<hr>
+
+<div id="question"></div>
+<div id="answers"></div>
+<div id="score">النقاط: 0</div>
+
+</div>
+
+<script>
+let playerPhone = localStorage.getItem("playerPhone");
+if(!playerPhone){
+    window.location.href = "index.html";
+}
+
+let questions = [
+{
+    q: "ما هي عاصمة فرنسا؟",
+    a: ["مدريد","باريس","روما","برلين"],
+    correct: 1
+},
+{
+    q: "كم عدد كواكب المجموعة الشمسية؟",
+    a: ["7","8","9","10"],
+    correct: 1
+},
+{
+    q: "أكبر محيط في العالم هو؟",
+    a: ["الهندي","الأطلسي","الهادئ","المتجمد"],
+    correct: 2
+},
+{
+    q: "من هو مخترع المصباح الكهربائي؟",
+    a: ["نيوتن","أينشتاين","توماس إديسون","غاليلو"],
+    correct: 2
+},
+{
+    q: "كم عدد أيام الأسبوع؟",
+    a: ["5","6","7","8"],
+    correct: 2
+}
+];
+
+let current = 0;
+let score = 0;
+
+function loadQuestion(){
+    if(current >= questions.length){
+        endGame();
+        return;
+    }
+
+    document.getElementById("question").innerText = questions[current].q;
+    let answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+
+    questions[current].a.forEach((answer,index)=>{
+        let btn = document.createElement("button");
+        btn.innerText = answer;
+        btn.className = "option";
+        btn.onclick = ()=>checkAnswer(index,btn);
+        answersDiv.appendChild(btn);
+    });
+}
+
+function checkAnswer(index,button){
+    let correctIndex = questions[current].correct;
+    let buttons = document.querySelectorAll(".option");
+
+    buttons.forEach(btn=>btn.disabled = true);
+
+    if(index === correctIndex){
+        button.classList.add("correct");
+        score += 10;
+    }else{
+        button.classList.add("wrong");
+        buttons[correctIndex].classList.add("correct");
+    }
+
+    document.getElementById("score").innerText = "النقاط: " + score;
+
+    setTimeout(()=>{
+        current++;
+        loadQuestion();
+    },1500);
+}
+
+function endGame(){
+    localStorage.setItem("finalScore", score);
+    window.location.href = "result.html";
+}
+
+/* 50:50 */
+document.getElementById("fifty").onclick = function(){
+    let correctIndex = questions[current].correct;
+    let buttons = document.querySelectorAll(".option");
+
+    let removed = 0;
+    buttons.forEach((btn,index)=>{
+        if(index !== correctIndex && removed < 2){
+            btn.style.display = "none";
+            removed++;
+        }
+    });
+
+    this.classList.add("used");
+};
+
+/* سؤال الجمهور */
+document.getElementById("audience").onclick = function(){
+    let correctIndex = questions[current].correct;
+    let percent = Math.floor(Math.random()*30)+50; // الصحيح بين 50-80%
+    alert("نتيجة الجمهور:\n\n" +
+        questions[current].a[correctIndex] + " : " + percent + "%\n" +
+        "بقية الخيارات موزعة عشوائياً");
+    this.classList.add("used");
+};
+
+/* تبديل السؤال */
+document.getElementById("change").onclick = function(){
+    current++;
+    loadQuestion();
+    this.classList.add("used");
+};
+
+loadQuestion();
+</script>
+
+</body>
+</html>
