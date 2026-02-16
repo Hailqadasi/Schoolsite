@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الصدارة</title>
+
+<style>
+body{
+    font-family:tahoma;
+    background:linear-gradient(to bottom,#0b3d91,#1e50a2);
+    text-align:center;
+    color:white;
+    padding:20px;
+}
+.box{
+    background:white;
+    color:black;
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ccc;
+}
+th{
+    background:#0b3d91;
+    color:white;
+}
+.rank1{
+    background:gold;
+}
+.rank2{
+    background:silver;
+}
+.rank3{
+    background:#cd7f32;
+}
+button{
+    margin-top:15px;
+    padding:10px 20px;
+    font-size:16px;
+    background:#0b3d91;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>🏆 لوحة الصدارة</h1>
+
+<div class="box">
+    <table>
+        <thead>
+            <tr>
+                <th>المركز</th>
+                <th>رقم الهاتف</th>
+                <th>النقاط</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardBody"></tbody>
+    </table>
+
+    <button onclick="goHome()">العودة للرئيسية</button>
+</div>
+
+<script>
+let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+let tbody = document.getElementById("leaderboardBody");
+
+leaderboard.forEach((player,index)=>{
+    let row = document.createElement("tr");
+
+    if(index === 0) row.classList.add("rank1");
+    if(index === 1) row.classList.add("rank2");
+    if(index === 2) row.classList.add("rank3");
+
+    row.innerHTML = `
+        <td>${index+1}</td>
+        <td>${player.phone}</td>
+        <td>${player.score}</td>
+    `;
+
+    tbody.appendChild(row);
+});
+
+function goHome(){
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
