@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>تفعيل التطبيق</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 body{font-family:tahoma;text-align:center;background:#f5f5f5}
@@ -34,12 +34,10 @@ button{background:#28a745;color:#fff;border:0;cursor:pointer}
 
 <script>
 document.addEventListener("DOMContentLoaded", async function(){
-});
-  const { createClient } = supabase;
 
-  const client = createClient(
-    "https://lhzyuezkfnsdkufvatzu.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxoenl1ZXprZm5zZGt1ZnZhdHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDYzOTYsImV4cCI6MjA4MTgyMjM5Nn0.1Bdzz52Abm3PSlnzOWlSKS2RVMqgkiOekA38abGScKA"
+  const client = supabase.createClient(
+    "https://pbkwfmhanvffapheqepl.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBia3dmbWhhbnZmZmFwaGVxZXBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5OTAyMzUsImV4cCI6MjA4MzU2NjIzNX0.jwgrX2jYQvf2SWNW-vYd0GGdNI_8QwUsq-Ks8_hMouE"
   );
 
   const activationBox = document.getElementById("activationBox");
@@ -49,11 +47,11 @@ document.addEventListener("DOMContentLoaded", async function(){
   const msg = document.getElementById("msg");
   const timeLeft = document.getElementById("timeLeft");
 
-  const MAX_TIME = 1 * 60 * 60 * 1000; // 1 ساعة
+  const MAX_TIME = 1 * 60 * 60 * 1000; // ساعة واحدة
   let sessionStart = Date.now();
   let timer;
 
-  // 🔁 استرجاع بيانات التفعيل من الجهاز
+  // استرجاع التفعيل من الجهاز
   const saved = JSON.parse(localStorage.getItem("activation_data"));
   if(saved && saved.usedTime < MAX_TIME){
     openAc();
@@ -63,18 +61,17 @@ document.addEventListener("DOMContentLoaded", async function(){
     msg.innerHTML = "⛔ انتهت صلاحية الكرت";
   }
 
-  // 🔘 زر التفعيل
+  // زر التفعيل
   activateBtn.onclick = async () => {
+
     msg.innerHTML = "⏳ جاري التحقق...";
     const code = document.getElementById("code").value.trim().toUpperCase();
-activateBtn.onclick = async () => {
-  alert("تم الضغط على الزر");
+
     if(!code){
       msg.innerHTML = "❌ أدخل كود الكرت";
       return;
     }
 
-    // ✅ التحقق من وجود الكرت
     const { data: card, error: selectError } = await client
       .from("cards")
       .select("*")
@@ -92,7 +89,6 @@ activateBtn.onclick = async () => {
       return;
     }
 
-    // 🔄 تحديث الكرت إلى مستخدم
     const { error: updateError } = await client
       .from("cards")
       .update({ used: true })
@@ -103,7 +99,6 @@ activateBtn.onclick = async () => {
       return;
     }
 
-    // 💾 حفظ التفعيل على الجهاز لمنع إعادة الاستخدام
     localStorage.setItem("activation_data", JSON.stringify({
       usedTime: 0,
       code: code
@@ -114,7 +109,6 @@ activateBtn.onclick = async () => {
     startTimer();
   };
 
-  // ⏱ تشغيل العداد
   function startTimer(){
     clearInterval(timer);
     timer = setInterval(()=>{
@@ -137,7 +131,6 @@ activateBtn.onclick = async () => {
     },1000);
   }
 
-  // ⛔ انتهاء التفعيل
   function endActivation(){
     clearInterval(timer);
     localStorage.removeItem("activation_data");
@@ -147,14 +140,12 @@ activateBtn.onclick = async () => {
     timeLeft.innerHTML = "";
   }
 
-  // 👁️ فتح قسم AC
   function openAc(){
     activationBox.style.display="none";
     acSection.style.display="block";
     msg.innerHTML = "";
   }
 
-  // 💾 حفظ الوقت عند الخروج أو إعادة تحميل الصفحة
   window.addEventListener("beforeunload", ()=>{
     const data = JSON.parse(localStorage.getItem("activation_data"));
     if(!data) return;
@@ -162,8 +153,11 @@ activateBtn.onclick = async () => {
     localStorage.setItem("activation_data", JSON.stringify(data));
   });
 
-  // زر الدخول
-  goAcBtn.onclick = ()=> location.href = "game.html";
+  goAcBtn.onclick = () => {
+    window.location.href = "game.html";
+  };
+
+});
 </script>
 
 </body>
