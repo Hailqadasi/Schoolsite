@@ -67,7 +67,8 @@ window.onload = async function(){
   activateBtn.onclick = async () => {
     msg.innerHTML = "⏳ جاري التحقق...";
     const code = document.getElementById("code").value.trim().toUpperCase();
-
+activateBtn.onclick = async () => {
+  alert("تم الضغط على الزر");
     if(!code){
       msg.innerHTML = "❌ أدخل كود الكرت";
       return;
