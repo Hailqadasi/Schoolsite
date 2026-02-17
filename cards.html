@@ -2,21 +2,17 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تفعيل التطبيق</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-body{font-family:tahoma;text-align:center;background:#f5f5f5;margin:0;padding:0}
-.box{margin:50px auto;width:90%;max-width:350px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.1)}
-input,button{width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:5px}
-input{border:1px solid #ccc}
+body{font-family:tahoma;text-align:center;background:#f5f5f5}
+.box{margin:50px auto;width:300px;background:#fff;padding:20px;border-radius:8px}
+input,button{width:100%;padding:10px;margin-top:10px}
 button{background:#28a745;color:#fff;border:0;cursor:pointer}
-button:hover{background:#218838}
 #acSection{display:none}
 #timeLeft{color:#555;font-size:14px;margin-top:15px;background:#f9f9f9;padding:8px;border-radius:4px;direction:ltr}
-#msg{margin-top:15px;font-weight:bold;color:#333}
 </style>
 </head>
 
@@ -30,10 +26,10 @@ button:hover{background:#218838}
 </div>
 
 <div class="box" id="acSection">
-  <h3>game</h3>
-  <p>✅ تم تفعيل التطبيق بنجاح</p>
+  <h3>قسم AC</h3>
+  <p>✅ تم تفعيل التطبيق</p>
   <div id="timeLeft"></div>
-  <button id="gogameBtn">الدخول</button>
+  <button id="goAcBtn">الدخول</button>
 </div>
 
 <script>
@@ -73,7 +69,7 @@ window.onload = async function(){
     const code = document.getElementById("code").value.trim().toUpperCase();
 
     if(!code){
-      msg.innerHTML = "❌ الرجاء إدخال كود الكرت";
+      msg.innerHTML = "❌ أدخل كود الكرت";
       return;
     }
 
@@ -91,7 +87,7 @@ window.onload = async function(){
     }
 
     if(card.used === true){
-      msg.innerHTML = "❌ تم استخدام هذا الكرت مسبقًا";
+      msg.innerHTML = "❌ الكرت مستخدم مسبقًا";
       return;
     }
 
@@ -106,13 +102,13 @@ window.onload = async function(){
       return;
     }
 
-    // 💾 حفظ التفعيل على الجهاز
+    // 💾 حفظ التفعيل على الجهاز لمنع إعادة الاستخدام
     localStorage.setItem("activation_data", JSON.stringify({
       usedTime: 0,
       code: code
     }));
 
-    opengame();
+    openAc();
     sessionStart = Date.now();
     startTimer();
   };
@@ -150,8 +146,8 @@ window.onload = async function(){
     timeLeft.innerHTML = "";
   }
 
-  // 👁️ فتح قسم game
-  function open game.html(){
+  // 👁️ فتح قسم AC
+  function openAc(){
     activationBox.style.display="none";
     acSection.style.display="block";
     msg.innerHTML = "";
@@ -165,9 +161,9 @@ window.onload = async function(){
     localStorage.setItem("activation_data", JSON.stringify(data));
   });
 
-// الانتقال إلى صفحة اللعبة
-    window.location.href = "game.html";
-}
+  // زر الدخول
+  goAcBtn.onclick = ()=> location="go:g";
+};
 </script>
 
 </body>
