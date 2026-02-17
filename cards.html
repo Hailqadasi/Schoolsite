@@ -30,10 +30,10 @@ button:hover{background:#218838}
 </div>
 
 <div class="box" id="acSection">
-  <h3>قسم AC</h3>
+  <h3>game</h3>
   <p>✅ تم تفعيل التطبيق بنجاح</p>
   <div id="timeLeft"></div>
-  <button id="goAcBtn">الدخول</button>
+  <button id="gogameBtn">الدخول</button>
 </div>
 
 <script>
@@ -112,7 +112,7 @@ window.onload = async function(){
       code: code
     }));
 
-    openAc();
+    opengame();
     sessionStart = Date.now();
     startTimer();
   };
@@ -150,8 +150,8 @@ window.onload = async function(){
     timeLeft.innerHTML = "";
   }
 
-  // 👁️ فتح قسم AC
-  function openAc(){
+  // 👁️ فتح قسم game
+  function open game.html(){
     activationBox.style.display="none";
     acSection.style.display="block";
     msg.innerHTML = "";
@@ -166,7 +166,7 @@ window.onload = async function(){
   });
 
   // زر الدخول - ضع هنا رابط القسم المطلوب
-  goAcBtn.onclick = ()=> location.href="https://hailqadasi.github.io/Schoolsite/result";
+  goAcBtn.onclick = ()=> location.href="game.html";
 };
 </script>
 
