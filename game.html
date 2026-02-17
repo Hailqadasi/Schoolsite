@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -7,59 +7,107 @@
 
 <style>
 body{
-    font-family:tahoma;
-    background:linear-gradient(to bottom,#0b3d91,#1e50a2);
-    color:white;
-    text-align:center;
-    padding:20px;
+    font-family: Tahoma, sans-serif;
+    background: linear-gradient(to bottom, #0b3d91, #1e50a2);
+    color: white;
+    text-align: center;
+    padding: 20px;
 }
+
+h2{
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
 .box{
-    background:white;
-    color:black;
-    max-width:500px;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
+    background: #ffffffdd; /* خلفية شبه شفافة */
+    color: black;
+    max-width: 550px;
+    margin: auto;
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
-button{
-    display:block;
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    font-size:16px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+
+/* نص السؤال */
+#question{
+    font-size: 22px;
+    margin-bottom: 20px;
 }
-.option{
-    background:#eee;
+
+/* أزرار الإجابات */
+button.option{
+    background: linear-gradient(145deg,#f0f0f0,#d9d9d9);
+    color: #333;
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    font-size: 22px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
-.option:hover{
-    background:#d4d4d4;
+
+button.option:hover{
+    transform: scale(1.03);
+    background: linear-gradient(145deg,#e0e0e0,#c9c9c9);
 }
-.correct{
-    background:green !important;
-    color:white;
+
+button.option.correct{
+    background: #28a745;
+    color: white;
+    box-shadow: 0 0 15px #28a745aa;
 }
-.wrong{
-    background:red !important;
-    color:white;
+
+button.option.wrong{
+    background: #dc3545;
+    color: white;
+    box-shadow: 0 0 15px #dc3545aa;
 }
-.lifeline{
-    width:auto;
-    display:inline-block;
-    margin:5px;
-    background:orange;
-    color:black;
-    font-weight:bold;
+
+/* أزرار وسائل المساعدة */
+button.lifeline{
+    width: auto;
+    display: inline-block;
+    margin: 5px 8px;
+    padding: 10px 16px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(145deg,#ffa500,#ffbf40);
+    color: black;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
-.used{
-    background:gray !important;
-    pointer-events:none;
+
+button.lifeline:hover{
+    background: linear-gradient(145deg,#ffb84d,#ffc966);
+    transform: scale(1.05);
 }
+
+button.lifeline.used{
+    background: gray !important;
+    pointer-events: none;
+    color: #eee;
+}
+
+/* النقاط */
 #score{
-    margin-top:15px;
-    font-size:18px;
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* فاصل */
+hr{
+    margin:20px 0;
+    border:1px solid #ccc;
 }
 </style>
 </head>
@@ -185,7 +233,7 @@ document.getElementById("fifty").onclick = function(){
 /* سؤال الجمهور */
 document.getElementById("audience").onclick = function(){
     let correctIndex = questions[current].correct;
-    let percent = Math.floor(Math.random()*30)+50; // الصحيح بين 50-80%
+    let percent = Math.floor(Math.random()*30)+50;
     alert("نتيجة الجمهور:\n\n" +
         questions[current].a[correctIndex] + " : " + percent + "%\n" +
         "بقية الخيارات موزعة عشوائياً");
