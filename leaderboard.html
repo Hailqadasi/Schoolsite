@@ -13,6 +13,7 @@ body{
     color:white;
     padding:20px;
 }
+
 .box{
     background:white;
     color:black;
@@ -21,27 +22,34 @@ body{
     padding:20px;
     border-radius:15px;
 }
+
 table{
     width:100%;
     border-collapse:collapse;
 }
+
 th,td{
     padding:10px;
     border-bottom:1px solid #ccc;
 }
+
 th{
     background:#0b3d91;
     color:white;
 }
+
 .rank1{
     background:gold;
 }
+
 .rank2{
     background:silver;
 }
+
 .rank3{
     background:#cd7f32;
 }
+
 button{
     margin-top:15px;
     padding:10px 20px;
@@ -52,6 +60,10 @@ button{
     border-radius:8px;
     cursor:pointer;
 }
+
+.reset{
+    background:#dc3545;
+}
 </style>
 </head>
 <body>
@@ -59,43 +71,72 @@ button{
 <h1>🏆 لوحة الصدارة</h1>
 
 <div class="box">
-    <table>
-        <thead>
-            <tr>
-                <th>المركز</th>
-                <th>رقم الهاتف</th>
-                <th>النقاط</th>
-            </tr>
-        </thead>
-        <tbody id="leaderboardBody"></tbody>
-    </table>
 
-    <button onclick="goHome()">العودة للرئيسية</button>
+<table>
+<thead>
+<tr>
+<th>المركز</th>
+<th>رقم الهاتف</th>
+<th>النقاط</th>
+</tr>
+</thead>
+
+<tbody id="leaderboardBody"></tbody>
+
+</table>
+
+<button onclick="goHome()">العودة للرئيسية</button>
+
+<br>
+
+<button class="reset" onclick="resetLeaderboard()">تصفير لوحة الصدارة</button>
+
 </div>
 
 <script>
+
 let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
 let tbody = document.getElementById("leaderboardBody");
 
 leaderboard.forEach((player,index)=>{
-    let row = document.createElement("tr");
 
-    if(index === 0) row.classList.add("rank1");
-    if(index === 1) row.classList.add("rank2");
-    if(index === 2) row.classList.add("rank3");
+let row = document.createElement("tr");
 
-    row.innerHTML = `
-        <td>${index+1}</td>
-        <td>${player.phone}</td>
-        <td>${player.score}</td>
-    `;
+if(index === 0) row.classList.add("rank1");
+if(index === 1) row.classList.add("rank2");
+if(index === 2) row.classList.add("rank3");
 
-    tbody.appendChild(row);
+row.innerHTML = `
+<td>${index+1}</td>
+<td>${player.phone}</td>
+<td>${player.score}</td>
+`;
+
+tbody.appendChild(row);
+
 });
 
 function goHome(){
-    window.location.href = "index.html";
+window.location.href = "index.html";
 }
+
+function resetLeaderboard(){
+
+let confirmReset = confirm("هل تريد تصفير لوحة الصدارة؟");
+
+if(confirmReset){
+
+localStorage.removeItem("leaderboard");
+
+alert("تم تصفير لوحة الصدارة");
+
+location.reload();
+
+}
+
+}
+
 </script>
 
 </body>
