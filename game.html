@@ -139,17 +139,17 @@ let playerPhone = localStorage.getItem("playerPhone");
 if(!playerPhone){
     window.location.href = "index.html";
 }
-
-let questions = [
+// ===== بنك الأسئلة =====
+let allQuestions = [
   {
-    question: "ما هو الضوء؟",
-    options: [
-      "موجات صوتية",
-      "نوع من الطاقة",
-      "مادة صلبة",
-      "تيار كهربائي"
-    ],
-    answer: "نوع من الطاقة"
+    question: "ما هي اللغة الرسمية في البرازيل؟",
+    options: ["الإسبانية","الإنجليزية","البرتغالية","الفرنسية"],
+    answer: "البرتغالية"
+  },
+  {
+    question: "ما هو أسرع حيوان بري في العالم؟",
+    options: ["الفهد","الأسد","النمر","الظبي"],
+    answer: "الفهد"
   },
   {
     question: "ما سرعة الضوء في الفراغ تقريبًا؟",
