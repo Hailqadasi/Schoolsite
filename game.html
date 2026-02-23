@@ -21,7 +21,7 @@ h2{
 }
 
 .box{
-    background: #ffffffdd; /* خلفية شبه شفافة */
+    background: #ffffffdd;
     color: black;
     max-width: 550px;
     margin: auto;
@@ -30,13 +30,11 @@ h2{
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* نص السؤال */
 #question{
     font-size: 22px;
     margin-bottom: 20px;
 }
 
-/* أزرار الإجابات */
 button.option{
     background: linear-gradient(145deg,#f0f0f0,#d9d9d9);
     color: #333;
@@ -60,16 +58,13 @@ button.option:hover{
 button.option.correct{
     background: #28a745;
     color: white;
-    box-shadow: 0 0 15px #28a745aa;
 }
 
 button.option.wrong{
     background: #dc3545;
     color: white;
-    box-shadow: 0 0 15px #dc3545aa;
 }
 
-/* أزرار وسائل المساعدة */
 button.lifeline{
     width: auto;
     display: inline-block;
@@ -82,13 +77,6 @@ button.lifeline{
     cursor: pointer;
     background: linear-gradient(145deg,#ffa500,#ffbf40);
     color: black;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-
-button.lifeline:hover{
-    background: linear-gradient(145deg,#ffb84d,#ffc966);
-    transform: scale(1.05);
 }
 
 button.lifeline.used{
@@ -97,17 +85,27 @@ button.lifeline.used{
     color: #eee;
 }
 
-/* النقاط */
 #score{
     margin-top: 20px;
     font-size: 22px;
     font-weight: bold;
 }
 
-/* فاصل */
 hr{
     margin:20px 0;
     border:1px solid #ccc;
+}
+
+/* زر لوحة الصدارة */
+.leaderboardBtn{
+    margin-top:20px;
+    padding:12px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(145deg,#ffd700,#ffea70);
+    cursor:pointer;
+    box-shadow:0 4px 8px rgba(0,0,0,0.3);
 }
 </style>
 </head>
@@ -118,9 +116,9 @@ hr{
 <div class="box">
 
 <div>
-    <button class="lifeline" id="fifty">50:50</button>
-    <button class="lifeline" id="audience">سؤال الجمهور</button>
-    <button class="lifeline" id="change">تبديل السؤال</button>
+<button class="lifeline" id="fifty">50:50</button>
+<button class="lifeline" id="audience">سؤال الجمهور</button>
+<button class="lifeline" id="change">تبديل السؤال</button>
 </div>
 
 <hr>
@@ -131,7 +129,12 @@ hr{
 
 </div>
 
+<!-- زر لوحة الصدارة -->
+<br>
+<button class="leaderboardBtn" onclick="openLeaderboard()">لوحة الصدارة</button>
+
 <script>
+
 let playerPhone = localStorage.getItem("playerPhone");
 if(!playerPhone){
     window.location.href = "index.html";
@@ -169,85 +172,136 @@ let current = 0;
 let score = 0;
 
 function loadQuestion(){
+
     if(current >= questions.length){
         endGame();
         return;
     }
 
     document.getElementById("question").innerText = questions[current].q;
+
     let answersDiv = document.getElementById("answers");
     answersDiv.innerHTML = "";
 
     questions[current].a.forEach((answer,index)=>{
+
         let btn = document.createElement("button");
         btn.innerText = answer;
         btn.className = "option";
         btn.onclick = ()=>checkAnswer(index,btn);
+
         answersDiv.appendChild(btn);
+
     });
+
 }
 
 function checkAnswer(index,button){
+
     let correctIndex = questions[current].correct;
     let buttons = document.querySelectorAll(".option");
 
     buttons.forEach(btn=>btn.disabled = true);
 
     if(index === correctIndex){
+
         button.classList.add("correct");
         score += 10;
+
     }else{
+
         button.classList.add("wrong");
         buttons[correctIndex].classList.add("correct");
+
     }
 
     document.getElementById("score").innerText = "النقاط: " + score;
 
     setTimeout(()=>{
+
         current++;
         loadQuestion();
+
     },1500);
+
 }
 
 function endGame(){
+
     localStorage.setItem("finalScore", score);
     window.location.href = "result.html";
+
 }
 
 /* 50:50 */
 document.getElementById("fifty").onclick = function(){
+
     let correctIndex = questions[current].correct;
     let buttons = document.querySelectorAll(".option");
 
     let removed = 0;
+
     buttons.forEach((btn,index)=>{
+
         if(index !== correctIndex && removed < 2){
+
             btn.style.display = "none";
             removed++;
+
         }
+
     });
 
     this.classList.add("used");
+
 };
 
 /* سؤال الجمهور */
 document.getElementById("audience").onclick = function(){
+
     let correctIndex = questions[current].correct;
+
     let percent = Math.floor(Math.random()*30)+50;
-    alert("نتيجة الجمهور:\n\n" +
+
+    alert(
+        "نتيجة الجمهور:\n\n" +
         questions[current].a[correctIndex] + " : " + percent + "%\n" +
-        "بقية الخيارات موزعة عشوائياً");
+        "بقية الخيارات موزعة عشوائياً"
+    );
+
     this.classList.add("used");
+
 };
 
 /* تبديل السؤال */
 document.getElementById("change").onclick = function(){
+
     current++;
     loadQuestion();
     this.classList.add("used");
+
 };
 
+/* فتح لوحة الصدارة بكلمة مرور */
+
+function openLeaderboard(){
+
+    let pass = prompt("ادخل كلمة المرور");
+
+    if(pass === "1234"){
+
+        window.location.href = "leaderboard.html";
+
+    }else{
+
+        alert("كلمة المرور غير صحيحة");
+
+    }
+
+}
+
 loadQuestion();
+
 </script>
 
 </body>
