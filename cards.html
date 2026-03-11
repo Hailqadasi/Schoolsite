@@ -68,7 +68,8 @@ button {
 </div>
 
 <script>
-/* ========== Firebase ========== */
+
+/* Firebase */
 firebase.initializeApp({
   apiKey: "APIKEY",
   authDomain: "AUTHDOMAIN",
@@ -78,13 +79,14 @@ firebase.initializeApp({
   messagingSenderId: "SENDERID",
   appId: "APPID"
 });
+
 var db = firebase.database();
 
-/* ========== الإعدادات ========== */
-const DAILY_LIMIT = 5 * 60 * 60; // 5 ساعات
+/* الإعدادات */
+const DAILY_LIMIT = 5 * 60 * 60;
 const TOTAL_DAYS = 7;
 
-/* ========== Device ID ========== */
+/* Device ID */
 function getDeviceId(){
   let id = localStorage.getItem("device_id");
   if(!id){
@@ -94,10 +96,11 @@ function getDeviceId(){
   return id;
 }
 
-/* ========== العداد ========== */
+/* العداد */
 var timerInterval = null;
 
 function startUsageTimer(){
+
   let today = new Date().toDateString();
   let storedDay = localStorage.getItem("usage_day");
   let remaining = parseInt(localStorage.getItem("daily_remaining"));
@@ -118,6 +121,7 @@ function startUsageTimer(){
       endCard();
       return;
     }
+
     localStorage.setItem("usage_day", today);
     localStorage.setItem("daily_remaining", DAILY_LIMIT);
     localStorage.setItem("used_days", usedDays);
@@ -137,6 +141,7 @@ function startUsageTimer(){
   localStorage.setItem("last_active", Math.floor(Date.now()/1000));
 
   timerInterval = setInterval(function(){
+
     remaining--;
     localStorage.setItem("daily_remaining", remaining);
 
@@ -145,40 +150,51 @@ function startUsageTimer(){
     let s = remaining % 60;
 
     document.getElementById("timer").innerHTML = `
-      ⏳ المتبقي اليوم:
-      <div class="time-display">${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-      <div style="margin-top:10px;font-size:13px">
-        اليوم ${usedDays} من ${TOTAL_DAYS}
-      </div>
+    ⏳ المتبقي اليوم
+    <div class="time-display">${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
+    <div style="margin-top:10px;font-size:13px">
+    اليوم ${usedDays} من ${TOTAL_DAYS}
+    </div>
     `;
 
     if(remaining <= 0){
       clearInterval(timerInterval);
       showDailyEnd(usedDays);
     }
+
   },1000);
 }
 
 function showDailyEnd(day){
   document.getElementById("timer").innerHTML = `
-    ⏸ انتهت 5 ساعات اليوم<br>
-    📅 اليوم ${day} من ${TOTAL_DAYS}
+  ⏸ انتهت 5 ساعات اليوم<br>
+  📅 اليوم ${day} من ${TOTAL_DAYS}
   `;
 }
 
 function endCard(){
   document.getElementById("timer").innerHTML = `
-    تم التفعيل بنجاح
+  انتهت صلاحية الكرت
   `;
 }
 
-/* ========== التفعيل ========== */
-function activate(){
-  let code = document.getElementById("cardCode").value.trim();
-  if(!code){ alert("أدخل رقم الكرت"); return; }
+/* التفعيل */
 
-  db.ref("cards/"+code).once("value").then(snap=>{
-    if(!snap.exists()){ alert("الكرت غير صحيح"); return; }
+function activate(){
+
+  let code = document.getElementById("cardCode").value.trim();
+
+  if(!code){
+    alert("أدخل رقم الكرت");
+    return;
+  }
+
+  db.ref("cards/"+code).once("value").then(function(snap){
+
+    if(!snap.exists()){
+      alert("الكرت غير صحيح");
+      return;
+    }
 
     let data = snap.val();
     let device = getDeviceId();
@@ -195,9 +211,12 @@ function activate(){
       });
     }
 
-    // الانتقال إلى صفحة اللعبة
-    window.location.href = "cards.html";
+    startUsageTimer(); // تشغيل العداد
+
+  });
+
 }
+
 </script>
 
 </body>
