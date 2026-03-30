@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -38,20 +38,12 @@ th{
     color:white;
 }
 
-.rank1{
-    background:gold;
-}
-
-.rank2{
-    background:silver;
-}
-
-.rank3{
-    background:#cd7f32;
-}
+.rank1{background:gold;}
+.rank2{background:silver;}
+.rank3{background:#cd7f32;}
 
 button{
-    margin-top:15px;
+    margin-top:10px;
     padding:10px 20px;
     font-size:16px;
     background:#0b3d91;
@@ -61,16 +53,21 @@ button{
     cursor:pointer;
 }
 
-.reset{
-    background:#dc3545;
-}
+.reset{background:#dc3545;}
 </style>
 </head>
+
 <body>
 
 <h1>🏆 لوحة الصدارة</h1>
 
 <div class="box">
+
+<!-- إدخال بيانات اللاعب -->
+<input type="text" id="phone" placeholder="رقم الهاتف"><br><br>
+<input type="number" id="score" placeholder="النقاط"><br>
+
+<button onclick="addScore()">إضافة النقاط</button>
 
 <table>
 <thead>
@@ -82,22 +79,26 @@ button{
 </thead>
 
 <tbody id="leaderboardBody"></tbody>
-
 </table>
 
-<button onclick="goHome()">العودة للرئيسية</button>
-
-<br>
-
+<button onclick="goHome()">العودة للرئيسية</button><br>
 <button class="reset" onclick="resetLeaderboard()">تصفير لوحة الصدارة</button>
 
 </div>
 
 <script>
 
+// جلب البيانات
 let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
 
+// عرض البيانات
+function displayLeaderboard(){
+
 let tbody = document.getElementById("leaderboardBody");
+tbody.innerHTML = "";
+
+// ترتيب
+leaderboard.sort((a,b)=> b.score - a.score);
 
 leaderboard.forEach((player,index)=>{
 
@@ -117,25 +118,69 @@ tbody.appendChild(row);
 
 });
 
+}
+
+// حفظ أو تحديث النقاط
+function saveScore(phone, newScore){
+
+let playerIndex = leaderboard.findIndex(p => p.phone === phone);
+
+if(playerIndex !== -1){
+// تحديث
+leaderboard[playerIndex].score += newScore;
+}else{
+// جديد
+leaderboard.push({
+phone: phone,
+score: newScore
+});
+}
+
+// حفظ
+localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+
+displayLeaderboard();
+
+}
+
+// زر إضافة النقاط
+function addScore(){
+
+let phone = document.getElementById("phone").value;
+let score = parseInt(document.getElementById("score").value);
+
+if(!phone || isNaN(score)){
+alert("أدخل البيانات بشكل صحيح");
+return;
+}
+
+saveScore(phone, score);
+
+document.getElementById("phone").value = "";
+document.getElementById("score").value = "";
+
+}
+
+// العودة
 function goHome(){
 window.location.href = "index.html";
 }
 
+// تصفير
 function resetLeaderboard(){
 
 let confirmReset = confirm("هل تريد تصفير لوحة الصدارة؟");
 
 if(confirmReset){
-
 localStorage.removeItem("leaderboard");
-
-alert("تم تصفير لوحة الصدارة");
-
-location.reload();
-
+leaderboard = [];
+displayLeaderboard();
 }
 
 }
+
+// تشغيل أولي
+displayLeaderboard();
 
 </script>
 
