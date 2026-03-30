@@ -33,6 +33,7 @@ input, button {
   font-size: 18px;
   margin-bottom: 15px;
   border-radius: 10px;
+  box-sizing: border-box;
 }
 input { border: 2px solid #ddd; }
 button {
@@ -40,6 +41,11 @@ button {
   color: #fff;
   border: none;
   font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: scale(0.98);
 }
 #timer {
   margin-top: 20px;
@@ -55,6 +61,19 @@ button {
   border-radius:8px;
   font-size:20px;
 }
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 10px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 </head>
 
@@ -63,7 +82,7 @@ button {
 <div class="card">
   <h3>تفعيل التطبيق</h3>
   <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
-  <button onclick="activate()">تفعيل الآن</button>
+  <button id="activateBtn" onclick="activate()">تفعيل الآن</button>
   <div id="timer"></div>
 </div>
 
@@ -100,7 +119,6 @@ function getDeviceId(){
 var timerInterval = null;
 
 function startUsageTimer(){
-
   let today = new Date().toDateString();
   let storedDay = localStorage.getItem("usage_day");
   let remaining = parseInt(localStorage.getItem("daily_remaining"));
@@ -178,21 +196,25 @@ function endCard(){
   `;
 }
 
-/* التفعيل */
-
+/* التفعيل مع فتح صفحة اللعبة */
 function activate(){
-
   let code = document.getElementById("cardCode").value.trim();
+  let btn = document.getElementById("activateBtn");
 
   if(!code){
     alert("أدخل رقم الكرت");
     return;
   }
 
-  db.ref("cards/"+code).once("value").then(function(snap){
+  // تعطيل الزر وتغيير النص لإظهار التحميل
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span> جاري التحقق...';
 
+  db.ref("cards/"+code).once("value").then(function(snap){
     if(!snap.exists()){
-      alert("الكرت غير صحيح");
+      alert("الكرت غير صحيح ❌");
+      btn.disabled = false;
+      btn.innerHTML = "تفعيل الآن";
       return;
     }
 
@@ -200,24 +222,77 @@ function activate(){
     let device = getDeviceId();
 
     if(data.used && data.device !== device){
-      alert("الكرت مستخدم على جهاز آخر");
+      alert("الكرت مستخدم على جهاز آخر 🚫");
+      btn.disabled = false;
+      btn.innerHTML = "تفعيل الآن";
       return;
     }
 
+    // الكرت صحيح، نقوم بتحديث الحالة إذا لم يكن مستخدمًا
+    let updatePromise;
     if(!data.used){
-      db.ref("cards/"+code).update({
-        used:true,
-        device:device
+      updatePromise = db.ref("cards/"+code).update({
+        used: true,
+        device: device
       });
+    } else {
+      updatePromise = Promise.resolve(); // الكرت مستخدم بالفعل لهذا الجهاز
     }
 
-    startUsageTimer(); // تشغيل العداد
+    updatePromise.then(() => {
+      // بدء العداد (سيخزن البيانات محليًا)
+      startUsageTimer();
+      
+      // عرض رسالة نجاح ثم التوجيه إلى صفحة اللعبة بعد 0.5 ثانية
+      alert("✅ تم التفعيل بنجاح! جاري نقلك إلى اللعبة...");
+      
+      // التوجيه إلى game.html
+      window.location.href = "game.html";
+      
+    }).catch((error) => {
+      console.error("خطأ في تحديث قاعدة البيانات:", error);
+      alert("حدث خطأ أثناء التفعيل، حاول مرة أخرى.");
+      btn.disabled = false;
+      btn.innerHTML = "تفعيل الآن";
+    });
 
+  }).catch(function(error){
+    console.error("خطأ في الاتصال بقاعدة البيانات:", error);
+    alert("حدث خطأ في الاتصال بقاعدة البيانات 🔌");
+    btn.disabled = false;
+    btn.innerHTML = "تفعيل الآن";
   });
-
 }
 
-</script>
+// إذا كان المستخدم قد قام بالتفعيل مسبقًا ولديه جلسة صالحة، يمكن توجيهه مباشرة
+function checkExistingActivation(){
+  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
+  let remaining = parseInt(localStorage.getItem("daily_remaining"));
+  let today = new Date().toDateString();
+  let storedDay = localStorage.getItem("usage_day");
+  
+  // إذا كان هناك أيام مستخدمة والمتبقي غير منتهٍ (أو اليوم لم ينتهِ)
+  if(usedDays > 0 && usedDays <= TOTAL_DAYS){
+    // التحقق من أن اليوم الحالي لم ينتهِ صلاحيته
+    if(storedDay === today){
+      if(remaining > 0){
+        // تم التفعيل مسبقًا ولديه وقت متبقي، نوجهه للعبة
+        window.location.href = "game.html";
+      } else if(remaining <= 0){
+        // انتهى وقت اليوم ولكن لا يزال هناك أيام متبقية
+        // نعرض العداد ليبين أنه انتهى اليوم لكن يمكنه التفعيل غدًا
+        startUsageTimer();
+      }
+    } else {
+      // يوم جديد، نبدأ عداد اليوم الجديد
+      startUsageTimer();
+    }
+  }
+}
 
+// تنفيذ فتح الصفحة مباشرة إذا كان الكرت مفعل مسبقًا
+checkExistingActivation();
+
+</script>
 </body>
 </html>
