@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة - تحدٍ مع الوقت</title>
+    <title>مسابقة الفيزياء - تحدي المعرفة</title>
     <style>
         * {
             box-sizing: border-box;
@@ -52,7 +52,7 @@
             transition: 0.2s;
         }
         .question-text {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #1e293b;
             margin-bottom: 25px;
@@ -79,7 +79,6 @@
             background: #eef2ff;
             border-color: #f59e0b;
         }
-        /* ألوان التغذية الراجعة */
         .option-correct {
             background: #22c55e !important;
             border-color: #15803d !important;
@@ -175,9 +174,8 @@
 </head>
 <body>
 <div class="container">
-    <!-- قسم المسابقة الرئيسي -->
     <div class="card">
-        <h1>🏆 تحدي المعرفة - سباق الأوائل ؟ 🏆</h1>
+        <h1>🏆 مسابقة الفيزياء - تحدي السرعة والدقة 🏆</h1>
         <div class="info-bar">
             <span>⏱️ وقت السؤال: <strong>15 ثانية</strong></span>
             <span>📋 السؤال <span id="currentQNumber">0</span> من <span id="totalQCount">0</span></span>
@@ -196,7 +194,6 @@
         </div>
     </div>
 
-    <!-- لوحة الترتيب وقائمة المتسابقين (للجميع) -->
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>📊 قائمة المتسابقين والنتائج</h2>
@@ -217,35 +214,49 @@
             <table style="width:100%">
                 <thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th></tr></thead>
                 <tbody id="rankingTbody"></tbody>
-            </table>
+             </table>
         </div>
     </div>
 </div>
 
 <script>
-    // ------------------- الأسئلة -------------------
+    // ---------- الأسئلة الجديدة (فيزياء) ----------
     const QUESTIONS = [
-        { text: "ما عاصمة المملكة العربية السعودية؟", options: ["جدة", "الرياض", "مكة", "الدمام"], correct: "الرياض" },
-        { text: "من هو مؤسس الدولة السعودية الحديثة؟", options: ["الملك سلمان", "الملك عبدالعزيز", "الملك فهد", "الملك عبدالله"], correct: "الملك عبدالعزيز" },
-        { text: "ما أكبر قارة في العالم من حيث المساحة؟", options: ["أفريقيا", "آسيا", "أمريكا الشمالية", "أوروبا"], correct: "آسيا" },
-        { text: "كم عدد الكواكب في المجموعة الشمسية؟", options: ["7", "8", "9", "6"], correct: "8" },
-        { text: "ما العملة الرسمية لمصر؟", options: ["الريال", "الدينار", "الجنيه المصري", "الدرهم"], correct: "الجنيه المصري" }
+        { text: "جسمان كتلة كلٍّ منهما (20) كجم، أحدهما يتحرك بسرعة (40) م/ث والآخر ساكن. إذا تصادما تصادمًا التحاميًا، فإن طاقة حركة الجسم المتكوّن بعد التصادم تساوي:",
+          options: ["1000 جول", "1600 جول", "2000 جول", "3200 جول"],
+          correct: "2000 جول" },
+        { text: "توضع الأقمار الصناعية على ارتفاع يقارب (270) كم من سطح الأرض وذلك من أجل:",
+          options: ["زيادة الجاذبية الأرضية", "تقليل سرعة القمر", "الابتعاد عن مقاومة الهواء", "زيادة طاقة الوضع"],
+          correct: "الابتعاد عن مقاومة الهواء" },
+        { text: "في التصادم غير المرن فإن:",
+          options: ["كمية التحرك لا تحفظ", "طاقة الحركة قبل التصادم أكبر منها بعد التصادم", "طاقة الحركة محفوظة", "لا يحدث فقد للطاقة"],
+          correct: "طاقة الحركة قبل التصادم أكبر منها بعد التصادم" },
+        { text: "يعتمد مقدار السرعة المدارية للقمر الصناعي حول الأرض على:",
+          options: ["كتلة القمر فقط", "عجلة الجاذبية فقط", "نصف قطر المدار", "شكل القمر"],
+          correct: "نصف قطر المدار" },
+        { text: "كمية التحرك الخطي تساوي:",
+          options: ["حاصل ضرب الكتلة في العجلة", "حاصل ضرب القوة في الزمن", "حاصل ضرب الكتلة في السرعة", "حاصل ضرب السرعة في الزمن"],
+          correct: "حاصل ضرب الكتلة في السرعة" },
+        { text: "كمية التحرك الزاوي تساوي:",
+          options: ["عزم القوة × الزمن", "عزم القصور الذاتي × السرعة الزاوية", "الكتلة × السرعة", "القوة × نصف القطر"],
+          correct: "عزم القصور الذاتي × السرعة الزاوية" },
+        { text: "تؤثر على القمر الصناعي الذي يدور حول الأرض قوتان هما:",
+          options: ["الجاذبية والمغناطيسية", "الجاذبية والاحتكاك", "الجذب والطرد الناتج عن الدوران", "الدفع والمقاومة"],
+          correct: "الجذب والطرد الناتج عن الدوران" }
     ];
     const TOTAL_QS = QUESTIONS.length;
 
-    // بنية المتسابقين
-    let contestants = []; // { id, fullName, answers, currentScore, quizCompleted, currentQuestionIndex }
+    let contestants = [];
     let activeContestantId = null;
     let currentAnswersForActive = [];
     let currentQuestionIndex = 0;
     let timerInterval = null;
     let timeLeft = 15;
-    let isWaitingForTransition = false; // منع النقر أثناء التلوين والانتقال
-    let selectedButton = null;
+    let isWaitingForTransition = false;
 
     // تحميل/حفظ
     function loadData() {
-        const stored = localStorage.getItem("quiz_advanced_v2");
+        const stored = localStorage.getItem("quiz_physics_v2");
         if(stored) {
             try {
                 contestants = JSON.parse(stored);
@@ -261,13 +272,11 @@
         renderPublicLists();
     }
     function saveData() {
-        localStorage.setItem("quiz_advanced_v2", JSON.stringify(contestants));
+        localStorage.setItem("quiz_physics_v2", JSON.stringify(contestants));
         renderPublicLists();
     }
 
-    // عرض قائمة المتسابقين وجدول الترتيب
     function renderPublicLists() {
-        // قائمة المتسابقين
         const container = document.getElementById("studentsList");
         if(container) {
             if(contestants.length === 0) {
@@ -279,7 +288,6 @@
                         <span class="score-badge">${c.quizCompleted ? c.currentScore+'/'+TOTAL_QS : (c.currentScore||0)}</span>
                     </div>
                 `).join('');
-                // إضافة حدث اختيار متسابق (للمعلم أو للمتابعة)
                 document.querySelectorAll('.student-item').forEach(el => {
                     el.addEventListener('click', (e) => {
                         const id = parseInt(el.getAttribute('data-id'));
@@ -293,7 +301,6 @@
                 });
             }
         }
-        // جدول الترتيب النهائي (من أنهوا فقط)
         const ranked = contestants.filter(c => c.quizCompleted === true).sort((a,b) => b.currentScore - a.currentScore);
         const tbody = document.getElementById("rankingTbody");
         if(tbody) {
@@ -311,7 +318,6 @@
         }
     }
 
-    // تعيين المتسابق النشط واستئناف
     function setActiveContestant(contestantId) {
         const contestant = contestants.find(c => c.id === contestantId);
         if(!contestant || contestant.quizCompleted) return;
@@ -340,7 +346,6 @@
             return;
         }
         const q = QUESTIONS[currentQuestionIndex];
-        const savedAnswer = currentAnswersForActive[currentQuestionIndex];
         let optionsHtml = `<div class="options-grid">`;
         q.options.forEach(opt => {
             optionsHtml += `<button class="option-btn" data-opt="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`;
@@ -352,38 +357,29 @@
                 ${optionsHtml}
             </div>
         `;
-        // ربط أحداث الاختيار
         document.querySelectorAll('.option-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if(isWaitingForTransition) return;
                 const selected = btn.getAttribute('data-opt');
-                // منع تكرار النقر
                 isWaitingForTransition = true;
-                // إلغاء المؤقت
                 if(timerInterval) clearInterval(timerInterval);
-                // تحديد صحة الإجابة
                 const currentQ = QUESTIONS[currentQuestionIndex];
                 const isCorrect = (selected === currentQ.correct);
-                // تطبيق اللون على الزر الذي تم النقر عليه
                 if(isCorrect) {
                     btn.classList.add('option-correct');
                 } else {
                     btn.classList.add('option-wrong');
-                    // أيضاً نبحث عن الزر الصحيح ونلونه أخضر (اختياري لتعليم الإجابة الصحيحة)
                     document.querySelectorAll('.option-btn').forEach(btn2 => {
                         if(btn2.getAttribute('data-opt') === currentQ.correct) {
                             btn2.classList.add('option-correct');
                         }
                     });
                 }
-                // حفظ الإجابة في الذاكرة
                 currentAnswersForActive[currentQuestionIndex] = selected;
                 const contestant = contestants.find(c => c.id === activeContestantId);
                 if(contestant) {
                     contestant.answers = [...currentAnswersForActive];
                     contestant.currentQuestionIndex = currentQuestionIndex;
-                    // تحديث النتيجة التراكمية فوراً (سنقوم بحسابها بشكل صحيح عند الانتقال)
-                    // لكن لتحديث الواجهة نعدل currentScore لتعكس الإجابة الحالية مؤقتاً
                     let tempScore = 0;
                     for(let i=0; i<=currentQuestionIndex; i++) {
                         if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
@@ -391,7 +387,6 @@
                     contestant.currentScore = tempScore;
                     saveData();
                 }
-                // الانتقال إلى السؤال التالي بعد 0.5 ثانية لإظهار التلوين
                 setTimeout(() => {
                     moveToNextQuestion();
                 }, 500);
@@ -409,7 +404,6 @@
                 clearInterval(timerInterval);
                 timerInterval = null;
                 if(!isWaitingForTransition) {
-                    // لم يختر شيئاً -> إجابة خاطئة
                     currentAnswersForActive[currentQuestionIndex] = null;
                     const contestant = contestants.find(c => c.id === activeContestantId);
                     if(contestant) {
@@ -422,7 +416,6 @@
                         contestant.currentScore = tempScore;
                         saveData();
                     }
-                    // إظهار رسالة خاطئة (بدون تلوين زر) ثم الانتقال
                     isWaitingForTransition = true;
                     setTimeout(() => moveToNextQuestion(), 300);
                 }
@@ -445,10 +438,8 @@
     function moveToNextQuestion() {
         if(isWaitingForTransition === false && timerInterval) clearInterval(timerInterval);
         isWaitingForTransition = false;
-        // حساب النتيجة النهائية للسؤال الحالي تمت بالفعل في حدث النقر أو انتهاء الوقت
         const contestant = contestants.find(c => c.id === activeContestantId);
         if(contestant && !contestant.quizCompleted) {
-            // تحديث نهائي
             let finalScore = 0;
             for(let i=0; i<=currentQuestionIndex; i++) {
                 if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
@@ -469,7 +460,6 @@
 
     function finalizeContestant(contestant) {
         if(contestant.quizCompleted) return;
-        // الحساب النهائي
         let finalScore = 0;
         for(let i=0; i<TOTAL_QS; i++) {
             if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
@@ -486,7 +476,6 @@
         renderPublicLists();
     }
 
-    // تسجيل متسابق جديد
     function registerNewContestant() {
         const nameInput = document.getElementById("fullNameInput");
         let fullName = nameInput.value.trim();
@@ -520,13 +509,12 @@
         setActiveContestant(newId);
     }
 
-    // حذف كل البيانات (للمعلم فقط)
     function resetAll() {
         if(confirm("⚠️ تحذير: سيتم حذف جميع المتسابقين والنتائج بشكل نهائي. هل أنت متأكد؟")) {
             contestants = [];
             activeContestantId = null;
             if(timerInterval) clearInterval(timerInterval);
-            localStorage.removeItem("quiz_advanced_v2");
+            localStorage.removeItem("quiz_physics_v2");
             document.getElementById("quizArea").style.display = "none";
             document.getElementById("contestantLoginArea").style.display = "block";
             renderPublicLists();
@@ -534,7 +522,6 @@
         }
     }
 
-    // فتح لوحة المعلم بكلمة مرور
     function unlockTeacher() {
         const password = document.getElementById("teacherPassword").value;
         if(password === "admin123") {
@@ -556,7 +543,6 @@
         });
     }
 
-    // ربط الأحداث
     window.onload = () => {
         loadData();
         document.getElementById("registerNewBtn").addEventListener("click", registerNewContestant);
