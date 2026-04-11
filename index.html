@@ -3,82 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دخول المتسابق</title>
+<title>تفعيل التطبيق</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{
-    font-family:tahoma;
-    background:linear-gradient(to bottom,#0b3d91,#1e50a2);
-    text-align:center;
-    color:white;
-    padding-top:100px;
+body { 
+  font-family: Tahoma; 
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
-.box{
-    background:white;
-    color:black;
-    width:320px;
-    margin:auto;
-    padding:25px;
-    border-radius:15px;
+.card { 
+  background: #fff; 
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  text-align: center;
 }
-input{
-    width:90%;
-    padding:12px;
-    font-size:18px;
-    text-align:center;
-    margin-top:15px;
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  font-size: 16px;
 }
-button{
-    margin-top:20px;
-    padding:12px 25px;
-    font-size:18px;
-    background:#0b3d91;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-button:hover{
-    background:#062b66;
-}
-.error{
-    color:red;
-    margin-top:10px;
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 </style>
 </head>
+
 <body>
 
-<h1>من سيربح المليون</h1>
-
-<div class="box">
-    <h3>أدخل رقم هاتفك</h3>
-    <input type="tel" id="phone" placeholder="7xxxxxxxx">
-    <br>
-    <button onclick="startGame()">ابدأ اللعب</button>
-    <div class="error" id="error"></div>
+<div class="card">
+  <h3>تفعيل التطبيق</h3>
+  <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
+  <button onclick="activate()">تفعيل</button>
 </div>
 
 <script>
-function startGame(){
-    let phone = document.getElementById("phone").value.trim();
-    let error = document.getElementById("error");
 
-    // التحقق من أن الرقم يمني (9 أرقام ويبدأ بـ 7)
-    let regex = /^7\d{8}$/;
+/* Firebase */
+firebase.initializeApp({
+  apiKey: "APIKEY",
+  authDomain: "AUTHDOMAIN",
+  databaseURL: "https://appcards-c4730-default-rtdb.firebaseio.com",
+  projectId: "PROJECTID"
+});
 
-    if(!regex.test(phone)){
-        error.innerText = "الرجاء إدخال رقم يمني صحيح مكون من 9 أرقام";
-        return;
+var db = firebase.database();
+
+/* إنشاء معرف للجهاز */
+function getDeviceId(){
+  let id = localStorage.getItem("device_id");
+  if(!id){
+    id = "dev-" + Math.random().toString(36).substr(2,16);
+    localStorage.setItem("device_id", id);
+  }
+  return id;
+}
+
+/* التفعيل */
+function activate(){
+  let code = document.getElementById("cardCode").value.trim();
+
+  if(!code){
+    alert("أدخل رقم الكرت");
+    return;
+  }
+
+  db.ref("cards/" + code).once("value").then(function(snap){
+
+    // تحقق هل الكرت موجود
+    if(!snap.exists()){
+      alert("❌ الكرت غير صحيح");
+      return;
     }
 
-    // حفظ الرقم مؤقتًا
-    localStorage.setItem("playerPhone", phone);
+    let data = snap.val();
+    let device = getDeviceId();
 
-    // الانتقال إلى صفحة اللعبة
-    window.location.href = "cards.html";
+    // تحقق هل مستخدم بجهاز آخر
+    if(data.used && data.device !== device){
+      alert("🚫 الكرت مستخدم على جهاز آخر");
+      return;
+    }
+
+    // إذا لم يستخدم → نربطه بهذا الجهاز
+    if(!data.used){
+      db.ref("cards/" + code).update({
+        used: true,
+        device: device
+      });
+    }
+
+    alert("✅ تم التفعيل بنجاح");
+    
+    // تحويل لصفحة أخرى
+    window.location.href = "game.html";
+
+  }).catch(function(){
+    alert("خطأ في الاتصال بقاعدة البيانات");
+  });
 }
-</script>
 
+</script>
 </body>
 </html>
