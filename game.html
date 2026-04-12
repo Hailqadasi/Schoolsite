@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة الفيزياء - تحدي المعرفة</title>
+    <title>مسابقة الفيزياء - متابعة المسابقة</title>
     <style>
         * {
             box-sizing: border-box;
@@ -108,6 +108,10 @@
             background: #dc2626;
             color: white;
         }
+        .btn-secondary {
+            background: #3b82f6;
+            color: white;
+        }
         .info-bar {
             display: flex;
             justify-content: space-between;
@@ -164,18 +168,30 @@
             align-items: center;
             gap: 12px;
         }
+        .flex-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
         input {
             padding: 10px;
             border-radius: 60px;
             border: 1px solid #cbd5e1;
             font-family: inherit;
         }
+        .resume-message {
+            background: #fef3c7;
+            border-radius: 24px;
+            padding: 12px;
+            margin-top: 12px;
+            border-right: 4px solid #f59e0b;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>🏆 مسابقة الفيزياء - تحدي السرعة والدقة 🏆</h1>
+        <h1>🏆 مسابقة الفيزياء - متابعة المسابقة 🏆</h1>
         <div class="info-bar">
             <span>⏱️ وقت السؤال: <strong>15 ثانية</strong></span>
             <span>📋 السؤال <span id="currentQNumber">0</span> من <span id="totalQCount">0</span></span>
@@ -184,9 +200,15 @@
             <h3>📝 تسجيل الدخول (الاسم رباعي)</h3>
             <div class="flex-between">
                 <input type="text" id="fullNameInput" placeholder="مثال: خالد محمد سعد العتيبي" style="flex:3;">
-                <button id="registerNewBtn" style="flex:1;">✅ بدء المسابقة</button>
+                <button id="registerNewBtn" style="flex:1;">✅ بدء مسابقة جديدة</button>
             </div>
             <div id="regMessage" style="margin-top:12px; font-size:14px;"></div>
+            <div id="resumeSection" style="display: none;" class="resume-message">
+                <div id="resumeText"></div>
+                <div class="flex-buttons">
+                    <button id="resumeBtn" class="btn-secondary">🔄 متابعة المسابقة من حيث توقفت</button>
+                </div>
+            </div>
         </div>
         <div id="quizArea" style="display: none;">
             <div class="timer-box" id="timerDisplay">00:15</div>
@@ -214,13 +236,13 @@
             <table style="width:100%">
                 <thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th></tr></thead>
                 <tbody id="rankingTbody"></tbody>
-             </table>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
-    // ---------- الأسئلة الجديدة (فيزياء) ----------
+    // ---------- أسئلة الفيزياء ----------
     const QUESTIONS = [
         { text: "جسمان كتلة كلٍّ منهما (20) كجم، أحدهما يتحرك بسرعة (40) م/ث والآخر ساكن. إذا تصادما تصادمًا التحاميًا، فإن طاقة حركة الجسم المتكوّن بعد التصادم تساوي:",
           options: ["1000 جول", "1600 جول", "2000 جول", "3200 جول"],
@@ -256,7 +278,7 @@
 
     // تحميل/حفظ
     function loadData() {
-        const stored = localStorage.getItem("quiz_physics_v2");
+        const stored = localStorage.getItem("quiz_physics_v3");
         if(stored) {
             try {
                 contestants = JSON.parse(stored);
@@ -272,7 +294,7 @@
         renderPublicLists();
     }
     function saveData() {
-        localStorage.setItem("quiz_physics_v2", JSON.stringify(contestants));
+        localStorage.setItem("quiz_physics_v3", JSON.stringify(contestants));
         renderPublicLists();
     }
 
@@ -316,6 +338,87 @@
                 `).join('');
             }
         }
+    }
+
+    // التحقق من وجود مسابقة غير مكتملة لنفس الاسم
+    function checkIncompleteContestant(fullName) {
+        return contestants.find(c => c.fullName === fullName && !c.quizCompleted);
+    }
+
+    // معالجة إدخال الاسم: إظهار زر المتابعة إذا وجدت مسابقة غير مكتملة
+    function onNameInput() {
+        const fullName = document.getElementById("fullNameInput").value.trim();
+        const resumeSection = document.getElementById("resumeSection");
+        const regMessage = document.getElementById("regMessage");
+        if(fullName === "") {
+            resumeSection.style.display = "none";
+            regMessage.innerHTML = "";
+            return;
+        }
+        const incomplete = checkIncompleteContestant(fullName);
+        if(incomplete) {
+            // يوجد مسابقة غير مكتملة
+            document.getElementById("resumeText").innerHTML = `⚠️ يوجد مسابقة غير مكتملة للمتسابق "${escapeHtml(fullName)}". هل تريد المتابعة من السؤال رقم ${incomplete.currentQuestionIndex+1}؟`;
+            resumeSection.style.display = "block";
+            regMessage.innerHTML = "";
+        } else {
+            resumeSection.style.display = "none";
+            regMessage.innerHTML = "";
+        }
+    }
+
+    // متابعة المسابقة الحالية
+    function resumeContestant() {
+        const fullName = document.getElementById("fullNameInput").value.trim();
+        const incomplete = checkIncompleteContestant(fullName);
+        if(incomplete) {
+            setActiveContestant(incomplete.id);
+        } else {
+            alert("لا توجد مسابقة غير مكتملة لهذا الاسم.");
+        }
+    }
+
+    // تسجيل متسابق جديد (بدء جديد)
+    function registerNewContestant() {
+        const nameInput = document.getElementById("fullNameInput");
+        let fullName = nameInput.value.trim();
+        if(fullName === "") {
+            document.getElementById("regMessage").innerHTML = "<span style='color:red'>أدخل الاسم الرباعي</span>";
+            return;
+        }
+        const parts = fullName.split(/\s+/);
+        if(parts.length < 4) {
+            document.getElementById("regMessage").innerHTML = "<span style='color:red'>يجب أن يتكون الاسم من أربعة أجزاء (اسم رباعي)</span>";
+            return;
+        }
+        // التأكد من عدم وجود مسابقة غير مكتملة بنفس الاسم (يمكنه إنشاء جديدة فقط إذا لم توجد أو يختار المتابعة)
+        const incomplete = checkIncompleteContestant(fullName);
+        if(incomplete) {
+            document.getElementById("regMessage").innerHTML = "<span style='color:orange'>⚠️ يوجد مسابقة غير مكتملة لهذا الاسم. الرجاء استخدام زر 'متابعة المسابقة' أو قم بإنهاء المسابقة أولاً.</span>";
+            return;
+        }
+        // التحقق من وجود اسم مكتمل (اختياري: يمكن السماح بتكرار الاسم إذا كان مكتملاً)
+        const existingCompleted = contestants.find(c => c.fullName === fullName && c.quizCompleted === true);
+        if(existingCompleted) {
+            if(!confirm(`الاسم "${fullName}" سبق له المشاركة وانتهت مسابقته. هل تريد إنشاء متسابق جديد بنفس الاسم؟ (سيتم إنشاء مشاركة جديدة مستقلة)`)) {
+                return;
+            }
+        }
+        const newId = Date.now() + Math.random();
+        const newContestant = {
+            id: newId,
+            fullName: fullName,
+            answers: new Array(TOTAL_QS).fill(null),
+            currentScore: 0,
+            quizCompleted: false,
+            currentQuestionIndex: 0
+        };
+        contestants.push(newContestant);
+        saveData();
+        nameInput.value = "";
+        document.getElementById("resumeSection").style.display = "none";
+        document.getElementById("regMessage").innerHTML = `<span style='color:green'>✅ تم التسجيل. يمكنك بدء المسابقة الآن.</span>`;
+        setActiveContestant(newId);
     }
 
     function setActiveContestant(contestantId) {
@@ -476,49 +579,17 @@
         renderPublicLists();
     }
 
-    function registerNewContestant() {
-        const nameInput = document.getElementById("fullNameInput");
-        let fullName = nameInput.value.trim();
-        if(fullName === "") {
-            document.getElementById("regMessage").innerHTML = "<span style='color:red'>أدخل الاسم الرباعي</span>";
-            return;
-        }
-        const parts = fullName.split(/\s+/);
-        if(parts.length < 4) {
-            document.getElementById("regMessage").innerHTML = "<span style='color:red'>يجب أن يتكون الاسم من أربعة أجزاء (اسم رباعي)</span>";
-            return;
-        }
-        const existing = contestants.find(c => c.fullName === fullName && !c.quizCompleted);
-        if(existing) {
-            document.getElementById("regMessage").innerHTML = "<span style='color:orange'>هذا الاسم لديه مسابقة غير مكتملة. اختر اسماً آخر أو أكمل مسابقته أولاً.</span>";
-            return;
-        }
-        const newId = Date.now() + Math.random();
-        const newContestant = {
-            id: newId,
-            fullName: fullName,
-            answers: new Array(TOTAL_QS).fill(null),
-            currentScore: 0,
-            quizCompleted: false,
-            currentQuestionIndex: 0
-        };
-        contestants.push(newContestant);
-        saveData();
-        nameInput.value = "";
-        document.getElementById("regMessage").innerHTML = `<span style='color:green'>✅ تم التسجيل. يمكنك بدء المسابقة الآن.</span>`;
-        setActiveContestant(newId);
-    }
-
     function resetAll() {
         if(confirm("⚠️ تحذير: سيتم حذف جميع المتسابقين والنتائج بشكل نهائي. هل أنت متأكد؟")) {
             contestants = [];
             activeContestantId = null;
             if(timerInterval) clearInterval(timerInterval);
-            localStorage.removeItem("quiz_physics_v2");
+            localStorage.removeItem("quiz_physics_v3");
             document.getElementById("quizArea").style.display = "none";
             document.getElementById("contestantLoginArea").style.display = "block";
             renderPublicLists();
             document.getElementById("regMessage").innerHTML = "";
+            document.getElementById("resumeSection").style.display = "none";
         }
     }
 
@@ -545,7 +616,10 @@
 
     window.onload = () => {
         loadData();
+        const nameInput = document.getElementById("fullNameInput");
+        nameInput.addEventListener("input", onNameInput);
         document.getElementById("registerNewBtn").addEventListener("click", registerNewContestant);
+        document.getElementById("resumeBtn").addEventListener("click", resumeContestant);
         document.getElementById("unlockTeacherBtn").addEventListener("click", unlockTeacher);
         document.getElementById("resetAllDataBtn").addEventListener("click", resetAll);
         if(activeContestantId) {
