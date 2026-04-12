@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة الفيزياء - لوحة تحكم المعلم</title>
+    <title>مسابقة الفيزياء - مع تعليقات المعلم</title>
     <style>
         * {
             box-sizing: border-box;
@@ -135,6 +135,21 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            flex-wrap: wrap;
+        }
+        .student-info {
+            flex: 1;
+        }
+        .student-name {
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        .student-comment {
+            font-size: 12px;
+            color: #4b5563;
+            margin-top: 4px;
+            font-style: italic;
         }
         .student-item.active {
             background: #fef3c7;
@@ -146,6 +161,20 @@
             color: #facc15;
             padding: 4px 12px;
             border-radius: 30px;
+            margin-right: 10px;
+        }
+        .comment-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        .comment-btn:hover {
+            background: #7c3aed;
         }
         table {
             width: 100%;
@@ -197,7 +226,6 @@
             font-weight: bold;
             border-right: 4px solid #dc2626;
         }
-        /* مودال عرض الكشف */
         .modal {
             display: none;
             position: fixed;
@@ -365,14 +393,13 @@
     let timerInterval = null;
     let timeLeft = 15;
     let isWaitingForTransition = false;
-    
-    // متغيرات التحكم من المعلم
-    let contestStopped = false;       // هل المسابقة موقفة من المعلم؟
-    let savedTimeLeft = 15;           // الوقت المتبقي عند الإيقاف
+    let contestStopped = false;
+    let savedTimeLeft = 15;
+    let isTeacherMode = false;   // لعرض أزرار التعليق
 
     // تحميل/حفظ
     function loadData() {
-        const stored = localStorage.getItem("quiz_physics_v3");
+        const stored = localStorage.getItem("quiz_physics_v4_comments");
         if(stored) {
             try {
                 contestants = JSON.parse(stored);
@@ -381,17 +408,19 @@
                     answers: c.answers || [], 
                     currentScore: c.currentScore || 0, 
                     quizCompleted: c.quizCompleted || false, 
-                    currentQuestionIndex: c.currentQuestionIndex || 0 
+                    currentQuestionIndex: c.currentQuestionIndex || 0,
+                    comment: c.comment || ""
                 }));
             } catch(e) {}
         }
         renderPublicLists();
     }
     function saveData() {
-        localStorage.setItem("quiz_physics_v3", JSON.stringify(contestants));
+        localStorage.setItem("quiz_physics_v4_comments", JSON.stringify(contestants));
         renderPublicLists();
     }
 
+    // عرض القائمة مع أزرار التعليق (للمعلم فقط)
     function renderPublicLists() {
         const container = document.getElementById("studentsList");
         if(container) {
@@ -400,16 +429,25 @@
             } else {
                 container.innerHTML = contestants.map(c => `
                     <div class="student-item ${activeContestantId === c.id ? 'active' : ''}" data-id="${c.id}">
-                        <span><strong>${escapeHtml(c.fullName)}</strong> ${c.quizCompleted ? '✅ (مكتمل)' : '⏳ (قيد اللعب)'}</span>
-                        <span class="score-badge">${c.quizCompleted ? c.currentScore+'/'+TOTAL_QS : (c.currentScore||0)}</span>
+                        <div class="student-info">
+                            <div>
+                                <span class="student-name"><strong>${escapeHtml(c.fullName)}</strong></span>
+                                <span class="score-badge">${c.quizCompleted ? c.currentScore+'/'+TOTAL_QS : (c.currentScore||0)}</span>
+                                ${isTeacherMode ? `<button class="comment-btn" data-id="${c.id}" data-name="${escapeHtml(c.fullName)}">✏️ تعليق</button>` : ''}
+                            </div>
+                            ${c.comment ? `<div class="student-comment">📝 ${escapeHtml(c.comment)}</div>` : ''}
+                        </div>
+                        <span>${c.quizCompleted ? '✅ (مكتمل)' : '⏳ (قيد اللعب)'}</span>
                     </div>
                 `).join('');
+                // إضافة مستمعي الأحداث للطلاب (للتبديل)
                 document.querySelectorAll('.student-item').forEach(el => {
+                    const id = parseInt(el.getAttribute('data-id'));
                     el.addEventListener('click', (e) => {
-                        const id = parseInt(el.getAttribute('data-id'));
+                        // منع إذا كان الزر داخل العنصر
+                        if(e.target.classList && e.target.classList.contains('comment-btn')) return;
                         const student = contestants.find(s => s.id === id);
                         if(student && !student.quizCompleted) {
-                            // إذا كانت المسابقة موقفة، لا نسمح بالتبديل إلا بعد استئناف
                             if(contestStopped) {
                                 alert("المسابقة متوقفة حالياً. يرجى من المعلم استئنافها أولاً.");
                                 return;
@@ -420,8 +458,27 @@
                         }
                     });
                 });
+                // أزرار التعليق
+                if(isTeacherMode) {
+                    document.querySelectorAll('.comment-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const studentId = parseInt(btn.getAttribute('data-id'));
+                            const studentName = btn.getAttribute('data-name');
+                            const student = contestants.find(s => s.id === studentId);
+                            if(student) {
+                                let newComment = prompt(`أدخل تعليقاً للطالب "${studentName}" (مثال: غائب, لا يرغب بالمشاركة, اعتذار...)`, student.comment || "");
+                                if(newComment !== null) {
+                                    student.comment = newComment.trim();
+                                    saveData();
+                                }
+                            }
+                        });
+                    });
+                }
             }
         }
+        // جدول الترتيب (للمكتملين فقط)
         const ranked = contestants.filter(c => c.quizCompleted === true).sort((a,b) => b.currentScore - a.currentScore);
         const tbody = document.getElementById("rankingTbody");
         if(tbody) {
@@ -431,7 +488,7 @@
                 tbody.innerHTML = ranked.map((c, idx) => `
                     <tr>
                         <td>${idx+1} ${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':''}</td>
-                        <td>${escapeHtml(c.fullName)}</td>
+                        <td>${escapeHtml(c.fullName)}${c.comment ? `<br><span style="font-size:12px;color:#6b7280;">📝 ${escapeHtml(c.comment)}</span>` : ''}</td>
                         <td><strong>${c.currentScore}/${TOTAL_QS}</strong></td>
                     </tr>
                 `).join('');
@@ -503,7 +560,8 @@
             answers: new Array(TOTAL_QS).fill(null),
             currentScore: 0,
             quizCompleted: false,
-            currentQuestionIndex: 0
+            currentQuestionIndex: 0,
+            comment: ""
         };
         contestants.push(newContestant);
         saveData();
@@ -516,13 +574,10 @@
     function setActiveContestant(contestantId) {
         const contestant = contestants.find(c => c.id === contestantId);
         if(!contestant || contestant.quizCompleted) return;
-        
-        // إلغاء حالة الإيقاف عند بدء أو متابعة متسابق جديد
         if(contestStopped) {
             alert("المسابقة موقفة من قبل المعلم. لا يمكن بدء مسابقة جديدة حتى يتم الاستئناف.");
             return;
         }
-        
         activeContestantId = contestantId;
         currentAnswersForActive = contestant.answers ? [...contestant.answers] : new Array(TOTAL_QS).fill(null);
         currentQuestionIndex = contestant.currentQuestionIndex !== undefined ? contestant.currentQuestionIndex : 0;
@@ -534,7 +589,6 @@
         document.getElementById("quizArea").style.display = "block";
         document.getElementById("currentQNumber").innerText = currentQuestionIndex+1;
         document.getElementById("totalQCount").innerText = TOTAL_QS;
-        // إخفاء رسالة الإيقاف إذا كانت ظاهرة
         document.getElementById("stopMessageArea").style.display = "none";
         renderCurrentQuestion();
         startTimerForCurrent();
@@ -601,7 +655,6 @@
                 }, 500);
             });
         });
-        // إذا كانت المسابقة موقفة، تعطيل الأزرار
         if(contestStopped) {
             btns.forEach(btn => btn.disabled = true);
         } else {
@@ -611,16 +664,13 @@
 
     function startTimerForCurrent() {
         if(timerInterval) clearInterval(timerInterval);
-        if(contestStopped) {
-            // لا نبدأ المؤقت إذا كانت موقفة
-            return;
-        }
+        if(contestStopped) return;
         timeLeft = savedTimeLeft > 0 ? savedTimeLeft : 15;
-        savedTimeLeft = 15; // إعادة تعيين
+        savedTimeLeft = 15;
         updateTimerDisplay();
         timerInterval = setInterval(() => {
             if(isWaitingForTransition) return;
-            if(contestStopped) return; // لا يتحرك المؤقت أثناء الإيقاف
+            if(contestStopped) return;
             if(timeLeft <= 1) {
                 clearInterval(timerInterval);
                 timerInterval = null;
@@ -697,7 +747,7 @@
         renderPublicLists();
     }
 
-    // ---------- دوال المعلم ----------
+    // دوال المعلم
     function stopContest() {
         if(!activeContestantId) {
             alert("لا توجد مسابقة نشطة حالياً لإيقافها.");
@@ -708,18 +758,15 @@
             return;
         }
         contestStopped = true;
-        // حفظ الوقت المتبقي
         savedTimeLeft = timeLeft;
         if(timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
         }
-        // تعطيل أزرار الخيارات
         const btns = document.querySelectorAll('.option-btn');
         btns.forEach(btn => btn.disabled = true);
-        // إظهار رسالة الإيقاف
         document.getElementById("stopMessageArea").style.display = "block";
-        alert("⛔ تم إيقاف المسابقة. يمكنك استئنافها لاحقاً باستخدام زر 'استئناف المسابقة'.");
+        alert("⛔ تم إيقاف المسابقة. يمكنك استئنافها لاحقاً.");
     }
 
     function resumeContest() {
@@ -732,40 +779,29 @@
             return;
         }
         contestStopped = false;
-        // إخفاء رسالة الإيقاف
         document.getElementById("stopMessageArea").style.display = "none";
-        // إعادة تمكين الأزرار
         const btns = document.querySelectorAll('.option-btn');
         btns.forEach(btn => btn.disabled = false);
-        // إعادة تشغيل المؤقت بالوقت المحفوظ
         startTimerForCurrent();
     }
 
     function showResultSheet() {
-        // تجهيز بيانات جميع المتسابقين (مكتملين وغير مكتملين)
         let allContestants = [...contestants];
         if(allContestants.length === 0) {
             alert("لا يوجد متسابقون لعرض النتيجة.");
             return;
         }
-        // إضافة معلومات إضافية: عدد الأسئلة المجاب عليها
         const enriched = allContestants.map(c => {
             const answeredCount = c.answers ? c.answers.filter(a => a !== null).length : 0;
             let status = '';
             if(c.quizCompleted) status = 'مكتمل ✅';
             else if(answeredCount === 0 && c.currentQuestionIndex === 0) status = 'لم يبدأ';
             else status = `قيد اللعب (السؤال ${c.currentQuestionIndex+1})`;
-            return {
-                ...c,
-                answeredCount,
-                status
-            };
+            return { ...c, answeredCount, status };
         });
-        // ترتيب حسب الدرجة تنازلياً
         enriched.sort((a,b) => b.currentScore - a.currentScore);
-        
         let html = `<table class="result-table" border="1" style="width:100%; border-collapse: collapse;">`;
-        html += `<thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th><th>الإجابات الصحيحة</th><th>تم الإجابة على</th><th>الحالة</th></tr></thead><tbody>`;
+        html += `<thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th><th>الإجابات الصحيحة</th><th>تم الإجابة على</th><th>الحالة</th><th>ملاحظات</th></tr></thead><tbody>`;
         enriched.forEach((c, idx) => {
             html += `<tr>
                         <td>${idx+1}</td>
@@ -774,6 +810,7 @@
                         <td>${c.currentScore}</td>
                         <td>${c.answeredCount}/${TOTAL_QS}</td>
                         <td>${c.status}</td>
+                        <td>${escapeHtml(c.comment) || '—'}</td>
                      </tr>`;
         });
         html += `</tbody></table>`;
@@ -787,10 +824,12 @@
             activeContestantId = null;
             contestStopped = false;
             savedTimeLeft = 15;
+            isTeacherMode = false;
             if(timerInterval) clearInterval(timerInterval);
-            localStorage.removeItem("quiz_physics_v3");
+            localStorage.removeItem("quiz_physics_v4_comments");
             document.getElementById("quizArea").style.display = "none";
             document.getElementById("contestantLoginArea").style.display = "block";
+            document.getElementById("teacherControls").style.display = "none";
             renderPublicLists();
             document.getElementById("regMessage").innerHTML = "";
             document.getElementById("resumeSection").style.display = "none";
@@ -801,11 +840,15 @@
     function unlockTeacher() {
         const password = document.getElementById("teacherPassword").value;
         if(password === "admin123") {
+            isTeacherMode = true;
             document.getElementById("teacherControls").style.display = "block";
-            alert("تم فتح لوحة تحكم المعلم");
+            alert("تم فتح لوحة تحكم المعلم - يمكنك الآن إضافة تعليقات على الطلاب.");
+            renderPublicLists(); // إعادة رسم القائمة لتظهر أزرار التعليق
         } else {
             alert("كلمة المرور غير صحيحة");
             document.getElementById("teacherControls").style.display = "none";
+            isTeacherMode = false;
+            renderPublicLists();
         }
     }
 
@@ -819,7 +862,6 @@
         });
     }
 
-    // إدارة المودال
     function closeModal() {
         document.getElementById("resultModal").style.display = "none";
     }
@@ -860,7 +902,6 @@
         document.getElementById("resumeContestBtn").addEventListener("click", resumeContest);
         document.getElementById("showResultsBtn").addEventListener("click", showResultSheet);
         
-        // أحداث المودال
         const modal = document.getElementById("resultModal");
         const closeBtns = document.querySelectorAll(".close-modal, #closeModalBtn");
         closeBtns.forEach(btn => btn.addEventListener("click", closeModal));
@@ -876,4 +917,4 @@
     };
 </script>
 </body>
-</html> 
+</html>
