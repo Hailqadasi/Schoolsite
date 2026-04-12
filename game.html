@@ -1,9 +1,9 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة الفيزياء - مع نظام تصويت الزملاء</title>
+    <title>مسابقة الفيزياء - لوحة تحكم المعلم</title>
     <style>
         * {
             box-sizing: border-box;
@@ -49,6 +49,7 @@
             padding: 25px;
             margin: 15px 0;
             border: 2px solid #e2e8f0;
+            transition: 0.2s;
         }
         .question-text {
             font-size: 1.4rem;
@@ -196,28 +197,7 @@
             font-weight: bold;
             border-right: 4px solid #dc2626;
         }
-        .vote-section {
-            background: #e0f2fe;
-            border-radius: 28px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        .vote-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .vote-btn {
-            background: #0284c7;
-            color: white;
-            font-size: 0.9rem;
-            padding: 8px 15px;
-        }
-        .vote-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
+        /* مودال عرض الكشف */
         .modal {
             display: none;
             position: fixed;
@@ -238,6 +218,23 @@
             border-radius: 32px;
             padding: 20px;
             overflow: auto;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .close-modal {
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            padding: 0 10px;
         }
         .result-table {
             width: 100%;
@@ -248,12 +245,17 @@
             padding: 8px;
             text-align: center;
         }
+        .print-btn {
+            background: #0f172a;
+            color: white;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>🏆 مسابقة الفيزياء + تصويت الزملاء 🏆</h1>
+        <h1>🏆 مسابقة الفيزياء - متابعة المسابقة 🏆</h1>
         <div class="info-bar">
             <span>⏱️ وقت السؤال: <strong>15 ثانية</strong></span>
             <span>📋 السؤال <span id="currentQNumber">0</span> من <span id="totalQCount">0</span></span>
@@ -272,21 +274,12 @@
                 </div>
             </div>
         </div>
-
-        <!-- منطقة عرض المسابقة -->
         <div id="quizArea" style="display: none;">
             <div class="timer-box" id="timerDisplay">00:15</div>
             <div id="stopMessageArea" style="display: none;" class="stop-message">
                 ⛔ تم إيقاف المسابقة من قبل المعلم. يرجى الانتظار.
             </div>
             <div id="singleQuestionContainer"></div>
-        </div>
-
-        <!-- منطقة تصويت الزملاء (تظهر بعد تسجيل الدخول) -->
-        <div id="voteArea" style="display: none;" class="vote-section">
-            <h3>🗳️ صوّت لزميلك المتميز (مرة واحدة فقط)</h3>
-            <div id="voteMessage" style="margin-bottom: 8px; font-size: 14px;"></div>
-            <div id="voteButtonsContainer" class="vote-buttons"></div>
         </div>
     </div>
 
@@ -303,7 +296,6 @@
                         <button id="stopContestBtn" class="btn-danger">⏹️ إيقاف المسابقة</button>
                         <button id="resumeContestBtn" class="btn-secondary">▶️ استئناف المسابقة</button>
                         <button id="showResultsBtn" class="btn-secondary">📄 إظهار كشف النتيجة</button>
-                        <button id="resetVotesBtn" class="btn-secondary">🔄 إعادة تعيين الأصوات</button>
                         <button id="resetAllDataBtn" class="btn-danger">🗑️ حذف جميع البيانات والمتسابقين</button>
                     </div>
                 </div>
@@ -311,34 +303,36 @@
         </div>
         <h3>🎓 المتسابقون المسجلون</h3>
         <div id="studentsList" class="student-list"></div>
-        <h3>🏅 الترتيب النهائي (درجة المسابقة + نقاط التصويت)</h3>
+        <h3>🏅 الترتيب النهائي (حسب الدرجة الأعلى للمكتملين)</h3>
         <div id="rankingTableWrapper">
             <table style="width:100%">
-                <thead><tr><th>#</th><th>الاسم</th><th>درجة المسابقة</th><th>نقاط التصويت</th><th>المجموع</th></tr>
+                <thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th></tr>
                 </thead>
                 <tbody id="rankingTbody"></tbody>
-             </table>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- مودال الكشف -->
+<!-- مودال عرض كشف النتيجة -->
 <div id="resultModal" class="modal">
     <div class="modal-content">
-        <div class="flex-between" style="margin-bottom: 10px;">
-            <h3>📋 كشف النتيجة التفصيلي</h3>
-            <span class="close-modal" style="cursor:pointer; font-size:28px;">&times;</span>
+        <div class="modal-header">
+            <h3>📋 كشف نتيجة المسابقة</h3>
+            <span class="close-modal">&times;</span>
         </div>
-        <div id="resultSheetContent"></div>
+        <div id="resultSheetContent">
+            <!-- سيتم تعبئة الجدول هنا -->
+        </div>
         <div class="flex-buttons">
-            <button id="printResultBtn" class="print-btn">🖨️ طباعة</button>
+            <button id="printResultBtn" class="print-btn">🖨️ طباعة الكشف</button>
             <button id="closeModalBtn" class="btn-secondary">إغلاق</button>
         </div>
     </div>
 </div>
 
 <script>
-    // الأسئلة (نفس السابق)
+    // ---------- أسئلة الفيزياء ----------
     const QUESTIONS = [
         { text: "جسمان كتلة كلٍّ منهما (20) كجم، أحدهما يتحرك بسرعة (40) م/ث والآخر ساكن. إذا تصادما تصادمًا التحاميًا، فإن طاقة حركة الجسم المتكوّن بعد التصادم تساوي:",
           options: ["1000 جول", "1600 جول", "2000 جول", "3200 جول"],
@@ -371,22 +365,21 @@
     let timerInterval = null;
     let timeLeft = 15;
     let isWaitingForTransition = false;
-    let contestStopped = false;
-    let savedTimeLeft = 15;
+    
+    // متغيرات التحكم من المعلم
+    let contestStopped = false;       // هل المسابقة موقفة من المعلم؟
+    let savedTimeLeft = 15;           // الوقت المتبقي عند الإيقاف
 
-    // تحميل البيانات
+    // تحميل/حفظ
     function loadData() {
-        const stored = localStorage.getItem("quiz_physics_voting");
+        const stored = localStorage.getItem("quiz_physics_v3");
         if(stored) {
             try {
                 contestants = JSON.parse(stored);
                 contestants = contestants.map(c => ({ 
                     ...c, 
                     answers: c.answers || [], 
-                    currentScore: c.currentScore || 0,
-                    votesReceived: c.votesReceived || 0,
-                    hasVoted: c.hasVoted || false,
-                    votedFor: c.votedFor || null,
+                    currentScore: c.currentScore || 0, 
                     quizCompleted: c.quizCompleted || false, 
                     currentQuestionIndex: c.currentQuestionIndex || 0 
                 }));
@@ -394,16 +387,12 @@
         }
         renderPublicLists();
     }
-
     function saveData() {
-        localStorage.setItem("quiz_physics_voting", JSON.stringify(contestants));
+        localStorage.setItem("quiz_physics_v3", JSON.stringify(contestants));
         renderPublicLists();
-        renderVoteArea(); // تحديث واجهة التصويت
     }
 
-    // عرض قائمة المتسابقين والترتيب
     function renderPublicLists() {
-        // قائمة الطلاب الجانبية
         const container = document.getElementById("studentsList");
         if(container) {
             if(contestants.length === 0) {
@@ -412,7 +401,7 @@
                 container.innerHTML = contestants.map(c => `
                     <div class="student-item ${activeContestantId === c.id ? 'active' : ''}" data-id="${c.id}">
                         <span><strong>${escapeHtml(c.fullName)}</strong> ${c.quizCompleted ? '✅ (مكتمل)' : '⏳ (قيد اللعب)'}</span>
-                        <span class="score-badge">${c.currentScore + c.votesReceived}/${TOTAL_QS + (c.votesReceived)}</span>
+                        <span class="score-badge">${c.quizCompleted ? c.currentScore+'/'+TOTAL_QS : (c.currentScore||0)}</span>
                     </div>
                 `).join('');
                 document.querySelectorAll('.student-item').forEach(el => {
@@ -420,111 +409,120 @@
                         const id = parseInt(el.getAttribute('data-id'));
                         const student = contestants.find(s => s.id === id);
                         if(student && !student.quizCompleted) {
-                            if(contestStopped) { alert("المسابقة موقفة"); return; }
+                            // إذا كانت المسابقة موقفة، لا نسمح بالتبديل إلا بعد استئناف
+                            if(contestStopped) {
+                                alert("المسابقة متوقفة حالياً. يرجى من المعلم استئنافها أولاً.");
+                                return;
+                            }
                             setActiveContestant(student.id);
                         } else if(student && student.quizCompleted) {
-                            alert(`هذا المتسابق أنهى المسابقة.`);
+                            alert(`هذا المتسابق أنهى المسابقة بنتيجة ${student.currentScore}/${TOTAL_QS}. لا يمكن إعادة اللعب إلا بعد حذف البيانات.`);
                         }
                     });
                 });
             }
         }
-        // الترتيب حسب المجموع (درجة المسابقة + نقاط التصويت)
-        const ranked = [...contestants].sort((a,b) => (b.currentScore + b.votesReceived) - (a.currentScore + a.votesReceived));
+        const ranked = contestants.filter(c => c.quizCompleted === true).sort((a,b) => b.currentScore - a.currentScore);
         const tbody = document.getElementById("rankingTbody");
         if(tbody) {
             if(ranked.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='4'>لا توجد بيانات</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='3'>لا توجد نتائج مكتملة بعد</td></tr>";
             } else {
                 tbody.innerHTML = ranked.map((c, idx) => `
                     <tr>
                         <td>${idx+1} ${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':''}</td>
                         <td>${escapeHtml(c.fullName)}</td>
-                        <td>${c.currentScore}/${TOTAL_QS}</td>
-                        <td>${c.votesReceived}</td>
-                        <td><strong>${c.currentScore + c.votesReceived}</strong></td>
+                        <td><strong>${c.currentScore}/${TOTAL_QS}</strong></td>
                     </tr>
                 `).join('');
             }
         }
     }
 
-    // عرض أزرار التصويت (للمتسابق النشط فقط)
-    function renderVoteArea() {
-        const voteArea = document.getElementById("voteArea");
-        const container = document.getElementById("voteButtonsContainer");
-        const msgDiv = document.getElementById("voteMessage");
-        if(!activeContestantId) {
-            voteArea.style.display = "none";
-            return;
-        }
-        const currentStudent = contestants.find(c => c.id === activeContestantId);
-        if(!currentStudent) {
-            voteArea.style.display = "none";
-            return;
-        }
-        voteArea.style.display = "block";
-        if(currentStudent.hasVoted) {
-            msgDiv.innerHTML = `✅ لقد قمت بالتصويت مسبقاً. شكراً لك.`;
-            container.innerHTML = "";
-            return;
-        }
-        // قائمة الزملاء الآخرين (غير نفسه)
-        const others = contestants.filter(c => c.id !== activeContestantId);
-        if(others.length === 0) {
-            msgDiv.innerHTML = `لا يوجد متسابقون آخرون للتصويت لهم حالياً.`;
-            container.innerHTML = "";
-            return;
-        }
-        msgDiv.innerHTML = `اختر زميلاً واحداً لتمنحه صوت تقدير (يضاف نقطة إلى مجموع نقاطه):`;
-        container.innerHTML = others.map(c => `
-            <button class="vote-btn" data-id="${c.id}">🗳️ ${escapeHtml(c.fullName)} (يحصل حاليًا على ${c.votesReceived} صوت)</button>
-        `).join('');
-        document.querySelectorAll('.vote-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const targetId = parseInt(btn.getAttribute('data-id'));
-                voteForPeer(targetId);
-            });
-        });
+    function checkIncompleteContestant(fullName) {
+        return contestants.find(c => c.fullName === fullName && !c.quizCompleted);
     }
 
-    // تنفيذ التصويت
-    function voteForPeer(targetId) {
-        const currentStudent = contestants.find(c => c.id === activeContestantId);
-        if(!currentStudent) return;
-        if(currentStudent.hasVoted) {
-            alert("لا يمكنك التصويت أكثر من مرة.");
+    function onNameInput() {
+        const fullName = document.getElementById("fullNameInput").value.trim();
+        const resumeSection = document.getElementById("resumeSection");
+        const regMessage = document.getElementById("regMessage");
+        if(fullName === "") {
+            resumeSection.style.display = "none";
+            regMessage.innerHTML = "";
             return;
         }
-        const targetStudent = contestants.find(c => c.id === targetId);
-        if(!targetStudent) return;
-        if(targetStudent.id === currentStudent.id) return;
-        // تسجيل التصويت
-        currentStudent.hasVoted = true;
-        currentStudent.votedFor = targetId;
-        targetStudent.votesReceived = (targetStudent.votesReceived || 0) + 1;
+        const incomplete = checkIncompleteContestant(fullName);
+        if(incomplete) {
+            document.getElementById("resumeText").innerHTML = `⚠️ يوجد مسابقة غير مكتملة للمتسابق "${escapeHtml(fullName)}". هل تريد المتابعة من السؤال رقم ${incomplete.currentQuestionIndex+1}؟`;
+            resumeSection.style.display = "block";
+            regMessage.innerHTML = "";
+        } else {
+            resumeSection.style.display = "none";
+            regMessage.innerHTML = "";
+        }
+    }
+
+    function resumeContestant() {
+        const fullName = document.getElementById("fullNameInput").value.trim();
+        const incomplete = checkIncompleteContestant(fullName);
+        if(incomplete) {
+            setActiveContestant(incomplete.id);
+        } else {
+            alert("لا توجد مسابقة غير مكتملة لهذا الاسم.");
+        }
+    }
+
+    function registerNewContestant() {
+        const nameInput = document.getElementById("fullNameInput");
+        let fullName = nameInput.value.trim();
+        if(fullName === "") {
+            document.getElementById("regMessage").innerHTML = "<span style='color:red'>أدخل الاسم الرباعي</span>";
+            return;
+        }
+        const parts = fullName.split(/\s+/);
+        if(parts.length < 4) {
+            document.getElementById("regMessage").innerHTML = "<span style='color:red'>يجب أن يتكون الاسم من أربعة أجزاء (اسم رباعي)</span>";
+            return;
+        }
+        const incomplete = checkIncompleteContestant(fullName);
+        if(incomplete) {
+            document.getElementById("regMessage").innerHTML = "<span style='color:orange'>⚠️ يوجد مسابقة غير مكتملة لهذا الاسم. الرجاء استخدام زر 'متابعة المسابقة' أو قم بإنهاء المسابقة أولاً.</span>";
+            return;
+        }
+        const existingCompleted = contestants.find(c => c.fullName === fullName && c.quizCompleted === true);
+        if(existingCompleted) {
+            if(!confirm(`الاسم "${fullName}" سبق له المشاركة وانتهت مسابقته. هل تريد إنشاء متسابق جديد بنفس الاسم؟ (سيتم إنشاء مشاركة جديدة مستقلة)`)) {
+                return;
+            }
+        }
+        const newId = Date.now() + Math.random();
+        const newContestant = {
+            id: newId,
+            fullName: fullName,
+            answers: new Array(TOTAL_QS).fill(null),
+            currentScore: 0,
+            quizCompleted: false,
+            currentQuestionIndex: 0
+        };
+        contestants.push(newContestant);
         saveData();
-        alert(`تم التصويت لـ ${targetStudent.fullName} بنجاح! +1 نقطة له.`);
-        renderVoteArea();
+        nameInput.value = "";
+        document.getElementById("resumeSection").style.display = "none";
+        document.getElementById("regMessage").innerHTML = `<span style='color:green'>✅ تم التسجيل. يمكنك بدء المسابقة الآن.</span>`;
+        setActiveContestant(newId);
     }
 
-    // إعادة تعيين جميع الأصوات (للمعلم)
-    function resetAllVotes() {
-        if(!confirm("هل تريد إعادة تعيين جميع أصوات التصويت؟ سيتم حذف جميع الأصوات ونقاط التصويت.")) return;
-        contestants.forEach(c => {
-            c.hasVoted = false;
-            c.votedFor = null;
-            c.votesReceived = 0;
-        });
-        saveData();
-        alert("تم إعادة تعيين الأصوات بنجاح.");
-    }
-
-    // باقي دوال المسابقة (مشابهة للسابقة مع تعديلات بسيطة)
     function setActiveContestant(contestantId) {
         const contestant = contestants.find(c => c.id === contestantId);
         if(!contestant || contestant.quizCompleted) return;
-        if(contestStopped) { alert("المسابقة موقفة"); return; }
+        
+        // إلغاء حالة الإيقاف عند بدء أو متابعة متسابق جديد
+        if(contestStopped) {
+            alert("المسابقة موقفة من قبل المعلم. لا يمكن بدء مسابقة جديدة حتى يتم الاستئناف.");
+            return;
+        }
+        
         activeContestantId = contestantId;
         currentAnswersForActive = contestant.answers ? [...contestant.answers] : new Array(TOTAL_QS).fill(null);
         currentQuestionIndex = contestant.currentQuestionIndex !== undefined ? contestant.currentQuestionIndex : 0;
@@ -536,11 +534,11 @@
         document.getElementById("quizArea").style.display = "block";
         document.getElementById("currentQNumber").innerText = currentQuestionIndex+1;
         document.getElementById("totalQCount").innerText = TOTAL_QS;
+        // إخفاء رسالة الإيقاف إذا كانت ظاهرة
         document.getElementById("stopMessageArea").style.display = "none";
         renderCurrentQuestion();
         startTimerForCurrent();
         renderPublicLists();
-        renderVoteArea(); // إظهار واجهة التصويت
     }
 
     function renderCurrentQuestion() {
@@ -567,17 +565,23 @@
         btns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 if(isWaitingForTransition) return;
-                if(contestStopped) { alert("المسابقة موقفة"); return; }
+                if(contestStopped) {
+                    alert("المسابقة موقفة حالياً. لا يمكن الإجابة حتى يستأنف المعلم.");
+                    return;
+                }
                 const selected = btn.getAttribute('data-opt');
                 isWaitingForTransition = true;
                 if(timerInterval) clearInterval(timerInterval);
                 const currentQ = QUESTIONS[currentQuestionIndex];
                 const isCorrect = (selected === currentQ.correct);
-                if(isCorrect) btn.classList.add('option-correct');
-                else {
+                if(isCorrect) {
+                    btn.classList.add('option-correct');
+                } else {
                     btn.classList.add('option-wrong');
                     document.querySelectorAll('.option-btn').forEach(btn2 => {
-                        if(btn2.getAttribute('data-opt') === currentQ.correct) btn2.classList.add('option-correct');
+                        if(btn2.getAttribute('data-opt') === currentQ.correct) {
+                            btn2.classList.add('option-correct');
+                        }
                     });
                 }
                 currentAnswersForActive[currentQuestionIndex] = selected;
@@ -586,27 +590,40 @@
                     contestant.answers = [...currentAnswersForActive];
                     contestant.currentQuestionIndex = currentQuestionIndex;
                     let tempScore = 0;
-                    for(let i=0; i<=currentQuestionIndex; i++) if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
+                    for(let i=0; i<=currentQuestionIndex; i++) {
+                        if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
+                    }
                     contestant.currentScore = tempScore;
                     saveData();
                 }
-                setTimeout(() => moveToNextQuestion(), 500);
+                setTimeout(() => {
+                    moveToNextQuestion();
+                }, 500);
             });
         });
-        if(contestStopped) btns.forEach(btn => btn.disabled = true);
-        else btns.forEach(btn => btn.disabled = false);
+        // إذا كانت المسابقة موقفة، تعطيل الأزرار
+        if(contestStopped) {
+            btns.forEach(btn => btn.disabled = true);
+        } else {
+            btns.forEach(btn => btn.disabled = false);
+        }
     }
 
     function startTimerForCurrent() {
         if(timerInterval) clearInterval(timerInterval);
-        if(contestStopped) return;
+        if(contestStopped) {
+            // لا نبدأ المؤقت إذا كانت موقفة
+            return;
+        }
         timeLeft = savedTimeLeft > 0 ? savedTimeLeft : 15;
-        savedTimeLeft = 15;
+        savedTimeLeft = 15; // إعادة تعيين
         updateTimerDisplay();
         timerInterval = setInterval(() => {
-            if(isWaitingForTransition || contestStopped) return;
+            if(isWaitingForTransition) return;
+            if(contestStopped) return; // لا يتحرك المؤقت أثناء الإيقاف
             if(timeLeft <= 1) {
                 clearInterval(timerInterval);
+                timerInterval = null;
                 if(!isWaitingForTransition && !contestStopped) {
                     currentAnswersForActive[currentQuestionIndex] = null;
                     const contestant = contestants.find(c => c.id === activeContestantId);
@@ -614,14 +631,19 @@
                         contestant.answers = [...currentAnswersForActive];
                         contestant.currentQuestionIndex = currentQuestionIndex;
                         let tempScore = 0;
-                        for(let i=0; i<=currentQuestionIndex; i++) if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
+                        for(let i=0; i<=currentQuestionIndex; i++) {
+                            if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
+                        }
                         contestant.currentScore = tempScore;
                         saveData();
                     }
                     isWaitingForTransition = true;
                     setTimeout(() => moveToNextQuestion(), 300);
                 }
-            } else { timeLeft--; updateTimerDisplay(); }
+            } else {
+                timeLeft--;
+                updateTimerDisplay();
+            }
         }, 1000);
     }
 
@@ -630,15 +652,19 @@
         const formatted = `00:${seconds < 10 ? '0'+seconds : seconds}`;
         const timerDiv = document.getElementById("timerDisplay");
         if(timerDiv) timerDiv.innerText = formatted;
-        timerDiv.style.color = timeLeft <= 5 ? "#ef4444" : "#facc15";
+        if(timeLeft <= 5) timerDiv.style.color = "#ef4444";
+        else timerDiv.style.color = "#facc15";
     }
 
     function moveToNextQuestion() {
+        if(isWaitingForTransition === false && timerInterval) clearInterval(timerInterval);
         isWaitingForTransition = false;
         const contestant = contestants.find(c => c.id === activeContestantId);
         if(contestant && !contestant.quizCompleted) {
             let finalScore = 0;
-            for(let i=0; i<=currentQuestionIndex; i++) if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
+            for(let i=0; i<=currentQuestionIndex; i++) {
+                if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
+            }
             contestant.currentScore = finalScore;
             contestant.currentQuestionIndex = currentQuestionIndex + 1;
             saveData();
@@ -656,77 +682,176 @@
     function finalizeContestant(contestant) {
         if(contestant.quizCompleted) return;
         let finalScore = 0;
-        for(let i=0; i<TOTAL_QS; i++) if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
+        for(let i=0; i<TOTAL_QS; i++) {
+            if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
+        }
         contestant.currentScore = finalScore;
         contestant.quizCompleted = true;
         contestant.currentQuestionIndex = TOTAL_QS;
         saveData();
-        alert(`🎉 انتهت المسابقة! ${contestant.fullName} حصل على ${finalScore}/${TOTAL_QS} + ${contestant.votesReceived} نقطة تصويت = ${finalScore+contestant.votesReceived} نقطة.`);
+        alert(`🎉 انتهت المسابقة! حصل ${contestant.fullName} على ${finalScore} من ${TOTAL_QS}. 🎉`);
         if(timerInterval) clearInterval(timerInterval);
         document.getElementById("quizArea").style.display = "none";
         document.getElementById("contestantLoginArea").style.display = "block";
         activeContestantId = null;
         renderPublicLists();
-        renderVoteArea();
     }
 
-    // تسجيل طالب جديد
-    function registerNewContestant() {
-        const nameInput = document.getElementById("fullNameInput");
-        let fullName = nameInput.value.trim();
-        if(fullName === "") { document.getElementById("regMessage").innerHTML = "<span style='color:red'>أدخل الاسم الرباعي</span>"; return; }
-        if(fullName.split(/\s+/).length < 4) { document.getElementById("regMessage").innerHTML = "<span style='color:red'>اسم رباعي كامل</span>"; return; }
-        const incomplete = contestants.find(c => c.fullName === fullName && !c.quizCompleted);
-        if(incomplete) { document.getElementById("regMessage").innerHTML = "<span style='color:orange'>يوجد مسابقة غير مكتملة، استخدم المتابعة</span>"; return; }
-        const newId = Date.now() + Math.random();
-        const newContestant = {
-            id: newId, fullName: fullName, answers: new Array(TOTAL_QS).fill(null), currentScore: 0,
-            votesReceived: 0, hasVoted: false, votedFor: null, quizCompleted: false, currentQuestionIndex: 0
-        };
-        contestants.push(newContestant);
-        saveData();
-        nameInput.value = "";
-        document.getElementById("resumeSection").style.display = "none";
-        document.getElementById("regMessage").innerHTML = "<span style='color:green'>✅ تم التسجيل، يمكنك بدء المسابقة.</span>";
-        setActiveContestant(newId);
+    // ---------- دوال المعلم ----------
+    function stopContest() {
+        if(!activeContestantId) {
+            alert("لا توجد مسابقة نشطة حالياً لإيقافها.");
+            return;
+        }
+        if(contestStopped) {
+            alert("المسابقة موقفة بالفعل.");
+            return;
+        }
+        contestStopped = true;
+        // حفظ الوقت المتبقي
+        savedTimeLeft = timeLeft;
+        if(timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        // تعطيل أزرار الخيارات
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(btn => btn.disabled = true);
+        // إظهار رسالة الإيقاف
+        document.getElementById("stopMessageArea").style.display = "block";
+        alert("⛔ تم إيقاف المسابقة. يمكنك استئنافها لاحقاً باستخدام زر 'استئناف المسابقة'.");
     }
 
-    function resumeContestant() {
-        const fullName = document.getElementById("fullNameInput").value.trim();
-        const inc = contestants.find(c => c.fullName === fullName && !c.quizCompleted);
-        if(inc) setActiveContestant(inc.id);
-        else alert("لا توجد مسابقة غير مكتملة");
+    function resumeContest() {
+        if(!activeContestantId) {
+            alert("لا توجد مسابقة نشطة لاستئنافها.");
+            return;
+        }
+        if(!contestStopped) {
+            alert("المسابقة غير موقفة حالياً.");
+            return;
+        }
+        contestStopped = false;
+        // إخفاء رسالة الإيقاف
+        document.getElementById("stopMessageArea").style.display = "none";
+        // إعادة تمكين الأزرار
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(btn => btn.disabled = false);
+        // إعادة تشغيل المؤقت بالوقت المحفوظ
+        startTimerForCurrent();
     }
-    function onNameInput() {
-        const fullName = document.getElementById("fullNameInput").value.trim();
-        const resumeSection = document.getElementById("resumeSection");
-        if(fullName === "") { resumeSection.style.display = "none"; return; }
-        const inc = contestants.find(c => c.fullName === fullName && !c.quizCompleted);
-        if(inc) { document.getElementById("resumeText").innerHTML = `⚠️ يوجد مسابقة غير مكتملة للمتسابق "${escapeHtml(fullName)}".`; resumeSection.style.display = "block"; }
-        else resumeSection.style.display = "none";
-    }
-    function stopContest() { if(activeContestantId) { contestStopped = true; savedTimeLeft = timeLeft; if(timerInterval) clearInterval(timerInterval); document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true); document.getElementById("stopMessageArea").style.display="block"; alert("تم إيقاف المسابقة"); } else alert("لا توجد مسابقة نشطة"); }
-    function resumeContest() { if(activeContestantId && contestStopped) { contestStopped = false; document.getElementById("stopMessageArea").style.display="none"; document.querySelectorAll('.option-btn').forEach(b=>b.disabled=false); startTimerForCurrent(); alert("تم استئناف المسابقة"); } else alert("لا توجد مسابقة موقفة"); }
+
     function showResultSheet() {
-        if(contestants.length===0) { alert("لا توجد بيانات"); return; }
-        let html = `<table class="result-table"><thead><tr><th>#</th><th>الاسم</th><th>درجة المسابقة</th><th>نقاط التصويت</th><th>المجموع</th><th>حالة المسابقة</th></tr></thead><tbody>`;
-        const sorted = [...contestants].sort((a,b)=>(b.currentScore+b.votesReceived)-(a.currentScore+a.votesReceived));
-        sorted.forEach((c,i)=>{
-            html+=`<tr><td>${i+1}</td><td>${escapeHtml(c.fullName)}</td><td>${c.currentScore}/${TOTAL_QS}</td><td>${c.votesReceived}</td><td><b>${c.currentScore+c.votesReceived}</b></td><td>${c.quizCompleted?"مكتمل":"قيد اللعب"}</td></tr>`;
+        // تجهيز بيانات جميع المتسابقين (مكتملين وغير مكتملين)
+        let allContestants = [...contestants];
+        if(allContestants.length === 0) {
+            alert("لا يوجد متسابقون لعرض النتيجة.");
+            return;
+        }
+        // إضافة معلومات إضافية: عدد الأسئلة المجاب عليها
+        const enriched = allContestants.map(c => {
+            const answeredCount = c.answers ? c.answers.filter(a => a !== null).length : 0;
+            let status = '';
+            if(c.quizCompleted) status = 'مكتمل ✅';
+            else if(answeredCount === 0 && c.currentQuestionIndex === 0) status = 'لم يبدأ';
+            else status = `قيد اللعب (السؤال ${c.currentQuestionIndex+1})`;
+            return {
+                ...c,
+                answeredCount,
+                status
+            };
         });
-        html+=`</tbody></table>`;
+        // ترتيب حسب الدرجة تنازلياً
+        enriched.sort((a,b) => b.currentScore - a.currentScore);
+        
+        let html = `<table class="result-table" border="1" style="width:100%; border-collapse: collapse;">`;
+        html += `<thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th><th>الإجابات الصحيحة</th><th>تم الإجابة على</th><th>الحالة</th></tr></thead><tbody>`;
+        enriched.forEach((c, idx) => {
+            html += `<tr>
+                        <td>${idx+1}</td>
+                        <td>${escapeHtml(c.fullName)}</td>
+                        <td><strong>${c.currentScore}/${TOTAL_QS}</strong></td>
+                        <td>${c.currentScore}</td>
+                        <td>${c.answeredCount}/${TOTAL_QS}</td>
+                        <td>${c.status}</td>
+                     </tr>`;
+        });
+        html += `</tbody></table>`;
         document.getElementById("resultSheetContent").innerHTML = html;
         document.getElementById("resultModal").style.display = "flex";
     }
-    function resetAll() { if(confirm("حذف كل شيء؟")) { contestants = []; activeContestantId=null; contestStopped=false; localStorage.removeItem("quiz_physics_voting"); renderPublicLists(); document.getElementById("quizArea").style.display="none"; document.getElementById("contestantLoginArea").style.display="block"; document.getElementById("voteArea").style.display="none"; } }
-    function unlockTeacher() { if(document.getElementById("teacherPassword").value==="admin123") { document.getElementById("teacherControls").style.display="block"; alert("تم الدخول"); } else alert("كلمة مرور خاطئة"); }
-    function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-    function closeModal() { document.getElementById("resultModal").style.display = "none"; }
-    function printResult() { const w = window.open('','_blank'); w.document.write(`<html dir="rtl"><head><title>كشف النتيجة</title><style>table,th,td{border:1px solid #000;border-collapse:collapse;padding:8px;}</style></head><body>${document.getElementById("resultSheetContent").innerHTML}</body></html>`); w.document.close(); w.print(); }
+
+    function resetAll() {
+        if(confirm("⚠️ تحذير: سيتم حذف جميع المتسابقين والنتائج بشكل نهائي. هل أنت متأكد؟")) {
+            contestants = [];
+            activeContestantId = null;
+            contestStopped = false;
+            savedTimeLeft = 15;
+            if(timerInterval) clearInterval(timerInterval);
+            localStorage.removeItem("quiz_physics_v3");
+            document.getElementById("quizArea").style.display = "none";
+            document.getElementById("contestantLoginArea").style.display = "block";
+            renderPublicLists();
+            document.getElementById("regMessage").innerHTML = "";
+            document.getElementById("resumeSection").style.display = "none";
+            document.getElementById("stopMessageArea").style.display = "none";
+        }
+    }
+
+    function unlockTeacher() {
+        const password = document.getElementById("teacherPassword").value;
+        if(password === "admin123") {
+            document.getElementById("teacherControls").style.display = "block";
+            alert("تم فتح لوحة تحكم المعلم");
+        } else {
+            alert("كلمة المرور غير صحيحة");
+            document.getElementById("teacherControls").style.display = "none";
+        }
+    }
+
+    function escapeHtml(str) {
+        if(!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // إدارة المودال
+    function closeModal() {
+        document.getElementById("resultModal").style.display = "none";
+    }
+    
+    function printResult() {
+        const content = document.getElementById("resultSheetContent").innerHTML;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html dir="rtl">
+            <head><title>كشف نتيجة المسابقة</title>
+            <style>
+                body { font-family: Tahoma; padding: 20px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+                th { background: #f0f0f0; }
+            </style>
+            </head>
+            <body>
+                <h2>كشف نتيجة مسابقة الفيزياء</h2>
+                ${content}
+                <p>تاريخ الطباعة: ${new Date().toLocaleString()}</p>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
 
     window.onload = () => {
         loadData();
-        document.getElementById("fullNameInput").addEventListener("input", onNameInput);
+        const nameInput = document.getElementById("fullNameInput");
+        nameInput.addEventListener("input", onNameInput);
         document.getElementById("registerNewBtn").addEventListener("click", registerNewContestant);
         document.getElementById("resumeBtn").addEventListener("click", resumeContestant);
         document.getElementById("unlockTeacherBtn").addEventListener("click", unlockTeacher);
@@ -734,13 +859,21 @@
         document.getElementById("stopContestBtn").addEventListener("click", stopContest);
         document.getElementById("resumeContestBtn").addEventListener("click", resumeContest);
         document.getElementById("showResultsBtn").addEventListener("click", showResultSheet);
-        document.getElementById("resetVotesBtn").addEventListener("click", resetAllVotes);
-        document.querySelectorAll(".close-modal, #closeModalBtn").forEach(btn=>btn.addEventListener("click", closeModal));
+        
+        // أحداث المودال
+        const modal = document.getElementById("resultModal");
+        const closeBtns = document.querySelectorAll(".close-modal, #closeModalBtn");
+        closeBtns.forEach(btn => btn.addEventListener("click", closeModal));
+        window.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
         document.getElementById("printResultBtn").addEventListener("click", printResult);
-        window.addEventListener("click", (e) => { if(e.target === document.getElementById("resultModal")) closeModal(); });
-        if(activeContestantId) setActiveContestant(activeContestantId);
-        else { document.getElementById("quizArea").style.display = "none"; document.getElementById("contestantLoginArea").style.display = "block"; }
+        
+        if(activeContestantId) {
+            setActiveContestant(activeContestantId);
+        } else {
+            document.getElementById("quizArea").style.display = "none";
+            document.getElementById("contestantLoginArea").style.display = "block";
+        }
     };
 </script>
 </body>
-</html>
+</html> 
