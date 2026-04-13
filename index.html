@@ -2,118 +2,73 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تفعيل التطبيق</title>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<title>تسجيل الطالب</title>
 
 <style>
-body { 
-  font-family: Tahoma; 
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-.card { 
-  background: #fff; 
-  padding: 30px;
-  border-radius: 15px;
-  width: 300px;
+body {
+  font-family: tahoma;
+  background: linear-gradient(to bottom, #0b3d91, #1e90ff);
   text-align: center;
+  color: white;
 }
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
+
+.box {
+  background: white;
+  color: black;
+  width: 90%;
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px;
   font-size: 16px;
 }
+
 button {
-  background: #4CAF50;
+  padding: 10px 20px;
+  background: #0b3d91;
   color: white;
   border: none;
-  cursor: pointer;
+  border-radius: 10px;
+  font-size: 16px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h3>تفعيل التطبيق</h3>
-  <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
-  <button onclick="activate()">تفعيل</button>
+<div class="box">
+  <h2>🎓 تسجيل الطالب</h2>
+
+  <input type="text" id="name" placeholder="أدخل الاسم الرباعي">
+
+  <br>
+
+  <button onclick="start()">ابدأ المسابقة</button>
 </div>
 
 <script>
+function start() {
+  var name = document.getElementById("name").value.trim();
 
-/* Firebase */
-firebase.initializeApp({
-  apiKey: "APIKEY",
-  authDomain: "AUTHDOMAIN",
-  databaseURL: "https://appcards-c4730-default-rtdb.firebaseio.com",
-  projectId: "PROJECTID"
-});
-
-var db = firebase.database();
-
-/* إنشاء معرف للجهاز */
-function getDeviceId(){
-  let id = localStorage.getItem("device_id");
-  if(!id){
-    id = "dev-" + Math.random().toString(36).substr(2,16);
-    localStorage.setItem("device_id", id);
-  }
-  return id;
-}
-
-/* التفعيل */
-function activate(){
-  let code = document.getElementById("cardCode").value.trim();
-
-  if(!code){
-    alert("أدخل رقم الكرت");
+  // تحقق من الاسم الرباعي
+  if (name.split(" ").length < 4) {
+    alert("يجب إدخال الاسم الرباعي");
     return;
   }
 
-  db.ref("cards/" + code).once("value").then(function(snap){
+  // حفظ الاسم
+  localStorage.setItem("studentName", name);
 
-    // تحقق هل الكرت موجود
-    if(!snap.exists()){
-      alert("❌ الكرت غير صحيح");
-      return;
-    }
-
-    let data = snap.val();
-    let device = getDeviceId();
-
-    // تحقق هل مستخدم بجهاز آخر
-    if(data.used && data.device !== device){
-      alert("🚫 الكرت مستخدم على جهاز آخر");
-      return;
-    }
-
-    // إذا لم يستخدم → نربطه بهذا الجهاز
-    if(!data.used){
-      db.ref("cards/" + code).update({
-        used: true,
-        device: device
-      });
-    }
-
-    alert("✅ تم التفعيل بنجاح");
-    
-    // تحويل لصفحة أخرى
-    window.location.href = "game.html";
-
-  }).catch(function(){
-    alert("خطأ في الاتصال بقاعدة البيانات");
-  });
+  // الانتقال لصفحة اللعبة
+  window.location.href = "game.html";
 }
-
 </script>
+
 </body>
 </html>
