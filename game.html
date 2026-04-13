@@ -1,1082 +1,130 @@
  <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة الفيزياء - مع تعليقات المعلم وخلط الأسئلة</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Tahoma', 'Segoe UI', system-ui;
-        }
-        body {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 25px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
-        }
-        h1, h2, h3 {
-            color: #0f172a;
-            margin-top: 0;
-            border-right: 5px solid #f59e0b;
-            padding-right: 15px;
-        }
-        .timer-box {
-            background: #0f172a;
-            color: #facc15;
-            font-size: 3rem;
-            font-weight: bold;
-            text-align: center;
-            padding: 12px;
-            border-radius: 60px;
-            margin-bottom: 25px;
-            font-family: monospace;
-        }
-        .question-card {
-            background: #f8fafc;
-            border-radius: 28px;
-            padding: 25px;
-            margin: 15px 0;
-            border: 2px solid #e2e8f0;
-            transition: 0.2s;
-        }
-        .question-text {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #1e293b;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .option-btn {
-            background: white;
-            border: 2px solid #cbd5e1;
-            border-radius: 60px;
-            padding: 14px 20px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.1s;
-            text-align: right;
-            font-weight: 500;
-        }
-        .option-btn:hover:not(:disabled) {
-            background: #eef2ff;
-            border-color: #f59e0b;
-        }
-        .option-correct {
-            background: #22c55e !important;
-            border-color: #15803d !important;
-            color: white !important;
-        }
-        .option-wrong {
-            background: #ef4444 !important;
-            border-color: #b91c1c !important;
-            color: white !important;
-        }
-        button {
-            background: #f59e0b;
-            color: #0f172a;
-            font-weight: bold;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-        button:hover {
-            background: #d97706;
-            transform: scale(1.02);
-        }
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-        .btn-secondary {
-            background: #3b82f6;
-            color: white;
-        }
-        .info-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            background: #f1f5f9;
-            padding: 12px 18px;
-            border-radius: 60px;
-            margin-bottom: 20px;
-        }
-        .student-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-        .student-item {
-            background: #f1f5f9;
-            margin: 8px 0;
-            padding: 10px;
-            border-radius: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            flex-wrap: wrap;
-        }
-        .student-info {
-            flex: 1;
-        }
-        .student-name {
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 8px;
-        }
-        .student-comment {
-            font-size: 12px;
-            color: #4b5563;
-            margin-top: 4px;
-            font-style: italic;
-        }
-        .student-item.active {
-            background: #fef3c7;
-            border-right: 5px solid #f59e0b;
-        }
-        .score-badge {
-            font-weight: bold;
-            background: #0f172a;
-            color: #facc15;
-            padding: 4px 12px;
-            border-radius: 30px;
-            margin-right: 10px;
-        }
-        .comment-btn {
-            background: #8b5cf6;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-right: 8px;
-        }
-        .comment-btn:hover {
-            background: #7c3aed;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            text-align: right;
-            border-bottom: 1px solid #cbd5e1;
-        }
-        .teacher-password-area {
-            background: #e2e8f0;
-            border-radius: 28px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-        .flex-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        input {
-            padding: 10px;
-            border-radius: 60px;
-            border: 1px solid #cbd5e1;
-            font-family: inherit;
-        }
-        .resume-message {
-            background: #fef3c7;
-            border-radius: 24px;
-            padding: 12px;
-            margin-top: 12px;
-            border-right: 4px solid #f59e0b;
-        }
-        .stop-message {
-            background: #fee2e2;
-            border-radius: 24px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: center;
-            color: #b91c1c;
-            font-weight: bold;
-            border-right: 4px solid #dc2626;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            border-radius: 32px;
-            padding: 20px;
-            overflow: auto;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .close-modal {
-            cursor: pointer;
-            font-size: 28px;
-            font-weight: bold;
-            background: none;
-            border: none;
-            padding: 0 10px;
-        }
-        .result-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .result-table th, .result-table td {
-            border: 1px solid #cbd5e1;
-            padding: 8px;
-            text-align: center;
-        }
-        .print-btn {
-            background: #0f172a;
-            color: white;
-            margin-top: 15px;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>المسابقة</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<style>
+body {
+  font-family: tahoma;
+  background: #1e90ff;
+  color: white;
+  text-align: center;
+}
+
+.box {
+  background: white;
+  color: black;
+  width: 90%;
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+button {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 10px;
+  border: none;
+  background: #0b3d91;
+  color: white;
+  border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
-<div class="container">
-    <div class="card">
-        <h1>🏆 مسابقة الأوائل - متابعة المسابقة 🏆</h1>
-        <div class="info-bar">
-            <span>⏱️ وقت السؤال: <strong>15 ثانية</strong></span>
-            <span>📋 السؤال <span id="currentQNumber">0</span> من <span id="totalQCount">0</span></span>
-        </div>
-        <div id="contestantLoginArea">
-            <h3>📝 تسجيل الدخول (الاسم رباعي)</h3>
-            <div class="flex-between">
-                <input type="text" id="fullNameInput" placeholder="مثال: خالد محمد سعد العتيبي" style="flex:3;">
-                <button id="registerNewBtn" style="flex:1;">✅ بدء مسابقة جديدة</button>
-            </div>
-            <div id="regMessage" style="margin-top:12px; font-size:14px;"></div>
-            <div id="resumeSection" style="display: none;" class="resume-message">
-                <div id="resumeText"></div>
-                <div class="flex-buttons">
-                    <button id="resumeBtn" class="btn-secondary">🔄 متابعة المسابقة من حيث توقفت</button>
-                </div>
-            </div>
-        </div>
-        <div id="quizArea" style="display: none;">
-            <div class="timer-box" id="timerDisplay">00:15</div>
-            <div id="stopMessageArea" style="display: none;" class="stop-message">
-                ⛔ تم إيقاف المسابقة من قبل المعلم. يرجى الانتظار.
-            </div>
-            <div id="singleQuestionContainer"></div>
-        </div>
-    </div>
 
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>📊 قائمة المتسابقين والنتائج</h2>
-            <div class="teacher-password-area" style="background:#f1f5f9;">
-                <div class="flex-between" style="gap:8px;">
-                    <input type="password" id="teacherPassword" placeholder="كلمة مرور المعلم" style="width:150px;">
-                    <button id="unlockTeacherBtn">🔓 دخول المعلم</button>
-                </div>
-                <div id="teacherControls" style="display: none; margin-top: 12px;">
-                    <div class="flex-buttons">
-                        <button id="stopContestBtn" class="btn-danger">⏹️ إيقاف المسابقة</button>
-                        <button id="resumeContestBtn" class="btn-secondary">▶️ استئناف المسابقة</button>
-                        <button id="showResultsBtn" class="btn-secondary">📄 إظهار كشف النتيجة</button>
-                        <button id="shuffleQuestionsBtn" class="btn-secondary">🔀 خلط الأسئلة (مع إعادة تعيين)</button>
-                        <button id="resetAllDataBtn" class="btn-danger">🗑️ حذف جميع البيانات والمتسابقين</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <h3>🎓 المتسابقون المسجلون</h3>
-        <div id="studentsList" class="student-list"></div>
-        <h3>🏅 الترتيب النهائي (حسب الدرجة الأعلى للمكتملين)</h3>
-        <div id="rankingTableWrapper">
-            <table style="width:100%">
-                <thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th></tr>
-                </thead>
-                <tbody id="rankingTbody"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<div class="box">
+  <h3 id="q"></h3>
 
-<!-- مودال عرض كشف النتيجة -->
-<div id="resultModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>📋 كشف نتيجة المسابقة</h3>
-            <span class="close-modal">&times;</span>
-        </div>
-        <div id="resultSheetContent">
-            <!-- سيتم تعبئة الجدول هنا -->
-        </div>
-        <div class="flex-buttons">
-            <button id="printResultBtn" class="print-btn">🖨️ طباعة الكشف</button>
-            <button id="closeModalBtn" class="btn-secondary">إغلاق</button>
-        </div>
-    </div>
+  <button onclick="answer(0)" id="a0"></button>
+  <button onclick="answer(1)" id="a1"></button>
+  <button onclick="answer(2)" id="a2"></button>
+  <button onclick="answer(3)" id="a3"></button>
 </div>
 
 <script>
-    // ---------- الأسئلة الأصلية (بعد التصحيح) ----------
-    const MASTER_QUESTIONS = [
-        // أسئلة الجهاز العصبي (20 سؤالاً)
-        { text: "ما الوظيفة الرئيسية للجهاز العصبي؟",
-          options: ["(أ) نقل الأكسجين إلى الخلايا", "(ب) تنظيم وتنسيق وظائف الجسم", "(ج) هضم الطعام", "(د) إنتاج الهرمونات"],
-          correct: "(ب) تنظيم وتنسيق وظائف الجسم" },
-        { text: "أي مما يلي يمثل الوحدة الأساسية للجهاز العصبي؟",
-          options: ["(أ) النيفرون", "(ب) العصبون", "(ج) الألياف العضلية", "(د) الحويصلة الهوائية"],
-          correct: "(ب) العصبون" },
-        { text: "أي جزء من الخلية العصبية يستقبل الإشارات من الخلايا الأخرى؟",
-          options: ["(أ) المحور", "(ب) الزوائد الشجرية", "(ج) غمد الميالين", "(د) شوان"],
-          correct: "(ب) الزوائد الشجرية" },
-        { text: "ما اسم المادة الدهنية التي تعزل المحور العصبي وتسرع نقل السيال العصبي؟",
-          options: ["(أ) الميالين", "(ب) السيروتونين", "(ج) الدوبامين", "(د) الأدرينالين"],
-          correct: "(أ) الميالين" },
-        { text: "ما اسم الفجوة الصغيرة بين عصبونين؟",
-          options: ["(أ) العقدة", "(ب) الشق التشابكي", "(ج) القشرة", "(د) الجسر"],
-          correct: "(ب) الشق التشابكي" },
-        { text: "ما هو دور النواقل العصبية في المشبك؟",
-          options: ["(أ) إنتاج الطاقة للخلية", "(ب) تكوين غمد الميالين", "(ج) نقل الإشارة عبر الشق التشابكي", "(د) تخزين الجينات"],
-          correct: "(ج) نقل الإشارة عبر الشق التشابكي" },
-        { text: "أي جزء من الجهاز العصبي يتحكم في الوظائف الإرادية مثل تحريك اليد؟",
-          options: ["(أ) الجهاز العصبي الودي", "(ب) الجهاز العصبي الجسدي", "(ج) الجهاز العصبي السمبثاوي", "(د) الجهاز العصبي المعوي"],
-          correct: "(ب) الجهاز العصبي الجسدي" },
-        { text: "أي جزء من الجهاز العصبي مسؤول عن تنظيم معدل ضربات القلب والتنفس تلقائياً؟",
-          options: ["(أ) الجهاز العصبي المركزي", "(ب) الجهاز العصبي الطرفي", "(ج) الجهاز العصبي الذاتي", "(د) الجهاز العصبي الجسدي"],
-          correct: "(ج) الجهاز العصبي الذاتي" },
-        { text: "أي من هذه الألياف تنقل السيالات العصبية بسرعة أكبر؟",
-          options: ["(أ) الألياف غير الميالينية", "(ب) الألياف الميالينية", "(ج) الألياف الحركية فقط", "(د) الألياف الحسية فقط"],
-          correct: "(ب) الألياف الميالينية" },
-        { text: "الجهاز العصبي الودي (السمبثاوي) مسؤول بشكل أساسي عن استجابة:",
-          options: ["(أ) الراحة والهضم", "(ب) القتال أو الهروب", "(ج) النوم", "(د) التكاثر"],
-          correct: "(ب) القتال أو الهروب" },
-        { text: "أي جزء من الدماغ مسؤول عن التوازن وتنسيق الحركة؟",
-          options: ["(أ) المخيخ", "(ب) جذع الدماغ", "(ج) المهاد", "(د) ما تحت المهاد"],
-          correct: "(أ) المخيخ" },
-        { text: "أي جزء من الدماغ يتحكم في وظائف البقاء الأساسية مثل التنفس وضربات القلب؟",
-          options: ["(أ) المخ", "(ب) المخيخ", "(ج) جذع الدماغ", "(د) الفص الصدغي"],
-          correct: "(ج) جذع الدماغ" },
-        { text: "ما اسم المسار العصبي السريع واللاإرادي استجابة لمثير معين؟",
-          options: ["(أ) الدائرة العصبية", "(ب) المنعكس", "(ج) العقدة العصبية", "(د) الحبل الشوكي"],
-          correct: "(ب) المنعكس" },
-        { text: "ما هو نوع المستقبلات الحسية المسؤولة عن حاسة اللمس والضغط؟",
-          options: ["(أ) المستقبلات الكيميائية", "(ب) المستقبلات الآلية", "(ج) المستقبلات الضوئية", "(د) المستقبلات الحرارية"],
-          correct: "(ب) المستقبلات الآلية" },
-        { text: "أي من هذه المستقبلات مسؤول عن تحفيزها بواسطة الضوء؟",
-          options: ["(أ) المستقبلات الآلية", "(ب) المستقبلات الكيميائية", "(ج) المستقبلات الضوئية", "(د) المستقبلات الألمية"],
-          correct: "(ج) المستقبلات الضوئية" },
-        { text: "ما هي الخلايا المسؤولة عن حماية ودعم الخلايا العصبية في الجهاز العصبي المركزي؟",
-          options: ["(أ) الخلايا العظمية", "(ب) خلايا الغراء العصبي", "(ج) الخلايا الليمفاوية", "(د) الخلايا الظهارية"],
-          correct: "(ب) خلايا الغراء العصبي" },
-        { text: "أي من هذه الألياف العصبية هي ألياف حركية؟",
-          options: ["(أ) تنقل السيال من المستقبل إلى الجهاز العصبي المركزي", "(ب) تنقل السيال من الجهاز العصبي المركزي إلى العضلات والغدد", "(ج) تنقل السيال بين عصبونين في الدماغ", "(د) تنقل السيال من عضو حسي إلى آخر"],
-          correct: "(ب) تنقل السيال من الجهاز العصبي المركزي إلى العضلات والغدد" },
-        { text: "أي نوع من الألياف العصبية تنقل الإشارات من المستقبلات الحسية إلى الجهاز العصبي المركزي؟",
-          options: ["(أ) ألياف واردة (حسية)", "(ب) ألياف صادرة (حركية)", "(ج) ألياف ناقلة", "(د) ألياف داخلية"],
-          correct: "(أ) ألياف واردة (حسية)" },
-        { text: "ما الذي يحدث للسيال العصبي عندما يصل إلى نهاية المحور؟",
-          options: ["(أ) يتوقف فوراً", "(ب) يتحول إلى إشارة كهربائية أقوى", "(ج) يتحول إلى إشارة كيميائية (ناقل عصبي)", "(د) يمتصه غمد الميالين"],
-          correct: "(ج) يتحول إلى إشارة كيميائية (ناقل عصبي)" },
-        { text: "الجهاز العصبي السمبتاوي (نظير الودي) مسؤول بشكل رئيسي عن استجابة:",
-          options: ["(أ) الطوارئ والتوتر", "(ب) الراحة والهضم", "(ج) القتال أو الهروب", "(د) اليقظة والتركيز"],
-          correct: "(ب) الراحة والهضم" }, 
-        { text: "جسمان كتلة كلٍّ منهما (20) كجم، أحدهما يتحرك بسرعة (40) م/ث والآخر ساكن. إذا تصادما تصادمًا التحاميًا، فإن طاقة حركة الجسم المتكوّن بعد التصادم تساوي:",
-          options: ["1000 جول", "1600 جول", "2000 جول", "3200 جول"],
-          correct: "2000 جول" },
-        { text: "توضع الأقمار الصناعية على ارتفاع يقارب (270) كم من سطح الأرض وذلك من أجل:",
-          options: ["زيادة الجاذبية الأرضية", "تقليل سرعة القمر", "الابتعاد عن مقاومة الهواء", "زيادة طاقة الوضع"],
-          correct: "الابتعاد عن مقاومة الهواء" },
-        { text: "في التصادم غير المرن فإن:",
-          options: ["كمية التحرك لا تحفظ", "طاقة الحركة قبل التصادم أكبر منها بعد التصادم", "طاقة الحركة محفوظة", "لا يحدث فقد للطاقة"],
-          correct: "طاقة الحركة قبل التصادم أكبر منها بعد التصادم" },
-        { text: "يعتمد مقدار السرعة المدارية للقمر الصناعي حول الأرض على:",
-          options: ["كتلة القمر فقط", "عجلة الجاذبية فقط", "نصف قطر المدار", "شكل القمر"],
-          correct: "نصف قطر المدار" },
-        { text: "كمية التحرك الخطي تساوي:",
-          options: ["حاصل ضرب الكتلة في العجلة", "حاصل ضرب القوة في الزمن", "حاصل ضرب الكتلة في السرعة", "حاصل ضرب السرعة في الزمن"],
-          correct: "حاصل ضرب الكتلة في السرعة" },
-        { text: "كمية التحرك الزاوي تساوي:",
-          options: ["عزم القوة × الزمن", "عزم القصور الذاتي × السرعة الزاوية", "الكتلة × السرعة", "القوة × نصف القطر"],
-          correct: "عزم القصور الذاتي × السرعة الزاوية" },
-        { text: "تؤثر على القمر الصناعي الذي يدور حول الأرض قوتان هما:",
-          options: ["الجاذبية والمغناطيسية", "الجاذبية والاحتكاك", "الجذب والطرد الناتج عن الدوران", "الدفع والمقاومة"],
-          correct: "الجذب والطرد الناتج عن الدوران" }, 
-    { text: "من هو العالم الذي استخدم أنبوب الأشعة المهبطية لاكتشاف الإلكترون وتعين نسبة شحنته إلى كتلته؟",
-      options: ["أ- طومسون", "ب- رذرفورد", "ج- ميلكان", "د- شادويك"],
-      correct: "أ- طومسون" },
-    { text: "في تجربة رذرفورد، سبب ارتداد عدد قليل جداً من جسيمات ألفا هو:",
-      options: ["أ- وجود إلكترونات حول النواة", "ب- أن النواة صغيرة الحجم وموجبة الشحنة وكثيفة", "ج- أن الذرة متعادلة كهربائياً", "د- وجود فراغات كبيرة داخل الذرة"],
-      correct: "ب- أن النواة صغيرة الحجم وموجبة الشحنة وكثيفة" },
-    { text: "العدد الكتلي لعنصر يساوي:",
-      options: ["أ- عدد البروتونات فقط", "ب- عدد النيوترونات فقط", "ج- مجموع عدد البروتونات والنيوترونات", "د- مجموع عدد البروتونات والإلكترونات"],
-      correct: "ج- مجموع عدد البروتونات والنيوترونات" },
-    { text: "ذرة عنصر عددها الذري 19 وعددها الكتلي 39، فإن عدد النيوترونات فيها يساوي:",
-      options: ["أ- 19", "ب- 20", "ج- 39", "د- 58"],
-      correct: "ب- 20" },
-    { text: "النظائر لعنصر واحد تختلف في:",
-      options: ["أ- عدد البروتونات", "ب- عدد الإلكترونات", "ج- عدد النيوترونات", "د- الشحنة النووية"],
-      correct: "ج- عدد النيوترونات" },
-    { text: "عدد الإلكترونات التي يمكن أن يستوعبها مستوى الطاقة الرئيسي الرابع (n=4) يساوي:",
-      options: ["أ- 8", "ب- 18", "ج- 32", "د- 2"],
-      correct: "ج- 32" },
-    { text: "وفقاً لقاعدة هوند، فإن الإلكترونات تتوزع في المستويات الفرعية المتساوية الطاقة بحيث:",
-      options: ["أ- تتزاوج أولاً ثم تشغل أفردياً", "ب- تشغل أفردياً أولاً ثم تتزاوج", "ج- تشغل جميعها أفردياً دائماً", "د- تتزاوج جميعها دائماً"],
-      correct: "ب- تشغل أفردياً أولاً ثم تتزاوج" },
-    { text: "التوزيع الإلكتروني الصحيح لعنصر الحديد (العدد الذري 26) هو:",
-      options: ["أ- [Ar] 4s² 3d⁶", "ب- [Ar] 3d⁶ 4s²", "ج- [Ar] 4s¹ 3d⁷", "د- [Ar] 3d⁸"],
-      correct: "أ- [Ar] 4s² 3d⁶" },
-    { text: "مبدأ باولي يستبعد وجود:",
-      options: ["أ- إلكترونين في نفس الذرة لهما نفس الأعداد الكمية الأربعة", "ب- إلكترونين في نفس الذرة لهما نفس العدد الكمي الرئيسي", "ج- إلكترونين لهما نفس العدد الكمي المغناطيسي", "د- إلكترونين في نفس المدار لهما نفس السبين"],
-      correct: "أ- إلكترونين في نفس الذرة لهما نفس الأعداد الكمية الأربعة" },
-    { text: "العنصر الذي ينتهي توزيعه الإلكتروني بـ 4p⁵ يقع في:",
-      options: ["أ- الدورة الرابعة، المجموعة السابعة", "ب- الدورة الخامسة، المجموعة السابعة عشرة", "ج- الدورة الرابعة، المجموعة السابعة عشرة", "د- الدورة الخامسة، المجموعة الخامسة"],
-      correct: "ج- الدورة الرابعة، المجموعة السابعة عشرة" },
-    { text: "الخواص الفلزية للعناصر في الجدول الدوري:",
-      options: ["أ- تزيد كلما اتجهنا من أعلى إلى أسفل في المجموعة", "ب- تقل كلما اتجهنا من أعلى إلى أسفل في المجموعة", "ج- تزيد كلما اتجهنا من اليسار إلى اليمين في الدورة", "د- لا تتغير في المجموعة الواحدة"],
-      correct: "أ- تزيد كلما اتجهنا من أعلى إلى أسفل في المجموعة" },
-    { text: "أكبر العناصر حجماً (نصف قطر ذري) في الدورة الثالثة هو:",
-      options: ["أ- الصوديوم (Na)", "ب- المغنسيوم (Mg)", "ج- الكلور (Cl)", "د- الأرجون (Ar)"],
-      correct: "أ- الصوديوم (Na)" },
-    { text: "طاقة التأين الأولى:",
-      options: ["أ- الطاقة اللازمة لإضافة إلكترون إلى ذرة متعادلة في حالتها الغازية", "ب- الطاقة اللازمة لنزع إلكترون من ذرة متعادلة في حالتها الغازية", "ج- الطاقة المنطلقة عند نزع إلكترون من ذرة", "د- الطاقة اللازمة لنزع إلكترون من أيون سالب"],
-      correct: "ب- الطاقة اللازمة لنزع إلكترون من ذرة متعادلة في حالتها الغازية" },
-    { text: "العنصر الذي له أعلى قيمة لطاقة التأين الأولى في الدورة الثانية هو:",
-      options: ["أ- الليثيوم (Li)", "ب- البيريليوم (Be)", "ج- النيون (Ne)", "د- الفلور (F)"],
-      correct: "ج- النيون (Ne)" },
-    { text: "السالبية الكهربية لمقياس باولنج:",
-      options: ["أ- قدرة الذرة على جذب الإلكترونات لنفسها في الجزيء", "ب- قدرة الذرة على فقد الإلكترونات", "ج- الطاقة اللازمة لنزع إلكترون", "د- نصف قطر الذرة"],
-      correct: "أ- قدرة الذرة على جذب الإلكترونات لنفسها في الجزيء" },
-    { text: "أكثر العناصر سالبية كهربية في الجدول الدوري هو:",
-      options: ["أ- الفلور (F)", "ب- الأكسجين (O)", "ج- الكلور (Cl)", "د- النيتروجين (N)"],
-      correct: "أ- الفلور (F)" },
-    { text: "في تجربة ميلكان لقطرة الزيت، تم تحديد:",
-      options: ["أ- شحنة الإلكترون", "ب- كتلة الإلكترون", "ج- نسبة شحنة الإلكترون إلى كتلته", "د- وجود النواة"],
-      correct: "أ- شحنة الإلكترون" },
-    { text: "عدد الأوربيتالات في المستوى الفرعي d يساوي:",
-      options: ["أ- 1", "ب- 3", "ج- 5", "د- 7"],
-      correct: "ج- 5" },
-    { text: "العدد الكمي المغناطيسي (m) يحدد:",
-      options: ["أ- مستوى الطاقة الرئيسي", "ب- شكل الأوربيتال", "ج- اتجاه الأوربيتال في الفراغ", "د- اتجاه دوران الإلكترون"],
-      correct: "ج- اتجاه الأوربيتال في الفراغ" },
-    { text: "العناصر الانتقالية هي العناصر التي:",
-      options: ["أ- تمتلئ فيها مستويات الطاقة الفرعية (s) و (p)", "ب- تمتلئ فيها مستويات الطاقة الفرعية (d) أو (f) جزئياً", "ج- تمتلئ فيها مستويات الطاقة الفرعية (s) فقط", "د- تمتلئ فيها مستويات الطاقة الفرعية (p) فقط"],
-      correct: "ب- تمتلئ فيها مستويات الطاقة الفرعية (d) أو (f) جزئياً" }
+// 🔹 إعداد Firebase (ضع بياناتك)
+var firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+  projectId: "YOUR_PROJECT"
+};
+firebase.initializeApp(firebaseConfig);
+
+// 🔹 اسم الطالب
+var studentName = localStorage.getItem("studentName");
+
+// 🔹 الأسئلة
+var questions = [
+  {
+    q: "كم عدد كواكب المجموعة الشمسية؟",
+    a: ["7", "8", "9", "10"],
+    correct: 1
+  },
+  {
+    q: "عاصمة اليمن؟",
+    a: ["عدن", "صنعاء", "تعز", "حضرموت"],
+    correct: 1
+  },
+  {
+    q: "كم 2 + 2 ؟",
+    a: ["3", "4", "5", "6"],
+    correct: 1
+  }
 ];
-    let QUESTIONS = [];          // ستكون هذه النسخة المخلوطة
-    let TOTAL_QS = MASTER_QUESTIONS.length;
 
-    let contestants = [];
-    let activeContestantId = null;
-    let currentAnswersForActive = [];
-    let currentQuestionIndex = 0;
-    let timerInterval = null;
-    let timeLeft = 15;
-    let isWaitingForTransition = false;
-    let contestStopped = false;
-    let savedTimeLeft = 15;
-    let isTeacherMode = false;
+var index = 0;
+var score = 0;
 
-    // دالة خلط عشوائي (خوارزمية Fisher-Yates)
-    function shuffleArray(arr) {
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
+// 🔹 عرض السؤال
+function loadQuestion() {
+  document.getElementById("q").innerText = questions[index].q;
 
-    // دالة خلط الأسئلة (تؤثر على جميع المتسابقين الحاليين ويجب إعادة تعيين البيانات)
-    function shuffleQuestions(resetData = true) {
-        if (resetData && contestants.length > 0) {
-            if (!confirm("🔀 خلط الأسئلة سيؤدي إلى إعادة تعيين جميع بيانات المتسابقين (لأن ترتيب الأسئلة تغير). هل تريد المتابعة؟")) {
-                return false;
-            }
-            // إعادة تعيين كاملة
-            contestants = [];
-            activeContestantId = null;
-            contestStopped = false;
-            savedTimeLeft = 15;
-            if (timerInterval) clearInterval(timerInterval);
-            localStorage.removeItem("quiz_physics_v4_comments");
-            document.getElementById("quizArea").style.display = "none";
-            document.getElementById("contestantLoginArea").style.display = "block";
-            document.getElementById("stopMessageArea").style.display = "none";
-        }
-        // إنشاء نسخة جديدة من الأسئلة الأصلية ثم خلطها
-        QUESTIONS = shuffleArray([...MASTER_QUESTIONS]);
-        TOTAL_QS = QUESTIONS.length;
-        document.getElementById("totalQCount").innerText = TOTAL_QS;
-        saveData(); // حفظ الحالة الفارغة إذا تم المسح
-        renderPublicLists();
-        alert(`تم خلط الأسئلة بنجاح! عدد الأسئلة: ${TOTAL_QS}`);
-        return true;
-    }
+  for (var i = 0; i < 4; i++) {
+    document.getElementById("a"+i).innerText = questions[index].a[i];
+  }
+}
 
-    // تحميل/حفظ البيانات
-    function loadData() {
-        const stored = localStorage.getItem("quiz_physics_v4_comments");
-        if(stored) {
-            try {
-                contestants = JSON.parse(stored);
-                contestants = contestants.map(c => ({ 
-                    ...c, 
-                    answers: c.answers || [], 
-                    currentScore: c.currentScore || 0, 
-                    quizCompleted: c.quizCompleted || false, 
-                    currentQuestionIndex: c.currentQuestionIndex || 0,
-                    comment: c.comment || ""
-                }));
-            } catch(e) {}
-        }
-        renderPublicLists();
-    }
-    function saveData() {
-        localStorage.setItem("quiz_physics_v4_comments", JSON.stringify(contestants));
-        renderPublicLists();
-    }
+// 🔹 عند الإجابة
+function answer(i) {
+  if (i === questions[index].correct) {
+    score++;
+  }
 
-    // عرض القائمة مع أزرار التعليق (للمعلم فقط)
-    function renderPublicLists() {
-        const container = document.getElementById("studentsList");
-        if(container) {
-            if(contestants.length === 0) {
-                container.innerHTML = "<div style='padding:12px; text-align:center;'>لا يوجد متسابقون بعد</div>";
-            } else {
-                container.innerHTML = contestants.map(c => `
-                    <div class="student-item ${activeContestantId === c.id ? 'active' : ''}" data-id="${c.id}">
-                        <div class="student-info">
-                            <div>
-                                <span class="student-name"><strong>${escapeHtml(c.fullName)}</strong></span>
-                                <span class="score-badge">${c.quizCompleted ? c.currentScore+'/'+TOTAL_QS : (c.currentScore||0)}</span>
-                                ${isTeacherMode ? `<button class="comment-btn" data-id="${c.id}" data-name="${escapeHtml(c.fullName)}">✏️ تعليق</button>` : ''}
-                            </div>
-                            ${c.comment ? `<div class="student-comment">📝 ${escapeHtml(c.comment)}</div>` : ''}
-                        </div>
-                        <span>${c.quizCompleted ? '✅ (مكتمل)' : '⏳ (قيد اللعب)'}</span>
-                    </div>
-                `).join('');
-                // إضافة مستمعي الأحداث للطلاب (للتبديل)
-                document.querySelectorAll('.student-item').forEach(el => {
-                    const id = parseInt(el.getAttribute('data-id'));
-                    el.addEventListener('click', (e) => {
-                        if(e.target.classList && e.target.classList.contains('comment-btn')) return;
-                        const student = contestants.find(s => s.id === id);
-                        if(student && !student.quizCompleted) {
-                            if(contestStopped) {
-                                alert("المسابقة متوقفة حالياً. يرجى من المعلم استئنافها أولاً.");
-                                return;
-                            }
-                            setActiveContestant(student.id);
-                        } else if(student && student.quizCompleted) {
-                            alert(`هذا المتسابق أنهى المسابقة بنتيجة ${student.currentScore}/${TOTAL_QS}. لا يمكن إعادة اللعب إلا بعد حذف البيانات.`);
-                        }
-                    });
-                });
-                if(isTeacherMode) {
-                    document.querySelectorAll('.comment-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const studentId = parseInt(btn.getAttribute('data-id'));
-                            const studentName = btn.getAttribute('data-name');
-                            const student = contestants.find(s => s.id === studentId);
-                            if(student) {
-                                let newComment = prompt(`أدخل تعليقاً للطالب "${studentName}" (مثال: غائب, لا يرغب بالمشاركة, اعتذار...)`, student.comment || "");
-                                if(newComment !== null) {
-                                    student.comment = newComment.trim();
-                                    saveData();
-                                }
-                            }
-                        });
-                    });
-                }
-            }
-        }
-        // جدول الترتيب (للمكتملين فقط)
-        const ranked = contestants.filter(c => c.quizCompleted === true).sort((a,b) => b.currentScore - a.currentScore);
-        const tbody = document.getElementById("rankingTbody");
-        if(tbody) {
-            if(ranked.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='3'>لا توجد نتائج مكتملة بعد</td></tr>";
-            } else {
-                tbody.innerHTML = ranked.map((c, idx) => `
-                    <tr>
-                        <td>${idx+1} ${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':''}</td>
-                        <td>${escapeHtml(c.fullName)}${c.comment ? `<br><span style="font-size:12px;color:#6b7280;">📝 ${escapeHtml(c.comment)}</span>` : ''}</td>
-                        <td><strong>${c.currentScore}/${TOTAL_QS}</strong></td>
-                    </tr>
-                `).join('');
-            }
-        }
-    }
+  index++;
 
-    function checkIncompleteContestant(fullName) {
-        return contestants.find(c => c.fullName === fullName && !c.quizCompleted);
-    }
+  if (index < questions.length) {
+    loadQuestion();
+  } else {
+    finish();
+  }
+}
 
-    function onNameInput() {
-        const fullName = document.getElementById("fullNameInput").value.trim();
-        const resumeSection = document.getElementById("resumeSection");
-        const regMessage = document.getElementById("regMessage");
-        if(fullName === "") {
-            resumeSection.style.display = "none";
-            regMessage.innerHTML = "";
-            return;
-        }
-        const incomplete = checkIncompleteContestant(fullName);
-        if(incomplete) {
-            document.getElementById("resumeText").innerHTML = `⚠️ يوجد مسابقة غير مكتملة للمتسابق "${escapeHtml(fullName)}". هل تريد المتابعة من السؤال رقم ${incomplete.currentQuestionIndex+1}؟`;
-            resumeSection.style.display = "block";
-            regMessage.innerHTML = "";
-        } else {
-            resumeSection.style.display = "none";
-            regMessage.innerHTML = "";
-        }
-    }
+// 🔹 إنهاء المسابقة
+function finish() {
+  var ref = firebase.database().ref("students");
 
-    function resumeContestant() {
-        const fullName = document.getElementById("fullNameInput").value.trim();
-        const incomplete = checkIncompleteContestant(fullName);
-        if(incomplete) {
-            setActiveContestant(incomplete.id);
-        } else {
-            alert("لا توجد مسابقة غير مكتملة لهذا الاسم.");
-        }
-    }
+  ref.push({
+    name: studentName,
+    score: score
+  });
 
-    function registerNewContestant() {
-        const nameInput = document.getElementById("fullNameInput");
-        let fullName = nameInput.value.trim();
-        if(fullName === "") {
-            document.getElementById("regMessage").innerHTML = "<span style='color:red'>أدخل الاسم الرباعي</span>";
-            return;
-        }
-        const parts = fullName.split(/\s+/);
-        if(parts.length < 4) {
-            document.getElementById("regMessage").innerHTML = "<span style='color:red'>يجب أن يتكون الاسم من أربعة أجزاء (اسم رباعي)</span>";
-            return;
-        }
-        const incomplete = checkIncompleteContestant(fullName);
-        if(incomplete) {
-            document.getElementById("regMessage").innerHTML = "<span style='color:orange'>⚠️ يوجد مسابقة غير مكتملة لهذا الاسم. الرجاء استخدام زر 'متابعة المسابقة' أو قم بإنهاء المسابقة أولاً.</span>";
-            return;
-        }
-        const existingCompleted = contestants.find(c => c.fullName === fullName && c.quizCompleted === true);
-        if(existingCompleted) {
-            if(!confirm(`الاسم "${fullName}" سبق له المشاركة وانتهت مسابقته. هل تريد إنشاء متسابق جديد بنفس الاسم؟ (سيتم إنشاء مشاركة جديدة مستقلة)`)) {
-                return;
-            }
-        }
-        const newId = Date.now() + Math.random();
-        const newContestant = {
-            id: newId,
-            fullName: fullName,
-            answers: new Array(TOTAL_QS).fill(null),
-            currentScore: 0,
-            quizCompleted: false,
-            currentQuestionIndex: 0,
-            comment: ""
-        };
-        contestants.push(newContestant);
-        saveData();
-        nameInput.value = "";
-        document.getElementById("resumeSection").style.display = "none";
-        document.getElementById("regMessage").innerHTML = `<span style='color:green'>✅ تم التسجيل. يمكنك بدء المسابقة الآن.</span>`;
-        setActiveContestant(newId);
-    }
+  alert("انتهت المسابقة! درجتك: " + score);
 
-    function setActiveContestant(contestantId) {
-        const contestant = contestants.find(c => c.id === contestantId);
-        if(!contestant || contestant.quizCompleted) return;
-        if(contestStopped) {
-            alert("المسابقة موقفة من قبل المعلم. لا يمكن بدء مسابقة جديدة حتى يتم الاستئناف.");
-            return;
-        }
-        activeContestantId = contestantId;
-        currentAnswersForActive = contestant.answers ? [...contestant.answers] : new Array(TOTAL_QS).fill(null);
-        currentQuestionIndex = contestant.currentQuestionIndex !== undefined ? contestant.currentQuestionIndex : 0;
-        if(currentQuestionIndex >= TOTAL_QS) {
-            finalizeContestant(contestant);
-            return;
-        }
-        document.getElementById("contestantLoginArea").style.display = "none";
-        document.getElementById("quizArea").style.display = "block";
-        document.getElementById("currentQNumber").innerText = currentQuestionIndex+1;
-        document.getElementById("totalQCount").innerText = TOTAL_QS;
-        document.getElementById("stopMessageArea").style.display = "none";
-        renderCurrentQuestion();
-        startTimerForCurrent();
-        renderPublicLists();
-    }
+  window.location.href = "leaderboard.html";
+}
 
-    function renderCurrentQuestion() {
-        const container = document.getElementById("singleQuestionContainer");
-        if(!container) return;
-        if(currentQuestionIndex >= TOTAL_QS) {
-            const contestant = contestants.find(c => c.id === activeContestantId);
-            if(contestant) finalizeContestant(contestant);
-            return;
-        }
-        const q = QUESTIONS[currentQuestionIndex];
-        let optionsHtml = `<div class="options-grid">`;
-        q.options.forEach(opt => {
-            optionsHtml += `<button class="option-btn" data-opt="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`;
-        });
-        optionsHtml += `</div>`;
-        container.innerHTML = `
-            <div class="question-card">
-                <div class="question-text">❓ ${escapeHtml(q.text)}</div>
-                ${optionsHtml}
-            </div>
-        `;
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if(isWaitingForTransition) return;
-                if(contestStopped) {
-                    alert("المسابقة موقفة حالياً. لا يمكن الإجابة حتى يستأنف المعلم.");
-                    return;
-                }
-                const selected = btn.getAttribute('data-opt');
-                isWaitingForTransition = true;
-                if(timerInterval) clearInterval(timerInterval);
-                const currentQ = QUESTIONS[currentQuestionIndex];
-                const isCorrect = (selected === currentQ.correct);
-                if(isCorrect) {
-                    btn.classList.add('option-correct');
-                } else {
-                    btn.classList.add('option-wrong');
-                    document.querySelectorAll('.option-btn').forEach(btn2 => {
-                        if(btn2.getAttribute('data-opt') === currentQ.correct) {
-                            btn2.classList.add('option-correct');
-                        }
-                    });
-                }
-                currentAnswersForActive[currentQuestionIndex] = selected;
-                const contestant = contestants.find(c => c.id === activeContestantId);
-                if(contestant) {
-                    contestant.answers = [...currentAnswersForActive];
-                    contestant.currentQuestionIndex = currentQuestionIndex;
-                    let tempScore = 0;
-                    for(let i=0; i<=currentQuestionIndex; i++) {
-                        if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
-                    }
-                    contestant.currentScore = tempScore;
-                    saveData();
-                }
-                setTimeout(() => {
-                    moveToNextQuestion();
-                }, 500);
-            });
-        });
-        if(contestStopped) {
-            btns.forEach(btn => btn.disabled = true);
-        } else {
-            btns.forEach(btn => btn.disabled = false);
-        }
-    }
-
-    function startTimerForCurrent() {
-        if(timerInterval) clearInterval(timerInterval);
-        if(contestStopped) return;
-        timeLeft = savedTimeLeft > 0 ? savedTimeLeft : 15;
-        savedTimeLeft = 15;
-        updateTimerDisplay();
-        timerInterval = setInterval(() => {
-            if(isWaitingForTransition) return;
-            if(contestStopped) return;
-            if(timeLeft <= 1) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                if(!isWaitingForTransition && !contestStopped) {
-                    currentAnswersForActive[currentQuestionIndex] = null;
-                    const contestant = contestants.find(c => c.id === activeContestantId);
-                    if(contestant) {
-                        contestant.answers = [...currentAnswersForActive];
-                        contestant.currentQuestionIndex = currentQuestionIndex;
-                        let tempScore = 0;
-                        for(let i=0; i<=currentQuestionIndex; i++) {
-                            if(currentAnswersForActive[i] === QUESTIONS[i].correct) tempScore++;
-                        }
-                        contestant.currentScore = tempScore;
-                        saveData();
-                    }
-                    isWaitingForTransition = true;
-                    setTimeout(() => moveToNextQuestion(), 300);
-                }
-            } else {
-                timeLeft--;
-                updateTimerDisplay();
-            }
-        }, 1000);
-    }
-
-    function updateTimerDisplay() {
-        const seconds = timeLeft;
-        const formatted = `00:${seconds < 10 ? '0'+seconds : seconds}`;
-        const timerDiv = document.getElementById("timerDisplay");
-        if(timerDiv) timerDiv.innerText = formatted;
-        if(timeLeft <= 5) timerDiv.style.color = "#ef4444";
-        else timerDiv.style.color = "#facc15";
-    }
-
-    function moveToNextQuestion() {
-        if(isWaitingForTransition === false && timerInterval) clearInterval(timerInterval);
-        isWaitingForTransition = false;
-        const contestant = contestants.find(c => c.id === activeContestantId);
-        if(contestant && !contestant.quizCompleted) {
-            let finalScore = 0;
-            for(let i=0; i<=currentQuestionIndex; i++) {
-                if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
-            }
-            contestant.currentScore = finalScore;
-            contestant.currentQuestionIndex = currentQuestionIndex + 1;
-            saveData();
-        }
-        currentQuestionIndex++;
-        if(currentQuestionIndex >= TOTAL_QS) {
-            if(contestant) finalizeContestant(contestant);
-            return;
-        }
-        document.getElementById("currentQNumber").innerText = currentQuestionIndex+1;
-        renderCurrentQuestion();
-        startTimerForCurrent();
-    }
-
-    function finalizeContestant(contestant) {
-        if(contestant.quizCompleted) return;
-        let finalScore = 0;
-        for(let i=0; i<TOTAL_QS; i++) {
-            if(currentAnswersForActive[i] === QUESTIONS[i].correct) finalScore++;
-        }
-        contestant.currentScore = finalScore;
-        contestant.quizCompleted = true;
-        contestant.currentQuestionIndex = TOTAL_QS;
-        saveData();
-        alert(`🎉 انتهت المسابقة! حصل ${contestant.fullName} على ${finalScore} من ${TOTAL_QS}. 🎉`);
-        if(timerInterval) clearInterval(timerInterval);
-        document.getElementById("quizArea").style.display = "none";
-        document.getElementById("contestantLoginArea").style.display = "block";
-        activeContestantId = null;
-        renderPublicLists();
-    }
-
-    // دوال المعلم
-    function stopContest() {
-        if(!activeContestantId) {
-            alert("لا توجد مسابقة نشطة حالياً لإيقافها.");
-            return;
-        }
-        if(contestStopped) {
-            alert("المسابقة موقفة بالفعل.");
-            return;
-        }
-        contestStopped = true;
-        savedTimeLeft = timeLeft;
-        if(timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => btn.disabled = true);
-        document.getElementById("stopMessageArea").style.display = "block";
-        alert("⛔ تم إيقاف المسابقة. يمكنك استئنافها لاحقاً.");
-    }
-
-    function resumeContest() {
-        if(!activeContestantId) {
-            alert("لا توجد مسابقة نشطة لاستئنافها.");
-            return;
-        }
-        if(!contestStopped) {
-            alert("المسابقة غير موقفة حالياً.");
-            return;
-        }
-        contestStopped = false;
-        document.getElementById("stopMessageArea").style.display = "none";
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => btn.disabled = false);
-        startTimerForCurrent();
-    }
-
-    function showResultSheet() {
-        let allContestants = [...contestants];
-        if(allContestants.length === 0) {
-            alert("لا يوجد متسابقون لعرض النتيجة.");
-            return;
-        }
-        const enriched = allContestants.map(c => {
-            const answeredCount = c.answers ? c.answers.filter(a => a !== null).length : 0;
-            let status = '';
-            if(c.quizCompleted) status = 'مكتمل ✅';
-            else if(answeredCount === 0 && c.currentQuestionIndex === 0) status = 'لم يبدأ';
-            else status = `قيد اللعب (السؤال ${c.currentQuestionIndex+1})`;
-            return { ...c, answeredCount, status };
-        });
-        enriched.sort((a,b) => b.currentScore - a.currentScore);
-        let html = `<table class="result-table" border="1" style="width:100%; border-collapse: collapse;">`;
-        html += `<thead><tr><th>#</th><th>الاسم</th><th>الدرجة</th><th>الإجابات الصحيحة</th><th>تم الإجابة على</th><th>الحالة</th><th>ملاحظات</th></tr></thead><tbody>`;
-        enriched.forEach((c, idx) => {
-            html += `<tr>
-                         <td>${idx+1}</td>
-                         <td>${escapeHtml(c.fullName)}</td>
-                         <td><strong>${c.currentScore}/${TOTAL_QS}</strong></td>
-                         <td>${c.currentScore}</td>
-                         <td>${c.answeredCount}/${TOTAL_QS}</td>
-                         <td>${c.status}</td>
-                         <td>${escapeHtml(c.comment) || '—'}</td>
-                      </tr>`;
-        });
-        html += `</tbody>`;
-        document.getElementById("resultSheetContent").innerHTML = html;
-        document.getElementById("resultModal").style.display = "flex";
-    }
-
-    function resetAll() {
-        if(confirm("⚠️ تحذير: سيتم حذف جميع المتسابقين والنتائج بشكل نهائي. هل أنت متأكد؟")) {
-            contestants = [];
-            activeContestantId = null;
-            contestStopped = false;
-            savedTimeLeft = 15;
-            isTeacherMode = false;
-            if(timerInterval) clearInterval(timerInterval);
-            localStorage.removeItem("quiz_physics_v4_comments");
-            document.getElementById("quizArea").style.display = "none";
-            document.getElementById("contestantLoginArea").style.display = "block";
-            document.getElementById("teacherControls").style.display = "none";
-            renderPublicLists();
-            document.getElementById("regMessage").innerHTML = "";
-            document.getElementById("resumeSection").style.display = "none";
-            document.getElementById("stopMessageArea").style.display = "none";
-        }
-    }
-
-    function unlockTeacher() {
-        const password = document.getElementById("teacherPassword").value;
-        if(password === "admin123") {
-            isTeacherMode = true;
-            document.getElementById("teacherControls").style.display = "block";
-            alert("تم فتح لوحة تحكم المعلم - يمكنك الآن إضافة تعليقات على الطلاب.");
-            renderPublicLists();
-        } else {
-            alert("كلمة المرور غير صحيحة");
-            document.getElementById("teacherControls").style.display = "none";
-            isTeacherMode = false;
-            renderPublicLists();
-        }
-    }
-
-    function escapeHtml(str) {
-        if(!str) return "";
-        return str.replace(/[&<>]/g, function(m) {
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function closeModal() {
-        document.getElementById("resultModal").style.display = "none";
-    }
-    
-    function printResult() {
-        const content = document.getElementById("resultSheetContent").innerHTML;
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html dir="rtl">
-            <head><title>كشف نتيجة المسابقة</title>
-            <style>
-                body { font-family: Tahoma; padding: 20px; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #000; padding: 8px; text-align: center; }
-                th { background: #f0f0f0; }
-            </style>
-            </head>
-            <body>
-                <h2>كشف نتيجة مسابقة الفيزياء</h2>
-                ${content}
-                <p>تاريخ الطباعة: ${new Date().toLocaleString()}</p>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    }
-
-    window.onload = () => {
-        // خلط الأسئلة عند بدء التطبيق (مرة واحدة)
-        QUESTIONS = shuffleArray([...MASTER_QUESTIONS]);
-        TOTAL_QS = QUESTIONS.length;
-        document.getElementById("totalQCount").innerText = TOTAL_QS;
-        loadData();
-        const nameInput = document.getElementById("fullNameInput");
-        nameInput.addEventListener("input", onNameInput);
-        document.getElementById("registerNewBtn").addEventListener("click", registerNewContestant);
-        document.getElementById("resumeBtn").addEventListener("click", resumeContestant);
-        document.getElementById("unlockTeacherBtn").addEventListener("click", unlockTeacher);
-        document.getElementById("resetAllDataBtn").addEventListener("click", resetAll);
-        document.getElementById("stopContestBtn").addEventListener("click", stopContest);
-        document.getElementById("resumeContestBtn").addEventListener("click", resumeContest);
-        document.getElementById("showResultsBtn").addEventListener("click", showResultSheet);
-        document.getElementById("shuffleQuestionsBtn").addEventListener("click", () => shuffleQuestions(true));
-        
-        const modal = document.getElementById("resultModal");
-        const closeBtns = document.querySelectorAll(".close-modal, #closeModalBtn");
-        closeBtns.forEach(btn => btn.addEventListener("click", closeModal));
-        window.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
-        document.getElementById("printResultBtn").addEventListener("click", printResult);
-        
-        if(activeContestantId) {
-            setActiveContestant(activeContestantId);
-        } else {
-            document.getElementById("quizArea").style.display = "none";
-            document.getElementById("contestantLoginArea").style.display = "block";
-        }
-    };
+// 🔹 تشغيل أول سؤال
+loadQuestion();
 </script>
+
 </body>
 </html>
