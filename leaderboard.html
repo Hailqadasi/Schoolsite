@@ -2,186 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة الصدارة</title>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 <style>
-body{
-    font-family:tahoma;
-    background:linear-gradient(to bottom,#0b3d91,#1e50a2);
-    text-align:center;
-    color:white;
-    padding:20px;
+body {
+  font-family: tahoma;
+  background: linear-gradient(to bottom, #0b3d91, #1e90ff);
+  color: white;
+  text-align: center;
 }
 
-.box{
-    background:white;
-    color:black;
-    max-width:500px;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
+h2 {
+  margin-top: 20px;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+table {
+  width: 95%;
+  margin: 20px auto;
+  background: white;
+  color: black;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-th,td{
-    padding:10px;
-    border-bottom:1px solid #ccc;
+th {
+  background: #0b3d91;
+  color: white;
 }
 
-th{
-    background:#0b3d91;
-    color:white;
+td, th {
+  padding: 10px;
+  text-align: center;
 }
-
-.rank1{background:gold;}
-.rank2{background:silver;}
-.rank3{background:#cd7f32;}
-
-button{
-    margin-top:10px;
-    padding:10px 20px;
-    font-size:16px;
-    background:#0b3d91;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.reset{background:#dc3545;}
 </style>
 </head>
 
 <body>
 
-<h1>🏆 لوحة الصدارة</h1>
+<h2>🏆 كشف الطلاب حسب الدرجة</h2>
 
-<div class="box">
-
-<!-- إدخال بيانات اللاعب -->
-<input type="text" id="phone" placeholder="رقم الهاتف"><br><br>
-<input type="number" id="score" placeholder="النقاط"><br>
-
-<button onclick="addScore()">إضافة النقاط</button>
-
-<table>
+<table border="1">
 <thead>
 <tr>
-<th>المركز</th>
-<th>رقم الهاتف</th>
-<th>النقاط</th>
+<th>الترتيب</th>
+<th>اسم الطالب</th>
+<th>الدرجة</th>
 </tr>
 </thead>
 
-<tbody id="leaderboardBody"></tbody>
+<tbody id="data"></tbody>
 </table>
 
-<button onclick="goHome()">العودة للرئيسية</button><br>
-<button class="reset" onclick="resetLeaderboard()">تصفير لوحة الصدارة</button>
-
-</div>
-
 <script>
+// 🔹 إعداد Firebase (نفس البيانات)
+var firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+  projectId: "YOUR_PROJECT"
+};
+firebase.initializeApp(firebaseConfig);
 
-// جلب البيانات
-let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+// 🔹 جلب البيانات
+var ref = firebase.database().ref("students");
 
-// عرض البيانات
-function displayLeaderboard(){
+ref.on("value", function(snapshot) {
 
-let tbody = document.getElementById("leaderboardBody");
-tbody.innerHTML = "";
+  var list = [];
 
-// ترتيب
-leaderboard.sort((a,b)=> b.score - a.score);
+  snapshot.forEach(function(child) {
+    list.push(child.val());
+  });
 
-leaderboard.forEach((player,index)=>{
+  // 🔹 ترتيب حسب الأعلى
+  list.sort(function(a, b) {
+    return b.score - a.score;
+  });
 
-let row = document.createElement("tr");
+  // 🔹 عرض البيانات
+  var html = "";
 
-if(index === 0) row.classList.add("rank1");
-if(index === 1) row.classList.add("rank2");
-if(index === 2) row.classList.add("rank3");
+  for (var i = 0; i < list.length; i++) {
+    html += "<tr>";
+    html += "<td>" + (i + 1) + "</td>";
+    html += "<td>" + list[i].name + "</td>";
+    html += "<td>" + list[i].score + "</td>";
+    html += "</tr>";
+  }
 
-row.innerHTML = `
-<td>${index+1}</td>
-<td>${player.phone}</td>
-<td>${player.score}</td>
-`;
-
-tbody.appendChild(row);
+  document.getElementById("data").innerHTML = html;
 
 });
-
-}
-
-// حفظ أو تحديث النقاط
-function saveScore(phone, newScore){
-
-let playerIndex = leaderboard.findIndex(p => p.phone === phone);
-
-if(playerIndex !== -1){
-// تحديث
-leaderboard[playerIndex].score += newScore;
-}else{
-// جديد
-leaderboard.push({
-phone: phone,
-score: newScore
-});
-}
-
-// حفظ
-localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-
-displayLeaderboard();
-
-}
-
-// زر إضافة النقاط
-function addScore(){
-
-let phone = document.getElementById("phone").value;
-let score = parseInt(document.getElementById("score").value);
-
-if(!phone || isNaN(score)){
-alert("أدخل البيانات بشكل صحيح");
-return;
-}
-
-saveScore(phone, score);
-
-document.getElementById("phone").value = "";
-document.getElementById("score").value = "";
-
-}
-
-// العودة
-function goHome(){
-window.location.href = "index.html";
-}
-
-// تصفير
-function resetLeaderboard(){
-
-let confirmReset = confirm("هل تريد تصفير لوحة الصدارة؟");
-
-if(confirmReset){
-localStorage.removeItem("leaderboard");
-leaderboard = [];
-displayLeaderboard();
-}
-
-}
-
-// تشغيل أولي
-displayLeaderboard();
-
 </script>
 
 </body>
