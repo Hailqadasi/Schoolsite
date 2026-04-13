@@ -1,7 +1,9 @@
- <!DOCTYPE html>
+ :::writing{variant="standard" id="48219"}
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>المسابقة</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -10,30 +12,33 @@
 <style>
 body {
   font-family: tahoma;
-  background: #1e90ff;
-  color: white;
+  background: linear-gradient(to bottom, #fff, #ffe4ec);
   text-align: center;
 }
 
 .box {
   background: white;
-  color: black;
-  width: 90%;
-  max-width: 500px;
-  margin: 50px auto;
+  width: 95%;
+  max-width: 400px;
+  margin: 40px auto;
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(255,105,180,0.3);
+}
+
+h3 {
+  color: #d63384;
 }
 
 button {
-  display: block;
-  width: 90%;
-  margin: 10px auto;
-  padding: 10px;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
   border: none;
-  background: #0b3d91;
+  border-radius: 12px;
+  background: #ff85a2;
   color: white;
-  border-radius: 10px;
+  font-size: 15px;
 }
 </style>
 </head>
@@ -50,7 +55,6 @@ button {
 </div>
 
 <script>
-// 🔹 إعداد Firebase (ضع بياناتك)
 var firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -59,72 +63,51 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-// 🔹 اسم الطالب
+// منع الدخول
+firebase.database().ref("settings/contest").on("value", function(snap){
+  if (snap.val() === "off") {
+    alert("المسابقة متوقفة");
+    window.location.href = "index.html";
+  }
+});
+
 var studentName = localStorage.getItem("studentName");
 
-// 🔹 الأسئلة
 var questions = [
-  {
-    q: "كم عدد كواكب المجموعة الشمسية؟",
-    a: ["7", "8", "9", "10"],
-    correct: 1
-  },
-  {
-    q: "عاصمة اليمن؟",
-    a: ["عدن", "صنعاء", "تعز", "حضرموت"],
-    correct: 1
-  },
-  {
-    q: "كم 2 + 2 ؟",
-    a: ["3", "4", "5", "6"],
-    correct: 1
-  }
+  { q: "كم عدد الكواكب؟", a: ["7","8","9","10"], correct: 1 },
+  { q: "عاصمة اليمن؟", a: ["عدن","صنعاء","تعز","حضرموت"], correct: 1 },
+  { q: "2 + 2 = ؟", a: ["3","4","5","6"], correct: 1 }
 ];
 
-var index = 0;
-var score = 0;
+var i = 0, score = 0;
 
-// 🔹 عرض السؤال
-function loadQuestion() {
-  document.getElementById("q").innerText = questions[index].q;
-
-  for (var i = 0; i < 4; i++) {
-    document.getElementById("a"+i).innerText = questions[index].a[i];
+function loadQuestion(){
+  document.getElementById("q").innerText = questions[i].q;
+  for (var j=0;j<4;j++){
+    document.getElementById("a"+j).innerText = questions[i].a[j];
   }
 }
 
-// 🔹 عند الإجابة
-function answer(i) {
-  if (i === questions[index].correct) {
-    score++;
-  }
-
-  index++;
-
-  if (index < questions.length) {
-    loadQuestion();
-  } else {
-    finish();
-  }
+function answer(x){
+  if (x === questions[i].correct) score++;
+  i++;
+  if (i < questions.length) loadQuestion();
+  else finish();
 }
 
-// 🔹 إنهاء المسابقة
-function finish() {
-  var ref = firebase.database().ref("students");
-
-  ref.push({
+function finish(){
+  firebase.database().ref("students").push({
     name: studentName,
     score: score
   });
 
-  alert("انتهت المسابقة! درجتك: " + score);
-
+  alert("درجتك: "+score);
   window.location.href = "leaderboard.html";
 }
 
-// 🔹 تشغيل أول سؤال
 loadQuestion();
 </script>
 
 </body>
 </html>
+:::
