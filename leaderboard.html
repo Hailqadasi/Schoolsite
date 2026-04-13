@@ -1,8 +1,10 @@
- <!DOCTYPE html>
+ :::writing{variant="standard" id="77463"}
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>لوحة الصدارة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>النتائج</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -10,54 +12,52 @@
 <style>
 body {
   font-family: tahoma;
-  background: linear-gradient(to bottom, #0b3d91, #1e90ff);
-  color: white;
+  background: linear-gradient(to bottom, #fff, #ffe4ec);
   text-align: center;
 }
 
 h2 {
-  margin-top: 20px;
+  color: #d63384;
 }
 
 table {
   width: 95%;
   margin: 20px auto;
   background: white;
-  color: black;
-  border-radius: 10px;
+  border-radius: 15px;
   overflow: hidden;
 }
 
 th {
-  background: #0b3d91;
+  background: #ff85a2;
   color: white;
 }
 
 td, th {
   padding: 10px;
-  text-align: center;
+  font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🏆 كشف الطلاب حسب الدرجة</h2>
+<h2>🏆 النتائج</h2>
 
+<div id="content">
 <table border="1">
 <thead>
 <tr>
 <th>الترتيب</th>
-<th>اسم الطالب</th>
+<th>الاسم</th>
 <th>الدرجة</th>
 </tr>
 </thead>
-
 <tbody id="data"></tbody>
 </table>
+</div>
 
 <script>
-// 🔹 إعداد Firebase (نفس البيانات)
 var firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -66,37 +66,29 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-// 🔹 جلب البيانات
-var ref = firebase.database().ref("students");
+// إخفاء النتائج
+firebase.database().ref("settings/results").on("value", function(snap){
+  if (snap.val() === "hide") {
+    document.getElementById("content").innerHTML = "<h3>🚫 النتائج مخفية</h3>";
+  }
+});
 
-ref.on("value", function(snapshot) {
-
+// عرض البيانات
+firebase.database().ref("students").on("value", function(snapshot){
   var list = [];
+  snapshot.forEach(function(c){ list.push(c.val()); });
 
-  snapshot.forEach(function(child) {
-    list.push(child.val());
-  });
+  list.sort(function(a,b){ return b.score - a.score; });
 
-  // 🔹 ترتيب حسب الأعلى
-  list.sort(function(a, b) {
-    return b.score - a.score;
-  });
-
-  // 🔹 عرض البيانات
   var html = "";
-
-  for (var i = 0; i < list.length; i++) {
-    html += "<tr>";
-    html += "<td>" + (i + 1) + "</td>";
-    html += "<td>" + list[i].name + "</td>";
-    html += "<td>" + list[i].score + "</td>";
-    html += "</tr>";
+  for (var i=0;i<list.length;i++){
+    html += "<tr><td>"+(i+1)+"</td><td>"+list[i].name+"</td><td>"+list[i].score+"</td></tr>";
   }
 
   document.getElementById("data").innerHTML = html;
-
 });
 </script>
 
 </body>
 </html>
+:::
