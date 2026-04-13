@@ -1,7 +1,9 @@
- <!DOCTYPE html>
+ :::writing{variant="standard" id="30157"}
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة تحكم المعلم</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -10,50 +12,52 @@
 <style>
 body {
   font-family: tahoma;
-  background: #222;
-  color: white;
+  background: linear-gradient(to bottom, #fff, #ffe4ec);
   text-align: center;
 }
 
 .box {
-  background: #333;
+  background: #ffffff;
+  width: 95%;
+  max-width: 350px;
+  margin: 60px auto;
   padding: 20px;
-  margin: 50px auto;
-  width: 90%;
-  max-width: 400px;
-  border-radius: 15px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(255,105,180,0.3);
+}
+
+h2 {
+  color: #d63384;
 }
 
 button {
   display: block;
-  width: 90%;
-  margin: 10px auto;
-  padding: 10px;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: white;
 }
 
-.delete { background: red; }
-.stop { background: orange; }
-.show { background: green; }
+.delete { background: #ff4d6d; }
+.stop { background: #ff85a2; }
+.show { background: #d63384; }
 </style>
 </head>
 
 <body>
 
 <div class="box">
-  <h2>👨‍🏫 لوحة تحكم المعلم</h2>
+  <h2>👨‍🏫 لوحة التحكم</h2>
 
-  <button class="delete" onclick="deleteAll()">🗑️ حذف جميع النتائج</button>
-
-  <button class="stop" onclick="toggleContest()">⛔ إيقاف / تشغيل المسابقة</button>
-
-  <button class="show" onclick="toggleResults()">👁️ إظهار / إخفاء النتائج</button>
+  <button class="delete" onclick="deleteAll()">حذف النتائج</button>
+  <button class="stop" onclick="toggleContest()">إيقاف / تشغيل</button>
+  <button class="show" onclick="toggleResults()">إظهار / إخفاء النتائج</button>
 </div>
 
 <script>
-// 🔹 إعداد Firebase
 var firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -64,48 +68,28 @@ firebase.initializeApp(firebaseConfig);
 
 var db = firebase.database();
 
-// 🔹 حذف كل النتائج
 function deleteAll() {
-  if (confirm("هل أنت متأكد؟")) {
+  if(confirm("تأكيد الحذف؟")){
     db.ref("students").remove();
-    alert("تم حذف جميع النتائج");
+    alert("تم الحذف");
   }
 }
 
-// 🔹 إيقاف / تشغيل المسابقة
 function toggleContest() {
   var ref = db.ref("settings/contest");
-
-  ref.once("value", function(snap) {
-    var current = snap.val();
-
-    if (current === "off") {
-      ref.set("on");
-      alert("تم تشغيل المسابقة");
-    } else {
-      ref.set("off");
-      alert("تم إيقاف المسابقة");
-    }
+  ref.once("value", function(s){
+    ref.set(s.val() === "off" ? "on" : "off");
   });
 }
 
-// 🔹 إظهار / إخفاء النتائج
 function toggleResults() {
   var ref = db.ref("settings/results");
-
-  ref.once("value", function(snap) {
-    var current = snap.val();
-
-    if (current === "hide") {
-      ref.set("show");
-      alert("تم إظهار النتائج");
-    } else {
-      ref.set("hide");
-      alert("تم إخفاء النتائج");
-    }
+  ref.once("value", function(s){
+    ref.set(s.val() === "hide" ? "show" : "hide");
   });
 }
 </script>
 
 </body>
 </html>
+:::
