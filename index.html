@@ -1,40 +1,71 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>تسجيل الطالب</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فحص الكرت</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
 
-<style>
-body {
-  font-family: tahoma;
-  background: linear-gradient(to bottom, #0b3d91, #1e90ff);
-  text-align: center;
-  color: white;
+<input id="cardCode" placeholder="أدخل الكرت">
+<button onclick="activate()">تحقق</button>
+
+<div id="msg"></div>
+
+<script>
+const msg = document.getElementById("msg");
+
+function show(t){
+  msg.innerText = t;
 }
 
-.box {
-  background: white;
-  color: black;
-  width: 90%;
-  max-width: 400px;
-  margin: 100px auto;
-  padding: 20px;
-  border-radius: 15px;
+show("✅ الصفحة تعمل");
+
+const supabaseUrl = "https://ujewyoendqnhkztnjsmf.supabase.co";
+const supabaseKey = "sb_publishable_7FOTfN_SkbuQGzO7gyhJEQ_vRxoLDSF";
+
+let supabase;
+
+try{
+  supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  show("✅ تم الاتصال بالمكتبة");
+}catch(e){
+  show("❌ فشل تحميل المكتبة: " + e.message);
 }
 
-input {
-  width: 90%;
-  padding: 10px;
-  margin: 10px;
-  font-size: 16px;
-}
+async function activate(){
+  try{
+    let code = document.getElementById("cardCode").value.trim().toUpperCase();
 
-button {
-  padding: 10px 20px;
-  background: #0b3d91;
-  color: white;
-  border: none;
-  border-radius: 10px;
+    if(!code){
+      show("اكتب الكرت أولاً");
+      return;
+    }
+
+    show("⏳ جاري البحث...");
+
+    const { data, error } = await supabase
+      .from("cards")
+      .select("*")
+      .eq("code", code)
+      .single();
+
+    if(error){
+      show("❌ خطأ: " + error.message);
+      return;
+    }
+
+    show("✅ تم العثور على الكرت: " + data.code);
+
+  }catch(err){
+    show("❌ مشكلة: " + err.message);
+  }
+}
+</script>
+
+</body>
+</html>  border-radius: 10px;
   font-size: 16px;
 }
 </style>
