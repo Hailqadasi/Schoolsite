@@ -1,105 +1,56 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+ <!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>فحص الكرت</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-
-<input id="cardCode" placeholder="أدخل الكرت">
-<button onclick="activate()">تحقق</button>
-
-<div id="msg"></div>
-
-<script>
-const msg = document.getElementById("msg");
-
-function show(t){
-  msg.innerText = t;
-}
-
-show("✅ الصفحة تعمل");
-
-const supabaseUrl = "https://ujewyoendqnhkztnjsmf.supabase.co";
-const supabaseKey = "sb_publishable_7FOTfN_SkbuQGzO7gyhJEQ_vRxoLDSF";
-
-let supabase;
-
-try{
-  supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-  show("✅ تم الاتصال بالمكتبة");
-}catch(e){
-  show("❌ فشل تحميل المكتبة: " + e.message);
-}
-
-async function activate(){
-  try{
-    let code = document.getElementById("cardCode").value.trim().toUpperCase();
-
-    if(!code){
-      show("اكتب الكرت أولاً");
-      return;
-    }
-
-    show("⏳ جاري البحث...");
-
-    const { data, error } = await supabase
-      .from("cards")
-      .select("*")
-      .eq("code", code)
-      .single();
-
-    if(error){
-      show("❌ خطأ: " + error.message);
-      return;
-    }
-
-    show("✅ تم العثور على الكرت: " + data.code);
-
-  }catch(err){
-    show("❌ مشكلة: " + err.message);
-  }
-}
-</script>
-
-</body>
-</html>  border-radius: 10px;
-  font-size: 16px;
-}
+<title>سؤال وجواب</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.card{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);width:100%;max-width:700px;border-radius:24px;padding:28px;box-shadow:0 20px 40px rgba(0,0,0,.18)}
+h1{margin-top:0;font-size:32px;text-align:center}
+input{flex:1;padding:14px;border-radius:14px;border:1px solid #ddd;font-size:16px}
+button{padding:14px 18px;border:none;border-radius:14px;font-size:15px;cursor:pointer;font-weight:bold;transition:.2s}
+button:hover{transform:translateY(-2px)}
+.primary{background:#667eea;color:#fff}.success{background:#22c55e;color:#fff}.dark{background:#222;color:#fff}
+.box{margin-top:18px;background:#f7f8ff;padding:20px;border-radius:18px;min-height:130px}
+#question{font-size:24px;font-weight:bold;margin-bottom:15px}
+#answer{font-size:20px;color:#333}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;justify-content:center}
+.small{opacity:.7;font-size:14px;text-align:center;margin-top:12px}
 </style>
 </head>
-
 <body>
-
-<div class="box">
-  <h2>🎓 تسجيل الطالب</h2>
-
-  <input type="text" id="name" placeholder="أدخل الاسم الرباعي">
-
-  <br>
-
-  <button onclick="start()">ابدأ المسابقة</button>
+<div class="card">
+<h1>📘 سؤال وجواب</h1><div class="box">
+<div id="question"></div>
+<div id="answer"></div>
 </div>
-
+<div class="actions">
+<button class="dark" onclick="prevQuestion()">السابق</button>
+<button class="dark" onclick="nextQuestion()">التالي</button>
+</div>
+<div class="small" id="counter"></div>
+</div>
 <script>
-function start() {
-  var name = document.getElementById("name").value.trim();
+let questions = [
+ {question:'ما عاصمة فرنسا؟', answer:'باريس'},
+ {question:'كم عدد القارات؟', answer:'7 قارات'},
+ {question:'ما أكبر كوكب في المجموعة الشمسية؟', answer:'المشتري'},
+ {question:'ما لغة البرمجة المستخدمة في صفحات الويب؟', answer:'JavaScript'},
+ {question:'كم عدد أيام السنة العادية؟', answer:'365 يومًا'}
+];let currentIndex = 0;
 
-  // تحقق من الاسم الرباعي
-  if (name.split(" ").length < 4) {
-    alert("يجب إدخال الاسم الرباعي");
-    return;
-  }
+function renderQuestion(){ document.getElementById('question').textContent = questions[currentIndex].question; document.getElementById('answer').textContent = questions[currentIndex].answer; document.getElementById('counter').textContent = السؤال ${currentIndex+1} من ${questions.length}; } من ${questions.length}`; }
 
-  // حفظ الاسم
-  localStorage.setItem("studentName", name);
+function showAnswer(){ window.onload = function(){ renderQuestion(); }; }
 
-  // الانتقال لصفحة اللعبة
-  window.location.href = "game.html";
-}
-</script>
+function prevQuestion(){ currentIndex = (currentIndex - 1 + questions.length) % questions.length; renderQuestion(); }
+
+function nextQuestion(){ currentIndex = (currentIndex + 1) % questions.length; renderQuestion(); }
+
+else { alert('لم يتم العثور على السؤال'); } }
+
+renderQuestion(); </script>
 
 </body>
 </html>
