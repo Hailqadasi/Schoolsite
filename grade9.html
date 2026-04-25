@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نتائج الطلاب مع تلوين</title>
+<style>
+body {font-family: Arial, sans-serif; background:#f0f2f5; margin:20px;}
+input, button {padding:10px; margin:5px;}
+.card {background:#fff; padding:20px; margin-top:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+.card-header {font-size:18px; font-weight:bold; margin-bottom:15px;}
+.grid {display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.item {padding:10px; border-radius:5px; text-align:center; font-weight:bold;}
+.total {margin-top:15px; font-weight:bold; text-align:center; font-size:16px;}
+.error {color:red; font-weight:bold; margin-top:15px;}
+.pass {background:#c8e6c9; color:#256029;}  /* أخضر */
+.fail {background:#ffcdd2; color:#b71c1c;}  /* أحمر */
+</style>
+</head>
+<body>
+
+<h2>ابحث عن نتيجة الطالب برقم الجلوس</h2>
+<input type="number" id="seat" placeholder="ادخل رقم الجلوس">
+<button onclick="search()">بحث</button>
+
+<div id="result"></div>
+
+<script>
+const students = [
+{seat:541,name:"ابراهيم وهيب عبدالله علي",q:37,i:39,a:30,e:22,m:23,p:18,soc:19,t:188},
+{seat:542,name:"ابكر ابوبكر شائف قاسم",q:37,i:46,a:44,e:24,m:35,p:38,soc:34,t:258},
+{seat:543,name:"احمد رضوان محمد عثمان",q:22,i:28,a:31,e:19,m:18,p:19,soc:13,t:150},
+{seat:544,name:"احمد عمر عبدالله عبدالقادر",q:44,i:46,a:46,e:29,m:32,p:33,soc:27,t:257},
+{seat:545,name:"ادم زكريا احمد عقلان",q:29,i:30,a:23,e:17,m:17,p:17,soc:15,t:148},
+{seat:546,name:"العز عبدالقادر محمد احمد",q:48,i:48,a:48,e:40,m:41,p:46,soc:40,t:311},
+{seat:547,name:"امير بدر عبدالله عبده مهيوب",q:36,i:38,a:39,e:33,m:29,p:33,soc:29,t:237},
+{seat:548,name:"امين محمود عبده قاسم",q:36,i:45,a:42,e:33,m:33,p:34,soc:33,t:256},
+{seat:549,name:"اياد رفيق علي احمد",q:39,i:47,a:49,e:37,m:36,p:36,soc:38,t:282},
+{seat:550,name:"اياد هاني نعمان احمد",q:46,i:48,a:49,e:43,m:43,p:39,soc:46,t:314},
+{seat:551,name:"ايهم ناصر عبدالله محمد",q:44,i:46,a:46,e:32,m:33,p:39,soc:36,t:276},
+{seat:552,name:"بدر بسام عبدالجبار محمد عبدالله",q:41,i:45,a:46,e:38,m:25,p:37,soc:40,t:272},
+{seat:553,name:"بشار بشير سيف سعيد",q:28,i:38,a:34,e:22,m:17,p:29,soc:24,t:192},
+{seat:554,name:"بشار صلاح عبدالله محمد",q:37,i:42,a:32,e:27,m:25,p:30,soc:25,t:218},
+{seat:555,name:"بشار عمار نبيل عبده",q:44,i:45,a:46,e:47,m:42,p:46,soc:42,t:312},
+{seat:556,name:"حسام عماد علي محمد الصلاحي",q:40,i:40,a:44,e:25,m:34,p:40,soc:30,t:253},
+{seat:557,name:"حمد شاكر عبدالحفيظ محمد",q:45,i:40,a:44,e:36,m:30,p:31,soc:40,t:266},
+{seat:558,name:"حمدي رفيق محمد عبدالله",q:25,i:33,a:24,e:19,m:21,p:31,soc:28,t:181},
+{seat:559,name:"رائد صلاح عبده محمد سلام",q:28,i:37,a:30,e:19,m:20,p:23,soc:21,t:178},
+{seat:560,name:"رسلان عبدالجليل مقبل احمد",q:27,i:41,a:35,e:26,m:17,p:24,soc:23,t:193},
+{seat:561,name:"زيدان عادل عبدالله ثابت",q:38,i:45,a:38,e:23,m:22,p:21,soc:29,t:216},
+{seat:562,name:"سليمان داؤد محسن قاسم",q:47,i:49,a:50,e:49,m:48,p:45,soc:44,t:332},
+{seat:563,name:"سند رضوان سعيد ثابت",q:36,i:45,a:42,e:27,m:30,p:31,soc:22,t:233},
+{seat:564,name:"شعيب منير شرف محمد",q:37,i:43,a:36,e:20,m:20,p:31,soc:22,t:209},
+{seat:565,name:"صخر هاني نعمان احمد",q:29,i:36,a:33,e:22,m:19,p:24,soc:27,t:190},
+{seat:566,name:"صقر وسيل شرف عبده",q:48,i:47,a:46,e:44,m:42,p:39,soc:46,t:312},
+{seat:567,name:"صهيب عبدالحفيظ عبدالقادر ردمان",q:37,i:40,a:31,e:27,m:23,p:20,soc:34,t:212},
+{seat:568,name:"عباده حمود عبدالولي مانع",q:50,i:49,a:50,e:48,m:46,p:48,soc:48,t:339},
+{seat:569,name:"عبدالرحمن عبدالله سلطان عبدالجبار",q:35,i:39,a:32,e:35,m:24,p:21,soc:33,t:219},
+{seat:570,name:"عبدالرحمن فؤاد عبدالباري محمد",q:35,i:39,a:38,e:23,m:31,p:30,soc:34,t:230},
+{seat:571,name:"عبدالرحيم نجيب علي عبدالقادر",q:38,i:43,a:39,e:18,m:26,p:23,soc:35,t:222},
+{seat:572,name:"عبدالسلام مشتاق اسماعيل عثمان",q:40,i:44,a:36,e:24,m:34,p:22,soc:28,t:228},
+{seat:573,name:"عبدالكريم امجد عبدالكريم غالب",q:48,i:47,a:50,e:49,m:45,p:44,soc:47,t:330},
+{seat:574,name:"عبدالله ابراهيم احمد محمد",q:32,i:23,a:31,e:21,m:27,p:19,soc:16,t:169},
+{seat:575,name:"عمار محمد عبدالجبار ثابت",q:32,i:34,a:33,e:18,m:21,p:18,soc:27,t:183},
+{seat:576,name:"عمر مختار عبدالباري محمد",q:29,i:41,a:30,e:24,m:18,p:20,soc:33,t:195},
+{seat:577,name:"عمرو هائل سعيد احمد",q:35,i:34,a:32,e:33,m:18,p:18,soc:23,t:193},
+{seat:578,name:"مازن محمود عبدالواسع احمد",q:46,i:43,a:32,e:34,m:46,p:43,soc:34,t:278},
+{seat:579,name:"مجد فتحي عبدالحفيظ حمود",q:33,i:40,a:41,e:30,m:27,p:28,soc:34,t:233},
+{seat:580,name:"محمد عائد محمد عبدالله",q:29,i:37,a:30,e:18,m:18,p:19,soc:27,t:178},
+{seat:581,name:"محمد عبدالشافي احمد مهيوب",q:33,i:40,a:36,e:24,m:21,p:20,soc:16,t:190},
+{seat:582,name:"وسيم عبدالرقيب عبدالواحد نعمان",q:31,i:37,a:20,e:20,m:20,p:19,soc:19,t:166},
+{seat:583,name:"ابرار عبدالله محمد عبدالله",q:46,i:50,a:49,e:50,m:47,p:48,soc:46,t:336},
+{seat:584,name:"ابرار كامل عبدالجليل محمد",q:34,i:37,a:35,e:23,m:21,p:25,soc:22,t:197},
+{seat:585,name:"افنان عبدالجواد محمد هائل",q:46,i:49,a:48,e:47,m:45,p:35,soc:30,t:300},
+{seat:586,name:"افنان محمد طربوش احمد",q:44,i:45,a:44,e:46,m:35,p:36,soc:32,t:282},
+{seat:587,name:"انهار امين شرف حسين",q:43,i:47,a:43,e:42,m:27,p:36,soc:33,t:271},
+{seat:588,name:"اية مراد علي محمد حيدر",q:33,i:38,a:30,e:22,m:20,p:21,soc:21,t:185},
+{seat:589,name:"ايمان ابراهيم محمد مقبل علي",q:32,i:42,a:40,e:33,m:20,p:30,soc:24,t:221},
+{seat:590,name:"براءه علي محمد عبدالله",q:49,i:50,a:49,e:50,m:50,p:50,soc:49,t:347},
+{seat:591,name:"ثويبة مجيب محمد شمسان",q:34,i:44,a:34,e:32,m:26,p:26,soc:33,t:229},
+{seat:592,name:"حماس مروان عبدالعزيز عبدالتواب",q:47,i:48,a:44,e:37,m:33,p:38,soc:43,t:290},
+{seat:593,name:"خولة داؤد احمد عقلان",q:30,i:41,a:37,e:29,m:24,p:24,soc:19,t:204},
+{seat:594,name:"دعاء جابر محمد سعيد",q:28,i:38,a:33,e:26,m:18,p:24,soc:16,t:183},
+{seat:595,name:"رانية رضوان عبده احمد",q:37,i:39,a:40,e:34,m:18,p:31,soc:22,t:221},
+{seat:596,name:"رحمة عبدالعزيز محمد عون",q:48,i:41,a:41,e:25,m:25,p:33,soc:27,t:240},
+{seat:597,name:"رحمة كارم درهم احمد",q:47,i:50,a:46,e:47,m:39,p:47,soc:38,t:314},
+{seat:598,name:"سلمى سليم نعمان مقبل",q:41,i:45,a:45,e:25,m:25,p:38,soc:38,t:257},
+{seat:599,name:"سيما مراد عبده محمد",q:30,i:34,a:38,e:27,m:25,p:17,soc:21,t:192},
+{seat:600,name:"شذى هاني عبدالله محمد",q:47,i:48,a:47,e:46,m:42,p:47,soc:48,t:325},
+{seat:601,name:"فاطمة نبيل علي محمد",q:42,i:44,a:37,e:33,m:28,p:32,soc:26,t:242},
+{seat:602,name:"ليلى نائل امين غالب",q:30,i:41,a:33,e:26,m:22,p:28,soc:35,t:215},
+{seat:603,name:"مرام احمد بن احمد عبدالجبار",q:50,i:50,a:49,e:49,m:46,p:50,soc:45,t:339},
+{seat:604,name:"مرام مصطفي شرف محمد",q:36,i:44,a:41,e:26,m:30,p:28,soc:31,t:236},
+{seat:605,name:"مرفت عبدالرؤوف عبدالحميد ثابت",q:43,i:44,a:41,e:43,m:40,p:40,soc:27,t:278},
+{seat:606,name:"مريم عبدالرحمن علي محمد",q:50,i:50,a:48,e:50,m:49,p:49,soc:48,t:344},
+{seat:607,name:"مها عبدالباقي عبدالباري محمد",q:27,i:39,a:34,e:26,m:25,p:26,soc:25,t:202},
+{seat:608,name:"نبا نبيل احمد محمد",q:37,i:45,a:38,e:33,m:27,p:36,soc:32,t:248},
+{seat:609,name:"نسمة عمار سعيد محمد",q:30,i:38,a:32,e:28,m:20,p:26,soc:25,t:199},
+{seat:610,name:"هاجر حمود عبدالباري محمد",q:36,i:43,a:35,e:32,m:25,p:27,soc:27,t:225},
+{seat:611,name:"وردة مصطفى حمود محمد",q:38,i:44,a:42,e:36,m:35,p:25,soc:29,t:249}
+];
+
+function getClass(score){
+    return score >= 20 ? 'pass':'fail'; // اعتبر النجاح >=20 لكل مادة
+}
+
+function search() {
+    const seat = parseInt(document.getElementById('seat').value);
+    const resultDiv = document.getElementById('result');
+    const student = students.find(s => s.seat === seat);
+    if(student){
+        resultDiv.innerHTML = `
+        <div class="card">
+            <div class="card-header">${student.name} - رقم الجلوس: ${student.seat}</div>
+            <div class="grid">
+                <div class="item ${getClass(student.q)}">القرآن: ${student.q}</div>
+                <div class="item ${getClass(student.i)}">الإسلامية: ${student.i}</div>
+                <div class="item ${getClass(student.a)}">العربي: ${student.a}</div>
+                <div class="item ${getClass(student.e)}">الإنجليزي: ${student.e}</div>
+                <div class="item ${getClass(student.m)}">الرياضيات: ${student.m}</div>
+                <div class="item ${getClass(student.p)}">العلوم: ${student.p}</div>
+                <div class="item ${getClass(student.soc)}">الاجتماعيات: ${student.soc}</div>
+            </div>
+            <div class="total">المجموع الكلي: ${student.t}</div>
+        </div>
+        `;
+    } else {
+        resultDiv.innerHTML = `<div class="error">لا توجد نتيجة لهذا الرقم</div>`;
+    }
+}
+</script>
+</body>
+</html>
