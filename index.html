@@ -1,56 +1,298 @@
- <!DOCTYPE html><html lang="ar" dir="rtl">
+  <!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سؤال وجواب</title>
+<title>تفعيل التطبيق</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
-.card{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);width:100%;max-width:700px;border-radius:24px;padding:28px;box-shadow:0 20px 40px rgba(0,0,0,.18)}
-h1{margin-top:0;font-size:32px;text-align:center}
-input{flex:1;padding:14px;border-radius:14px;border:1px solid #ddd;font-size:16px}
-button{padding:14px 18px;border:none;border-radius:14px;font-size:15px;cursor:pointer;font-weight:bold;transition:.2s}
-button:hover{transform:translateY(-2px)}
-.primary{background:#667eea;color:#fff}.success{background:#22c55e;color:#fff}.dark{background:#222;color:#fff}
-.box{margin-top:18px;background:#f7f8ff;padding:20px;border-radius:18px;min-height:130px}
-#question{font-size:24px;font-weight:bold;margin-bottom:15px}
-#answer{font-size:20px;color:#333}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;justify-content:center}
-.small{opacity:.7;font-size:14px;text-align:center;margin-top:12px}
+body { 
+  font-family: Tahoma, Arial; 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.card { 
+  background: #fff; 
+  max-width: 400px;
+  width: 100%;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  text-align: center;
+}
+input, button {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+input { border: 2px solid #ddd; }
+button {
+  background: linear-gradient(to right, #4CAF50, #2E7D32);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: scale(0.98);
+}
+#timer {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.time-display {
+  background:#4CAF50;
+  color:#fff;
+  padding:10px;
+  border-radius:8px;
+  font-size:20px;
+}
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 10px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 </head>
+
 <body>
+
 <div class="card">
-<h1>📘 سؤال وجواب</h1><div class="box">
-<div id="question"></div>
-<div id="answer"></div>
+  <h3>تفعيل التطبيق</h3>
+  <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
+  <button id="activateBtn" onclick="activate()">تفعيل الآن</button>
+  <div id="timer"></div>
 </div>
-<div class="actions">
-<button class="dark" onclick="prevQuestion()">السابق</button>
-<button class="dark" onclick="nextQuestion()">التالي</button>
-</div>
-<div class="small" id="counter"></div>
-</div>
+
 <script>
-let questions = [
- {question:'ما عاصمة فرنسا؟', answer:'باريس'},
- {question:'كم عدد القارات؟', answer:'7 قارات'},
- {question:'ما أكبر كوكب في المجموعة الشمسية؟', answer:'المشتري'},
- {question:'ما لغة البرمجة المستخدمة في صفحات الويب؟', answer:'JavaScript'},
- {question:'كم عدد أيام السنة العادية؟', answer:'365 يومًا'}
-];let currentIndex = 0;
 
-function renderQuestion(){ document.getElementById('question').textContent = questions[currentIndex].question; document.getElementById('answer').textContent = questions[currentIndex].answer; document.getElementById('counter').textContent = السؤال ${currentIndex+1} من ${questions.length}; } من ${questions.length}`; }
+/* Firebase */
+firebase.initializeApp({
+  apiKey: "APIKEY",
+  authDomain: "AUTHDOMAIN",
+  databaseURL: "https://appcards-c4730-default-rtdb.firebaseio.com",
+  projectId: "PROJECTID",
+  storageBucket: "STORAGE",
+  messagingSenderId: "SENDERID",
+  appId: "APPID"
+});
 
-function showAnswer(){ window.onload = function(){ renderQuestion(); }; }
+var db = firebase.database();
 
-function prevQuestion(){ currentIndex = (currentIndex - 1 + questions.length) % questions.length; renderQuestion(); }
+/* الإعدادات */
+const DAILY_LIMIT = 5 * 60 * 60;
+const TOTAL_DAYS = 7;
 
-function nextQuestion(){ currentIndex = (currentIndex + 1) % questions.length; renderQuestion(); }
+/* Device ID */
+function getDeviceId(){
+  let id = localStorage.getItem("device_id");
+  if(!id){
+    id = "dev-" + Math.random().toString(36).substr(2,16);
+    localStorage.setItem("device_id", id);
+  }
+  return id;
+}
 
-else { alert('لم يتم العثور على السؤال'); } }
+/* العداد */
+var timerInterval = null;
 
-renderQuestion(); </script>
+function startUsageTimer(){
+  let today = new Date().toDateString();
+  let storedDay = localStorage.getItem("usage_day");
+  let remaining = parseInt(localStorage.getItem("daily_remaining"));
+  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
+  let lastActive = parseInt(localStorage.getItem("last_active"));
 
+  if(!storedDay){
+    localStorage.setItem("usage_day", today);
+    localStorage.setItem("daily_remaining", DAILY_LIMIT);
+    localStorage.setItem("used_days", 1);
+    remaining = DAILY_LIMIT;
+    usedDays = 1;
+  }
+
+  if(storedDay !== today){
+    usedDays++;
+    if(usedDays > TOTAL_DAYS){
+      endCard();
+      return;
+    }
+
+    localStorage.setItem("usage_day", today);
+    localStorage.setItem("daily_remaining", DAILY_LIMIT);
+    localStorage.setItem("used_days", usedDays);
+    remaining = DAILY_LIMIT;
+  }
+
+  if(lastActive){
+    remaining -= Math.floor(Date.now()/1000) - lastActive;
+  }
+
+  if(remaining <= 0){
+    showDailyEnd(usedDays);
+    return;
+  }
+
+  localStorage.setItem("daily_remaining", remaining);
+  localStorage.setItem("last_active", Math.floor(Date.now()/1000));
+
+  timerInterval = setInterval(function(){
+
+    remaining--;
+    localStorage.setItem("daily_remaining", remaining);
+
+    let h = Math.floor(remaining / 3600);
+    let m = Math.floor((remaining % 3600) / 60);
+    let s = remaining % 60;
+
+    document.getElementById("timer").innerHTML = `
+    ⏳ المتبقي اليوم
+    <div class="time-display">${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
+    <div style="margin-top:10px;font-size:13px">
+    اليوم ${usedDays} من ${TOTAL_DAYS}
+    </div>
+    `;
+
+    if(remaining <= 0){
+      clearInterval(timerInterval);
+      showDailyEnd(usedDays);
+    }
+
+  },1000);
+}
+
+function showDailyEnd(day){
+  document.getElementById("timer").innerHTML = `
+  ⏸ انتهت 5 ساعات اليوم<br>
+  📅 اليوم ${day} من ${TOTAL_DAYS}
+  `;
+}
+
+function endCard(){
+  document.getElementById("timer").innerHTML = `
+  انتهت صلاحية الكرت
+  `;
+}
+
+/* التفعيل مع فتح صفحة اللعبة */
+function activate(){
+  let code = document.getElementById("cardCode").value.trim();
+  let btn = document.getElementById("activateBtn");
+
+  if(!code){
+    alert("أدخل رقم الكرت");
+    return;
+  }
+
+  // تعطيل الزر وتغيير النص لإظهار التحميل
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span> جاري التحقق...';
+
+  db.ref("cards/"+code).once("value").then(function(snap){
+    if(!snap.exists()){
+      alert("الكرت غير صحيح ❌");
+      btn.disabled = false;
+      btn.innerHTML = "تفعيل الآن";
+      return;
+    }
+
+    let data = snap.val();
+    let device = getDeviceId();
+
+    if(data.used && data.device !== device){
+      alert("الكرت مستخدم على جهاز آخر 🚫");
+      btn.disabled = false;
+      btn.innerHTML = "تفعيل الآن";
+      return;
+    }
+
+    // الكرت صحيح، نقوم بتحديث الحالة إذا لم يكن مستخدمًا
+    let updatePromise;
+    if(!data.used){
+      updatePromise = db.ref("cards/"+code).update({
+        used: true,
+        device: device
+      });
+    } else {
+      updatePromise = Promise.resolve(); // الكرت مستخدم بالفعل لهذا الجهاز
+    }
+
+    updatePromise.then(() => {
+      // بدء العداد (سيخزن البيانات محليًا)
+      startUsageTimer();
+      
+      // عرض رسالة نجاح ثم التوجيه إلى صفحة اللعبة بعد 0.5 ثانية
+      alert("✅ تم التفعيل بنجاح! جاري نقلك إلى اللعبة...");
+      
+      // التوجيه إلى game.html
+      window.location.href = "themain.html";
+      
+    }).catch((error) => {
+      console.error("خطأ في تحديث قاعدة البيانات:", error);
+      alert("حدث خطأ أثناء التفعيل، حاول مرة أخرى.");
+      btn.disabled = false;
+      btn.innerHTML = "تفعيل الآن";
+    });
+
+  }).catch(function(error){
+    console.error("خطأ في الاتصال بقاعدة البيانات:", error);
+    alert("حدث خطأ في الاتصال بقاعدة البيانات 🔌");
+    btn.disabled = false;
+    btn.innerHTML = "تفعيل الآن";
+  });
+}
+
+// إذا كان المستخدم قد قام بالتفعيل مسبقًا ولديه جلسة صالحة، يمكن توجيهه مباشرة
+function checkExistingActivation(){
+  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
+  let remaining = parseInt(localStorage.getItem("daily_remaining"));
+  let today = new Date().toDateString();
+  let storedDay = localStorage.getItem("usage_day");
+  
+  // إذا كان هناك أيام مستخدمة والمتبقي غير منتهٍ (أو اليوم لم ينتهِ)
+  if(usedDays > 0 && usedDays <= TOTAL_DAYS){
+    // التحقق من أن اليوم الحالي لم ينتهِ صلاحيته
+    if(storedDay === today){
+      if(remaining > 0){
+        // تم التفعيل مسبقًا ولديه وقت متبقي، نوجهه للعبة
+        window.location.href = "game.html";
+      } else if(remaining <= 0){
+        // انتهى وقت اليوم ولكن لا يزال هناك أيام متبقية
+        // نعرض العداد ليبين أنه انتهى اليوم لكن يمكنه التفعيل غدًا
+        startUsageTimer();
+      }
+    } else {
+      // يوم جديد، نبدأ عداد اليوم الجديد
+      startUsageTimer();
+    }
+  }
+}
+
+// تنفيذ فتح الصفحة مباشرة إذا كان الكرت مفعل مسبقًا
+checkExistingActivation();
+
+</script>
 </body>
 </html>
