@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نتائج الطلاب</title>
+<style>
+body {
+    font-family: Tahoma, Arial;
+    background: #f2f4f8;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+h1 {
+    text-align: center;
+    color: #333;
+}
+.search-box {
+    margin: 20px 0;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+.card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+    margin-top: 20px;
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #eee;
+}
+.row:last-child {
+    border: none;
+}
+.pass {
+    color: green;
+    font-weight: bold;
+}
+.fail {
+    color: red;
+    font-weight: bold;
+}
+.status {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+.status.pass {
+    background: #e7f8ec;
+}
+.status.fail {
+    background: #fdeaea;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>نتائج الصف الثاني أساسي</h1>
+
+<div class="search-box">
+<input type="text" id="search" placeholder="اكتب اسم الطالب كامل">
+</div>
+
+<div id="result"></div>
+</div>
+
+<script>
+const PASS_MARK = 25;
+
+const students = [
+    {
+        name: "ابراهيم خالد شمسان محمد",
+        grade: "الثالث",
+        marks: {quran: 34, islamic: 32, arabic: 31, math: 33, science: 37},
+        total: 167
+    },
+    {
+        name: "ابراهيم امين سعيد جميل",
+        grade: "الثاني أساسي",
+        marks: {quran: 39, islamic: 34, arabic: 41, math: 32, science: 32},
+        total: 178
+    },
+    {
+        name: "ابراهيم خالد محمد علي",
+        grade: "الثاني أساسي",
+        marks: {quran: 17, islamic: 22, arabic: 11, math: 36, science: 36},
+        total: 122
+    },
+    {
+        name: "ابراهيم عبدالحافظ عبده عون",
+        grade: "الثاني أساسي",
+        marks: {quran: 28, islamic: 28, arabic: 25, math: 25, science: 25},
+        total: 131
+    },
+    {
+        name: "ابراهيم منير رشيد محمد ثابت",
+        grade: "الثاني أساسي",
+        marks: {quran: 28, islamic: 31, arabic: 33, math: 31, science: 31},
+        total: 154
+    },
+    {
+        name: "احمد عامر عبدالجليل مهيوب",
+        grade: "الثاني أساسي",
+        marks: {quran: 37, islamic: 35, arabic: 44, math: 31, science: 31},
+        total: 178
+    },
+    {
+        name: "اركان مختار سعد ناجي",
+        grade: "الثاني أساسي",
+        marks: {quran: 43, islamic: 44, arabic: 48, math: 47, science: 47},
+        total: 229
+    },
+    {
+        name: "اركان وليد نعمان قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 25, islamic: 27, arabic: 15, math: 34, science: 34},
+        total: 135
+    },
+    {
+        name: "اسامة زيد هائل حمود",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 49, arabic: 50, math: 50, science: 50},
+        total: 248
+    },
+    {
+        name: "اسامة عبدالله محمد علي",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 47, arabic: 49, math: 48, science: 48},
+        total: 241
+    },
+    {
+        name: "البراء نبيل محمد شاهر",
+        grade: "الثاني أساسي",
+        marks: {quran: 34, islamic: 31, arabic: 33, math: 36, science: 36},
+        total: 170
+    },
+    {
+        name: "الياس ماجد سلطان نعمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "امجد حلمي نعمان قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 29, islamic: 32, arabic: 36, math: 46, science: 46},
+        total: 189
+    },
+    {
+        name: "امجد درهم سعيد محمد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 24, islamic: 28, arabic: 35, math: 24, science: 24},
+        total: 135
+    },
+    {
+        name: "امير رافت عبدالكريم غالب",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "امير صدام خالد فارع",
+        grade: "الثاني أساسي",
+        marks: {quran: 38, islamic: 43, arabic: 43, math: 46, science: 46},
+        total: 216
+    },
+    {
+        name: "امير وضاح عبدالله محمد عبدالله",
+        grade: "الثاني أساسي",
+        marks: {quran: 40, islamic: 44, arabic: 43, math: 45, science: 45},
+        total: 217
+    },
+    {
+        name: "امين احمد سلطان نعمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 48, arabic: 50, math: 50, science: 50},
+        total: 246
+    },
+    {
+        name: "اياد بشير سيف سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 20, islamic: 22, arabic: 18, math: 23, science: 23},
+        total: 106
+    },
+    {
+        name: "اياد رياض عبده احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 10, islamic: 20, arabic: 19, math: 19, science: 19},
+        total: 87
+    },
+    {
+        name: "ايان شكيب منصور محمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 49, arabic: 47, math: 48, science: 48},
+        total: 240
+    },
+    {
+        name: "ايان محمد امين شرف",
+        grade: "الثاني أساسي",
+        marks: {quran: 19, islamic: 26, arabic: 22, math: 23, science: 23},
+        total: 113
+    },
+    {
+        name: "براء حمدي محمد حميد",
+        grade: "الثاني أساسي",
+        marks: {quran: 43, islamic: 46, arabic: 46, math: 48, science: 48},
+        total: 231
+    },
+    {
+        name: "حسين امين محمد علي",
+        grade: "الثاني أساسي",
+        marks: {quran: 10, islamic: 18, arabic: 21, math: 18, science: 18},
+        total: 85
+    },
+    {
+        name: "حمد رافت عبدالكريم غالب",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "حمد محمد نعمان احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 49, arabic: 49, math: 50, science: 50},
+        total: 248
+    },
+    {
+        name: "رامي عبدالرحمن توفيق سيف",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 48, arabic: 49, math: 49, science: 49},
+        total: 244
+    },
+    {
+        name: "ربيع رفيق علي احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "ريان وعيد محمد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "ريدان احمد حمود احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 45, islamic: 39, arabic: 44, math: 39, science: 39},
+        total: 206
+    },
+    {
+        name: "زياد يزيد سعيد عبدالجبار",
+        grade: "الثاني أساسي",
+        marks: {quran: 40, islamic: 43, arabic: 47, math: 39, science: 39},
+        total: 208
+    },
+    {
+        name: "سليم ابوبكر شائف قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 47, islamic: 48, arabic: 46, math: 48, science: 48},
+        total: 237
+    },
+    {
+        name: "صلاح فهيم علي فارع",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 49, arabic: 49, math: 50, science: 50},
+        total: 247
+    },
+    {
+        name: "عبدالعزيز عبدالناصر عبدالحميد عبدالواحد",
+        grade: "الثاني أساسي",
+        marks: {quran: 44, islamic: 47, arabic: 48, math: 50, science: 50},
+        total: 239
+    },
+    {
+        name: "عماد سليم منصور قائد",
+        grade: "الثاني أساسي",
+        marks: {quran: 22, islamic: 27, arabic: 23, math: 28, science: 28},
+        total: 128
+    },
+    {
+        name: "عمار احمد محمد علي",
+        grade: "الثاني أساسي",
+        marks: {quran: 13, islamic: 19, arabic: 17, math: 17, science: 17},
+        total: 83
+    },
+    {
+        name: "عمار توفيق عبده محمد سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 47, arabic: 48, math: 48, science: 48},
+        total: 239
+    },
+    {
+        name: "عمار عارف قاسم محمد سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 33, islamic: 25, arabic: 26, math: 32, science: 32},
+        total: 148
+    },
+    {
+        name: "عمر عبدالرحمن محمد بن محمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 39, islamic: 32, arabic: 41, math: 42, science: 42},
+        total: 196
+    },
+    {
+        name: "عمرو عاصم محمد سيف",
+        grade: "الثاني أساسي",
+        marks: {quran: 45, islamic: 48, arabic: 44, math: 45, science: 45},
+        total: 227
+    },
+    {
+        name: "فراس ياسر سلطان قائد",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 249
+    },
+    {
+        name: "قائد محمد قائد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 47, science: 47},
+        total: 244
+    },
+    {
+        name: "كريم محمد نعمان احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 17, islamic: 11, arabic: 24, math: 18, science: 18},
+        total: 88
+    },
+    {
+        name: "مبارك محمد عبدالوهاب سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 46, islamic: 49, arabic: 49, math: 50, science: 50},
+        total: 244
+    },
+    {
+        name: "مجد عبدالله سعيد محمد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 20, islamic: 20, arabic: 18, math: 20, science: 20},
+        total: 98
+    },
+    {
+        name: "محمد اديب محمد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 28, islamic: 32, arabic: 32, math: 27, science: 27},
+        total: 146
+    },
+    {
+        name: "محمد سامر عبدالباقي احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 49, arabic: 50, math: 50, science: 50},
+        total: 249
+    },
+    {
+        name: "محمد عبدالعزيز محمد ثابت",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 49, arabic: 49, math: 49, science: 49},
+        total: 246
+    },
+    {
+        name: "محمد عبدالله شرف حسين",
+        grade: "الثاني أساسي",
+        marks: {quran: 30, islamic: 31, arabic: 31, math: 38, science: 38},
+        total: 168
+    },
+    {
+        name: "محمد علي عبدالله نصر",
+        grade: "الثاني أساسي",
+        marks: {quran: 25, islamic: 30, arabic: 38, math: 37, science: 37},
+        total: 167
+    },
+    {
+        name: "محمد عمر عبدالله عبدالقادر",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "محمد مروان العزي شمسان",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "محمد وهيب قاسم محمد سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 33, islamic: 37, arabic: 36, math: 39, science: 39},
+        total: 184
+    },
+    {
+        name: "معمر عمرو مغلس راحج",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "نعمان هاني عبده قائد",
+        grade: "الثاني أساسي",
+        marks: {quran: 25, islamic: 33, arabic: 34, math: 21, science: 21},
+        total: 134
+    },
+    {
+        name: "وسيم ماجد طربوش احمد غالب",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "وهيب فهمي شمسان سيف",
+        grade: "الثاني أساسي",
+        marks: {quran: 45, islamic: 45, arabic: 47, math: 48, science: 48},
+        total: 233
+    },
+    {
+        name: "يونس فهمي عبدالجبار سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 16, islamic: 32, arabic: 16, math: 22, science: 22},
+        total: 108
+    },
+    {
+        name: "ابرار امين سعيد جميل",
+        grade: "الثاني أساسي",
+        marks: {quran: 32, islamic: 36, arabic: 32, math: 30, science: 30},
+        total: 160
+    },
+    {
+        name: "اخلاص محمد عبدالله سلطان",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "ارادة عبدالجبار محمد عثمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 47, islamic: 48, arabic: 50, math: 50, science: 50},
+        total: 245
+    },
+    {
+        name: "اريج ناصر احمد عبدالقادر",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 47, arabic: 49, math: 50, science: 50},
+        total: 244
+    },
+    {
+        name: "ازهار قيس اسماعيل عبدالله نعمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 49, arabic: 49, math: 48, science: 48},
+        total: 242
+    },
+    {
+        name: "اسماء محمد منصور عبده عثمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 46, islamic: 47, arabic: 48, math: 47, science: 47},
+        total: 235
+    },
+    {
+        name: "اسيل مجد فهد احمد سلام",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "انهار انور مصطفي حمود",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 49, arabic: 50, math: 50, science: 50},
+        total: 249
+    },
+    {
+        name: "ايه داوود محسن قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 49, arabic: 50, math: 50, science: 50},
+        total: 248
+    },
+    {
+        name: "براءة جابر احمد عبده قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 37, islamic: 40, arabic: 42, math: 45, science: 45},
+        total: 209
+    },
+    {
+        name: "براءة قيس اسماعيل عبدالله نعمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "بسمة اكرم عبده احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 46, arabic: 49, math: 49, science: 49},
+        total: 241
+    },
+    {
+        name: "بشائر هاني عبدالله احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "بشرى عبدالله علي محمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 47, arabic: 49, math: 48, science: 48},
+        total: 240
+    },
+    {
+        name: "بيان امجد علي سيف احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "تسنيم عارف سامي احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 249
+    },
+    {
+        name: "ثريا ثوفيق محمد قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "جنى صدقي شرف احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "جوري وضاح عبدالله نصر",
+        grade: "الثاني أساسي",
+        marks: {quran: 24, islamic: 25, arabic: 20, math: 30, science: 30},
+        total: 129
+    },
+    {
+        name: "حسن فكري احمد شرف",
+        grade: "الثاني أساسي",
+        marks: {quran: 45, islamic: 47, arabic: 48, math: 46, science: 46},
+        total: 232
+    },
+    {
+        name: "حنان فوزي قاسم سيف",
+        grade: "الثاني أساسي",
+        marks: {quran: 44, islamic: 46, arabic: 48, math: 47, science: 47},
+        total: 232
+    },
+    {
+        name: "دعاء احمد محمد علي عبد",
+        grade: "الثاني أساسي",
+        marks: {quran: 14, islamic: 17, arabic: 22, math: 26, science: 26},
+        total: 105
+    },
+    {
+        name: "رشا جابر محمد علي",
+        grade: "الثاني أساسي",
+        marks: {quran: 19, islamic: 24, arabic: 28, math: 23, science: 23},
+        total: 117
+    },
+    {
+        name: "رفا محمد توفيق محمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 249
+    },
+    {
+        name: "رمال توفيق احمد عامر",
+        grade: "الثاني أساسي",
+        marks: {quran: 47, islamic: 45, arabic: 50, math: 50, science: 50},
+        total: 242
+    },
+    {
+        name: "رهام محفوظ محمد عبدالقادر",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "رهف ياسر سعيد فارع",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "روان سليم نعمان مقبل",
+        grade: "الثاني أساسي",
+        marks: {quran: 49, islamic: 50, arabic: 49, math: 49, science: 49},
+        total: 246
+    },
+    {
+        name: "روان شهاب عامر محمد سيف",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "ريناد خليل صالح قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "سلمي عبدالله عبدالقادر نعمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 47, islamic: 46, arabic: 49, math: 49, science: 49},
+        total: 240
+    },
+    {
+        name: "سماء طارق فؤاد اسماعيل",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 43, arabic: 49, math: 45, science: 45},
+        total: 230
+    },
+    {
+        name: "سماء ياسر عبدالله ثابت",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 47, arabic: 50, math: 49, science: 49},
+        total: 243
+    },
+    {
+        name: "سماح سامي عبده سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 15, islamic: 23, arabic: 25, math: 25, science: 25},
+        total: 113
+    },
+    {
+        name: "سندس محمد سفيان قاسم",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "شمس بسام فؤاد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "شيماء مريد امين احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 42, islamic: 45, arabic: 44, math: 46, science: 46},
+        total: 223
+    },
+    {
+        name: "صفاء احمد عبده احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 45, islamic: 36, arabic: 36, math: 44, science: 44},
+        total: 205
+    },
+    {
+        name: "صفاء حمود عبده سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 21, islamic: 22, arabic: 33, math: 26, science: 26},
+        total: 128
+    },
+    {
+        name: "عائشة ابوبكر عبدالباقي عبدالوهاب",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 48, arabic: 50, math: 48, science: 48},
+        total: 242
+    },
+    {
+        name: "غناء عبدالباسط صالح عون",
+        grade: "الثاني أساسي",
+        marks: {quran: 46, islamic: 47, arabic: 47, math: 46, science: 46},
+        total: 232
+    },
+    {
+        name: "فاطمة عماد سلطان نعمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 50, arabic: 49, math: 49, science: 49},
+        total: 245
+    },
+    {
+        name: "ليالي فؤاد توفيق سيف حازم",
+        grade: "الثاني أساسي",
+        marks: {quran: 19, islamic: 22, arabic: 21, math: 19, science: 19},
+        total: 100
+    },
+    {
+        name: "ليان اياد عبده سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 45, islamic: 43, arabic: 36, math: 37, science: 37},
+        total: 198
+    },
+    {
+        name: "لين اياد عبده سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 41, islamic: 40, arabic: 45, math: 46, science: 46},
+        total: 218
+    },
+    {
+        name: "مارينا محمد امين شرف",
+        grade: "الثاني أساسي",
+        marks: {quran: 33, islamic: 35, arabic: 31, math: 40, science: 40},
+        total: 179
+    },
+    {
+        name: "مرام جبير عبدالرحمن عبدالرحيم",
+        grade: "الثاني أساسي",
+        marks: {quran: 48, islamic: 48, arabic: 46, math: 47, science: 47},
+        total: 236
+    },
+    {
+        name: "مرام مروان خالد عبده عثمان",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "مرام منير رشيد محمد ثابت",
+        grade: "الثاني أساسي",
+        marks: {quran: 46, islamic: 47, arabic: 48, math: 47, science: 47},
+        total: 235
+    },
+    {
+        name: "مرجانة احمد امين عبده",
+        grade: "الثاني أساسي",
+        marks: {quran: 30, islamic: 34, arabic: 38, math: 31, science: 31},
+        total: 164
+    },
+    {
+        name: "مروة حمود عبده سعيد",
+        grade: "الثاني أساسي",
+        marks: {quran: 27, islamic: 27, arabic: 33, math: 42, science: 42},
+        total: 171
+    },
+    {
+        name: "مريم احمد احمد عبدالجبار",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "ملاك عقلان عبدالرزق عوض",
+        grade: "الثاني أساسي",
+        marks: {quran: 44, islamic: 45, arabic: 48, math: 48, science: 48},
+        total: 233
+    },
+    {
+        name: "نسيبة حمدي خالد فارع",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    },
+    {
+        name: "هنادي سامي جمال علي صالح",
+        grade: "الثاني أساسي",
+        marks: {quran: 27, islamic: 33, arabic: 39, math: 28, science: 28},
+        total: 155
+    },
+    {
+        name: "وديان فارس محمد مقبل",
+        grade: "الثاني أساسي",
+        marks: {quran: 18, islamic: 27, arabic: 30, math: 26, science: 26},
+        total: 127
+    },
+    {
+        name: "ورود خليل احمد احمد",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 49, science: 49},
+        total: 248
+    },
+    {
+        name: "وفاء داوود احمد عقلان",
+        grade: "الثاني أساسي",
+        marks: {quran: 30, islamic: 24, arabic: 18, math: 24, science: 24},
+        total: 120
+    },
+    {
+        name: "وئام جبير محمد عبدالقادر",
+        grade: "الثاني أساسي",
+        marks: {quran: 50, islamic: 50, arabic: 50, math: 50, science: 50},
+        total: 250
+    }
+];
+
+function isPass(m) { 
+    return m >= PASS_MARK; 
+}
+
+document.getElementById("search").addEventListener("input", function(){
+    const value = this.value.trim();
+    const result = document.getElementById("result");
+    result.innerHTML = "";
+
+    if (!value) return;
+
+    const student = students.find(s => s.name.includes(value));
+    if (!student) {
+        result.innerHTML = "<p style='text-align:center;color:red'>لا يوجد طالب بهذا الاسم</p>";
+        return;
+    }
+
+    let failed = Object.values(student.marks).some(m => m < PASS_MARK);
+    let statusClass = failed ? "fail" : "pass";
+    let statusText = failed ? "راسب" : "ناجح";
+
+    result.innerHTML = `
+    <div class="card">
+        <div class="row"><strong>الاسم</strong><span>${student.name}</span></div>
+        <div class="row"><strong>الصف</strong><span>${student.grade}</span></div>
+
+        <div class="row"><strong>القرآن</strong><span class="${isPass(student.marks.quran) ? 'pass' : 'fail'}">${student.marks.quran}</span></div>
+        <div class="row"><strong>الإسلامية</strong><span class="${isPass(student.marks.islamic) ? 'pass' : 'fail'}">${student.marks.islamic}</span></div>
+        <div class="row"><strong>العربية</strong><span class="${isPass(student.marks.arabic) ? 'pass' : 'fail'}">${student.marks.arabic}</span></div>
+        <div class="row"><strong>الرياضيات</strong><span class="${isPass(student.marks.math) ? 'pass' : 'fail'}">${student.marks.math}</span></div>
+        <div class="row"><strong>العلوم</strong><span class="${isPass(student.marks.science) ? 'pass' : 'fail'}">${student.marks.science}</span></div>
+
+        <div class="row"><strong>المجموع الكلي</strong><span>${student.total}</span></div>
+
+        <div class="status ${statusClass}">${statusText}</div>
+    </div>`;
+});
+</script>
+</body>
+</html> 
