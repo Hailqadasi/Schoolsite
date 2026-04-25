@@ -1,764 +1,260 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<title>نتيجة الطالب</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نتائج الطلاب</title>
-
 <style>
 body{
-    font-family: Tahoma, Arial;
-    background:#f2f4f8;
-    margin:0;
-    padding:20px;
-}
-.container{
-    max-width:600px;
-    margin:auto;
-}
-h1{
-    text-align:center;
-    color:#333;
-}
-.search-box{
-    margin:20px 0;
-}
-input{
-    width:100%;
-    padding:12px;
-    font-size:16px;
-    border-radius:8px;
-    border:1px solid #ccc;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  min-height:100vh;
+  padding:20px;
+  color:#fff;
 }
 .card{
-    background:#fff;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
-    margin-top:20px;
+  background:#ffffff;
+  color:#000;
+  max-width:520px;
+  margin:auto;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
-.row{
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-    border-bottom:1px dashed #eee;
+h2{text-align:center;color:#203a43}
+input,button{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  font-size:16px;
+  border-radius:8px;
+  box-sizing:border-box;
 }
-.row:last-child{border:none}
+button{
+  background:#2c5364;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+button:hover{
+  background:#203a43;
+}
+.result{
+  margin-top:15px;
+  padding:15px;
+  border-radius:12px;
+  background:#f7f7f7;
+}
 .pass{color:green;font-weight:bold}
 .fail{color:red;font-weight:bold}
-.status{
-    text-align:center;
-    font-size:20px;
-    margin-top:15px;
-    padding:10px;
-    border-radius:10px;
+.row{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #ddd;
+  padding:5px 0;
 }
-.status.pass{background:#e7f8ec}
-.status.fail{background:#fdeaea}
 </style>
 </head>
 
 <body>
-<div class="container">
-<h1>نتائج الصف الثالث</h1>
 
-<div class="search-box">
-<input type="text" id="search" placeholder="اكتب اسم الطالب كامل">
-</div>
-
-<div id="result"></div>
+<div class="card">
+  <h2>الاستعلام عن النتيجة</h2>
+  <input type="number" id="seat" placeholder="أدخل رقم الجلوس">
+  <button onclick="showResult()">عرض النتيجة</button>
+  <div id="output"></div>
 </div>
 
 <script>
-const PASS_MARK = 25;
-
+// قائمة الطلاب مرتبة حسب رقم الجلوس
+// قائمة الطلاب مرتبة حسب رقم الجلوس
 const students = [
-{
-name:"ابراهيم خالد شمسان محمد",
-grade:"الثالث",
-marks:{quran:34,islamic:32,arabic:31,math:33,science:37,social:42},
-total:209
-},
-{
-name:"ابراهيم عبدالعالم عبده عون",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"احمد داود احمد عبدالقادر نعمان",
-grade:"الثالث",
-marks:{quran:38,islamic:33,arabic:36,math:45,science:45,social:41},
-total:238
-},
-{
-name:"احمد عادل علي سعيد",
-grade:"الثالث",
-marks:{quran:31,islamic:30,arabic:29,math:27,science:37,social:40},
-total:194
-},
-{
-name:"اديب عبدالله احمد علي",
-grade:"الثالث",
-marks:{quran:16,islamic:29,arabic:23,math:25,science:20,social:26},
-total:139
-},
-{
-name:"اسامة عصام شرف محمد احمد",
-grade:"الثالث",
-marks:{quran:25,islamic:39,arabic:25,math:35,science:26,social:29},
-total:179
-},
-{
-name:"اسامة محمد عبدالقادر محمد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"الياس برهان شرف محمد سلام",
-grade:"الثالث",
-marks:{quran:43,islamic:38,arabic:42,math:36,science:44,social:42},
-total:245
-},
-{
-name:"الياس زكريا احمد عقلان علي",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:49,math:50,science:50,social:50},
-total:299
-},
-{
-name:"الياس سهيم نعمان مقبل صالح",
-grade:"الثالث",
-marks:{quran:48,islamic:48,arabic:48,math:50,science:50,social:49},
-total:293
-},
-{
-name:"امير رفعت سيف حزام هلال",
-grade:"الثالث",
-marks:{quran:48,islamic:50,arabic:49,math:49,science:50,social:50},
-total:296
-},
-{
-name:"انس خلدون سيف محمد",
-grade:"الثالث",
-marks:{quran:19,islamic:24,arabic:24,math:29,science:25,social:25},
-total:146
-},
-{
-name:"انيس خلدون سيف محمد",
-grade:"الثالث",
-marks:{quran:20,islamic:25,arabic:25,math:39,science:25,social:24},
-total:158
-},
-{
-name:"اياد محمد علي مجاهد",
-grade:"الثالث",
-marks:{quran:47,islamic:46,arabic:39,math:49,science:49,social:49},
-total:279
-},
-{
-name:"تميم ياسر محمد عبدالله ثابت",
-grade:"الثالث",
-marks:{quran:48,islamic:48,arabic:45,math:45,science:47,social:46},
-total:279
-},
-{
-name:"توهيب توفيق سيف حازم",
-grade:"الثالث",
-marks:{quran:19,islamic:22,arabic:18,math:32,science:25,social:21},
-total:137
-},
-{
-name:"جميل رشدي جميل احمد",
-grade:"الثالث",
-marks:{quran:35,islamic:43,arabic:34,math:38,science:34,social:39},
-total:223
-}, // كانت هنا نقطة مفقودة
-{
-name:"حذيفة فهد احمد سلام",
-grade:"الثالث",
-marks:{quran:48,islamic:49,arabic:48,math:49,science:48,social:48},
-total:290
-},
-{
-name:"حسام صادق عبدالله احمد",
-grade:"الثالث",
-marks:{quran:28,islamic:31,arabic:27,math:34,science:30,social:33},
-total:183
-},
-{
-name:"رائد فؤاد شرف محمد هلال",
-grade:"الثالث",
-marks:{quran:28,islamic:27,arabic:28,math:25,science:28,social:31},
-total:167
-},
-{
-name:"رشيد وعيد محمد احمد عبدالواسع",
-grade:"الثالث",
-marks:{quran:49,islamic:48,arabic:50,math:50,science:50,social:49},
-total:296
-},
-{
-name:"ريان عبدالله عبده احمد غالب",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"ريان فؤاد توفيق سيف",
-grade:"الثالث",
-marks:{quran:28,islamic:38,arabic:40,math:36,science:29,social:38},
-total:209
-},
-{
-name:"ريان فؤاد عبدالحميد احمد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:49,math:50,science:50,social:50},
-total:299
-},
-{
-name:"سعد معاذ عبدالله احمد محمد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"سلمان شكيب محمد علي",
-grade:"الثالث",
-marks:{quran:38,islamic:44,arabic:41,math:35,science:43,social:41},
-total:242
-},
-{
-name:"عبدالرحمن عبدالحكيم حمود عبدالله هلال",
-grade:"الثالث",
-marks:{quran:34,islamic:37,arabic:31,math:19,science:34,social:39},
-total:194
-},
-{
-name:"عبدالرقيب عبدالوهاب توفيق سيف",
-grade:"الثالث",
-marks:{quran:27,islamic:30,arabic:31,math:33,science:30,social:40},
-total:191
-},
-{
-name:"عبدالقادر عزيز عبدالقادر نعمان",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"عبدالله مشتاق اسماعيل عثمان حسن",
-grade:"الثالث",
-marks:{quran:18,islamic:21,arabic:20,math:28,science:25,social:34},
-total:146
-},
-{
-name:"عمار عمر جعفر مهيوب احمد",
-grade:"الثالث",
-marks:{quran:46,islamic:46,arabic:46,math:42,science:48,social:47},
-total:275
-},
-{
-name:"عمار نبيل سعد علي",
-grade:"الثالث",
-marks:{quran:28,islamic:32,arabic:24,math:21,science:26,social:32},
-total:163
-},
-{
-name:"عمر امين عبده مقبل",
-grade:"الثالث",
-marks:{quran:28,islamic:36,arabic:30,math:40,science:32,social:39},
-total:205
-},
-{
-name:"عمر رشاد سيف مقبل",
-grade:"الثالث",
-marks:{quran:48,islamic:48,arabic:49,math:49,science:50,social:49},
-total:293
-},
-{
-name:"عمر فتحي عبدالكريم غالب",
-grade:"الثالث",
-marks:{quran:48,islamic:48,arabic:44,math:50,science:49,social:49},
-total:288
-},
-{
-name:"عمر محمد عبدالجبار ثابت مسعود",
-grade:"الثالث",
-marks:{quran:34,islamic:33,arabic:37,math:37,science:46,social:35},
-total:222
-}, // كانت هنا نقطة مفقودة
-{
-name:"عمران سليم منصور قائد",
-grade:"الثالث",
-marks:{quran:13,islamic:13,arabic:16,math:16,science:19,social:23},
-total:100
-},
-{
-name:"فارس ماجد عبدالله علي",
-grade:"الثالث",
-marks:{quran:14,islamic:19,arabic:16,math:28,science:16,social:29},
-total:122
-},
-{
-name:"قاسم حيان قاسم محمد غالب",
-grade:"الثالث",
-marks:{quran:50,islamic:49,arabic:49,math:47,science:50,social:50},
-total:295
-},
-{
-name:"كرم بسام قاسم محمد الفقيه",
-grade:"الثالث",
-marks:{quran:20,islamic:25,arabic:25,math:41,science:30,social:33},
-total:174
-},
-{
-name:"كرم عبدالرقيب محمد احمد",
-grade:"الثالث",
-marks:{quran:34,islamic:43,arabic:37,math:45,science:42,social:38},
-total:239
-},
-{
-name:"كمال رمزي نعمان علي",
-grade:"الثالث",
-marks:{quran:47,islamic:46,arabic:38,math:46,science:45,social:47},
-total:269
-},
-{
-name:"مالك عبدالحكيم احمد محمد",
-grade:"الثالث",
-marks:{quran:20,islamic:21,arabic:22,math:19,science:20,social:19},
-total:121
-},
-{
-name:"مجد عبدالحي محمد صالح",
-grade:"الثالث",
-marks:{quran:26,islamic:28,arabic:29,math:20,science:25,social:36},
-total:164
-},
-{
-name:"محمد بسام احمد مقبل",
-grade:"الثالث",
-marks:{quran:36,islamic:46,arabic:37,math:40,science:46,social:46},
-total:251
-},
-{
-name:"محمد جبير محمد عبدالقادر نعمان",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"محمد سامي علي فارع غالب",
-grade:"الثالث",
-marks:{quran:34,islamic:37,arabic:33,math:39,science:45,social:42},
-total:230
-},
-{
-name:"محمد صلاح عبده محمد سعيد",
-grade:"الثالث",
-marks:{quran:32,islamic:39,arabic:34,math:34,science:35,social:30},
-total:204
-},
-{
-name:"محمد عبدالسلام عبدالجليل محمد هلال",
-grade:"الثالث",
-marks:{quran:49,islamic:48,arabic:49,math:47,science:50,social:50},
-total:293
-},
-{
-name:"محمد عبده محمد عبدالله ناجي",
-grade:"الثالث",
-marks:{quran:26,islamic:30,arabic:25,math:37,science:33,social:32},
-total:183
-},
-{
-name:"محمد علي محمد عبدالله نعمان",
-grade:"الثالث",
-marks:{quran:49,islamic:50,arabic:50,math:50,science:49,social:49},
-total:297
-},
-{
-name:"محمد فائز عبدالحكيم احمد سعيد",
-grade:"الثالث",
-marks:{quran:27,islamic:38,arabic:36,math:33,science:43,social:41},
-total:218
-},
-{
-name:"محمد فكري عبده احمد",
-grade:"الثالث",
-marks:{quran:46,islamic:48,arabic:47,math:49,science:49,social:49},
-total:288
-},
-{
-name:"محمد مفيد محمد بن محمد",
-grade:"الثالث",
-marks:{quran:29,islamic:39,arabic:35,math:33,science:35,social:37},
-total:208
-},
-{
-name:"محمد نبيل احمد محمد",
-grade:"الثالث",
-marks:{quran:39,islamic:33,arabic:36,math:39,science:46,social:45},
-total:238
-},
-{
-name:"محمد نبيل درهم احمد غالب",
-grade:"الثالث",
-marks:{quran:49,islamic:48,arabic:47,math:49,science:50,social:50},
-total:293
-},
-{
-name:"مرسل عبدالرؤوف عبدالحميد ثابت",
-grade:"الثالث",
-marks:{quran:48,islamic:45,arabic:47,math:48,science:47,social:47},
-total:282
-},
-{
-name:"معالي عبدالرحمن عبدالرب صالح",
-grade:"الثالث",
-marks:{quran:48,islamic:50,arabic:48,math:50,science:50,social:50},
-total:296
-},
-{
-name:"معتز فهد احمد قاسم",
-grade:"الثالث",
-marks:{quran:30,islamic:37,arabic:33,math:45,science:46,social:45},
-total:236
-},
-{
-name:"معتز منصور عبدالله طربوش",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"مهند يحيى عبده سعيد",
-grade:"الثالث",
-marks:{quran:17,islamic:29,arabic:26,math:32,science:24,social:30},
-total:158
-},
-{
-name:"نشوان جهاد علي محمد الصلاحي",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"وسام عبدالرقيب عبدالواحد نعمان",
-grade:"الثالث",
-marks:{quran:28,islamic:41,arabic:32,math:34,science:32,social:40},
-total:207
-}, // كانت هنا نقطة مفقودة
-{
-name:"ابرار مروان جميل محمد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"ارادة شرف علي ناجي",
-grade:"الثالث",
-marks:{quran:13,islamic:19,arabic:15,math:30,science:14,social:22},
-total:113
-},
-{
-name:"اريج وهيب سيف سعيد",
-grade:"الثالث",
-marks:{quran:35,islamic:35,arabic:42,math:35,science:38,social:40},
-total:225
-},
-{
-name:"ازهار منير احمد عامر",
-grade:"الثالث",
-marks:{quran:29,islamic:24,arabic:24,math:21,science:26,social:31},
-total:155
-},
-{
-name:"اسراء عبدالله عبده محمد سلام",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"اسيل محمد طربوس احمد غالب",
-grade:"الثالث",
-marks:{quran:46,islamic:47,arabic:39,math:47,science:49,social:47},
-total:275
-},
-{
-name:"اقدار علي عبدالله ابراهيم",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"امل منصور علي احمد محمد",
-grade:"الثالث",
-marks:{quran:43,islamic:42,arabic:41,math:36,science:39,social:45},
-total:246
-},
-{
-name:"انسام بسام عبدالعزيز محمد",
-grade:"الثالث",
-marks:{quran:48,islamic:50,arabic:50,math:49,science:50,social:50},
-total:297
-},
-{
-name:"انسام فهمي شمسان سيف",
-grade:"الثالث",
-marks:{quran:28,islamic:29,arabic:26,math:29,science:30,social:29},
-total:171
-},
-{
-name:"انهار مجيب محمد شمسان",
-grade:"الثالث",
-marks:{quran:31,islamic:37,arabic:30,math:25,science:36,social:43},
-total:202
-},
-{
-name:"اية امين غالب نعمان سعيد",
-grade:"الثالث",
-marks:{quran:46,islamic:47,arabic:46,math:44,science:48,social:48},
-total:279
-},
-{
-name:"اية عبدالله احمد علي",
-grade:"الثالث",
-marks:{quran:28,islamic:31,arabic:28,math:28,science:31,social:25},
-total:171
-},
-{
-name:"ايناس مجيب محمد شمسان",
-grade:"الثالث",
-marks:{quran:32,islamic:38,arabic:33,math:25,science:34,social:44},
-total:206
-},
-{
-name:"بسمة امين طربوش احمد غالب",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"تسنيم مأمون محمد عوض",
-grade:"الثالث",
-marks:{quran:33,islamic:36,arabic:36,math:28,science:35,social:38},
-total:206
-},
-{
-name:"جنات عادل علي محمد",
-grade:"الثالث",
-marks:{quran:40,islamic:46,arabic:41,math:29,science:39,social:44},
-total:239
-},
-{
-name:"جنى وهيب هائل حميد سعيد",
-grade:"الثالث",
-marks:{quran:40,islamic:44,arabic:31,math:28,science:31,social:40},
-total:214
-},
-{
-name:"حنان نبيل محمد عبدالغني",
-grade:"الثالث",
-marks:{quran:31,islamic:36,arabic:29,math:33,science:34,social:34},
-total:197
-},
-{
-name:"دعاء شرف علي ناجي",
-grade:"الثالث",
-marks:{quran:18,islamic:20,arabic:22,math:19,science:20,social:25},
-total:124
-},
-{
-name:"رغد ردفان محمد قائد",
-grade:"الثالث",
-marks:{quran:21,islamic:27,arabic:20,math:31,science:35,social:37},
-total:171
-},
-{
-name:"رغد عبدالرحمن احمد مقبل",
-grade:"الثالث",
-marks:{quran:43,islamic:43,arabic:42,math:33,science:43,social:37},
-total:241
-},
-{
-name:"سمية سمير سعيد فارع",
-grade:"الثالث",
-marks:{quran:21,islamic:33,arabic:23,math:31,science:23,social:28},
-total:159
-},
-{
-name:"عائشة محمد نعمان احمد",
-grade:"الثالث",
-marks:{quran:21,islamic:20,arabic:16,math:26,science:21,social:28},
-total:132
-},
-{
-name:"عدالة ماجد محمد مقبل",
-grade:"الثالث",
-marks:{quran:16,islamic:18,arabic:18,math:12,science:13,social:23},
-total:100
-},
-{
-name:"ليان احمد امين عبده احمد",
-grade:"الثالث",
-marks:{quran:31,islamic:33,arabic:26,math:31,science:35,social:36},
-total:192
-},
-{
-name:"ليان انور محمد عبدالله ناجي",
-grade:"الثالث",
-marks:{quran:49,islamic:49,arabic:43,math:46,science:48,social:50},
-total:285
-},
-{
-name:"ليان عارف محمد شمسان",
-grade:"الثالث",
-marks:{quran:30,islamic:31,arabic:25,math:44,science:40,social:32},
-total:202
-},
-{
-name:"مرام درهم سعيد محمد",
-grade:"الثالث",
-marks:{quran:37,islamic:29,arabic:30,math:35,science:36,social:32},
-total:199
-},
-{
-name:"مروة جلال احمد سعيد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"مريم محمد احمد مقبل",
-grade:"الثالث",
-marks:{quran:48,islamic:49,arabic:49,math:41,science:50,social:49},
-total:286
-}, // كانت هنا نقطة مفقودة
-{
-name:"مشاعل محمد امين احمد",
-grade:"الثالث",
-marks:{quran:41,islamic:38,arabic:43,math:35,science:46,social:46},
-total:249
-},
-{
-name:"منار وجدان محمد مقبل",
-grade:"الثالث",
-marks:{quran:19,islamic:21,arabic:17,math:26,science:20,social:23},
-total:126
-},
-{
-name:"مواهب هاني عبدالله احمد مقبل",
-grade:"الثالث",
-marks:{quran:47,islamic:48,arabic:48,math:47,science:48,social:49},
-total:287
-},
-{
-name:"مودة عارف عبدالرحمن احمد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-},
-{
-name:"ميادة احمد عبده احمد",
-grade:"الثالث",
-marks:{quran:32,islamic:40,arabic:29,math:21,science:34,social:29},
-total:185
-},
-{
-name:"ميرة عماد قاسم محمد غالب",
-grade:"الثالث",
-marks:{quran:43,islamic:44,arabic:44,math:34,science:46,social:47},
-total:258
-},
-{
-name:"ميسون داؤد عبدالله سعيد",
-grade:"الثالث",
-marks:{quran:33,islamic:39,arabic:37,math:25,science:38,social:46},
-total:218
-},
-{
-name:"ندى شمسان قائد محمد",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:49,math:50,science:50,social:50},
-total:299
-},
-{
-name:"ندى لطفي احمد مهيوب احمد",
-grade:"الثالث",
-marks:{quran:49,islamic:48,arabic:49,math:41,science:50,social:50},
-total:287
-},
-{
-name:"نهر عبدالرحمن محمد بن محمد",
-grade:"الثالث",
-marks:{quran:47,islamic:48,arabic:46,math:38,science:42,social:47},
-total:268
-},
-{
-name:"هدى فهمي حمود غالب",
-grade:"الثالث",
-marks:{quran:16,islamic:20,arabic:16,math:16,science:15,social:17},
-total:100
-},
-{
-name:"هنادي احمد نعمان احمد عوض",
-grade:"الثالث",
-marks:{quran:22,islamic:22,arabic:17,math:23,science:25,social:26},
-total:135
-},
-{
-name:"وداد هاني نعمان احمد الفقي",
-grade:"الثالث",
-marks:{quran:45,islamic:43,arabic:35,math:32,science:38,social:44},
-total:237
-},
-{
-name:"وئام قيس عبدالحفيظ عبدالقادر ردمان",
-grade:"الثالث",
-marks:{quran:50,islamic:50,arabic:50,math:50,science:50,social:50},
-total:300
-} // آخر عنصر لا يحتاج نقطة
+  // أرقام الجلوس من 4 إلى 42
+  {seat:4,name:"ابراهيم حمدي محمد حميد",quran:35,islam:40,arabic:40,math:40,science:37,social:39},
+  {seat:5,name:"ابراهيم محمد عبدالله عبده عثمان",quran:24,islam:20,arabic:20,math:21,science:29,social:31},
+  {seat:6,name:"احمد باسم احمد مقبل",quran:33,islam:38,arabic:30,math:31,science:33,social:42},
+  {seat:7,name:"احمد بسام احمد مقبل",quran:40,islam:39,arabic:32,math:34,science:38,social:39},
+  {seat:8,name:"احمد فتحي عبدالوهاب سعيد",quran:49,islam:49,arabic:46,math:47,science:49,social:49},
+  {seat:9,name:"احمد فوزي قاسم سيف",quran:39,islam:44,arabic:49,math:45,science:41,social:41},
+  {seat:10,name:"ادهم علي محمد عوض",quran:40,islam:42,arabic:44,math:44,science:40,social:27},
+  {seat:11,name:"ارسلان ماجد عبدالله ثابت",quran:35,islam:35,arabic:39,math:36,science:41,social:30},
+  {seat:12,name:"انس يونس عبدالله سعيد",quran:27,islam:31,arabic:34,math:36,science:31,social:36},
+  {seat:13,name:"اياد عبدالرقيب غالب احمد",quran:46,islam:50,arabic:49,math:49,science:47,social:50},
+  {seat:14,name:"ايهم امجد عبدالكريم غالب",quran:50,islam:50,arabic:49,math:50,science:50,social:50},
+  {seat:15,name:"باسم فتحي حمود محمد",quran:28,islam:34,arabic:37,math:33,science:30,social:27},
+  {seat:16,name:"بسام ماجد امين غالب",quran:31,islam:39,arabic:38,math:35,science:42,social:34},
+  {seat:17,name:"بكيل صلاح عبدالله محمد",quran:21,islam:22,arabic:26,math:29,science:25,social:30},
+  {seat:18,name:"بهاء نذير عبدالملك غالب",quran:41,islam:44,arabic:43,math:47,science:45,social:36},
+  {seat:19,name:"حسام حميد عقلان علي",quran:41,islam:44,arabic:42,math:39,science:40,social:35},
+  {seat:20,name:"حسام مروان درهم علي",quran:29,islam:28,arabic:30,math:25,science:31,social:26},
+  {seat:21,name:"زيد حمود علي عقلان",quran:22,islam:19,arabic:27,math:25,science:34,social:27},
+  {seat:22,name:"شعيب عمار عبدالكريم عثمان",quran:22,islam:21,arabic:23,math:29,science:24,social:20},
+  {seat:23,name:"شكري عائد محمد عبدالله",quran:25,islam:32,arabic:26,math:31,science:24,social:24},
+  {seat:24,name:"شهاب اكرم محمد طه عبده",quran:26,islam:27,arabic:18,math:23,science:24,social:33},
+  {seat:25,name:"صلاح الدين علاء اسماعيل عبدالله",quran:48,islam:47,arabic:49,math:49,science:49,social:44},
+  {seat:26,name:"ضيف الله نعمان محمد عبدالله",quran:34,islam:29,arabic:34,math:34,science:30,social:19},
+  {seat:27,name:"عبدالله طه عبدالاله طه",quran:41,islam:46,arabic:43,math:45,science:48,social:40},
+  {seat:28,name:"عزت باسم سيف محمد",quran:46,islam:41,arabic:46,math:49,science:47,social:45},
+  {seat:29,name:"عفيف عارف عبدالباقي محمد",quran:37,islam:33,arabic:34,math:31,science:40,social:38},
+  {seat:30,name:"عقيل معاذ عبدالودود عبدالواحد",quran:29,islam:29,arabic:30,math:33,science:38,social:34},
+  {seat:31,name:"عمار احمد نعمان احمد",quran:18,islam:18,arabic:18,math:18,science:21,social:16},
+  {seat:32,name:"عمار عزيز عبدالقادر نعمان",quran:50,islam:50,arabic:49,math:50,science:50,social:50},
+  {seat:33,name:"عمرو فيصل محمد عوض",quran:22,islam:20,arabic:26,math:24,science:20,social:26},
+  {seat:34,name:"عيسى عمار طربوش احمد",quran:42,islam:42,arabic:40,math:46,science:42,social:34},
+  {seat:35,name:"فراس بسام عبدالجبار محمد",quran:44,islam:47,arabic:38,math:43,science:44,social:37},
+  {seat:36,name:"كرم جمال جميل احمد",quran:20,islam:30,arabic:31,math:32,science:28,social:25},
+  {seat:37,name:"كرمان فؤاد عبدالحميد احمد",quran:45,islam:47,arabic:46,math:47,science:48,social:37},
+  {seat:38,name:"محمد احمد محمود عبدالجليل",quran:40,islam:38,arabic:39,math:35,science:38,social:44},
+  {seat:39,name:"محمد امين محمد علي",quran:26,islam:22,arabic:19,math:19,science:22,social:31},
+  {seat:40,name:"محمد لطف عبدالله احمد",quran:34,islam:37,arabic:40,math:39,science:44,social:30},
+  {seat:41,name:"محمد هشام حزام سعيد",quran:37,islam:33,arabic:38,math:36,science:31,social:38},
+  {seat:42,name:"مراد عبدالله احمد علي",quran:34,islam:28,arabic:32,math:37,science:34,social:32},
+
+  // أرقام الجلوس من 43 إلى 116
+  {seat:43,name:"مصطفي عبدالجليل مقبل احمد",quran:31,islam:22,arabic:25,math:23,science:30,social:30},
+  {seat:44,name:"معتصم خالد عبده محمد سلام",quran:27,islam:25,arabic:31,math:23,science:22,social:33},
+  {seat:45,name:"معتصم عصام شرف محمد",quran:27,islam:26,arabic:23,math:21,science:26,social:28},
+  {seat:46,name:"منتصر صابر علي سفيان",quran:29,islam:36,arabic:41,math:36,science:27,social:29},
+  {seat:47,name:"منيف ماجد عبدالله ردمان",quran:40,islam:46,arabic:45,math:48,science:48,social:44},
+  {seat:48,name:"مهند رفيق علي احمد",quran:49,islam:50,arabic:49,math:48,science:50,social:48},
+  {seat:49,name:"مؤيد صادق عبدالله ثابت",quran:29,islam:27,arabic:38,math:27,science:26,social:27},
+  {seat:50,name:"وسيم باسم صالح سعيد البحر",quran:44,islam:42,arabic:43,math:40,science:38,social:44},
+  {seat:51,name:"يزن شاكر عبدالحفيظ محمد",quran:39,islam:46,arabic:45,math:43,science:38,social:30},
+  {seat:52,name:"ابرار ابراهيم احمد محمد",quran:49,islam:50,arabic:47,math:44,science:48,social:44},
+  {seat:53,name:"ابرار خالد محمد علي",quran:22,islam:18,arabic:20,math:23,science:27,social:19},
+  {seat:54,name:"ابرار نبيل محمد شاهر",quran:37,islam:41,arabic:41,math:34,science:41,social:35},
+  {seat:55,name:"اثار درهم سعيد محمد",quran:36,islam:39,arabic:43,math:36,science:37,social:25},
+  {seat:56,name:"احسان توفيق محمد قاسم",quran:40,islam:40,arabic:41,math:31,science:43,social:39},
+  {seat:57,name:"ازهار عبدالله عبده قاسم",quran:22,islam:22,arabic:25,math:21,science:23,social:34},
+  {seat:58,name:"اسرار وليد محمد احمد",quran:37,islam:37,arabic:33,math:31,science:37,social:30},
+  {seat:59,name:"اسلام هاني نعمان احمد",quran:38,islam:38,arabic:42,math:41,science:37,social:28},
+  {seat:60,name:"اطياف محمد نعمان علي",quran:48,islam:48,arabic:47,math:49,science:46,social:46},
+  {seat:61,name:"اميرة امين محمد احمد",quran:45,islam:43,arabic:43,math:42,science:42,social:37},
+  {seat:62,name:"اميرة عبدالحافظ عبدالرب صالح",quran:37,islam:36,arabic:33,math:29,science:32,social:28},
+  {seat:63,name:"انهار عبدالله محمد عبدالله",quran:48,islam:49,arabic:49,math:42,science:45,social:43},
+  {seat:64,name:"اية خالد احمد علي",quran:36,islam:35,arabic:33,math:31,science:35,social:29},
+  {seat:65,name:"آسيا اكرم عبده احمد",quran:37,islam:42,arabic:41,math:33,science:40,social:34},
+  {seat:66,name:"براءة وليد علي عبدالله",quran:31,islam:37,arabic:38,math:26,science:33,social:32},
+  {seat:67,name:"بيان ناصر احمد عبدالقادر",quran:46,islam:47,arabic:47,math:33,science:46,social:40},
+  {seat:68,name:"بيان وجدي عبدالقادر حمود",quran:44,islam:47,arabic:46,math:43,science:45,social:34},
+  {seat:69,name:"بيان ياسر سلطان قائد",quran:45,islam:46,arabic:47,math:37,science:46,social:41},
+  {seat:70,name:"جنات عبدالوكيل احمد سعيد",quran:38,islam:42,arabic:47,math:39,science:44,social:32},
+  {seat:71,name:"حنين محمد امين عبده احمد",quran:40,islam:41,arabic:43,math:38,science:38,social:35},
+  {seat:72,name:"دعاء داؤود محسن قاسم",quran:50,islam:49,arabic:49,math:49,science:48,social:49},
+  {seat:73,name:"رتيل مدين سلطان قائد",quran:49,islam:50,arabic:49,math:50,science:49,social:50},
+  {seat:74,name:"رغد فوزي محمد علي",quran:19,islam:18,arabic:24,math:23,science:23,social:19},
+  {seat:75,name:"رغد يونس عبدالله سعيد",quran:28,islam:20,arabic:33,math:23,science:31,social:22},
+  {seat:76,name:"رفاء جلال سيف مقبل",quran:41,islam:48,arabic:49,math:45,science:48,social:41},
+  {seat:77,name:"رفاء عبدالله شرف حسين",quran:39,islam:33,arabic:33,math:29,science:36,social:32},
+  {seat:78,name:"رنيم محمد عبدالكريم احمد",quran:48,islam:48,arabic:47,math:44,science:47,social:45},
+  {seat:79,name:"روضة وليد نعمان قاسم",quran:21,islam:32,arabic:34,math:28,science:37,social:23},
+  {seat:80,name:"رؤية مهيوب قاسم حزام",quran:36,islam:41,arabic:44,math:38,science:37,social:30},
+  {seat:81,name:"زينب محمد عبدالقادر محمد",quran:43,islam:48,arabic:49,math:42,science:48,social:49},
+  {seat:82,name:"سارة رياض عبده احمد عبد",quran:24,islam:25,arabic:23,math:27,science:33,social:26},
+  {seat:83,name:"سارة عبدالله محمد علي",quran:43,islam:38,arabic:46,math:42,science:32,social:39},
+  {seat:84,name:"سلاء وضاح عبدالله محمد",quran:37,islam:41,arabic:33,math:42,science:32,social:37},
+  {seat:85,name:"سماء احمد شائف قاسم",quran:46,islam:48,arabic:49,math:40,science:45,social:32},
+  {seat:86,name:"سمر سامر عبدالباقي احمد",quran:45,islam:47,arabic:49,math:43,science:46,social:32},
+  {seat:87,name:"صابرين عبدالعالم محمد عبدالله",quran:33,islam:40,arabic:41,math:32,science:39,social:25},
+  {seat:88,name:"صمود فكري احمد شرف",quran:37,islam:36,arabic:38,math:27,science:33,social:31},
+  {seat:89,name:"علياء علاء علي عبدالقادر",quran:48,islam:44,arabic:43,math:40,science:46,social:34},
+  {seat:90,name:"علياء علي عبدالملك غالب",quran:40,islam:42,arabic:40,math:37,science:34,social:39},
+  {seat:91,name:"عهود نبيل احمد سعيد",quran:32,islam:37,arabic:36,math:36,science:36,social:36},
+  {seat:92,name:"غادة نعمان محمد عبدالله",quran:43,islam:42,arabic:44,math:34,science:37,social:31},
+  {seat:93,name:"فرح اديب محمد احمد",quran:27,islam:33,arabic:33,math:29,science:29,social:33},
+  {seat:94,name:"فرح صادق عبدالله احمد",quran:24,islam:17,arabic:29,math:18,science:24,social:28},
+  {seat:95,name:"فرح عبدالله احمد علي",quran:36,islam:28,arabic:37,math:31,science:39,social:32},
+  {seat:96,name:"فرح هاني نعمان احمد",quran:34,islam:37,arabic:37,math:28,science:38,social:28},
+  {seat:97,name:"ليان اكرم محمد طه عبده",quran:44,islam:43,arabic:46,math:40,science:45,social:41},
+  {seat:98,name:"ليان عبدالفتاح حمود عبدالباري",quran:49,islam:50,arabic:49,math:44,science:47,social:49},
+  {seat:99,name:"مارية داؤد محمد شمسان",quran:48,islam:47,arabic:49,math:45,science:46,social:45},
+  {seat:100,name:"مارية عبدالحكيم حمود عبدالله",quran:31,islam:39,arabic:40,math:25,science:31,social:29},
+  {seat:101,name:"مرام سامي علي فارع",quran:27,islam:32,arabic:36,math:27,science:28,social:25},
+  {seat:102,name:"مرام عاصم سعيد فارع",quran:48,islam:45,arabic:47,math:42,science:47,social:44},
+  {seat:103,name:"مرام عبدالله درهم علي",quran:31,islam:28,arabic:29,math:30,science:29,social:28},
+  {seat:104,name:"مرام فهيم محسن قاسم",quran:46,islam:39,arabic:43,math:36,science:37,social:29},
+  {seat:105,name:"مريم اكرم عبدالعزيز محمد",quran:48,islam:48,arabic:46,math:46,science:47,social:50},
+  {seat:106,name:"ملاك وائل عبدالجبار محمد",quran:35,islam:36,arabic:36,math:32,science:28,social:26},
+  {seat:107,name:"منار عمار نبيل عبده سعيد",quran:50,islam:49,arabic:49,math:48,science:49,social:48},
+  {seat:108,name:"مهتدى فهمي حمود غالب",quran:35,islam:35,arabic:40,math:31,science:32,social:32},
+  {seat:109,name:"ناهد عبدالباقي عبدالباري محمد",quran:46,islam:45,arabic:48,math:47,science:47,social:41},
+  {seat:110,name:"نسمه امين محمد عثمان احمد",quran:49,islam:47,arabic:45,math:50,science:48,social:45},
+  {seat:111,name:"نوال جابر محمد علي",quran:16,islam:16,arabic:14,math:17,science:16,social:20},
+  {seat:112,name:"هديل عبدالدائم غالب عبدالدائم",quran:43,islam:48,arabic:45,math:39,science:45,social:38},
+  {seat:113,name:"هلا فؤاد سيف حزام",quran:35,islam:36,arabic:32,math:39,science:39,social:25},
+  {seat:114,name:"وفاء عارف سيف حزام",quran:40,islam:36,arabic:39,math:33,science:33,social:27},
+  {seat:115,name:"ولاء ماجد عبدالوهاب احمد",quran:42,islam:45,arabic:44,math:45,science:40,social:43},
+  {seat:116,name:"ولاء وليد نعمان قاسم",quran:31,islam:35,arabic:40,math:25,science:37,social:33}
 ];
 
-function isPass(m){ return m>=PASS_MARK }
-
-document.getElementById("search").addEventListener("input", function(){
-    const value = this.value.trim();
-    const result = document.getElementById("result");
-    result.innerHTML="";
-
-    if(!value) return;
-
-    const student = students.find(s => s.name.includes(value));
-    if(!student){
-        result.innerHTML="<p style='text-align:center;color:red'>لا يوجد طالب بهذا الاسم</p>";
-        return;
-    }
-
-    let failed = Object.values(student.marks).some(m=>m<PASS_MARK);
-    let statusClass = failed ? "fail":"pass";
-    let statusText = failed ? "راسب":"ناجح";
-
-    result.innerHTML = `
-    <div class="card">
-        <div class="row"><strong>الاسم</strong><span>${student.name}</span></div>
-        <div class="row"><strong>الصف</strong><span>${student.grade}</span></div>
-
-        <div class="row"><strong>القرآن</strong><span class="${isPass(student.marks.quran)?'pass':'fail'}">${student.marks.quran}</span></div>
-        <div class="row"><strong>الإسلامية</strong><span class="${isPass(student.marks.islamic)?'pass':'fail'}">${student.marks.islamic}</span></div>
-        <div class="row"><strong>العربية</strong><span class="${isPass(student.marks.arabic)?'pass':'fail'}">${student.marks.arabic}</span></div>
-        <div class="row"><strong>الرياضيات</strong><span class="${isPass(student.marks.math)?'pass':'fail'}">${student.marks.math}</span></div>
-        <div class="row"><strong>العلوم</strong><span class="${isPass(student.marks.science)?'pass':'fail'}">${student.marks.science}</span></div>
-        <div class="row"><strong>الاجتماعيات</strong><span class="${isPass(student.marks.social)?'pass':'fail'}">${student.marks.social}</span></div>
-
-        <div class="row"><strong>المجموع الكلي</strong><span>${student.total}</span></div>
-
-        <div class="status ${statusClass}">${statusText}</div>
-    </div>`;
+// لحساب المجموع لكل طالب
+students.forEach(student => {
+  student.total = student.quran + student.islam + student.arabic + 
+                  student.math + student.science + student.social;
 });
+
+function showResult() {
+  const seat = Number(document.getElementById("seat").value);
+  const out = document.getElementById("output");
+  const s = students.find(x => x.seat === seat);
+
+  if (!s) {
+    out.innerHTML = "<p class='fail'>رقم الجلوس غير موجود</p>";
+    return;
+  }
+
+  const pass = s.quran >= 25 && s.islam >= 25 && s.arabic >= 25 && 
+               s.math >= 25 && s.science >= 25 && s.social >= 25;
+
+  out.innerHTML = `
+  <div class="result">
+    <p><strong>الاسم:</strong> ${s.name}</p>
+    <div class="row"><span>قرآن</span><span>${s.quran}</span></div>
+    <div class="row"><span>إسلامية</span><span>${s.islam}</span></div>
+    <div class="row"><span>لغة عربية</span><span>${s.arabic}</span></div>
+    <div class="row"><span>رياضيات</span><span>${s.math}</span></div>
+    <div class="row"><span>علوم</span><span>${s.science}</span></div>
+    <div class="row"><span>اجتماعيات</span><span>${s.social}</span></div>
+    <hr>
+    <p><strong>المجموع:</strong> ${s.total}</p>
+    <p class="${pass ? 'pass' : 'fail'}">${pass ? 'ناجح ✅' : 'راسب ❌'}</p>
+  </div>`;
+}
+
+// لحساب المجموع لكل طالب
+students.forEach(student => {
+  student.total = student.quran + student.islam + student.arabic + 
+                  student.math + student.science + student.social;
+});
+
+function showResult() {
+  const seat = Number(document.getElementById("seat").value);
+  const out = document.getElementById("output");
+  const s = students.find(x => x.seat === seat);
+
+  if (!s) {
+    out.innerHTML = "<p class='fail'>رقم الجلوس غير موجود</p>";
+    return;
+  }
+
+  const pass = s.quran >= 25 && s.islam >= 25 && s.arabic >= 25 && 
+               s.math >= 25 && s.science >= 25 && s.social >= 25;
+
+  out.innerHTML = `
+  <div class="result">
+    <p><strong>الاسم:</strong> ${s.name}</p>
+    <div class="row"><span>قرآن</span><span>${s.quran}</span></div>
+    <div class="row"><span>إسلامية</span><span>${s.islam}</span></div>
+    <div class="row"><span>لغة عربية</span><span>${s.arabic}</span></div>
+    <div class="row"><span>رياضيات</span><span>${s.math}</span></div>
+    <div class="row"><span>علوم</span><span>${s.science}</span></div>
+    <div class="row"><span>اجتماعيات</span><span>${s.social}</span></div>
+    <hr>
+    <p><strong>المجموع:</strong> ${s.total}</p>
+    <p class="${pass ? 'pass' : 'fail'}">${pass ? 'ناجح ✅' : 'راسب ❌'}</p>
+  </div>`;
+}
 </script>
+
 </body>
-</html>
+</html> 
