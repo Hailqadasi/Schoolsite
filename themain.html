@@ -3,47 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الصفحة الرئيسية</title>
+<title>نتائج الطلاب</title>
 
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-font-family: Arial;
-background: #f5f5f5;
-text-align: center;
-padding: 40px;
+font-family:Tahoma, Arial, sans-serif;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+min-height:100vh;
+padding:40px 20px;
+text-align:center;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
 h1{
-color: #333;
-margin-bottom: 30px;
+color:white;
+margin-bottom:30px;
+font-size:38px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
 }
 
 a{
-display: block;
-margin: 12px auto;
-padding: 15px;
-width: 250px;
-background: #0366d6;
-color: white;
-text-decoration: none;
-border-radius: 10px;
-font-size: 18px;
+display:block;
+padding:18px;
+background:linear-gradient(135deg,#00c6ff,#0072ff);
+color:white;
+text-decoration:none;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+transition:0.3s;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
 
 a:hover{
-background: #024ea2;
+transform:translateY(-5px) scale(1.03);
+background:linear-gradient(135deg,#ff512f,#dd2476);
+}
+
+footer{
+margin-top:25px;
+color:#ddd;
+font-size:14px;
 }
 </style>
 
 </head>
 <body>
 
+<div class="container">
+
 <h1>📚 نتائج الطلاب</h1>
 
-<a href="grade1.html">نتائج الصف الأول</a>
-<a href="grade2.html">نتائج الصف الثاني</a>
-<a href="grade3.html">نتائج الصف الثالث</a>
-<a href="grade4.html">نتائج الصف الرابع</a>
+<div class="grid">
+
+<a href="grade1.html">الصف الأول</a>
+<a href="grade2.html">الصف الثاني</a>
+<a href="grade3.html">الصف الثالث</a>
+<a href="grade4.html">الصف الرابع</a>
+<a href="grade5.html">الصف الخامس</a>
+<a href="grade6.html">الصف السادس</a>
+<a href="grade7.html">الصف السابع</a>
+<a href="grade8.html">الصف الثامن</a>
+<a href="grade9.html">الصف التاسع</a>
+<a href="grade10.html">الأول الثانوي</a>
+<a href="grade11.html">الثاني الثانوي</a>
+
+</div>
+
+<footer>
+جميع الحقوق محفوظة © 2026
+</footer>
+
+</div>
 
 </body>
 </html>
