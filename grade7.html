@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نتيجة الطالب</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #f0f4c3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  h1 {
+    color: #33691e;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  input, button {
+    width: 90%;
+    max-width: 300px;
+    padding: 12px;
+    font-size: 16px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border: 1px solid #33691e;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #33691e;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #1b5e20;
+  }
+
+  .result-card {
+    margin-top: 20px;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 350px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    text-align: right;
+  }
+
+  .result-card h2 {
+    color: #1b5e20;
+    margin-bottom: 12px;
+    font-size: 18px;
+  }
+
+  .subject {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+    padding: 5px 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .total {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    font-size: 17px;
+  }
+
+  .error {
+    color: red;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>ادخل رقم الجلوس لمعرفة نتيجتك</h1>
+<input type="text" id="seatNo" placeholder="رقم الجلوس">
+<button onclick="showResult()">اظهار النتيجة</button>
+
+<div id="result"></div>
+
+<script>
+  const students = {
+    "329": { name: "ابراهيم عبدالباري عبده علي", quran: 40, islamic: 43, arabic: 35, english: 39, math: 43, telom: 29, social: 36, total: 265 },
+    "330": { name: "ابراهيم فهد احمد قاسم", quran: 37, islamic: 44, arabic: 30, english: 40, math: 35, telom: 27, social: 31, total: 244 },
+    "331": { name: "احمد سلطان محمد غالب", quran: 38, islamic: 45, arabic: 34, english: 41, math: 36, telom: 39, social: 44, total: 277 },
+    "332": { name: "احمد علي عبدالله نصر", quran: 39, islamic: 42, arabic: 31, english: 35, math: 36, telom: 38, social: 32, total: 253 },
+    "333": { name: "اركان علي محمد عبدالله", quran: 41, islamic: 46, arabic: 33, english: 40, math: 39, telom: 33, social: 31, total: 263 },
+    "334": { name: "اسعد شكري احمد عبدالله", quran: 28, islamic: 34, arabic: 33, english: 39, math: 29, telom: 29, social: 26, total: 218 },
+    "335": { name: "اسلام عبدالله عبده محمد سلام", quran: 49, islamic: 49, arabic: 47, english: 50, math: 49, telom: 48, social: 50, total: 342 },
+    "336": { name: "اشرف فائد عبدالحميد احمد", quran: 48, islamic: 45, arabic: 43, english: 49, math: 46, telom: 38, social: 43, total: 312 },
+    "337": { name: "اكرم عبدالرحمن احمد مقبل", quran: 30, islamic: 36, arabic: 30, english: 30, math: 30, telom: 18, social: 22, total: 196 },
+    "338": { name: "البراء باسم ياسين سيف", quran: 48, islamic: 48, arabic: 48, english: 49, math: 46, telom: 46, social: 47, total: 332 },
+    "339": { name: "المعتصم بالله عصام علي عبدالعزيز", quran: 40, islamic: 38, arabic: 32, english: 40, math: 36, telom: 28, social: 25, total: 239 },
+    "340": { name: "المعتصم عبدالحافظ عبده عون", quran: 25, islamic: 42, arabic: 30, english: 30, math: 32, telom: 30, social: 31, total: 220 },
+    "341": { name: "الياس امين عبده سعيد", quran: 45, islamic: 45, arabic: 39, english: 44, math: 31, telom: 22, social: 30, total: 256 },
+    "342": { name: "الياس رضوان محمد عثمان", quran: 25, islamic: 25, arabic: 29, english: 24, math: 25, telom: 16, social: 22, total: 166 },
+    "343": { name: "الياس عبدالله محمد عبدالله", quran: 47, islamic: 48, arabic: 42, english: 46, math: 45, telom: 45, social: 49, total: 322 },
+    "344": { name: "امجد محمد امين عبده", quran: 26, islamic: 30, arabic: 32, english: 33, math: 27, telom: 19, social: 28, total: 195 },
+    "345": { name: "ايمن امين شرف حسين", quran: 31, islamic: 25, arabic: 39, english: 26, math: 25, telom: 25, social: 38, total: 209 },
+    "346": { name: "ايمن عبدالباقي شرف محمد", quran: 39, islamic: 38, arabic: 44, english: 26, math: 34, telom: 26, social: 34, total: 241 },
+    "347": { name: "ايهاب توفيق سيف حازم", quran: 22, islamic: 19, arabic: 30, english: 24, math: 18, telom: 15, social: 19, total: 147 },
+    "348": { name: "بدر رشاد عبدالله ثابت", quran: 32, islamic: 30, arabic: 36, english: 30, math: 27, telom: 26, social: 36, total: 217 },
+    "349": { name: "حامد وهيب سيف سعيد", quran: 36, islamic: 43, arabic: 33, english: 32, math: 39, telom: 37, social: 43, total: 263 },
+    "350": { name: "حسام اديب محمد احمد", quran: 28, islamic: 34, arabic: 26, english: 26, math: 27, telom: 21, social: 22, total: 184 },
+    "351": { name: "حسام عبدالدائم غالب عبدالدائم", quran: 40, islamic: 41, arabic: 30, english: 33, math: 38, telom: 33, social: 32, total: 247 },
+    "352": { name: "حسام مروان عبدالعزير عبدالتواب", quran: 49, islamic: 49, arabic: 48, english: 46, math: 49, telom: 43, social: 46, total: 330 },
+    "353": { name: "حسام وحيد فؤاد احمد", quran: 32, islamic: 43, arabic: 31, english: 31, math: 35, telom: 30, social: 26, total: 228 },
+    "354": { name: "حسين محمد علي ناصر", quran: 35, islamic: 38, arabic: 32, english: 34, math: 33, telom: 28, social: 31, total: 231 },
+    "355": { name: "حيان هاني نعمان احمد", quran: 46, islamic: 45, arabic: 43, english: 46, math: 44, telom: 46, social: 42, total: 312 },
+    "356": { name: "خالد وليد علي عبدالله", quran: 50, islamic: 47, arabic: 42, english: 46, math: 45, telom: 47, social: 47, total: 324 },
+    "357": { name: "رشيد انور رشيد محمد", quran: 33, islamic: 35, arabic: 28, english: 35, math: 29, telom: 20, social: 26, total: 206 },
+    "358": { name: "زيد فتحي عبدالوهاب سعيد", quran: 49, islamic: 48, arabic: 44, english: 46, math: 48, telom: 48, social: 48, total: 331 },
+    "359": { name: "سليمان سليم احمد مهيوب", quran: 47, islamic: 46, arabic: 47, english: 49, math: 46, telom: 49, social: 47, total: 331 },
+    "360": { name: "صالح فهمي عبدالجبار سعيد", quran: 46, islamic: 45, arabic: 34, english: 34, math: 33, telom: 37, social: 40, total: 269 },
+    "361": { name: "عبد الرزاق احمد محمد احمد", quran: 28, islamic: 35, arabic: 32, english: 33, math: 27, telom: 20, social: 30, total: 205 },
+    "362": { name: "عبدالرحمن ابوبكر عبدالباقي عبدالوهاب", quran: 26, islamic: 29, arabic: 32, english: 35, math: 26, telom: 21, social: 30, total: 199 },
+    "363": { name: "عبدالقادر قيس عبدالحفيظ عبدالقادر", quran: 39, islamic: 47, arabic: 35, english: 38, math: 48, telom: 43, social: 36, total: 286 },
+    "364": { name: "عبدالملك مروان درهم علي", quran: 18, islamic: 31, arabic: 28, english: 31, math: 24, telom: 24, social: 24, total: 180 },
+    "365": { name: "عزالدين برهان شرف محمد", quran: 45, islamic: 47, arabic: 39, english: 43, math: 38, telom: 44, social: 38, total: 294 },
+    "366": { name: "عمرو طارق فؤاد اسماعيل", quran: 27, islamic: 28, arabic: 24, english: 26, math: 23, telom: 15, social: 22, total: 165 },
+    "367": { name: "عمرو عبدالرحمن توفيق سيف", quran: 30, islamic: 40, arabic: 29, english: 33, math: 24, telom: 21, social: 27, total: 204 },
+    "368": { name: "عمرو عبدالرحمن محمد بن محمد", quran: 37, islamic: 40, arabic: 35, english: 36, math: 27, telom: 20, social: 30, total: 225 },
+    "369": { name: "عيسى جابر جعفر مهيوب", quran: 33, islamic: 40, arabic: 29, english: 31, math: 24, telom: 21, social: 17, total: 195 },
+    "370": { name: "عيسي حزام محمد سعيد", quran: 16, islamic: 33, arabic: 30, english: 29, math: 19, telom: 15, social: 21, total: 163 },
+    "371": { name: "فراس فارس محمد مقبل", quran: 33, islamic: 35, arabic: 31, english: 21, math: 22, telom: 20, social: 24, total: 186 },
+    "372": { name: "فراس فوزي احمد مهيوب", quran: 48, islamic: 48, arabic: 45, english: 50, math: 49, telom: 46, social: 44, total: 330 },
+    "373": { name: "فرسان خالد عبدالله قاسم", quran: 35, islamic: 40, arabic: 31, english: 32, math: 30, telom: 20, social: 27, total: 215 },
+    "374": { name: "فهمان ثابت محمد احمد", quran: 29, islamic: 42, arabic: 31, english: 34, math: 23, telom: 22, social: 30, total: 211 },
+    "375": { name: "كارم ثابت محمد احمد", quran: 37, islamic: 42, arabic: 36, english: 43, math: 43, telom: 34, social: 34, total: 269 },
+    "376": { name: "كامل عبدالله محمد علي", quran: 33, islamic: 30, arabic: 30, english: 38, math: 24, telom: 21, social: 27, total: 203 },
+    "377": { name: "ليث اكرم محمد طه عبده", quran: 40, islamic: 44, arabic: 37, english: 40, math: 32, telom: 40, social: 37, total: 270 },
+    "378": { name: "مجد عمار نبيل عبده سعيد", quran: 48, islamic: 49, arabic: 42, english: 47, math: 42, telom: 45, social: 49, total: 322 },
+    "379": { name: "محمد رفيق محمد عبدالله", quran: 41, islamic: 44, arabic: 37, english: 37, math: 38, telom: 38, social: 44, total: 279 },
+    "380": { name: "محمد عمار طربوش احمد", quran: 30, islamic: 39, arabic: 33, english: 36, math: 30, telom: 33, social: 32, total: 233 },
+    "381": { name: "محمد فواد بجاش حزام", quran: 50, islamic: 49, arabic: 46, english: 49, math: 45, telom: 46, social: 46, total: 331 },
+    "382": { name: "محمد فيصل محمد عوض", quran: 22, islamic: 32, arabic: 30, english: 23, math: 27, telom: 30, social: 27, total: 191 },
+    "383": { name: "محمد محفوظ منصور عبدالعزيز", quran: 37, islamic: 47, arabic: 36, english: 36, math: 32, telom: 22, social: 35, total: 245 },
+    "384": { name: "معتز جابر محمد سعيد", quran: 25, islamic: 42, arabic: 31, english: 33, math: 35, telom: 28, social: 38, total: 232 },
+    "385": { name: "معتصم امين محمد عثمان احمد", quran: 34, islamic: 40, arabic: 37, english: 44, math: 39, telom: 37, social: 37, total: 268 },
+    "386": { name: "معتصم هاني نعمان احمد", quran: 26, islamic: 42, arabic: 31, english: 39, math: 29, telom: 34, social: 36, total: 237 },
+    "387": { name: "منصور عادل غالب احمد", quran: 30, islamic: 39, arabic: 31, english: 35, math: 35, telom: 31, social: 32, total: 233 },
+    "388": { name: "مؤيد عبدالرحمن عبدالرب صالح", quran: 36, islamic: 41, arabic: 32, english: 29, math: 30, telom: 32, social: 39, total: 239 },
+    "389": { name: "ناصر فؤاد عبدالله محمد", quran: 41, islamic: 44, arabic: 38, english: 35, math: 40, telom: 38, social: 42, total: 278 },
+    "390": { name: "نوح حزام محمد سعيد نعمان", quran: 42, islamic: 45, arabic: 30, english: 29, math: 28, telom: 36, social: 33, total: 243 },
+    "391": { name: "وسيم وسام هائل حميد", quran: 44, islamic: 43, arabic: 35, english: 29, math: 38, telom: 37, social: 39, total: 265 },
+    "392": { name: "يوسف مامون محمد عوض", quran: 23, islamic: 30, arabic: 30, english: 22, math: 21, telom: 22, social: 22, total: 170 },
+    "393": { name: "ابرار اياد عبده سعيد", quran: 32, islamic: 35, arabic: 31, english: 34, math: 30, telom: 22, social: 31, total: 215 },
+    "394": { name: "ازهار انور امين احمد", quran: 34, islamic: 31, arabic: 32, english: 29, math: 30, telom: 27, social: 37, total: 220 },
+    "395": { name: "افنان شرف احمد عبدالواسع", quran: 37, islamic: 42, arabic: 38, english: 37, math: 35, telom: 35, social: 38, total: 262 },
+    "396": { name: "امة الرحمن عارف سيف حزام", quran: 39, islamic: 43, arabic: 34, english: 28, math: 38, telom: 21, social: 36, total: 239 },
+    "397": { name: "امل ابراهيم محمد سعيد", quran: 42, islamic: 40, arabic: 37, english: 27, math: 32, telom: 36, social: 35, total: 249 },
+    "398": { name: "امل محمد عباس علي شمسان", quran: 38, islamic: 44, arabic: 35, english: 35, math: 25, telom: 31, social: 33, total: 241 },
+    "399": { name: "اميرة علاء اسماعيل عبدالله", quran: 48, islamic: 48, arabic: 49, english: 45, math: 41, telom: 47, social: 49, total: 327 },
+    "400": { name: "انسام فهيم علي محمد", quran: 48, islamic: 47, arabic: 48, english: 47, math: 44, telom: 48, social: 49, total: 331 },
+    "401": { name: "ايمان عارف قاسم محمد", quran: 34, islamic: 32, arabic: 34, english: 26, math: 25, telom: 25, social: 25, total: 201 },
+    "402": { name: "ايه عبدالجبار محمد عبدالله", quran: 45, islamic: 47, arabic: 42, english: 35, math: 37, telom: 32, social: 34, total: 272 },
+    "403": { name: "براءة جابر عبدالرحمن عبدالرحيم", quran: 38, islamic: 45, arabic: 39, english: 34, math: 37, telom: 28, social: 29, total: 250 },
+    "404": { name: "براءة عصام شرف محمد", quran: 31, islamic: 30, arabic: 29, english: 19, math: 32, telom: 17, social: 27, total: 185 },
+    "405": { name: "براءة عصام محمد بن محمد", quran: 44, islamic: 46, arabic: 36, english: 45, math: 40, telom: 43, social: 47, total: 301 },
+    "406": { name: "بيان خالد غالب عبدالله مرشد", quran: 50, islamic: 49, arabic: 46, english: 50, math: 48, telom: 49, social: 49, total: 341 },
+    "407": { name: "تسبيح عمار هائل حمود", quran: 45, islamic: 47, arabic: 46, english: 42, math: 40, telom: 40, social: 45, total: 305 },
+    "408": { name: "خوله فتحي عبدالكريم غالب", quran: 48, islamic: 49, arabic: 48, english: 47, math: 42, telom: 48, social: 44, total: 326 },
+    "409": { name: "دعاء علي احمد عبده", quran: 39, islamic: 45, arabic: 35, english: 32, math: 32, telom: 38, social: 30, total: 251 },
+    "410": { name: "رحمة ابراهيم محمد سعيد", quran: 37, islamic: 45, arabic: 30, english: 38, math: 38, telom: 38, social: 39, total: 265 },
+    "411": { name: "رغد طلال عبدالعزيز محمد", quran: 35, islamic: 45, arabic: 30, english: 25, math: 37, telom: 25, social: 30, total: 227 },
+    "412": { name: "رنده محمد منصور عبده عثمان", quran: 41, islamic: 44, arabic: 39, english: 42, math: 35, telom: 29, social: 32, total: 262 },
+    "413": { name: "رهف مفيد محمد بن محمد", quran: 38, islamic: 45, arabic: 38, english: 35, math: 37, telom: 33, social: 27, total: 253 },
+    "414": { name: "رهف هارون عبدالله طارش", quran: 39, islamic: 48, arabic: 40, english: 32, math: 40, telom: 31, social: 33, total: 263 },
+    "415": { name: "سماح وليد ياسين عبده", quran: 41, islamic: 40, arabic: 33, english: 29, math: 29, telom: 25, social: 25, total: 222 },
+    "416": { name: "سونيا احمد سلطان نعمان", quran: 32, islamic: 41, arabic: 34, english: 30, math: 25, telom: 25, social: 30, total: 217 },
+    "417": { name: "شيماء ياسر عبداالله ثابت", quran: 35, islamic: 43, arabic: 40, english: 30, math: 31, telom: 37, social: 33, total: 249 },
+    "418": { name: "غزال خالد شمسان محمد", quran: 22, islamic: 33, arabic: 29, english: 26, math: 28, telom: 24, social: 20, total: 182 },
+    "419": { name: "فاطمة عيسى محمد علي غرسان", quran: 39, islamic: 37, arabic: 30, english: 36, math: 29, telom: 21, social: 28, total: 220 },
+    "420": { name: "مرام احمد سلطان نعمان", quran: 33, islamic: 43, arabic: 30, english: 34, math: 28, telom: 19, social: 31, total: 218 },
+    "421": { name: "مشاعل هاني عبدالله احمد", quran: 42, islamic: 39, arabic: 36, english: 35, math: 31, telom: 25, social: 30, total: 238 },
+    "422": { name: "ملاك حمود عبده سعيد", quran: 46, islamic: 38, arabic: 32, english: 21, math: 23, telom: 22, social: 29, total: 211 },
+    "423": { name: "ملاك عارف عبدالباقي محمد محمد", quran: 44, islamic: 43, arabic: 34, english: 41, math: 35, telom: 39, social: 44, total: 280 },
+    "424": { name: "ملاك محمد توفيق محمد", quran: 43, islamic: 43, arabic: 30, english: 33, math: 31, telom: 25, social: 36, total: 241 },
+    "425": { name: "منار فهيم محسن قاسم", quran: 36, islamic: 39, arabic: 30, english: 26, math: 35, telom: 19, social: 23, total: 208 },
+    "426": { name: "منيرة عبدالحي محمد صالح", quran: 35, islamic: 44, arabic: 34, english: 36, math: 39, telom: 30, social: 29, total: 247 },
+    "427": { name: "مواهب وهيب قاسم محمد", quran: 40, islamic: 44, arabic: 38, english: 35, math: 40, telom: 32, social: 38, total: 267 },
+    "428": { name: "مودة الجحدري منصور عبدالعزيز", quran: 36, islamic: 40, arabic: 41, english: 34, math: 36, telom: 32, social: 34, total: 253 },
+    "429": { name: "مودة ماجد امين غالب", quran: 49, islamic: 47, arabic: 42, english: 37, math: 42, telom: 34, social: 35, total: 286 }
+  };
+
+  function getColor(score, max=50) {
+    const percentage = (score / max) * 100;
+    if (percentage >= 75) return '#4caf50';
+    if (percentage >= 50) return '#ffeb3b';
+    return '#f44336';
+  }
+
+  function showResult() {
+    const seatNo = document.getElementById('seatNo').value.trim();
+    const resultDiv = document.getElementById('result');
+
+    if (students[seatNo]) {
+      const student = students[seatNo];
+      const subjects = [
+        {name: "القرآن", score: student.quran},
+        {name: "الإسلامية", score: student.islamic},
+        {name: "اللغة العربية", score: student.arabic},
+        {name: "الإنجليزي", score: student.english},
+        {name: "الرياضيات", score: student.math},
+        {name: "علوم", score: student.telom},
+        {name: "الاجتماعيات", score: student.social}
+      ];
+
+      let subjectsHtml = '';
+      subjects.forEach(sub => {
+        subjectsHtml += `<div class="subject" style="background-color:${getColor(sub.score)};">
+                          <span>${sub.name}</span> <span>${sub.score}</span>
+                         </div>`;
+      });
+
+      const totalColor = getColor(student.total / subjects.length);
+
+      resultDiv.innerHTML = `
+        <div class="result-card">
+          <h2>${student.name}</h2>
+          ${subjectsHtml}
+          <div class="total" style="background-color:${totalColor};">المجموع الكلي: ${student.total}</div>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `<p class="error">رقم الجلوس غير موجود!</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>
