@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>نتيجة الصف الخامس</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  min-height:100vh;
+  padding:20px;
+  color:#fff;
+}
+.card{
+  background:#fff;
+  color:#000;
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+h2{text-align:center;color:#203a43}
+input,button{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  font-size:16px;
+  border-radius:8px;
+}
+button{
+  background:#2c5364;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+button:hover{background:#203a43}
+.result{
+  margin-top:15px;
+  padding:15px;
+  border-radius:12px;
+  background:#f7f7f7;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #ddd;
+  padding:6px 0;
+}
+.pass{color:green;font-weight:bold}
+.fail{color:red;font-weight:bold}
+.header{text-align:center;font-weight:bold;margin-bottom:10px}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>الاستعلام عن النتيجة</h2>
+  <input type="number" id="seat" placeholder="أدخل رقم الجلوس">
+  <button onclick="showResult()">عرض النتيجة</button>
+  <div id="output"></div>
+</div>
+
+<script>
+const students = [
+{seat:117,name:"ابراهيم امين احمد عقلان",quran:49,islamic:50,arabic:46,math:49,science:48,social:48,total:290},
+{seat:118,name:"ابراهيم جلال احمد سعيد",quran:43,islamic:41,arabic:34,math:45,science:39,social:36,total:238},
+{seat:119,name:"احمد مريد امين احمد",quran:22,islamic:22,arabic:19,math:32,science:32,social:26,total:153},
+{seat:120,name:"احمد مصطفي شرف محمد مغلس",quran:38,islamic:41,arabic:25,math:40,science:37,social:43,total:224},
+{seat:121,name:"اركان جهاد احمد محمد",quran:42,islamic:47,arabic:39,math:46,science:45,social:48,total:267},
+{seat:122,name:"اسامة زيد محمد مقبل",quran:26,islamic:29,arabic:22,math:28,science:36,social:27,total:168},
+{seat:123,name:"اكرم عبدالحبيب عبدالله محمد",quran:46,islamic:43,arabic:39,math:46,science:46,social:48,total:268},
+{seat:124,name:"اكرم فؤاد توفيق سيف",quran:25,islamic:26,arabic:15,math:22,science:26,social:20,total:134},
+{seat:125,name:"العز عبدالسلام عبدالمجيد عبدالقادر",quran:41,islamic:42,arabic:34,math:30,science:43,social:42,total:232},
+{seat:126,name:"الياس بشير امين عبدالله ردمان",quran:42,islamic:39,arabic:33,math:39,science:40,social:37,total:230},
+{seat:127,name:"امير احمد امين عبده",quran:37,islamic:33,arabic:26,math:33,science:37,social:40,total:206},
+{seat:128,name:"امير رياض سيف محمد",quran:30,islamic:33,arabic:20,math:39,science:35,social:33,total:190},
+{seat:129,name:"امير عرفان احمد عقلان",quran:43,islamic:47,arabic:37,math:44,science:44,social:46,total:261},
+{seat:130,name:"انور محمد امين احمد",quran:45,islamic:39,arabic:32,math:48,science:44,social:42,total:250},
+{seat:131,name:"ايمن محمد عبده غالب",quran:41,islamic:39,arabic:35,math:39,science:44,social:39,total:237},
+{seat:132,name:"بدر وليد عبدالرقيب محمد احمد",quran:31,islamic:33,arabic:25,math:42,science:34,social:43,total:208},
+{seat:133,name:"توفيق محمد توفيق محمد",quran:37,islamic:36,arabic:29,math:42,science:38,social:33,total:215},
+{seat:134,name:"جابر منصور احمد مقبل",quran:32,islamic:28,arabic:18,math:30,science:26,social:23,total:157},
+{seat:135,name:"جلال محمد عبده غالب",quran:34,islamic:38,arabic:26,math:37,science:36,social:42,total:213},
+{seat:136,name:"خالد جميل عبدالرقيب سيف",quran:22,islamic:29,arabic:23,math:41,science:30,social:31,total:176},
+{seat:137,name:"ذالنون رضوان محمد عثمان",quran:12,islamic:18,arabic:21,math:14,science:28,social:15,total:108},
+{seat:138,name:"رامز ماجد محمد مقبل",quran:21,islamic:33,arabic:14,math:25,science:21,social:21,total:135},
+{seat:139,name:"زكريا سليم احمد مهيوب",quran:49,islamic:49,arabic:48,math:49,science:49,social:46,total:290},
+{seat:140,name:"زيدان يزيد سعيد عبدالجبار",quran:48,islamic:47,arabic:46,math:49,science:44,social:46,total:280},
+{seat:141,name:"سلمان جهاد علي محمد الصلاحي",quran:47,islamic:47,arabic:46,math:48,science:46,social:46,total:280},
+{seat:142,name:"سليمان مروان عبدالعزيز عبدالتواب",quran:48,islamic:50,arabic:48,math:49,science:45,social:42,total:282},
+{seat:143,name:"صلاح فهمي عبدالجبار سعيد",quran:47,islamic:47,arabic:45,math:41,science:40,social:44,total:264},
+{seat:144,name:"صلاح هائل محمد مقبل",quran:25,islamic:28,arabic:26,math:34,science:30,social:25,total:168},
+{seat:145,name:"عبدالجبار مروان جميل محمد",quran:31,islamic:37,arabic:30,math:37,science:39,social:29,total:203},
+{seat:146,name:"عبدالرحمن عارف عبدالرحمن احمد",quran:49,islamic:49,arabic:47,math:44,science:47,social:48,total:284},
+{seat:147,name:"عبدالرحمن عبدالله عبده احمد",quran:47,islamic:50,arabic:49,math:48,science:48,social:45,total:287},
+{seat:148,name:"عبدالفتاح ماجد سلطان نعمان",quran:44,islamic:42,arabic:39,math:44,science:35,social:41,total:245},
+{seat:149,name:"عبدالله مراد عبدالله سيف",quran:48,islamic:47,arabic:46,math:46,science:42,social:46,total:275},
+{seat:150,name:"عبدالله مهيوب قاسم حزام",quran:29,islamic:23,arabic:19,math:30,science:34,social:28,total:163},
+{seat:151,name:"عصام عبدالحميد سيف احمد",quran:26,islamic:33,arabic:21,math:35,science:38,social:29,total:182},
+{seat:152,name:"علي نائل علي ثابت",quran:34,islamic:29,arabic:23,math:34,science:22,social:31,total:173},
+{seat:153,name:"عمار ياسر عبدالله ثابت",quran:48,islamic:49,arabic:41,math:49,science:47,social:47,total:281},
+{seat:154,name:"عمر علاء علي عبدالقادر",quran:38,islamic:46,arabic:35,math:43,science:40,social:43,total:245},
+{seat:155,name:"عمر ياسر طارش حزام",quran:50,islamic:49,arabic:50,math:48,science:46,social:46,total:289},
+{seat:156,name:"عمرو محفوظ منصور عبدالعزيز",quran:41,islamic:41,arabic:29,math:38,science:43,social:33,total:225},
+{seat:157,name:"فتحي نجيب عبدالغني محمد",quran:26,islamic:34,arabic:28,math:37,science:16,social:27,total:168},
+{seat:158,name:"فرج فوزي احمد مهيوب",quran:49,islamic:49,arabic:48,math:46,science:46,social:46,total:284},
+{seat:159,name:"كريم حمود عبدالباري محمد",quran:48,islamic:43,arabic:43,math:40,science:43,social:41,total:258},
+{seat:160,name:"كريم فارس عبدالرحمن قاسم",quran:50,islamic:49,arabic:48,math:48,science:46,social:48,total:289},
+{seat:161,name:"ماهر هيثم حمود عبدالباري",quran:46,islamic:47,arabic:32,math:43,science:48,social:45,total:261},
+{seat:162,name:"محمد خالد شمسان محمد",quran:22,islamic:33,arabic:20,math:26,science:37,social:21,total:159},
+{seat:163,name:"محمد رشاد سيف مقبل",quran:45,islamic:47,arabic:36,math:45,science:44,social:43,total:260},
+{seat:164,name:"محمد شهاب عامر محمد سيف",quran:48,islamic:49,arabic:49,math:50,science:49,social:49,total:294},
+{seat:165,name:"محمد عبدالجليل مقيل احمد",quran:27,islamic:20,arabic:17,math:32,science:34,social:24,total:154},
+{seat:166,name:"مرسي عبدالرحمن عبدالرب صالح",quran:48,islamic:48,arabic:47,math:48,science:43,social:46,total:280},
+{seat:167,name:"معتصم صابر علي سفيان",quran:25,islamic:24,arabic:24,math:26,science:37,social:29,total:165},
+{seat:168,name:"معتصم معاذ عبده علي",quran:27,islamic:37,arabic:22,math:37,science:39,social:33,total:195},
+{seat:169,name:"معتصم هاني عبدالله محمد",quran:41,islamic:44,arabic:34,math:32,science:42,social:42,total:235},
+{seat:170,name:"مهند عبدالجبار عباس عبده",quran:35,islamic:40,arabic:21,math:36,science:33,social:32,total:197},
+{seat:171,name:"موسى فهمي شمسان سيف",quran:25,islamic:26,arabic:18,math:31,science:22,social:23,total:145},
+{seat:172,name:"وليد ماجد عبدالوهاب احمد",quran:48,islamic:46,arabic:40,math:42,science:45,social:39,total:260},
+{seat:173,name:"يحي عبدالناصر عبدالحميد عبدالواحد",quran:47,islamic:50,arabic:45,math:45,science:44,social:49,total:280},
+{seat:174,name:"ابرار ناظم علي محمد",quran:30,islamic:35,arabic:27,math:25,science:39,social:34,total:190},
+{seat:175,name:"ابرار ياسر محمود محمد",quran:30,islamic:41,arabic:34,math:32,science:39,social:43,total:219},
+{seat:176,name:"اثمار محمد احمد مقبل",quran:40,islamic:48,arabic:38,math:36,science:36,social:41,total:239},
+{seat:177,name:"اعياد حميد ياسين احمد شرف",quran:29,islamic:30,arabic:30,math:43,science:37,social:37,total:206},
+{seat:178,name:"امل ابراهيم احمد محمد",quran:48,islamic:50,arabic:47,math:47,science:46,social:47,total:285},
+{seat:179,name:"امنية امين ناجي عبدالله",quran:40,islamic:46,arabic:35,math:43,science:42,social:34,total:240},
+{seat:180,name:"اميره عمر عبدالعزيز محمد",quran:48,islamic:48,arabic:43,math:42,science:46,social:44,total:271},
+{seat:181,name:"ايمان امين غالب نعمان",quran:46,islamic:48,arabic:47,math:40,science:46,social:47,total:274},
+{seat:182,name:"ايه محمد سفيان قاسم",quran:50,islamic:49,arabic:45,math:45,science:47,social:46,total:282},
+{seat:183,name:"براءة عبدالله علي محمد",quran:46,islamic:40,arabic:40,math:47,science:44,social:42,total:259},
+{seat:184,name:"براءة وعيد محمد احمد",quran:44,islamic:47,arabic:40,math:41,science:42,social:43,total:257},
+{seat:185,name:"بسمة داؤود احمد عقلان",quran:43,islamic:49,arabic:44,math:45,science:46,social:47,total:274},
+{seat:186,name:"بيان عقلان عبدالرزقي عوض",quran:30,islamic:29,arabic:28,math:34,science:33,social:30,total:184},
+{seat:187,name:"بيان ياسر احمد ردمان",quran:46,islamic:44,arabic:41,math:43,science:45,social:44,total:263},
+{seat:188,name:"تسنيم محمد عبدالوهاب سعيد",quran:44,islamic:39,arabic:41,math:44,science:44,social:41,total:253},
+{seat:189,name:"ثريا حميد عقلان علي",quran:49,islamic:45,arabic:38,math:46,science:41,social:42,total:261},
+{seat:190,name:"خديجة عبدالرحمن توفيق سيف",quran:45,islamic:42,arabic:40,math:42,science:34,social:38,total:241},
+{seat:191,name:"خوله فيصل محمد عوض",quran:42,islamic:34,arabic:33,math:31,science:36,social:36,total:212},
+{seat:192,name:"دعاء عمار هائل حمود",quran:44,islamic:43,arabic:33,math:39,science:37,social:37,total:233},
+{seat:193,name:"دعاء نبيل درهم احمد",quran:44,islamic:48,arabic:46,math:48,science:47,social:45,total:278},
+{seat:194,name:"ربا سليم نعمان مقبل",quran:47,islamic:49,arabic:43,math:49,science:46,social:44,total:278},
+{seat:195,name:"ربا علي محمد عوض",quran:44,islamic:42,arabic:43,math:36,science:41,social:45,total:251},
+{seat:196,name:"رحمة رياض سيف محمد",quran:46,islamic:36,arabic:34,math:37,science:36,social:37,total:226},
+{seat:197,name:"رحمة محمد احمد سلام",quran:47,islamic:44,arabic:40,math:32,science:42,social:47,total:252},
+{seat:198,name:"رهف جابر علي محمد",quran:28,islamic:31,arabic:32,math:25,science:34,social:39,total:189},
+{seat:199,name:"روان صلاح عبده محمد",quran:49,islamic:50,arabic:47,math:46,science:49,social:48,total:289},
+{seat:200,name:"روان عماد سلطان نعمان",quran:50,islamic:50,arabic:45,math:47,science:48,social:49,total:289},
+{seat:201,name:"سارة كامل عبدالجليل محمد",quran:46,islamic:48,arabic:47,math:42,science:47,social:48,total:278},
+{seat:202,name:"ساره حميد محمد حميد",quran:47,islamic:46,arabic:38,math:32,science:41,social:40,total:244},
+{seat:203,name:"سلسبيل ماجد عبدالله ثابت",quran:37,islamic:39,arabic:37,math:29,science:42,social:35,total:219},
+{seat:204,name:"سلمى رضوان سعيد ثابت",quran:43,islamic:45,arabic:43,math:43,science:41,social:43,total:258},
+{seat:205,name:"سلمى فكري احمد شرف",quran:31,islamic:38,arabic:30,math:41,science:39,social:34,total:213},
+{seat:206,name:"سماء رضوان سعيد ثابت",quran:33,islamic:45,arabic:38,math:43,science:40,social:40,total:239},
+{seat:207,name:"سهام ماجد طربوش احمد",quran:49,islamic:50,arabic:47,math:49,science:46,social:48,total:289},
+{seat:208,name:"كفاء خالد علي سعيد",quran:39,islamic:35,arabic:37,math:34,science:39,social:35,total:219},
+{seat:209,name:"ليان علي محمد عبدالله",quran:49,islamic:48,arabic:46,math:47,science:49,social:48,total:287},
+{seat:210,name:"مروة عبدالرؤوف عبدالحميد ثابت",quran:42,islamic:38,arabic:34,math:30,science:38,social:33,total:215},
+{seat:211,name:"ملاك عبدالوكيل عبده عون",quran:40,islamic:42,arabic:32,math:37,science:36,social:41,total:228},
+{seat:212,name:"ملاك محمد قائد احمد",quran:34,islamic:45,arabic:37,math:42,science:42,social:33,total:233},
+{seat:213,name:"منار اياد عبده سعيد",quran:43,islamic:48,arabic:36,math:40,science:44,social:44,total:255},
+{seat:214,name:"مودة داؤود عبدالله سعيد",quran:32,islamic:39,arabic:29,math:32,science:38,social:28,total:198},
+{seat:215,name:"مودة عبدالعزيز محمد عون",quran:41,islamic:50,arabic:48,math:35,science:44,social:48,total:266},
+{seat:216,name:"موهبة وهيب ياسين احمد",quran:48,islamic:46,arabic:38,math:45,science:44,social:44,total:265},
+{seat:217,name:"نسائم رشاد عبدالله ثابت",quran:29,islamic:34,arabic:28,math:26,science:39,social:32,total:188},
+{seat:218,name:"نسائم شاهر شرف عبدالله",quran:40,islamic:35,arabic:37,math:43,science:40,social:29,total:224},
+{seat:219,name:"وردة امين سعيد جميل",quran:38,islamic:44,arabic:37,math:38,science:42,social:43,total:242}
+];
+
+function showResult(){
+  const seat = Number(document.getElementById("seat").value);
+  const out = document.getElementById("output");
+  const s = students.find(x => x.seat === seat);
+
+  if(!s){
+    out.innerHTML = "<p class='fail'>رقم الجلوس غير موجود</p>";
+    return;
+  }
+
+  const pass =
+    s.quran>=25 &&
+    s.islamic>=25 &&
+    s.arabic>=25 &&
+    s.math>=25 &&
+    s.science>=25 &&
+    s.social>=25;
+
+  out.innerHTML = `
+  <div class="result">
+    <div class="header">الصف الخامس</div>
+    <p><strong>رقم الجلوس:</strong> ${s.seat}</p>
+    <p><strong>الاسم:</strong> ${s.name}</p>
+
+    <div class="row"><span>قرآن</span><span>${s.quran}</span></div>
+    <div class="row"><span>إسلامية</span><span>${s.islamic}</span></div>
+    <div class="row"><span>لغة عربية</span><span>${s.arabic}</span></div>
+    <div class="row"><span>رياضيات</span><span>${s.math}</span></div>
+    <div class="row"><span>علوم</span><span>${s.science}</span></div>
+    <div class="row"><span>اجتماعيات</span><span>${s.social}</span></div>
+
+    <hr>
+    <p><strong>المجموع الكلي:</strong> ${s.total}</p>
+    <p class="${pass?'pass':'fail'}">${pass?'ناجح ✅':'راسب ❌'}</p>
+  </div>`;
+}
+</script>
+
+</body>
+</html>
