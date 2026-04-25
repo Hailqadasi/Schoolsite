@@ -1,298 +1,847 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تفعيل التطبيق</title>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<title>نتائج الطلاب</title>
 
 <style>
-body { 
-  font-family: Tahoma, Arial; 
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+body{
+    font-family: Tahoma, Arial;
+    background:#f2f4f8;
+    margin:0;
+    padding:20px;
 }
-.card { 
-  background: #fff; 
-  max-width: 400px;
-  width: 100%;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  text-align: center;
+.container{
+    max-width:600px;
+    margin:auto;
 }
-input, button {
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-sizing: border-box;
+h1{
+    text-align:center;
+    color:#333;
 }
-input { border: 2px solid #ddd; }
-button {
-  background: linear-gradient(to right, #4CAF50, #2E7D32);
-  color: #fff;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s;
+.search-box{
+    margin:20px 0;
 }
-button:hover {
-  transform: scale(0.98);
+input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
-#timer {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  font-weight: bold;
+.card{
+    background:#fff;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    margin-top:20px;
 }
-.time-display {
-  background:#4CAF50;
-  color:#fff;
-  padding:10px;
-  border-radius:8px;
-  font-size:20px;
+.row{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+    border-bottom:1px dashed #eee;
 }
-.loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 10px;
+.row:last-child{border:none}
+.pass{color:green;font-weight:bold}
+.fail{color:red;font-weight:bold}
+.status{
+    text-align:center;
+    font-size:20px;
+    margin-top:15px;
+    padding:10px;
+    border-radius:10px;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+.status.pass{background:#e7f8ec}
+.status.fail{background:#fdeaea}
 </style>
 </head>
 
 <body>
+<div class="container">
+<h1> نتائج الصف الاول أساسي  </h1>
 
-<div class="card">
-  <h3>تفعيل التطبيق</h3>
-  <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
-  <button id="activateBtn" onclick="activate()">تفعيل الآن</button>
-  <div id="timer"></div>
+<div class="search-box">
+<input type="text" id="search" placeholder="اكتب اسم الطالب كامل">
+</div>
+
+<div id="result"></div>
 </div>
 
 <script>
+const PASS_MARK = 25;
 
-/* Firebase */
-firebase.initializeApp({
-  apiKey: "APIKEY",
-  authDomain: "AUTHDOMAIN",
-  databaseURL: "https://appcards-c4730-default-rtdb.firebaseio.com",
-  projectId: "PROJECTID",
-  storageBucket: "STORAGE",
-  messagingSenderId: "SENDERID",
-  appId: "APPID"
+const students = [
+{
+name:"احمد امين محمد احمد",
+grade:"الأول أساسي",
+marks:{quran:45,islamic:45,arabic:38,math:48,science:45},
+total:218
+},
+{
+name:"احمد شوقي محمد حزام",
+grade:"الأول أساسي",
+marks:{quran:34,islamic:34,arabic:26,math:30,science:37},
+total:169
+},
+{
+name:"ادهم هيثم حمود عبدالباري",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"اديب ايوب طارش حمود",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:39,math:34,science:43},
+total:208
+},
+{
+name:"اشيد يحي عبده سعيد",
+grade:"الأول أساسي",
+marks:{quran:0,islamic:0,arabic:0,math:0,science:0},
+total:0
+},
+{
+name:"اكرم خالد علي عبدالعزيز",
+grade:"الأول أساسي",
+marks:{quran:39,islamic:39,arabic:41,math:45,science:44},
+total:213
+},
+{
+name:"اكرم سامي عبده سعيد نعمان",
+grade:"الأول أساسي",
+marks:{quran:15,islamic:15,arabic:10,math:11,science:15},
+total:61
+},
+{
+name:"اكرم صادق عبدالله احمد",
+grade:"الأول أساسي",
+marks:{quran:41,islamic:41,arabic:25,math:34,science:26},
+total:154
+},
+{
+name:"العز اوسان محمد سيف عوض",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:48,math:49,science:50},
+total:246
+},
+{
+name:"امير الجحدري منصور عبدالعزيز",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:38,math:49,science:48},
+total:232
+},
+{
+name:"امير عبدالله سعيد احمد",
+grade:"الأول أساسي",
+marks:{quran:25,islamic:25,arabic:17,math:15,science:19},
+total:91
+},
+{
+name:"امير يزيد عبدالله عبده",
+grade:"الأول أساسي",
+marks:{quran:45,islamic:45,arabic:43,math:48,science:45},
+total:227
+},
+{
+name:"اواب موسى محمد عبدالقادر",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:45,science:50},
+total:245
+},
+{
+name:"اياد سامي عبده سعيد",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:41,math:45,science:43},
+total:211
+},
+{
+name:"ايمن امين عبدالله احمد",
+grade:"الأول أساسي",
+marks:{quran:41,islamic:41,arabic:36,math:48,science:41},
+total:212
+},
+{
+name:"ايهم محمد علي عوض",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:40,math:35,science:42},
+total:207
+},
+{
+name:"ايهم منير شرف محمد",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:41,math:48,science:48},
+total:227
+},
+{
+name:"برهان عمران عبدالله عبده",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"بليغ احمد محمد احمد",
+grade:"الأول أساسي",
+marks:{quran:32,islamic:32,arabic:32,math:43,science:41},
+total:189
+},
+{
+name:"بندر سليم عبدالسلام عبده",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"تمام ياسر محمد عبدالله ثابت",
+grade:"الأول أساسي",
+marks:{quran:37,islamic:37,arabic:31,math:43,science:39},
+total:188
+},
+{
+name:"حذيفة مختار عبدالباري محمد",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"حمدان محمد امين احمد",
+grade:"الأول أساسي",
+marks:{quran:30,islamic:30,arabic:21,math:28,science:29},
+total:136
+},
+{
+name:"حمود ابراهيم حمود علي",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:41,math:45,science:46},
+total:219
+},
+{
+name:"راغب ردفان عبدالله قائد",
+grade:"الأول أساسي",
+marks:{quran:41,islamic:41,arabic:33,math:48,science:46},
+total:215
+},
+{
+name:"راكان عادل عبدالله ثابت",
+grade:"الأول أساسي",
+marks:{quran:39,islamic:39,arabic:43,math:46,science:44},
+total:215
+},
+{
+name:"ريان عبدالرقيب طربوش احمد",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:37,math:45,science:46},
+total:220
+},
+{
+name:"زاهر وجدان محمد مقبل",
+grade:"الأول أساسي",
+marks:{quran:0,islamic:0,arabic:0,math:0,science:0},
+total:0
+},
+{
+name:"زهير وجدان محمد مقبل",
+grade:"الأول أساسي",
+marks:{quran:11,islamic:11,arabic:13,math:12,science:11},
+total:60
+},
+{
+name:"سام رشاد عبدالله ثابت",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:43,math:48,science:46},
+total:229
+},
+{
+name:"سعد جبير عبدالقادر محمد",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:47,math:49,science:48},
+total:241
+},
+{
+name:"سعيد فيصل محمد عوض",
+grade:"الأول أساسي",
+marks:{quran:12,islamic:12,arabic:11,math:11,science:11},
+total:54
+},
+{
+name:"سعيد لطفي احمد مهيوب",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:42,math:36,science:49},
+total:219
+},
+{
+name:"سلطان امين شرف حسين",
+grade:"الأول أساسي",
+marks:{quran:34,islamic:34,arabic:20,math:25,science:25},
+total:126
+},
+{
+name:"سهيم امجد عبدالله علي",
+grade:"الأول أساسي",
+marks:{quran:19,islamic:19,arabic:11,math:15,science:15},
+total:69
+},
+{
+name:"صقر رفيق محمد عبدالله",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:43,math:48,science:47},
+total:231
+},
+{
+name:"ضياء عائد رضوان غالب",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:49,math:50,science:49},
+total:248
+},
+{
+name:"عابد هارون خالد قاسم",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:47,math:50,science:50},
+total:245
+},
+{
+name:"عاصم شكري عبده احمد",
+grade:"الأول أساسي",
+marks:{quran:24,islamic:24,arabic:16,math:30,science:32},
+total:127
+},
+{
+name:"عبدالاله جميل علي حسن",
+grade:"الأول أساسي",
+marks:{quran:39,islamic:39,arabic:37,math:42,science:47},
+total:208
+},
+{
+name:"عبدالله بشير عبدالله احمد",
+grade:"الأول أساسي",
+marks:{quran:37,islamic:37,arabic:33,math:43,science:27},
+total:174
+},
+{
+name:"عبدالله عصام محمد بن محمد",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"عبدالله ماجد عبدالله علي عبد",
+grade:"الأول أساسي",
+marks:{quran:33,islamic:33,arabic:34,math:39,science:27},
+total:158
+},
+{
+name:"عزالدين فهيم محسن قاسم",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:37,math:46,science:41},
+total:218
+},
+{
+name:"علاء بشير توفيق سيف حازم",
+grade:"الأول أساسي",
+marks:{quran:22,islamic:22,arabic:8,math:19,science:13},
+total:74
+},
+{
+name:"عمار ياسرهائل محمد مجاهد",
+grade:"الأول أساسي",
+marks:{quran:37,islamic:37,arabic:34,math:40,science:39},
+total:180
+},
+{
+name:"عمران فوزي محمد علي",
+grade:"الأول أساسي",
+marks:{quran:27,islamic:27,arabic:15,math:12,science:20},
+total:88
+},
+{
+name:"عمران وحيد فؤاد احمد",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"عمرو عمار محمد ثابت",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:41,math:47,science:48},
+total:230
+},
+{
+name:"غيث نبيل احمد محمد",
+grade:"الأول أساسي",
+marks:{quran:44,islamic:44,arabic:44,math:43,science:43},
+total:215
+},
+{
+name:"فيصل علي محمد عوض",
+grade:"الأول أساسي",
+marks:{quran:29,islamic:29,arabic:13,math:17,science:11},
+total:86
+},
+{
+name:"قائد احمد محمد علي عبده",
+grade:"الأول أساسي",
+marks:{quran:26,islamic:26,arabic:13,math:16,science:19},
+total:88
+},
+{
+name:"قتيبة محمد علي محمد",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:37,math:38,science:48},
+total:213
+},
+{
+name:"قيصر علاء احمد قاسم",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:42,math:49,science:47},
+total:231
+},
+{
+name:"كارم شاكر عبدالعزيز محمد",
+grade:"الأول أساسي",
+marks:{quran:34,islamic:34,arabic:24,math:31,science:33},
+total:148
+},
+{
+name:"كنان فارس عبدالرحمن",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:45,math:48,science:47},
+total:235
+},
+{
+name:"ليث اسامه محمد عبدالغني",
+grade:"الأول أساسي",
+marks:{quran:44,islamic:44,arabic:45,math:48,science:46},
+total:229
+},
+{
+name:"محمد عادل محمد مقبل",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:47,math:44,science:41},
+total:220
+},
+{
+name:"مدين عمار عبدالكريم عثمان",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:47,math:48,science:46},
+total:234
+},
+{
+name:"مراد محمد امين شرف محمد",
+grade:"الأول أساسي",
+marks:{quran:36,islamic:36,arabic:29,math:45,science:39},
+total:186
+},
+{
+name:"معتز معاذ عبدالرقيب احمد",
+grade:"الأول أساسي",
+marks:{quran:45,islamic:45,arabic:35,math:48,science:46},
+total:222
+},
+{
+name:"معمر وسيم عبدالرقيب محمد",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:46,math:49,science:48},
+total:239
+},
+{
+name:"منور انور امين احمد",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:43,math:47,science:40},
+total:221
+},
+{
+name:"موسى نبيل محمد عبدالغني",
+grade:"الأول أساسي",
+marks:{quran:43,islamic:43,arabic:32,math:44,science:42},
+total:191
+},
+{
+name:"مؤيد محمود علي عبدالله",
+grade:"الأول أساسي",
+marks:{quran:37,islamic:37,arabic:32,math:43,science:35},
+total:190
+},
+{
+name:"مؤيد هشام حزام سعيد",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:35,math:48,science:46},
+total:219
+},
+{
+name:"نبراس فارس محمد مقبل",
+grade:"الأول أساسي",
+marks:{quran:19,islamic:19,arabic:20,math:18,science:22},
+total:97
+},
+{
+name:"وسيم سلطان محمد عبدالله",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:48,math:48,science:47},
+total:239
+},
+{
+name:"يوسف اكرم رشيد محمد",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:49,math:49,science:49},
+total:247
+},
+{
+name:"يوسف محمد عبدالقادر محمد",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:47,math:49,science:50},
+total:242
+},
+{
+name:"يونس خلدون سيف محمد",
+grade:"الأول أساسي",
+marks:{quran:28,islamic:28,arabic:22,math:26,science:21},
+total:141
+},
+{
+name:"ابرار محمد عبدالرحمن سلطان",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:39,math:38,science:48},
+total:217
+},
+{
+name:"ارجوان محمد محمود عبدالله",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"اقدار عبدالعزيز محمد ثابت",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:47,math:48,science:48},
+total:239
+},
+{
+name:"انسام عبدالله عبدالقادر محمد",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:48,math:49,science:48},
+total:243
+},
+{
+name:"اية ماجد عبدالله علي عبد",
+grade:"الأول أساسي",
+marks:{quran:36,islamic:36,arabic:38,math:39,science:39},
+total:182
+},
+{
+name:"بشائر جواد ناجي عبدالله",
+grade:"الأول أساسي",
+marks:{quran:39,islamic:39,arabic:30,math:43,science:42},
+total:193
+},
+{
+name:"بيان ماهر بجاش سعيد",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"بيان منبر عبدة سعيد نعمان",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:33,math:37,science:39},
+total:191
+},
+{
+name:"تسنيم شاهر شرف عبدالله",
+grade:"الأول أساسي",
+marks:{quran:43,islamic:43,arabic:29,math:42,science:29},
+total:187
+},
+{
+name:"جنات جهاد علي محمد الصلاحي",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:48,math:48,science:49},
+total:241
+},
+{
+name:"جنات هارون عبدالله طارش",
+grade:"الأول أساسي",
+marks:{quran:40,islamic:40,arabic:42,math:46,science:44},
+total:218
+},
+{
+name:"جنى سامي جمال علي",
+grade:"الأول أساسي",
+marks:{quran:45,islamic:45,arabic:44,math:39,science:47},
+total:219
+},
+{
+name:"جوان مراد عزالدين محمد",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:44,math:45,science:46},
+total:222
+},
+{
+name:"جوري فؤاد بجاش حزام",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"حلا امين محمد علي",
+grade:"الأول أساسي",
+marks:{quran:0,islamic:0,arabic:0,math:0,science:0},
+total:0
+},
+{
+name:"خلود حمدي خالد فارع",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:48,math:49,science:49},
+total:243
+},
+{
+name:"خلود ماهر حميد عبدالله",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"رزان سهيم نعمان مقبل",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:47,math:49,science:48},
+total:241
+},
+{
+name:"رنا جهاد احمد محمد",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:48,math:49,science:49},
+total:242
+},
+{
+name:"رنيم داؤود احمد عبدالقادر",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:48,math:49,science:50},
+total:244
+},
+{
+name:"رهف عبدالله احمد علي",
+grade:"الأول أساسي",
+marks:{quran:28,islamic:28,arabic:16,math:25,science:23},
+total:110
+},
+{
+name:"روان امجد عبدالله علي",
+grade:"الأول أساسي",
+marks:{quran:44,islamic:44,arabic:45,math:48,science:47},
+total:229
+},
+{
+name:"ريتاج نذير سلطان شمسان",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"ساجدة هاني احمد مقبل",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:33,math:32,science:46},
+total:205
+},
+{
+name:"سعاد شوقي احمد مهيوب",
+grade:"الأول أساسي",
+marks:{quran:47,islamic:47,arabic:41,math:43,science:43},
+total:220
+},
+{
+name:"سعاد نذير عبدالله قاسم",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:49,math:50,science:49},
+total:248
+},
+{
+name:"سندس عمر جعفر مهيوب",
+grade:"الأول أساسي",
+marks:{quran:43,islamic:43,arabic:37,math:42,science:31},
+total:195
+},
+{
+name:"شريفة وليد محمد احمد سلام",
+grade:"الأول أساسي",
+marks:{quran:32,islamic:32,arabic:17,math:18,science:25},
+total:112
+},
+{
+name:"عبير عبدالوكيل عبده عون",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"غفران توفيق علي محمد",
+grade:"الأول أساسي",
+marks:{quran:43,islamic:43,arabic:41,math:47,science:44},
+total:214
+},
+{
+name:"فاطمة عبدالله عبده سلام",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:45,math:44,science:39},
+total:222
+},
+{
+name:"فرح مازن نعمان احمد",
+grade:"الأول أساسي",
+marks:{quran:40,islamic:40,arabic:12,math:19,science:24},
+total:121
+},
+{
+name:"فرح هاني عبده قائد",
+grade:"الأول أساسي",
+marks:{quran:14,islamic:14,arabic:22,math:21,science:24},
+total:95
+},
+{
+name:"لقاء مازن نعمان احمد",
+grade:"الأول أساسي",
+marks:{quran:33,islamic:33,arabic:20,math:30,science:22},
+total:120
+},
+{
+name:"ليان عائش عبدالله حزام",
+grade:"الأول أساسي",
+marks:{quran:39,islamic:39,arabic:39,math:46,science:42},
+total:210
+},
+{
+name:"مِنى وليد عبدالله عبدالرحيم",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:48,math:49,science:48},
+total:241
+},
+{
+name:"مارية مامون محمد عوض",
+grade:"الأول أساسي",
+marks:{quran:15,islamic:15,arabic:14,math:11,science:15},
+total:68
+},
+{
+name:"مارينا معاذ احمد علي",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:38,math:44,science:48},
+total:224
+},
+{
+name:"مايه مروان عبدالعزيز عبدالتواب",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:47,math:46,science:48},
+total:233
+},
+{
+name:"مرام احمد محمد احمد",
+grade:"الأول أساسي",
+marks:{quran:48,islamic:48,arabic:40,math:44,science:43},
+total:221
+},
+{
+name:"مروة احمد عبده احمد",
+grade:"الأول أساسي",
+marks:{quran:14,islamic:14,arabic:11,math:17,science:20},
+total:73
+},
+{
+name:"مريم خليل قؤاد طارش حزام",
+grade:"الأول أساسي",
+marks:{quran:50,islamic:50,arabic:50,math:50,science:50},
+total:250
+},
+{
+name:"مريم عيسى محمد علي",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:46,math:44,science:41},
+total:220
+},
+{
+name:"منيرة منير احمد عامر",
+grade:"الأول أساسي",
+marks:{quran:45,islamic:45,arabic:37,math:32,science:44},
+total:201
+},
+{
+name:"مودة بشير سيف سعيد",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:33,math:40,science:41},
+total:197
+},
+{
+name:"مي فهمي احمد عقلان",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:48,math:49,science:48},
+total:242
+},
+{
+name:"نور صدام عبدالرقيب عبدالله",
+grade:"الأول أساسي",
+marks:{quran:45,islamic:45,arabic:37,math:33,science:47},
+total:207
+},
+{
+name:"نور معاذ عبدالله احمد",
+grade:"الأول أساسي",
+marks:{quran:42,islamic:42,arabic:44,math:48,science:44},
+total:219
+},
+{
+name:"نورة عادل علي محمد",
+grade:"الأول أساسي",
+marks:{quran:26,islamic:26,arabic:23,math:23,science:24},
+total:116
+},
+{
+name:"هبه عزيز عبدالرحمن مهيوب",
+grade:"الأول أساسي",
+marks:{quran:49,islamic:49,arabic:48,math:49,science:47},
+total:241
+},
+{
+name:"هديل هاني عبدالله محمد",
+grade:"الأول أساسي",
+marks:{quran:46,islamic:46,arabic:44,math:44,science:44},
+total:222
+}
+];
+
+function isPass(m){ return m>=PASS_MARK }
+
+document.getElementById("search").addEventListener("input", function(){
+    const value = this.value.trim();
+    const result = document.getElementById("result");
+    result.innerHTML="";
+
+    if(!value) return;
+
+    const student = students.find(s => s.name.includes(value));
+    if(!student){
+        result.innerHTML="<p style='text-align:center;color:red'>لا يوجد طالب بهذا الاسم</p>";
+        return;
+    }
+
+    let failed = Object.values(student.marks).some(m=>m<PASS_MARK);
+    let statusClass = failed ? "fail":"pass";
+    let statusText = failed ? "راسب":"ناجح";
+
+    result.innerHTML = `
+    <div class="card">
+        <div class="row"><strong>الاسم</strong><span>${student.name}</span></div>
+        <div class="row"><strong>الصف</strong><span>${student.grade}</span></div>
+
+        <div class="row"><strong>القرآن</strong><span class="${isPass(student.marks.quran)?'pass':'fail'}">${student.marks.quran}</span></div>
+        <div class="row"><strong>الإسلامية</strong><span class="${isPass(student.marks.islamic)?'pass':'fail'}">${student.marks.islamic}</span></div>
+        <div class="row"><strong>العربية</strong><span class="${isPass(student.marks.arabic)?'pass':'fail'}">${student.marks.arabic}</span></div>
+        <div class="row"><strong>الرياضيات</strong><span class="${isPass(student.marks.math)?'pass':'fail'}">${student.marks.math}</span></div>
+        <div class="row"><strong>العلوم</strong><span class="${isPass(student.marks.science)?'pass':'fail'}">${student.marks.science}</span></div>
+
+        <div class="row"><strong>المجموع الكلي</strong><span>${student.total}</span></div>
+
+        <div class="status ${statusClass}">${statusText}</div>
+    </div>`;
 });
-
-var db = firebase.database();
-
-/* الإعدادات */
-const DAILY_LIMIT = 5 * 60 * 60;
-const TOTAL_DAYS = 7;
-
-/* Device ID */
-function getDeviceId(){
-  let id = localStorage.getItem("device_id");
-  if(!id){
-    id = "dev-" + Math.random().toString(36).substr(2,16);
-    localStorage.setItem("device_id", id);
-  }
-  return id;
-}
-
-/* العداد */
-var timerInterval = null;
-
-function startUsageTimer(){
-  let today = new Date().toDateString();
-  let storedDay = localStorage.getItem("usage_day");
-  let remaining = parseInt(localStorage.getItem("daily_remaining"));
-  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
-  let lastActive = parseInt(localStorage.getItem("last_active"));
-
-  if(!storedDay){
-    localStorage.setItem("usage_day", today);
-    localStorage.setItem("daily_remaining", DAILY_LIMIT);
-    localStorage.setItem("used_days", 1);
-    remaining = DAILY_LIMIT;
-    usedDays = 1;
-  }
-
-  if(storedDay !== today){
-    usedDays++;
-    if(usedDays > TOTAL_DAYS){
-      endCard();
-      return;
-    }
-
-    localStorage.setItem("usage_day", today);
-    localStorage.setItem("daily_remaining", DAILY_LIMIT);
-    localStorage.setItem("used_days", usedDays);
-    remaining = DAILY_LIMIT;
-  }
-
-  if(lastActive){
-    remaining -= Math.floor(Date.now()/1000) - lastActive;
-  }
-
-  if(remaining <= 0){
-    showDailyEnd(usedDays);
-    return;
-  }
-
-  localStorage.setItem("daily_remaining", remaining);
-  localStorage.setItem("last_active", Math.floor(Date.now()/1000));
-
-  timerInterval = setInterval(function(){
-
-    remaining--;
-    localStorage.setItem("daily_remaining", remaining);
-
-    let h = Math.floor(remaining / 3600);
-    let m = Math.floor((remaining % 3600) / 60);
-    let s = remaining % 60;
-
-    document.getElementById("timer").innerHTML = `
-    ⏳ المتبقي اليوم
-    <div class="time-display">${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-    <div style="margin-top:10px;font-size:13px">
-    اليوم ${usedDays} من ${TOTAL_DAYS}
-    </div>
-    `;
-
-    if(remaining <= 0){
-      clearInterval(timerInterval);
-      showDailyEnd(usedDays);
-    }
-
-  },1000);
-}
-
-function showDailyEnd(day){
-  document.getElementById("timer").innerHTML = `
-  ⏸ انتهت 5 ساعات اليوم<br>
-  📅 اليوم ${day} من ${TOTAL_DAYS}
-  `;
-}
-
-function endCard(){
-  document.getElementById("timer").innerHTML = `
-  انتهت صلاحية الكرت
-  `;
-}
-
-/* التفعيل مع فتح صفحة اللعبة */
-function activate(){
-  let code = document.getElementById("cardCode").value.trim();
-  let btn = document.getElementById("activateBtn");
-
-  if(!code){
-    alert("أدخل رقم الكرت");
-    return;
-  }
-
-  // تعطيل الزر وتغيير النص لإظهار التحميل
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading"></span> جاري التحقق...';
-
-  db.ref("cards/"+code).once("value").then(function(snap){
-    if(!snap.exists()){
-      alert("الكرت غير صحيح ❌");
-      btn.disabled = false;
-      btn.innerHTML = "تفعيل الآن";
-      return;
-    }
-
-    let data = snap.val();
-    let device = getDeviceId();
-
-    if(data.used && data.device !== device){
-      alert("الكرت مستخدم على جهاز آخر 🚫");
-      btn.disabled = false;
-      btn.innerHTML = "تفعيل الآن";
-      return;
-    }
-
-    // الكرت صحيح، نقوم بتحديث الحالة إذا لم يكن مستخدمًا
-    let updatePromise;
-    if(!data.used){
-      updatePromise = db.ref("cards/"+code).update({
-        used: true,
-        device: device
-      });
-    } else {
-      updatePromise = Promise.resolve(); // الكرت مستخدم بالفعل لهذا الجهاز
-    }
-
-    updatePromise.then(() => {
-      // بدء العداد (سيخزن البيانات محليًا)
-      startUsageTimer();
-      
-      // عرض رسالة نجاح ثم التوجيه إلى صفحة اللعبة بعد 0.5 ثانية
-      alert("✅ تم التفعيل بنجاح! جاري نقلك إلى اللعبة...");
-      
-      // التوجيه إلى game.html
-      window.location.href = "themain.html";
-      
-    }).catch((error) => {
-      console.error("خطأ في تحديث قاعدة البيانات:", error);
-      alert("حدث خطأ أثناء التفعيل، حاول مرة أخرى.");
-      btn.disabled = false;
-      btn.innerHTML = "تفعيل الآن";
-    });
-
-  }).catch(function(error){
-    console.error("خطأ في الاتصال بقاعدة البيانات:", error);
-    alert("حدث خطأ في الاتصال بقاعدة البيانات 🔌");
-    btn.disabled = false;
-    btn.innerHTML = "تفعيل الآن";
-  });
-}
-
-// إذا كان المستخدم قد قام بالتفعيل مسبقًا ولديه جلسة صالحة، يمكن توجيهه مباشرة
-function checkExistingActivation(){
-  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
-  let remaining = parseInt(localStorage.getItem("daily_remaining"));
-  let today = new Date().toDateString();
-  let storedDay = localStorage.getItem("usage_day");
-  
-  // إذا كان هناك أيام مستخدمة والمتبقي غير منتهٍ (أو اليوم لم ينتهِ)
-  if(usedDays > 0 && usedDays <= TOTAL_DAYS){
-    // التحقق من أن اليوم الحالي لم ينتهِ صلاحيته
-    if(storedDay === today){
-      if(remaining > 0){
-        // تم التفعيل مسبقًا ولديه وقت متبقي، نوجهه للعبة
-        window.location.href = "game.html";
-      } else if(remaining <= 0){
-        // انتهى وقت اليوم ولكن لا يزال هناك أيام متبقية
-        // نعرض العداد ليبين أنه انتهى اليوم لكن يمكنه التفعيل غدًا
-        startUsageTimer();
-      }
-    } else {
-      // يوم جديد، نبدأ عداد اليوم الجديد
-      startUsageTimer();
-    }
-  }
-}
-
-// تنفيذ فتح الصفحة مباشرة إذا كان الكرت مفعل مسبقًا
-checkExistingActivation();
-
 </script>
 </body>
 </html>
