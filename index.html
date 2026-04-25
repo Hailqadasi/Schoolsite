@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -9,70 +9,51 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body { 
-  font-family: Tahoma, Arial; 
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+body{
+  font-family:Tahoma,Arial;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
 }
-.card { 
-  background: #fff; 
-  max-width: 400px;
-  width: 100%;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  text-align: center;
+.card{
+  background:#fff;
+  max-width:400px;
+  width:100%;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,.2);
+  text-align:center;
 }
-input, button {
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-sizing: border-box;
+input,button{
+  width:100%;
+  padding:15px;
+  font-size:18px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-sizing:border-box;
 }
-input { border: 2px solid #ddd; }
-button {
-  background: linear-gradient(to right, #4CAF50, #2E7D32);
-  color: #fff;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-button:hover {
-  transform: scale(0.98);
-}
-#timer {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  font-weight: bold;
-}
-.time-display {
-  background:#4CAF50;
+input{border:2px solid #ddd;}
+button{
+  background:linear-gradient(to right,#4CAF50,#2E7D32);
   color:#fff;
-  padding:10px;
-  border-radius:8px;
-  font-size:20px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
 }
-.loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 10px;
+.loading{
+  display:inline-block;
+  width:20px;
+  height:20px;
+  border:3px solid rgba(255,255,255,.3);
+  border-radius:50%;
+  border-top-color:#fff;
+  animation:spin 1s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes spin{
+  to{transform:rotate(360deg);}
 }
 </style>
 </head>
@@ -83,12 +64,9 @@ button:hover {
   <h3>تفعيل التطبيق</h3>
   <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
   <button id="activateBtn" onclick="activate()">تفعيل الآن</button>
-  <div id="timer"></div>
 </div>
 
 <script>
-
-/* Firebase */
 firebase.initializeApp({
   apiKey: "APIKEY",
   authDomain: "AUTHDOMAIN",
@@ -101,198 +79,83 @@ firebase.initializeApp({
 
 var db = firebase.database();
 
-/* الإعدادات */
-const DAILY_LIMIT = 5 * 60 * 60;
-const TOTAL_DAYS = 7;
-
-/* Device ID */
+/* رقم الجهاز */
 function getDeviceId(){
   let id = localStorage.getItem("device_id");
+
   if(!id){
     id = "dev-" + Math.random().toString(36).substr(2,16);
     localStorage.setItem("device_id", id);
   }
+
   return id;
 }
 
-/* العداد */
-var timerInterval = null;
-
-function startUsageTimer(){
-  let today = new Date().toDateString();
-  let storedDay = localStorage.getItem("usage_day");
-  let remaining = parseInt(localStorage.getItem("daily_remaining"));
-  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
-  let lastActive = parseInt(localStorage.getItem("last_active"));
-
-  if(!storedDay){
-    localStorage.setItem("usage_day", today);
-    localStorage.setItem("daily_remaining", DAILY_LIMIT);
-    localStorage.setItem("used_days", 1);
-    remaining = DAILY_LIMIT;
-    usedDays = 1;
-  }
-
-  if(storedDay !== today){
-    usedDays++;
-    if(usedDays > TOTAL_DAYS){
-      endCard();
-      return;
-    }
-
-    localStorage.setItem("usage_day", today);
-    localStorage.setItem("daily_remaining", DAILY_LIMIT);
-    localStorage.setItem("used_days", usedDays);
-    remaining = DAILY_LIMIT;
-  }
-
-  if(lastActive){
-    remaining -= Math.floor(Date.now()/1000) - lastActive;
-  }
-
-  if(remaining <= 0){
-    showDailyEnd(usedDays);
-    return;
-  }
-
-  localStorage.setItem("daily_remaining", remaining);
-  localStorage.setItem("last_active", Math.floor(Date.now()/1000));
-
-  timerInterval = setInterval(function(){
-
-    remaining--;
-    localStorage.setItem("daily_remaining", remaining);
-
-    let h = Math.floor(remaining / 3600);
-    let m = Math.floor((remaining % 3600) / 60);
-    let s = remaining % 60;
-
-    document.getElementById("timer").innerHTML = `
-    ⏳ المتبقي اليوم
-    <div class="time-display">${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-    <div style="margin-top:10px;font-size:13px">
-    اليوم ${usedDays} من ${TOTAL_DAYS}
-    </div>
-    `;
-
-    if(remaining <= 0){
-      clearInterval(timerInterval);
-      showDailyEnd(usedDays);
-    }
-
-  },1000);
-}
-
-function showDailyEnd(day){
-  document.getElementById("timer").innerHTML = `
-  ⏸ انتهت 5 ساعات اليوم<br>
-  📅 اليوم ${day} من ${TOTAL_DAYS}
-  `;
-}
-
-function endCard(){
-  document.getElementById("timer").innerHTML = `
-  انتهت صلاحية الكرت
-  `;
-}
-
-/* التفعيل مع فتح صفحة اللعبة */
+/* التفعيل */
 function activate(){
+
   let code = document.getElementById("cardCode").value.trim();
-  let btn = document.getElementById("activateBtn");
+  let btn  = document.getElementById("activateBtn");
 
   if(!code){
     alert("أدخل رقم الكرت");
     return;
   }
 
-  // تعطيل الزر وتغيير النص لإظهار التحميل
   btn.disabled = true;
   btn.innerHTML = '<span class="loading"></span> جاري التحقق...';
 
-  db.ref("cards/"+code).once("value").then(function(snap){
+  db.ref("cards/" + code).once("value").then(function(snap){
+
     if(!snap.exists()){
-      alert("الكرت غير صحيح ❌");
-      btn.disabled = false;
-      btn.innerHTML = "تفعيل الآن";
+      alert("الكرت غير موجود ❌");
+      resetBtn();
       return;
     }
 
-    let data = snap.val();
+    let data   = snap.val();
     let device = getDeviceId();
 
-    if(data.used && data.device !== device){
+    /* إذا مستخدم على جهاز آخر */
+    if(data.used === true && data.device !== device){
       alert("الكرت مستخدم على جهاز آخر 🚫");
-      btn.disabled = false;
-      btn.innerHTML = "تفعيل الآن";
+      resetBtn();
       return;
     }
 
-    // الكرت صحيح، نقوم بتحديث الحالة إذا لم يكن مستخدمًا
-    let updatePromise;
+    /* إذا غير مستخدم من قبل */
     if(!data.used){
-      updatePromise = db.ref("cards/"+code).update({
-        used: true,
-        device: device
+
+      db.ref("cards/" + code).update({
+        used:true,
+        device:device
+      }).then(function(){
+
+        localStorage.setItem("activated_card", code);
+        window.location.href = "themain.html";
+
+      }).catch(function(){
+        alert("حدث خطأ أثناء التفعيل");
+        resetBtn();
       });
-    } else {
-      updatePromise = Promise.resolve(); // الكرت مستخدم بالفعل لهذا الجهاز
+
+    }else{
+      /* مستخدم سابقاً على نفس الجهاز */
+      localStorage.setItem("activated_card", code);
+      window.location.href = "themain.html";
     }
 
-    updatePromise.then(() => {
-      // بدء العداد (سيخزن البيانات محليًا)
-      startUsageTimer();
-      
-      // عرض رسالة نجاح ثم التوجيه إلى صفحة اللعبة بعد 0.5 ثانية
-      alert("✅ تم التفعيل بنجاح! جاري نقلك إلى اللعبة...");
-      
-      // التوجيه إلى game.html
-      window.location.href = "themain.html";
-      
-    }).catch((error) => {
-      console.error("خطأ في تحديث قاعدة البيانات:", error);
-      alert("حدث خطأ أثناء التفعيل، حاول مرة أخرى.");
-      btn.disabled = false;
-      btn.innerHTML = "تفعيل الآن";
-    });
+  }).catch(function(){
+    alert("فشل الاتصال بقاعدة البيانات");
+    resetBtn();
+  });
 
-  }).catch(function(error){
-    console.error("خطأ في الاتصال بقاعدة البيانات:", error);
-    alert("حدث خطأ في الاتصال بقاعدة البيانات 🔌");
+  function resetBtn(){
     btn.disabled = false;
     btn.innerHTML = "تفعيل الآن";
-  });
-}
-
-// إذا كان المستخدم قد قام بالتفعيل مسبقًا ولديه جلسة صالحة، يمكن توجيهه مباشرة
-function checkExistingActivation(){
-  let usedDays = parseInt(localStorage.getItem("used_days")) || 0;
-  let remaining = parseInt(localStorage.getItem("daily_remaining"));
-  let today = new Date().toDateString();
-  let storedDay = localStorage.getItem("usage_day");
-  
-  // إذا كان هناك أيام مستخدمة والمتبقي غير منتهٍ (أو اليوم لم ينتهِ)
-  if(usedDays > 0 && usedDays <= TOTAL_DAYS){
-    // التحقق من أن اليوم الحالي لم ينتهِ صلاحيته
-    if(storedDay === today){
-      if(remaining > 0){
-        // تم التفعيل مسبقًا ولديه وقت متبقي، نوجهه للعبة
-        window.location.href = "game.html";
-      } else if(remaining <= 0){
-        // انتهى وقت اليوم ولكن لا يزال هناك أيام متبقية
-        // نعرض العداد ليبين أنه انتهى اليوم لكن يمكنه التفعيل غدًا
-        startUsageTimer();
-      }
-    } else {
-      // يوم جديد، نبدأ عداد اليوم الجديد
-      startUsageTimer();
-    }
   }
 }
-
-// تنفيذ فتح الصفحة مباشرة إذا كان الكرت مفعل مسبقًا
-checkExistingActivation();
-
 </script>
+
 </body>
 </html>
