@@ -1,236 +1,161 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>نظام الكروت</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تفعيل التطبيق</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
 body{
-  font-family: Arial;
+  font-family:Tahoma,Arial;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+.card{
+  background:#fff;
+  max-width:400px;
+  width:100%;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,.2);
   text-align:center;
-  margin-top:60px;
-  background:#f5f5f5;
 }
-
-.box{
-  background:white;
-  padding:20px;
-  margin:auto;
-  width:320px;
+input,button{
+  width:100%;
+  padding:15px;
+  font-size:18px;
+  margin-bottom:15px;
   border-radius:10px;
-  box-shadow:0 0 10px #ccc;
+  box-sizing:border-box;
 }
-
-input{
-  padding:10px;
-  width:90%;
-  margin:5px 0;
-}
-
+input{border:2px solid #ddd;}
 button{
-  padding:10px;
-  width:95%;
+  background:linear-gradient(to right,#4CAF50,#2E7D32);
+  color:#fff;
+  border:none;
+  font-weight:bold;
   cursor:pointer;
-  margin-top:10px;
 }
-
-#adminPanel{
-  display:none;
-  margin-top:20px;
+.loading{
+  display:inline-block;
+  width:20px;
+  height:20px;
+  border:3px solid rgba(255,255,255,.3);
+  border-radius:50%;
+  border-top-color:#fff;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{
+  to{transform:rotate(360deg);}
 }
 </style>
 </head>
+
 <body>
 
-<div class="box">
-
-<h2>تفعيل الكرت</h2>
-
-<input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
-<button onclick="checkCard()">دخول</button>
-
-<p id="msg"></p>
-
-<hr>
-
-<h4>لوحة الأدمن</h4>
-
-<input type="password" id="adminPass" placeholder="كلمة المرور">
-<button onclick="openAdmin()">دخول الأدمن</button>
-
-<div id="adminPanel">
-
-  <h3>توليد الكروت</h3>
-  <input type="number" id="count" placeholder="عدد الكروت">
-  <button onclick="generateCards()">توليد الكروت</button>
-
-  <button onclick="exportCSV()">تصدير أرقام الكروت CSV</button>
-
-  <p id="adminMsg"></p>
-
-</div>
-
+<div class="card">
+  <h3>تفعيل التطبيق</h3>
+  <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
+  <button id="activateBtn" onclick="activate()">تفعيل الآن</button>
 </div>
 
 <script>
-const SUPABASE_URL = "https://eorcwpnppumcppbmylt.supabase.co";
+firebase.initializeApp({
+  apiKey: "APIKEY",
+  authDomain: "AUTHDOMAIN",
+  databaseURL: "https://appcards-c4730-default-rtdb.firebaseio.com",
+  projectId: "PROJECTID",
+  storageBucket: "STORAGE",
+  messagingSenderId: "SENDERID",
+  appId: "APPID"
+});
 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcmN3cG9ucHB1bWNwcGJteWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDYzMzgsImV4cCI6MjA5MjAyMjMzOH0.TWIDhL_WONrQ1YyxBTFW3Xw4QJn_DlaKwHsrmyEuq98";
+var db = firebase.database();
 
-const ADMIN_PASSWORD = "1234";
-
-// ================= الجهاز =================
+/* رقم الجهاز */
 function getDeviceId(){
   let id = localStorage.getItem("device_id");
+
   if(!id){
-    id = Math.random().toString(36).substring(2);
+    id = "dev-" + Math.random().toString(36).substr(2,16);
     localStorage.setItem("device_id", id);
   }
+
   return id;
 }
 
-// ================= التحقق من الكرت =================
-async function checkCard(){
-  const code = document.getElementById("cardCode").value.trim();
-  const msg = document.getElementById("msg");
-  const deviceId = getDeviceId();
+/* التفعيل */
+function activate(){
+
+  let code = document.getElementById("cardCode").value.trim();
+  let btn  = document.getElementById("activateBtn");
 
   if(!code){
-    msg.innerText = "أدخل رقم الكرت";
+    alert("أدخل رقم الكرت");
     return;
   }
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/cards?code=eq.${code}`,{
-    headers:{
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span> جاري التحقق...';
+
+  db.ref("cards/" + code).once("value").then(function(snap){
+
+    if(!snap.exists()){
+      alert("الكرت غير موجود ❌");
+      resetBtn();
+      return;
     }
-  });
 
-  const data = await res.json();
+    let data   = snap.val();
+    let device = getDeviceId();
 
-  if(data.length === 0){
-    msg.innerText = "الكرت غير موجود";
-    return;
-  }
-
-  const card = data[0];
-
-  if(!card.activated){
-    await fetch(`${SUPABASE_URL}/rest/v1/cards?id=eq.${card.id}`,{
-      method:"PATCH",
-      headers:{
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        activated:true,
-        device_id:deviceId
-      })
-    });
-
-    window.location.href = "result.html";
-    return;
-  }
-
-  if(card.device_id === deviceId){
-    window.location.href = "result.html";
-  }else{
-    msg.innerText = "الكرت مستخدم على جهاز آخر";
-  }
-}
-
-// ================= الأدمن =================
-function openAdmin(){
-  const pass = document.getElementById("adminPass").value;
-
-  if(pass === ADMIN_PASSWORD){
-    document.getElementById("adminPanel").style.display = "block";
-  }else{
-    alert("كلمة المرور خطأ");
-  }
-}
-
-// ================= توليد الكروت =================
-function randomCode(){
-  return Math.floor(100000 + Math.random()*900000).toString();
-}
-
-async function generateCards(){
-  const count = document.getElementById("count").value;
-  const msg = document.getElementById("adminMsg");
-
-  if(!count){
-    msg.innerText = "أدخل عدد الكروت";
-    return;
-  }
-
-  let cards = [];
-
-  for(let i=0;i<count;i++){
-    cards.push({
-      code: randomCode(),
-      activated:false,
-      device_id:null
-    });
-  }
-
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/cards`,{
-    method:"POST",
-    headers:{
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      "Content-Type":"application/json",
-      Prefer:"return=representation"
-    },
-    body:JSON.stringify(cards)
-  });
-
-  if(res.ok){
-    msg.innerText = "تم إنشاء الكروت بنجاح 🎉";
-  }else{
-    msg.innerText = "حدث خطأ";
-  }
-}
-
-// ================= تصدير CSV (أرقام فقط) =================
-async function exportCSV(){
-  const msg = document.getElementById("adminMsg");
-
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/cards?select=code`, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`
+    /* إذا مستخدم على جهاز آخر */
+    if(data.used === true && data.device !== device){
+      alert("الكرت مستخدم على جهاز آخر 🚫");
+      resetBtn();
+      return;
     }
+
+    /* إذا غير مستخدم من قبل */
+    if(!data.used){
+
+      db.ref("cards/" + code).update({
+        used:true,
+        device:device
+      }).then(function(){
+
+        localStorage.setItem("activated_card", code);
+        window.location.href = "themain.html";
+
+      }).catch(function(){
+        alert("حدث خطأ أثناء التفعيل");
+        resetBtn();
+      });
+
+    }else{
+      /* مستخدم سابقاً على نفس الجهاز */
+      localStorage.setItem("activated_card", code);
+      window.location.href = "themain.html";
+    }
+
+  }).catch(function(){
+    alert("فشل الاتصال بقاعدة البيانات");
+    resetBtn();
   });
 
-  const data = await res.json();
-
-  if(!data || data.length === 0){
-    msg.innerText = "لا توجد كروت للتصدير";
-    return;
+  function resetBtn(){
+    btn.disabled = false;
+    btn.innerHTML = "تفعيل الآن";
   }
-
-  let csv = "code\n";
-
-  data.forEach(row => {
-    csv += `${row.code}\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "cards_codes.csv";
-  a.click();
-
-  URL.revokeObjectURL(url);
-
-  msg.innerText = "تم تصدير أرقام الكروت 📁";
 }
 </script>
 
 </body>
-</html>
+</html> 
