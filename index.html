@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فحص الكرت</title>
+<title>تفعيل التطبيق</title>
 
 <style>
 body{
@@ -32,7 +32,7 @@ box-sizing:border-box;
 }
 button{
 border:none;
-background:#0d6efd;
+background:#28a745;
 color:#fff;
 cursor:pointer;
 }
@@ -46,11 +46,11 @@ font-weight:bold;
 <body>
 
 <div class="box">
-<h2>إدخال الكرت</h2>
+<h2>إدخال كرت التفعيل</h2>
 
 <input id="code" placeholder="رقم الكرت">
 
-<button onclick="checkCard()">تحقق</button>
+<button onclick="checkCard()">تفعيل</button>
 
 <div id="result">جاهز</div>
 </div>
@@ -60,20 +60,20 @@ font-weight:bold;
 <script>
 const result = document.getElementById("result");
 
+// 🔁 إذا الجهاز مفعل مسبقًا → ادخل مباشرة
+if(localStorage.getItem("activated") === "true"){
+  window.location.href = "Themain.html";
+}
+
 function msg(t){
   result.innerText = t;
 }
 
 async function checkCard(){
 
-  if(!window.supabase){
-    msg("مكتبة Supabase لم تعمل");
-    return;
-  }
-
   const supabase = window.supabase.createClient(
-    "https://eorcwponppumcppbmylt.supabase.co", // ✅ المشروع الصحيح
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcmN3cG9ucHB1bWNwcGJteWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDYzMzgsImV4cCI6MjA5MjAyMjMzOH0.TWIDhL_WONrQ1YyxBTFW3Xw4QJn_DlaKwHsrmyEuq98"
+    "https://eorcwponppumcppbmylt.supabase.co",
+    "ضع_المفتاح_هنا"
   );
 
   let code = document.getElementById("code").value.trim();
@@ -88,21 +88,51 @@ async function checkCard(){
   try{
 
     const { data, error } = await supabase
-      .from("scards") // تأكد أن الاسم نفس الموجود في Supabase
+      .from("scards")
       .select("*")
-      .eq("code", parseInt(code))
+      .eq("code", code)
       .single();
 
-    if (error && error.code !== "PGRST116") {
-      msg("خطأ: " + error.message);
+    if(error){
+      msg("❌ الكرت غير موجود");
       return;
     }
 
-    if (data) {
-      msg("✅ الكرت موجود");
-    } else {
-      msg("❌ الكرت غير موجود");
+    if(data.used){
+      msg("❌ الكرت مستخدم مسبقًا");
+      return;
     }
+
+    // 🆔 إنشاء معرف جهاز
+    let deviceId = localStorage.getItem("device_id");
+    if(!deviceId){
+      deviceId = "dev_" + Math.random().toString(36).substring(2,10);
+      localStorage.setItem("device_id", deviceId);
+    }
+
+    // ✅ تفعيل الكرت
+    const { error: updateError } = await supabase
+      .from("scards")
+      .update({
+        used: true,
+        device: deviceId
+      })
+      .eq("code", code);
+
+    if(updateError){
+      msg("خطأ أثناء التفعيل");
+      return;
+    }
+
+    // 💾 حفظ حالة التفعيل
+    localStorage.setItem("activated", "true");
+
+    msg("✅ تم التفعيل... جاري الدخول");
+
+    // 🚀 الانتقال للصفحة الرئيسية
+    setTimeout(()=>{
+      window.location.href = "Themain.html";
+    },1000);
 
   }catch(e){
     msg("فشل الاتصال");
