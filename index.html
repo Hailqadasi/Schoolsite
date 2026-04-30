@@ -66,16 +66,14 @@ function msg(t){
 
 async function checkCard(){
 
-  msg("جاري التحقق...");
-
   if(!window.supabase){
-    msg("مكتبة Supabase لم تحمل");
+    msg("مكتبة Supabase لم تعمل");
     return;
   }
 
   const supabase = window.supabase.createClient(
-    "https://xoofgkdaedktsneahdhd.supabase.co",
-    "sb_publishable__auzC8_Ywsaj4Zx-coLkRg_DVD7vcpo"
+    "https://eorcwponppumcppbmylt.supabase.co", // ✅ المشروع الصحيح
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcmN3cG9ucHB1bWNwcGJteWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDYzMzgsImV4cCI6MjA5MjAyMjMzOH0.TWIDhL_WONrQ1YyxBTFW3Xw4QJn_DlaKwHsrmyEuq98"
   );
 
   let code = document.getElementById("code").value.trim();
@@ -85,15 +83,16 @@ async function checkCard(){
     return;
   }
 
+  msg("جاري التحقق...");
+
   try{
 
     const { data, error } = await supabase
-      .from("scards") // ✅ اسم الجدول الصحيح
+      .from("scards") // تأكد أن الاسم نفس الموجود في Supabase
       .select("*")
       .eq("code", parseInt(code))
       .single();
 
-    // معالجة الأخطاء
     if (error && error.code !== "PGRST116") {
       msg("خطأ: " + error.message);
       return;
