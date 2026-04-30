@@ -1,161 +1,118 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تفعيل التطبيق</title>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فحص الكرت</title>
 
 <style>
 body{
-  font-family:Tahoma,Arial;
-  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  margin:0;
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
-.card{
-  background:#fff;
-  max-width:400px;
-  width:100%;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 20px 40px rgba(0,0,0,.2);
-  text-align:center;
+.box{
+background:#fff;
+padding:30px;
+width:320px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+text-align:center;
 }
 input,button{
-  width:100%;
-  padding:15px;
-  font-size:18px;
-  margin-bottom:15px;
-  border-radius:10px;
-  box-sizing:border-box;
+width:100%;
+padding:12px;
+font-size:18px;
+margin-bottom:15px;
+box-sizing:border-box;
 }
-input{border:2px solid #ddd;}
 button{
-  background:linear-gradient(to right,#4CAF50,#2E7D32);
-  color:#fff;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
+border:none;
+background:#0d6efd;
+color:#fff;
+cursor:pointer;
 }
-.loading{
-  display:inline-block;
-  width:20px;
-  height:20px;
-  border:3px solid rgba(255,255,255,.3);
-  border-radius:50%;
-  border-top-color:#fff;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{
-  to{transform:rotate(360deg);}
+#result{
+font-size:18px;
+font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h3>تفعيل التطبيق</h3>
-  <input type="text" id="cardCode" placeholder="أدخل رقم الكرت">
-  <button id="activateBtn" onclick="activate()">تفعيل الآن</button>
+<div class="box">
+<h2>إدخال الكرت</h2>
+
+<input id="code" placeholder="رقم الكرت">
+
+<button onclick="checkCard()">تحقق</button>
+
+<div id="result">جاهز</div>
 </div>
 
+<!-- ضع المكتبة آخر الصفحة -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
 <script>
-firebase.initializeApp({
-  apiKey: "APIKEY",
-  authDomain: "AUTHDOMAIN",
-  databaseURL: "https://appcards-c4730-default-rtdb.firebaseio.com",
-  projectId: "PROJECTID",
-  storageBucket: "STORAGE",
-  messagingSenderId: "SENDERID",
-  appId: "APPID"
-});
+const result = document.getElementById("result");
 
-var db = firebase.database();
-
-/* رقم الجهاز */
-function getDeviceId(){
-  let id = localStorage.getItem("device_id");
-
-  if(!id){
-    id = "dev-" + Math.random().toString(36).substr(2,16);
-    localStorage.setItem("device_id", id);
-  }
-
-  return id;
+function msg(t){
+result.innerText = t;
 }
 
-/* التفعيل */
-function activate(){
+async function checkCard(){
 
-  let code = document.getElementById("cardCode").value.trim();
-  let btn  = document.getElementById("activateBtn");
+msg("تم الضغط");
 
-  if(!code){
-    alert("أدخل رقم الكرت");
-    return;
-  }
+if(!window.supabase){
+msg("مكتبة Supabase لم تحمل");
+return;
+}
 
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading"></span> جاري التحقق...';
+const supabase = window.supabase.createClient(
+"https://xoofgkdaedktsneahdhd.supabase.co",
+"sb_publishable__auzC8_Ywsaj4Zx-coLkRg_DVD7vcpo"
+);
 
-  db.ref("cards/" + code).once("value").then(function(snap){
+const code = document.getElementById("code").value.trim();
 
-    if(!snap.exists()){
-      alert("الكرت غير موجود ❌");
-      resetBtn();
-      return;
-    }
+if(!code){
+msg("أدخل رقم الكرت");
+return;
+}
 
-    let data   = snap.val();
-    let device = getDeviceId();
+msg("جاري الاتصال...");
 
-    /* إذا مستخدم على جهاز آخر */
-    if(data.used === true && data.device !== device){
-      alert("الكرت مستخدم على جهاز آخر 🚫");
-      resetBtn();
-      return;
-    }
+try{
 
-    /* إذا غير مستخدم من قبل */
-    if(!data.used){
+const {data,error} = await supabase
+.from("cards")
+.select("*")
+.eq("code", parseInt(code));
 
-      db.ref("cards/" + code).update({
-        used:true,
-        device:device
-      }).then(function(){
+if(error){
+msg("خطأ: " + error.message);
+return;
+}
 
-        localStorage.setItem("activated_card", code);
-        window.location.href = "themain.html";
+if(data.length > 0){
+msg("✅ الكرت موجود");
+}else{
+msg("❌ غير موجود");
+}
 
-      }).catch(function(){
-        alert("حدث خطأ أثناء التفعيل");
-        resetBtn();
-      });
+}catch(e){
+msg("فشل الاتصال");
+console.log(e);
+}
 
-    }else{
-      /* مستخدم سابقاً على نفس الجهاز */
-      localStorage.setItem("activated_card", code);
-      window.location.href = "themain.html";
-    }
-
-  }).catch(function(){
-    alert("فشل الاتصال بقاعدة البيانات");
-    resetBtn();
-  });
-
-  function resetBtn(){
-    btn.disabled = false;
-    btn.innerHTML = "تفعيل الآن";
-  }
 }
 </script>
 
 </body>
-</html> 
+</html>
