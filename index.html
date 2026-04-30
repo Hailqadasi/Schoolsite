@@ -55,61 +55,60 @@ font-weight:bold;
 <div id="result">جاهز</div>
 </div>
 
-<!-- ضع المكتبة آخر الصفحة -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script>
 const result = document.getElementById("result");
 
 function msg(t){
-result.innerText = t;
+  result.innerText = t;
 }
 
 async function checkCard(){
 
-msg("تم الضغط");
+  msg("جاري التحقق...");
 
-if(!window.supabase){
-msg("مكتبة Supabase لم تحمل");
-return;
-}
+  if(!window.supabase){
+    msg("مكتبة Supabase لم تحمل");
+    return;
+  }
 
-const supabase = window.supabase.createClient(
-"https://xoofgkdaedktsneahdhd.supabase.co",
-"sb_publishable__auzC8_Ywsaj4Zx-coLkRg_DVD7vcpo"
-);
+  const supabase = window.supabase.createClient(
+    "https://xoofgkdaedktsneahdhd.supabase.co",
+    "sb_publishable__auzC8_Ywsaj4Zx-coLkRg_DVD7vcpo"
+  );
 
-const code = document.getElementById("code").value.trim();
+  let code = document.getElementById("code").value.trim();
 
-if(!code){
-msg("أدخل رقم الكرت");
-return;
-}
+  if(!code){
+    msg("أدخل رقم الكرت");
+    return;
+  }
 
-msg("جاري الاتصال...");
+  try{
 
-try{
+    const { data, error } = await supabase
+      .from("scards") // ✅ اسم الجدول الصحيح
+      .select("*")
+      .eq("code", parseInt(code))
+      .single();
 
-const {data,error} = await supabase
-.from("cards")
-.select("*")
-.eq("code", parseInt(code));
+    // معالجة الأخطاء
+    if (error && error.code !== "PGRST116") {
+      msg("خطأ: " + error.message);
+      return;
+    }
 
-if(error){
-msg("خطأ: " + error.message);
-return;
-}
+    if (data) {
+      msg("✅ الكرت موجود");
+    } else {
+      msg("❌ الكرت غير موجود");
+    }
 
-if(data.length > 0){
-msg("✅ الكرت موجود");
-}else{
-msg("❌ غير موجود");
-}
-
-}catch(e){
-msg("فشل الاتصال");
-console.log(e);
-}
+  }catch(e){
+    msg("فشل الاتصال");
+    console.log(e);
+  }
 
 }
 </script>
