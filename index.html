@@ -72,7 +72,7 @@ async function checkCard(){
   }
 
   const supabase = window.supabase.createClient(
-    "https://eorcwponppumcppbmylt.supabase.co", // ✅ المشروع الصحيح
+    "https://eorcwponppumcppbmylt.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcmN3cG9ucHB1bWNwcGJteWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDYzMzgsImV4cCI6MjA5MjAyMjMzOH0.TWIDhL_WONrQ1YyxBTFW3Xw4QJn_DlaKwHsrmyEuq98"
   );
 
@@ -88,7 +88,7 @@ async function checkCard(){
   try{
 
     const { data, error } = await supabase
-      .from("scards") // تأكد أن الاسم نفس الموجود في Supabase
+      .from("scards")
       .select("*")
       .eq("code", parseInt(code))
       .single();
@@ -100,6 +100,12 @@ async function checkCard(){
 
     if (data) {
       msg("✅ الكرت موجود");
+
+      // 🔥 فتح الصفحة الرئيسية
+      setTimeout(() => {
+        window.location.href = "main.html";
+      }, 800);
+
     } else {
       msg("❌ الكرت غير موجود");
     }
