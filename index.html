@@ -66,11 +66,6 @@ function msg(t){
 
 async function checkCard(){
 
-  if(!window.supabase){
-    msg("مكتبة Supabase لم تعمل");
-    return;
-  }
-
   const supabase = window.supabase.createClient(
     "https://eorcwponppumcppbmylt.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcmN3cG9ucHB1bWNwcGJteWx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDYzMzgsImV4cCI6MjA5MjAyMjMzOH0.TWIDhL_WONrQ1YyxBTFW3Xw4QJn_DlaKwHsrmyEuq98"
@@ -98,16 +93,59 @@ async function checkCard(){
       return;
     }
 
-    if (data) {
-      msg("✅ الكرت موجود");
+    if (!data) {
+      msg("❌ الكرت غير موجود");
+      return;
+    }
 
-      // 🔥 فتح الصفحة الرئيسية
+    let now = new Date();
+
+    // 🟢 أول تفعيل
+    if (!data.activated_at) {
+
+      await supabase
+        .from("scards")
+        .update({ activated_at: now.toISOString() })
+        .eq("id", data.id);
+
+      // 💾 حفظ الجلسة
+      localStorage.setItem("card_id", data.id);
+      localStorage.setItem("activated_at", now.toISOString());
+
+      msg("✅ تم تفعيل الكرت (5 دقائق)");
+
+      setTimeout(() => {
+        window.location.href = "main.html";
+      }, 800);
+
+      return;
+    }
+
+    // ⏳ حساب الوقت
+    let activatedTime = new Date(data.activated_at);
+    let diff = (now - activatedTime) / 1000;
+
+    if (diff <= 300) {
+
+      // 💾 حفظ الجلسة
+      localStorage.setItem("card_id", data.id);
+      localStorage.setItem("activated_at", data.activated_at);
+
+      msg("✅ الكرت ما زال فعال");
+
       setTimeout(() => {
         window.location.href = "main.html";
       }, 800);
 
     } else {
-      msg("❌ الكرت غير موجود");
+
+      msg("⛔ انتهت صلاحية الكرت");
+
+      await supabase
+        .from("scards")
+        .update({ expired: true })
+        .eq("id", data.id);
+
     }
 
   }catch(e){
