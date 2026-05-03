@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -32,8 +32,15 @@ box-shadow:0 10px 30px rgba(0,0,0,0.3);
 
 h1{
 color:white;
-margin-bottom:30px;
+margin-bottom:20px;
 font-size:38px;
+}
+
+#timer{
+color:#ffdddd;
+font-size:18px;
+margin-bottom:20px;
+font-weight:bold;
 }
 
 .grid{
@@ -66,16 +73,17 @@ color:#ddd;
 font-size:14px;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
 <h1>📚 نتائج الطلاب</h1>
 
-<div class="grid">
+<div id="timer">الوقت المتبقي: 5:00</div>
 
+<div class="grid">
 <a href="grade1.html">الصف الأول</a>
 <a href="grade2.html">الصف الثاني</a>
 <a href="grade3.html">الصف الثالث</a>
@@ -87,7 +95,6 @@ font-size:14px;
 <a href="grade9.html">الصف التاسع</a>
 <a href="grade10.html">الأول الثانوي</a>
 <a href="grade11.html">الثاني الثانوي</a>
-
 </div>
 
 <footer>
@@ -96,5 +103,91 @@ font-size:14px;
 
 </div>
 
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+// 🔗 الاتصال
+const supabase = window.supabase.createClient(
+  "https://eorcwponppumcppbmylt.supabase.co",
+  "YOUR-ANON-KEY"
+);
+
+// 🔐 بيانات الجلسة
+let card_id = localStorage.getItem("card_id");
+let activated_at = localStorage.getItem("activated_at");
+
+// ⛔ منع الدخول المباشر
+if (!card_id || !activated_at) {
+  window.location.href = "index.html";
+}
+
+// ⏳ العداد
+function startTimer() {
+  const timerEl = document.getElementById("timer");
+
+  setInterval(() => {
+    let now = new Date();
+    let start = new Date(activated_at);
+    let diff = 300 - Math.floor((now - start) / 1000);
+
+    if (diff <= 0) {
+      alert("⛔ انتهى وقت الكرت");
+      localStorage.clear();
+      window.location.href = "index.html";
+      return;
+    }
+
+    let min = Math.floor(diff / 60);
+    let sec = diff % 60;
+
+    timerEl.innerText = `الوقت المتبقي: ${min}:${sec < 10 ? "0"+sec : sec}`;
+  }, 1000);
+}
+
+// 🔍 تحقق من السيرفر
+async function checkServer() {
+
+  const { data, error } = await supabase
+    .from("scards")
+    .select("*")
+    .eq("id", card_id)
+    .single();
+
+  if (error || !data) {
+    alert("الكرت غير صالح");
+    localStorage.clear();
+    window.location.href = "index.html";
+    return;
+  }
+
+  if (data.expired) {
+    alert("⛔ الكرت منتهي");
+    localStorage.clear();
+    window.location.href = "index.html";
+    return;
+  }
+
+  let now = new Date();
+  let start = new Date(data.activated_at);
+  let diff = (now - start) / 1000;
+
+  if (diff > 300) {
+
+    await supabase
+      .from("scards")
+      .update({ expired: true })
+      .eq("id", card_id);
+
+    alert("⛔ انتهت صلاحية الكرت");
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
+}
+
+// 🚀 تشغيل
+checkServer();
+startTimer();
+</script>
+
 </body>
-</html>
+</html> 
