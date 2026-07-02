@@ -99,9 +99,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: default;
+            cursor: pointer;  /* تغيير المؤشر إلى يد للإشارة إلى قابلية النقر */
             position: relative;
             overflow: hidden;
+            text-decoration: none; /* إلغاء التزيين الافتراضي للروابط */
+            color: inherit; /* الاحتفاظ بلون النص */
         }
 
         .card::before {
@@ -329,76 +331,76 @@
         <div class="grid">
 
             <!-- 1. القرآن الكريم -->
-            <div class="card">
+            <a href="holyquran.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-quran"></i>
                 </div>
                 <div class="card-title">القرآن الكريم</div>
                 <div class="card-sub">تلاوة وتفسير</div>
-            </div>
+            </a>
 
             <!-- 2. التربية الإسلامية -->
-            <div class="card">
+            <a href="islamic.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-mosque"></i>
                 </div>
                 <div class="card-title">التربية الإسلامية</div>
                 <div class="card-sub">أخلاق &amp; فقه</div>
-            </div>
+            </a>
 
             <!-- 3. اللغة العربية -->
-            <div class="card">
+            <a href="arabic.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-pen-nib"></i>
                 </div>
                 <div class="card-title">اللغة العربية</div>
                 <div class="card-sub">نحو &amp; بلاغة</div>
-            </div>
+            </a>
 
             <!-- 4. الإنجليزي -->
-            <div class="card">
+            <a href="english.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-language"></i>
                 </div>
                 <div class="card-title">الإنجليزي</div>
                 <div class="card-sub">قراءة &amp; محادثة</div>
-            </div>
+            </a>
 
             <!-- 5. الرياضيات -->
-            <div class="card">
+            <a href="maths.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-calculator"></i>
                 </div>
                 <div class="card-title">الرياضيات</div>
                 <div class="card-sub">جبر &amp; هندسة</div>
-            </div>
+            </a>
 
             <!-- 6. فيزياء -->
-            <div class="card">
+            <a href="physics.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-atom"></i>
                 </div>
                 <div class="card-title">فيزياء</div>
                 <div class="card-sub">ميكانيكا &amp; كهرباء</div>
-            </div>
+            </a>
 
             <!-- 7. كيمياء -->
-            <div class="card">
+            <a href="chemistry.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-flask"></i>
                 </div>
                 <div class="card-title">كيمياء</div>
                 <div class="card-sub">عضوية &amp; تحليلية</div>
-            </div>
+            </a>
 
             <!-- 8. أحياء -->
-            <div class="card">
+            <a href="biology.html" class="card">
                 <div class="card-icon">
                     <i class="fas fa-dna"></i>
                 </div>
                 <div class="card-title">أحياء</div>
                 <div class="card-sub">خلية &amp; وراثة</div>
-            </div>
+            </a>
 
         </div>
 
