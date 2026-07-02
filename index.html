@@ -1,131 +1,122 @@
  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>موسوعة الثانوية اليمنية</title>
+<title>الموسوعة التعليمية الذكية</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Tahoma,Arial,sans-serif;
-}
-
 body{
-height:100vh;
-overflow:hidden;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(-45deg,#0f172a,#1d4ed8,#2563eb,#38bdf8);
-background-size:400% 400%;
-animation:bg 12s ease infinite;
+    margin:0;
+    font-family:Tahoma,Arial;
+    background:linear-gradient(135deg,#0f172a,#2563eb);
+    color:#fff;
 }
 
-@keyframes bg{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+header{
+    padding:20px;
+    text-align:center;
+}
+
+#clock{
+    font-size:18px;
+    margin-top:8px;
 }
 
 .container{
-width:92%;
-max-width:420px;
-text-align:center;
-}
-
-.logo{
-font-size:65px;
-animation:updown 3s infinite;
-}
-
-@keyframes updown{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-10px);}
-}
-
-h1{
-color:white;
-font-size:30px;
-margin-top:10px;
-}
-
-.subtitle{
-color:#dbeafe;
-margin:12px 0 35px;
-font-size:16px;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
 }
 
 .card{
-display:block;
-text-decoration:none;
-margin:18px 0;
-padding:22px;
-border-radius:22px;
-background:rgba(255,255,255,.16);
-border:1px solid rgba(255,255,255,.25);
-backdrop-filter:blur(12px);
-color:white;
-font-size:24px;
-font-weight:bold;
-box-shadow:0 12px 25px rgba(0,0,0,.25);
-transition:.35s;
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(8px);
+    border-radius:18px;
+    padding:24px;
+    margin:18px 0;
+    text-align:center;
+    cursor:pointer;
+    transition:.25s;
 }
 
 .card:hover{
-transform:scale(1.05);
+    transform:translateY(-6px) scale(1.02);
 }
 
-.icon{
-font-size:34px;
-display:block;
-margin-bottom:8px;
+.card .icon{
+    font-size:52px;
 }
 
-.footer{
-margin-top:35px;
-color:#e5e7eb;
-font-size:13px;
+footer{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#0b1220;
+    padding:10px;
+    display:flex;
+    justify-content:space-around;
 }
 
+footer div{
+    text-align:center;
+    font-size:14px;
+}
 </style>
+
 </head>
 
 <body>
 
+<header>
+    <h1>📚 الموسوعة التعليمية الذكية</h1>
+    <p>مناهج الجمهورية اليمنية - المرحلة الثانوية</p>
+    <div id="clock"></div>
+</header>
+
 <div class="container">
 
-<div class="logo">🎓</div>
+    <div class="card" onclick="openPage('الصف الأول الثانوي')">
+        <div class="icon">📘</div>
+        <h2>الصف الأول الثانوي</h2>
+    </div>
 
-<h1>موسوعة الثانوية اليمنية</h1>
+    <div class="card" onclick="openPage('الصف الثاني الثانوي')">
+        <div class="icon">📗</div>
+        <h2>الصف الثاني الثانوي</h2>
+    </div>
 
-<div class="subtitle">
-جميع المناهج الدراسية في مكان واحد
-</div>
-
-<a class="card" href="appcreator24://section/b3">
-<span class="icon">🎓</span>
-الثالث الثانوي
-</a>
-
-<a class="card" href="appcreator24://section/c2">
-<span class="icon">📘</span>
-الثاني الثانوي
-</a>
-
-<a class="card" href="appcreator24://section/d1">
-<span class="icon">📗</span>
-الأول الثانوي
-</a>
-
-<div class="footer">
-الإصدار الأول • صُمم لخدمة طلاب الثانوية في اليمن
-</div>
+    <div class="card" onclick="openPage('الصف الثالث الثانوي')">
+        <div class="icon">📕</div>
+        <h2>الصف الثالث الثانوي</h2>
+    </div>
 
 </div>
+
+<footer>
+    <div>🏠<br>الرئيسية</div>
+    <div>🔍<br>بحث</div>
+    <div>🤖<br>ذكاء</div>
+    <div>⭐<br>المفضلة</div>
+    <div>⚙️<br>الإعدادات</div>
+</footer>
+
+<script>
+function updateClock(){
+    const d = new Date();
+    document.getElementById("clock").textContent =
+        d.toLocaleString("ar");
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+function openPage(name){
+    alert("سيتم ربط صفحة " + name + " في الخطوة القادمة.");
+}
+</script>
 
 </body>
 </html>
