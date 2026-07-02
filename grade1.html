@@ -99,11 +99,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;  /* تغيير المؤشر إلى يد للإشارة إلى قابلية النقر */
+            cursor: pointer;
             position: relative;
             overflow: hidden;
-            text-decoration: none; /* إلغاء التزيين الافتراضي للروابط */
-            color: inherit; /* الاحتفاظ بلون النص */
         }
 
         .card::before {
@@ -331,76 +329,76 @@
         <div class="grid">
 
             <!-- 1. القرآن الكريم -->
-            <a href="holyquran.html" class="card">
+            <div class="card" onclick="window.location.href='holyquran.html'">
                 <div class="card-icon">
                     <i class="fas fa-quran"></i>
                 </div>
                 <div class="card-title">القرآن الكريم</div>
                 <div class="card-sub">تلاوة وتفسير</div>
-            </a>
+            </div>
 
             <!-- 2. التربية الإسلامية -->
-            <a href="islamic.html" class="card">
+            <div class="card" onclick="window.location.href='islamic.html'">
                 <div class="card-icon">
                     <i class="fas fa-mosque"></i>
                 </div>
                 <div class="card-title">التربية الإسلامية</div>
                 <div class="card-sub">أخلاق &amp; فقه</div>
-            </a>
+            </div>
 
             <!-- 3. اللغة العربية -->
-            <a href="arabic.html" class="card">
+            <div class="card" onclick="window.location.href='arabic.html'">
                 <div class="card-icon">
                     <i class="fas fa-pen-nib"></i>
                 </div>
                 <div class="card-title">اللغة العربية</div>
                 <div class="card-sub">نحو &amp; بلاغة</div>
-            </a>
+            </div>
 
             <!-- 4. الإنجليزي -->
-            <a href="english.html" class="card">
+            <div class="card" onclick="window.location.href='english.html'">
                 <div class="card-icon">
                     <i class="fas fa-language"></i>
                 </div>
                 <div class="card-title">الإنجليزي</div>
                 <div class="card-sub">قراءة &amp; محادثة</div>
-            </a>
+            </div>
 
             <!-- 5. الرياضيات -->
-            <a href="maths.html" class="card">
+            <div class="card" onclick="window.location.href='maths.html'">
                 <div class="card-icon">
                     <i class="fas fa-calculator"></i>
                 </div>
                 <div class="card-title">الرياضيات</div>
                 <div class="card-sub">جبر &amp; هندسة</div>
-            </a>
+            </div>
 
             <!-- 6. فيزياء -->
-            <a href="physics.html" class="card">
+            <div class="card" onclick="window.location.href='physics.html'">
                 <div class="card-icon">
                     <i class="fas fa-atom"></i>
                 </div>
                 <div class="card-title">فيزياء</div>
                 <div class="card-sub">ميكانيكا &amp; كهرباء</div>
-            </a>
+            </div>
 
             <!-- 7. كيمياء -->
-            <a href="chemistry.html" class="card">
+            <div class="card" onclick="window.location.href='chemistry.html'">
                 <div class="card-icon">
                     <i class="fas fa-flask"></i>
                 </div>
                 <div class="card-title">كيمياء</div>
                 <div class="card-sub">عضوية &amp; تحليلية</div>
-            </a>
+            </div>
 
             <!-- 8. أحياء -->
-            <a href="biology.html" class="card">
+            <div class="card" onclick="window.location.href='biology.html'">
                 <div class="card-icon">
                     <i class="fas fa-dna"></i>
                 </div>
                 <div class="card-title">أحياء</div>
                 <div class="card-sub">خلية &amp; وراثة</div>
-            </a>
+            </div>
 
         </div>
 
