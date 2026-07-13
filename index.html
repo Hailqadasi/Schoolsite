@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📸 معرض الصور - تسجيل الدخول</title>
+    <title>📸 معرض الصور - سحابي</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
     <style>
-        /* ===== CSS ===== */
+        /* ===== CSS (نفس الكود السابق مع تعديلات بسيطة) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1110,6 +1110,21 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        /* ===== Cloud Badge ===== */
+        .cloud-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .cloud-badge i {
+            font-size: 10px;
+        }
+
         /* ===== أنيميشن ===== */
         @keyframes fadeIn {
             from {
@@ -1250,7 +1265,7 @@
                 <button class="back-btn" id="backBtn" onclick="closeProfile()">
                     <i class="fa-solid fa-arrow-right"></i> رجوع
                 </button>
-                <h1><i class="fa-solid fa-images"></i> معرض الصور</h1>
+                <h1><i class="fa-solid fa-images"></i> معرض الصور <span class="cloud-badge"><i class="fa-solid fa-cloud"></i> سحابي</span></h1>
             </div>
             <div class="header-actions">
                 <div class="user-info" id="userInfo" title="انقر لتغيير الاسم">
@@ -1368,6 +1383,12 @@
 
     <script>
         // ============================================================
+        // ===== مفتاح ImgBB (استبدله بمفتاحك) =====
+        // سجل في https://imgbb.com/ واحصل على مفتاح مجاني
+        // ============================================================
+        const IMGBB_API_KEY = '1325c7cdc0aaa248f2175858733c3231';
+
+        // ============================================================
         // ===== نظام تسجيل الدخول =====
         // ============================================================
 
@@ -1390,26 +1411,20 @@
                 return false;
             }
 
-            // إنشاء معرف فريد للمستخدم
             currentUserName = name;
             currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 
-            // حفظ في localStorage
             localStorage.setItem('userName', currentUserName);
             localStorage.setItem('userId', currentUserId);
 
-            // إخفاء نافذة تسجيل الدخول
             document.getElementById('loginOverlay').classList.remove('active');
-
-            // تحديث واجهة المستخدم
             updateUserInterface();
 
             showToast(`👋 مرحباً ${currentUserName}!`, 2500);
-
             return true;
         }
 
-        // ===== تحديث واجهة المستخدم بالاسم =====
+        // ===== تحديث واجهة المستخدم =====
         function updateUserInterface() {
             const displayName = currentUserName || 'مستخدم';
             const letter = displayName.charAt(0).toUpperCase();
@@ -1418,15 +1433,14 @@
             document.getElementById('avatarLetter').textContent = letter;
             document.getElementById('uploadAvatar').textContent = letter;
 
-            // تحديث لون الأفاتار
             const avatarColor = getAvatarColor(currentUserId);
-            document.querySelectorAll('.avatar, .upload-avatar, .comment-input-avatar').forEach(el => {
+            document.querySelectorAll('.avatar, .upload-avatar').forEach(el => {
                 if (el.classList.contains('comment-input-avatar')) return;
                 el.style.background = avatarColor;
             });
         }
 
-        // ===== التحقق من تسجيل الدخول عند التحميل =====
+        // ===== التحقق من تسجيل الدخول =====
         function checkLogin() {
             const savedName = localStorage.getItem('userName');
             const savedId = localStorage.getItem('userId');
@@ -1444,7 +1458,7 @@
             }
         }
 
-        // ===== تغيير الاسم (النقر على اسم المستخدم) =====
+        // ===== تغيير الاسم =====
         document.getElementById('userInfo').addEventListener('click', () => {
             const newName = prompt('✏️ أدخل اسمك الجديد:', currentUserName);
             if (newName && newName.trim() && newName.trim().length >= 2) {
@@ -1468,25 +1482,54 @@
                 const name = document.getElementById('loginNameInput').value;
                 loginUser(name);
             }
-            // إخفاء رسالة الخطأ عند الكتابة
             document.getElementById('loginError').classList.remove('show');
         });
 
         // ============================================================
-        // ===== باقي الكود =====
+        // ===== رفع الصور إلى السحابة (ImgBB) =====
         // ============================================================
 
-        // ===== صلاحية المشرف =====
-        const ADMIN_PASSWORD = "admin123";
-        if (localStorage.getItem('isAdmin') === 'true') {
-            isAdmin = true;
+        async function uploadToImgBB(imageDataUrl) {
+            try {
+                // تحويل base64 إلى Blob
+                const response = await fetch(imageDataUrl);
+                const blob = await response.blob();
+
+                const formData = new FormData();
+                formData.append('image', blob, 'image.jpg');
+                formData.append('key', IMGBB_API_KEY);
+
+                // إضافة اسم للتجربة
+                const name = 'post_' + Date.now();
+                formData.append('name', name);
+
+                const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await uploadResponse.json();
+
+                if (result.success) {
+                    console.log('✅ تم رفع الصورة للسحابة:', result.data.url);
+                    return result.data.url;
+                } else {
+                    console.error('❌ فشل رفع الصورة:', result.error);
+                    throw new Error(result.error?.message || 'فشل رفع الصورة');
+                }
+            } catch (error) {
+                console.error('❌ خطأ في رفع الصورة:', error);
+                // في حالة الفشل، نستخدم الصورة محلياً (base64)
+                showToast('⚠️ فشل الرفع للسحابة، تم الحفظ محلياً', 3000);
+                return imageDataUrl;
+            }
         }
 
         // ============================================================
         // ===== IndexedDB =====
         // ============================================================
 
-        const DB_NAME = 'GalleryDB_V5';
+        const DB_NAME = 'GalleryDB_V6';
         const DB_VERSION = 1;
 
         function openDB() {
@@ -1691,23 +1734,19 @@
             }
         }
 
-        // ===== الحصول على اسم المستخدم من المعرف =====
         function getUserNameFromId(userId) {
-            // إذا كان المستخدم هو المستخدم الحالي
             if (userId === currentUserId) {
                 return currentUserName;
             }
-            // نبحث في المنشورات عن اسم المستخدم
             const post = allPosts.find(p => p.userId === userId);
             if (post && post.userName) {
                 return post.userName;
             }
-            // إذا لم نجد، نستخدم المعرف
             return 'مستخدم ' + userId.substring(0, 6);
         }
 
         // ============================================================
-        // ===== إدارة المنشورات =====
+        // ===== إدارة المنشورات (مع رفع للسحابة) =====
         // ============================================================
 
         async function addPost(text, imageData) {
@@ -1716,10 +1755,26 @@
                 return;
             }
 
+            // رفع الصورة للسحابة إذا وجدت
+            let imageUrl = null;
+            if (imageData) {
+                try {
+                    showToast('📤 جاري رفع الصورة للسحابة...', 2000);
+                    imageUrl = await uploadToImgBB(imageData);
+                    if (imageUrl !== imageData) {
+                        showToast('✅ تم رفع الصورة للسحابة', 1500);
+                    }
+                } catch (error) {
+                    console.error('❌ خطأ في رفع الصورة:', error);
+                    imageUrl = imageData; // استخدام الصورة محلياً في حالة الفشل
+                    showToast('⚠️ تم حفظ الصورة محلياً', 2000);
+                }
+            }
+
             const post = {
                 id: Date.now(),
                 text: text || '',
-                image: imageData || null,
+                image: imageUrl, // رابط الصورة على السحابة أو محلياً
                 userId: currentUserId,
                 userName: currentUserName,
                 timestamp: Date.now(),
@@ -1867,7 +1922,15 @@
                 return;
             }
 
-            addPost(text, image);
+            // تعطيل الزر أثناء النشر
+            const publishBtn = document.getElementById('publishBtn');
+            publishBtn.disabled = true;
+            publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر...';
+
+            addPost(text, image).finally(() => {
+                publishBtn.disabled = false;
+                publishBtn.innerHTML = '<i class="fa-regular fa-paper-plane"></i> نشر';
+            });
         }
 
         // ============================================================
@@ -1913,10 +1976,12 @@
                 imageBtnText.textContent = 'تغيير الصورة';
                 imageBtn.classList.add('has-image');
 
-                progressFill.style.width = '0%';
-                progressBar.classList.remove('active');
+                setTimeout(() => {
+                    progressFill.style.width = '0%';
+                    progressBar.classList.remove('active');
+                }, 500);
 
-                showToast('✅ تم إضافة الصورة');
+                showToast('✅ تم إضافة الصورة (سيتم رفعها للسحابة عند النشر)');
 
             } catch (error) {
                 console.error('❌ خطأ في معالجة الصورة:', error);
@@ -2246,6 +2311,14 @@
         });
 
         // ============================================================
+        // ===== صلاحية المشرف =====
+        // ============================================================
+        const ADMIN_PASSWORD = "admin123";
+        if (localStorage.getItem('isAdmin') === 'true') {
+            isAdmin = true;
+        }
+
+        // ============================================================
         // ===== اختصارات لوحة المفاتيح =====
         // ============================================================
 
@@ -2261,17 +2334,21 @@
         // ============================================================
 
         async function initApp() {
-            // التحقق من تسجيل الدخول
             const isLoggedIn = checkLogin();
 
             if (!isLoggedIn) {
-                // إذا لم يكن مسجلاً، ننتظر حتى يسجل الدخول
                 return;
             }
 
             try {
                 await openDB();
                 await loadPosts();
+
+                // التحقق من وجود مفتاح API
+                if (IMGBB_API_KEY === 'YOUR_FREE_API_KEY_HERE') {
+                    showToast('⚠️ يرجى إضافة مفتاح ImgBB في الكود', 4000);
+                    console.warn('⚠️ يرجى إضافة مفتاح ImgBB في المتغير IMGBB_API_KEY');
+                }
 
                 setTimeout(() => {
                     const count = allPosts.length;
