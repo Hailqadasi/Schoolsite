@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📸 معرض الصور - الملف الشخصي</title>
+    <title>📸 معرض الصور - النشر الكتابي</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -152,18 +152,21 @@
             background: #ccd0d5;
         }
 
-        /* ===== قسم إضافة صورة ===== */
+        /* ===== قسم إضافة منشور ===== */
         .upload-section {
             background: #fff;
             border-radius: 12px;
-            padding: 14px 18px;
+            padding: 16px 18px;
             margin-bottom: 20px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-section .upload-header {
             display: flex;
             gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
+            align-items: flex-start;
         }
+
         .upload-section .upload-avatar {
             width: 40px;
             height: 40px;
@@ -176,23 +179,82 @@
             font-weight: 600;
             flex-shrink: 0;
         }
-        .upload-section .upload-input {
+
+        .upload-section .upload-textarea {
             flex: 1;
-            padding: 10px 16px;
+            min-height: 60px;
+            padding: 10px 14px;
             border: 1px solid #e4e6eb;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            resize: vertical;
+            background: #f0f2f5;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .upload-section .upload-textarea:focus {
+            border-color: #1877f2;
+            background: #fff;
+        }
+        .upload-section .upload-textarea::placeholder {
+            color: #65676b;
+        }
+
+        .upload-section .upload-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f2f5;
+        }
+
+        .upload-section .upload-tools .tools-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .upload-section .upload-tools .tools-left button {
+            padding: 8px 16px;
+            border: none;
             border-radius: 20px;
             background: #f0f2f5;
-            cursor: pointer;
-            transition: all 0.3s;
             color: #65676b;
-            font-size: 14px;
-            min-width: 150px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .upload-section .upload-input:hover {
+        .upload-section .upload-tools .tools-left button:hover {
             background: #e4e6eb;
         }
-        .upload-section .upload-btn {
-            padding: 10px 24px;
+        .upload-section .upload-tools .tools-left button i {
+            font-size: 16px;
+        }
+        .upload-section .upload-tools .tools-left .image-btn {
+            color: #45b7d1;
+        }
+        .upload-section .upload-tools .tools-left .image-btn:hover {
+            background: #e3f2fd;
+        }
+        .upload-section .upload-tools .tools-left .image-btn.has-image {
+            background: #45b7d1;
+            color: #fff;
+        }
+        .upload-section .upload-tools .tools-left .image-btn.has-image:hover {
+            background: #3a9bb5;
+        }
+
+        .upload-section .upload-tools .publish-btn {
+            padding: 8px 28px;
             border: none;
             border-radius: 20px;
             background: #1877f2;
@@ -201,26 +263,62 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 14px;
-            white-space: nowrap;
         }
-        .upload-section .upload-btn:hover {
+        .upload-section .upload-tools .publish-btn:hover {
             background: #166fe5;
             transform: scale(1.02);
         }
-        .upload-section .upload-btn:disabled {
+        .upload-section .upload-tools .publish-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
+        .upload-section .image-preview-container {
+            display: none;
+            margin-top: 12px;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f0f2f5;
+        }
+        .upload-section .image-preview-container.visible {
+            display: block;
+        }
+        .upload-section .image-preview-container img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            background: #fff;
+        }
+        .upload-section .image-preview-container .remove-image {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .upload-section .image-preview-container .remove-image:hover {
+            background: rgba(255, 0, 0, 0.7);
+        }
+
         .progress-bar {
             display: none;
             width: 100%;
-            height: 4px;
+            height: 3px;
             background: #e4e6eb;
             border-radius: 4px;
             overflow: hidden;
-            margin: 8px 0 0;
+            margin-top: 8px;
         }
         .progress-bar.active {
             display: block;
@@ -422,15 +520,38 @@
             color: #ff4d4d;
         }
 
+        /* ===== محتوى المنشور ===== */
+        .post-content {
+            padding: 12px 16px 8px;
+        }
+
+        .post-text {
+            font-size: 15px;
+            color: #1a1a1a;
+            line-height: 1.7;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            min-height: 20px;
+        }
+
+        .post-text .text-placeholder {
+            color: #65676b;
+            font-style: italic;
+        }
+
         /* ===== صورة المنشور ===== */
         .post-image-wrapper {
             background: #f0f2f5;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             cursor: pointer;
             position: relative;
+            margin: 0 0 8px;
+        }
+        .post-image-wrapper.visible {
+            display: flex;
         }
         .post-image-wrapper img {
             width: 100%;
@@ -906,16 +1027,19 @@
                 font-size: 18px;
             }
             .upload-section {
-                padding: 10px 12px;
+                padding: 12px 14px;
             }
-            .upload-section .upload-input {
+            .upload-section .upload-textarea {
                 font-size: 13px;
-                padding: 8px 14px;
-                min-width: 100px;
+                min-height: 50px;
+                padding: 8px 12px;
             }
-            .upload-section .upload-btn {
-                font-size: 13px;
-                padding: 8px 16px;
+            .upload-section .upload-tools {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .upload-section .upload-tools .tools-left {
+                justify-content: center;
             }
             .search-bar {
                 padding: 10px 12px;
@@ -931,6 +1055,12 @@
             }
             .post-header {
                 padding: 10px 12px 8px;
+            }
+            .post-content {
+                padding: 8px 12px 4px;
+            }
+            .post-text {
+                font-size: 14px;
             }
             .post-actions button {
                 font-size: 12px;
@@ -988,18 +1118,38 @@
             <button class="clear-btn" onclick="clearSearch()"><i class="fa-solid fa-times"></i></button>
         </div>
 
-        <!-- ===== قسم إضافة صورة ===== -->
+        <!-- ===== قسم إضافة منشور ===== -->
         <div class="upload-section" id="uploadSection">
-            <div class="upload-avatar">
-                <i class="fa-regular fa-user"></i>
+            <div class="upload-header">
+                <div class="upload-avatar">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <textarea class="upload-textarea" id="postTextInput" placeholder="ماذا تريد أن تنشر؟ اكتب مقالاً أو شارك فكرة..."></textarea>
             </div>
-            <input type="text" class="upload-input" id="uploadInput" placeholder="ماذا تريد مشاركته؟" readonly />
-            <button class="upload-btn" id="addBtn">
-                <i class="fa-solid fa-plus"></i> إضافة
-            </button>
-            <input type="file" id="fileInput" accept="image/*" hidden />
+
+            <!-- معاينة الصورة -->
+            <div class="image-preview-container" id="imagePreviewContainer">
+                <img id="imagePreview" src="" alt="معاينة الصورة" />
+                <button class="remove-image" onclick="removeImage()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
             <div class="progress-bar" id="progressBar">
                 <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="upload-tools">
+                <div class="tools-left">
+                    <button class="image-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="fa-regular fa-image"></i>
+                        <span id="imageBtnText">إضافة صورة</span>
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" hidden />
+                </div>
+                <button class="publish-btn" id="publishBtn" onclick="publishPost()">
+                    <i class="fa-regular fa-paper-plane"></i> نشر
+                </button>
             </div>
         </div>
 
@@ -1011,7 +1161,7 @@
             <div class="profile-stats">
                 <div class="stat">
                     <div class="stat-number" id="profilePosts">0</div>
-                    <div class="stat-label">📸 صور</div>
+                    <div class="stat-label">📝 منشورات</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number" id="profileLikes">0</div>
@@ -1025,7 +1175,7 @@
             <div class="profile-bio" id="profileBio">📱 مستخدم في معرض الصور</div>
             <div class="profile-actions">
                 <button class="view-posts-btn" onclick="viewUserPosts()">
-                    <i class="fa-regular fa-images"></i> عرض صوره
+                    <i class="fa-regular fa-images"></i> عرض منشوراته
                 </button>
                 <button class="close-profile-btn" onclick="closeProfile()">
                     <i class="fa-regular fa-xmark"></i> إغلاق
@@ -1033,14 +1183,14 @@
             </div>
         </div>
 
-        <!-- ===== حاوية الصور ===== -->
+        <!-- ===== حاوية المنشورات ===== -->
         <div id="postsContainer"></div>
 
         <!-- ===== حالة فارغة ===== -->
         <div class="empty-state" id="emptyState">
             <i class="fa-regular fa-images"></i>
-            <h3>لا توجد صور</h3>
-            <p>أضف صورتك الأولى لمشاركتها مع الآخرين</p>
+            <h3>لا توجد منشورات</h3>
+            <p>انشر أول منشور لمشاركته مع الآخرين</p>
         </div>
     </div>
 
@@ -1079,8 +1229,9 @@
         let filteredPosts = [];
         let confirmCallback = null;
         let db = null;
-        let viewingUserId = null; // المستخدم الذي نعرض ملفه
+        let viewingUserId = null;
         let isProfileView = false;
+        let tempImageData = null; // للصورة المؤقتة قبل النشر
 
         // ===== معرف المستخدم =====
         function initUserId() {
@@ -1104,7 +1255,7 @@
         // ===== IndexedDB =====
         // ============================================================
 
-        const DB_NAME = 'GalleryDB_V3';
+        const DB_NAME = 'GalleryDB_V4';
         const DB_VERSION = 1;
 
         function openDB() {
@@ -1216,19 +1367,14 @@
             viewingUserId = userId;
             isProfileView = true;
 
-            // إظهار زر الرجوع
             document.getElementById('backBtn').classList.add('visible');
-
-            // إخفاء شريط البحث وقسم الإضافة
             document.getElementById('searchBar').style.display = 'none';
             document.getElementById('uploadSection').style.display = 'none';
 
-            // جلب بيانات المستخدم
             const userPosts = allPosts.filter(p => p.userId === userId);
             const userName = 'مستخدم ' + userId.substring(0, 6);
             const avatarColor = getAvatarColor(userId);
 
-            // حساب الإحصائيات
             let totalLikes = 0;
             let totalComments = 0;
             userPosts.forEach(post => {
@@ -1236,7 +1382,6 @@
                 totalComments += (post.comments || []).length;
             });
 
-            // عرض الملف الشخصي
             const profileCard = document.getElementById('profileCard');
             document.getElementById('profileAvatar').textContent = userName.charAt(0).toUpperCase();
             document.getElementById('profileAvatar').style.background = avatarColor;
@@ -1246,10 +1391,9 @@
             document.getElementById('profileLikes').textContent = totalLikes;
             document.getElementById('profileComments').textContent = totalComments;
 
-            // تحديث السيرة الذاتية
             let bio = '📱 مستخدم في معرض الصور';
             if (userPosts.length > 0) {
-                bio = `📸 نشر ${userPosts.length} صورة`;
+                bio = `📝 نشر ${userPosts.length} منشور`;
                 if (totalLikes > 0) bio += ` · ❤️ ${totalLikes} إعجاب`;
                 if (totalComments > 0) bio += ` · 💬 ${totalComments} تعليق`;
             }
@@ -1257,12 +1401,11 @@
 
             profileCard.classList.add('visible');
 
-            // عرض صور المستخدم فقط
             filteredPosts = userPosts;
             renderPosts(filteredPosts);
 
             if (userPosts.length === 0) {
-                showToast('👤 هذا المستخدم لم ينشر أي صور بعد', 2500);
+                showToast('👤 هذا المستخدم لم ينشر أي منشورات بعد', 2500);
             }
         }
 
@@ -1272,20 +1415,17 @@
 
             document.getElementById('backBtn').classList.remove('visible');
             document.getElementById('searchBar').style.display = 'flex';
-            document.getElementById('uploadSection').style.display = 'flex';
+            document.getElementById('uploadSection').style.display = 'block';
             document.getElementById('profileCard').classList.remove('visible');
 
             filteredPosts = [...allPosts];
             renderPosts(filteredPosts);
-
-            // إلغاء أي بحث
             document.getElementById('searchInput').value = '';
         }
 
         function viewUserPosts() {
             if (viewingUserId) {
-                // بالفعل نعرض صوره
-                showToast('📸 جاري عرض صور المستخدم', 1500);
+                showToast('📝 جاري عرض منشورات المستخدم', 1500);
             }
         }
 
@@ -1293,10 +1433,16 @@
         // ===== إدارة المنشورات =====
         // ============================================================
 
-        async function addPost(imageData) {
+        async function addPost(text, imageData) {
+            if (!text && !imageData) {
+                showToast('⚠️ الرجاء كتابة نص أو إضافة صورة', 2500);
+                return;
+            }
+
             const post = {
                 id: Date.now(),
-                image: imageData,
+                text: text || '',
+                image: imageData || null,
                 userId: currentUserId,
                 timestamp: Date.now(),
                 likes: 0,
@@ -1307,10 +1453,13 @@
             try {
                 await savePostToDB(post);
                 await loadPosts();
-                showToast('✅ تم نشر الصورة بنجاح');
+                showToast('✅ تم نشر المنشور بنجاح');
+                // تنظيف المدخلات
+                document.getElementById('postTextInput').value = '';
+                removeImage();
             } catch (error) {
                 console.error('❌ خطأ في إضافة المنشور:', error);
-                showToast('⚠️ حدث خطأ في نشر الصورة', 3000);
+                showToast('⚠️ حدث خطأ في نشر المنشور', 3000);
             }
         }
 
@@ -1320,25 +1469,24 @@
 
             const canDelete = post.userId === currentUserId || isAdmin;
             if (!canDelete) {
-                showToast('⛔ لا يمكنك حذف صورة مستخدم آخر', 3000);
+                showToast('⛔ لا يمكنك حذف منشور مستخدم آخر', 3000);
                 return;
             }
 
             showConfirm(
                 'تأكيد الحذف',
-                'هل أنت متأكد من رغبتك في حذف هذه الصورة؟',
+                'هل أنت متأكد من رغبتك في حذف هذا المنشور؟',
                 async () => {
                     try {
                         await deletePostFromDB(postId);
                         await loadPosts();
-                        showToast('🗑️ تم حذف الصورة');
-                        // إذا كنا في عرض ملف شخصي، نحدثه
+                        showToast('🗑️ تم حذف المنشور');
                         if (isProfileView && viewingUserId) {
                             openProfile(viewingUserId);
                         }
                     } catch (error) {
                         console.error('❌ خطأ في حذف المنشور:', error);
-                        showToast('⚠️ حدث خطأ في حذف الصورة', 3000);
+                        showToast('⚠️ حدث خطأ في حذف المنشور', 3000);
                     }
                 }
             );
@@ -1360,7 +1508,6 @@
             try {
                 await savePostToDB(post);
                 await loadPosts();
-                // تحديث الملف الشخصي إذا كان مفتوحاً
                 if (isProfileView && viewingUserId) {
                     openProfile(viewingUserId);
                 }
@@ -1427,6 +1574,89 @@
                     }
                 }
             );
+        }
+
+        // ============================================================
+        // ===== النشر =====
+        // ============================================================
+
+        function publishPost() {
+            const text = document.getElementById('postTextInput').value.trim();
+            const image = tempImageData;
+
+            if (!text && !image) {
+                showToast('⚠️ الرجاء كتابة نص أو إضافة صورة', 2500);
+                return;
+            }
+
+            addPost(text, image);
+        }
+
+        // ============================================================
+        // ===== إدارة الصورة المؤقتة =====
+        // ============================================================
+
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imageBtnText = document.getElementById('imageBtnText');
+        const imageBtn = document.querySelector('.image-btn');
+
+        fileInput.onchange = async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('⚠️ الرجاء اختيار ملف صورة فقط');
+                this.value = '';
+                return;
+            }
+
+            // إظهار شريط التحميل
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.classList.add('active');
+
+            try {
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    if (progress >= 90) clearInterval(progressInterval);
+                    progressFill.style.width = progress + '%';
+                }, 50);
+
+                const compressed = await compressImage(file, 1200, 1200, 0.8);
+
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+
+                tempImageData = compressed;
+                imagePreview.src = compressed;
+                imagePreviewContainer.classList.add('visible');
+                imageBtnText.textContent = 'تغيير الصورة';
+                imageBtn.classList.add('has-image');
+
+                progressFill.style.width = '0%';
+                progressBar.classList.remove('active');
+
+                showToast('✅ تم إضافة الصورة');
+
+            } catch (error) {
+                console.error('❌ خطأ في معالجة الصورة:', error);
+                showToast('⚠️ حدث خطأ في معالجة الصورة', 3000);
+                progressFill.style.width = '0%';
+                progressBar.classList.remove('active');
+            }
+
+            this.value = '';
+        };
+
+        function removeImage() {
+            tempImageData = null;
+            imagePreview.src = '';
+            imagePreviewContainer.classList.remove('visible');
+            imageBtnText.textContent = 'إضافة صورة';
+            imageBtn.classList.remove('has-image');
         }
 
         // ============================================================
@@ -1510,6 +1740,26 @@
                 const avatarColor = getAvatarColor(post.userId);
                 const timeAgo = getPostTime(post.timestamp);
 
+                // عرض النص
+                const hasText = post.text && post.text.trim() !== '';
+                const textHTML = hasText ?
+                    `<div class="post-text">${escapeHtml(post.text)}</div>` :
+                    '';
+
+                // عرض الصورة
+                const hasImage = post.image && post.image !== null;
+                const imageHTML = hasImage ?
+                    `
+                    <div class="post-image-wrapper visible" onclick="openLightbox('${post.image}', '${userName}', '${timeAgo}')">
+                        <img src="${post.image}" alt="صورة منشور" loading="lazy" />
+                        <div class="image-overlay">
+                            <i class="fa-regular fa-expand"></i>
+                        </div>
+                    </div>
+                    ` :
+                    '';
+
+                // التعليقات
                 let commentsHTML = '';
                 if (post.comments && post.comments.length > 0) {
                     post.comments.forEach(comment => {
@@ -1570,12 +1820,11 @@
                         </div>
                     </div>
 
-                    <div class="post-image-wrapper" onclick="openLightbox('${post.image}', '${userName}', '${timeAgo}')">
-                        <img src="${post.image}" alt="صورة منشور" loading="lazy" />
-                        <div class="image-overlay">
-                            <i class="fa-regular fa-expand"></i>
-                        </div>
+                    <div class="post-content">
+                        ${textHTML}
                     </div>
+
+                    ${imageHTML}
 
                     <div class="post-actions">
                         <button class="${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
@@ -1588,7 +1837,7 @@
                             <span>تعليق</span>
                             ${post.comments && post.comments.length > 0 ? `<span style="font-size:11px;color:#65676b;">(${post.comments.length})</span>` : ''}
                         </button>
-                        <button onclick="sharePost('${post.image}')">
+                        <button onclick="sharePost('${post.image || ''}', '${escapeHtml(post.text || '').replace(/'/g, "\\'")}')">
                             <i class="fa-regular fa-share-from-square"></i>
                             <span>مشاركة</span>
                         </button>
@@ -1646,17 +1895,18 @@
             }
         }
 
-        function sharePost(imageSrc) {
+        function sharePost(imageSrc, text) {
+            const shareText = text || '📸 شاهد هذا المنشور من معرض الصور!';
             if (navigator.share) {
                 navigator.share({
                     title: '📸 معرض الصور',
-                    text: 'شاهد هذه الصورة الرائعة!',
+                    text: shareText,
                 }).catch(() => {});
             } else {
-                navigator.clipboard.writeText('📸 شاهد هذه الصورة من معرضي!').then(() => {
+                navigator.clipboard.writeText(shareText).then(() => {
                     showToast('📋 تم نسخ النص للحافظة');
                 }).catch(() => {
-                    showToast('📋 يمكنك مشاركة الصورة يدوياً');
+                    showToast('📋 يمكنك مشاركة هذا المنشور يدوياً');
                 });
             }
         }
@@ -1713,7 +1963,7 @@
         };
 
         // ============================================================
-        // ===== تحميل الصور =====
+        // ===== تحميل المنشورات =====
         // ============================================================
 
         async function loadPosts() {
@@ -1725,71 +1975,12 @@
                     filteredPosts = [...allPosts];
                 }
                 renderPosts(filteredPosts);
-                console.log('✅ تم تحميل ' + allPosts.length + ' صورة');
+                console.log('✅ تم تحميل ' + allPosts.length + ' منشور');
             } catch (error) {
-                console.error('❌ خطأ في تحميل الصور:', error);
-                showToast('⚠️ حدث خطأ في تحميل الصور', 3000);
+                console.error('❌ خطأ في تحميل المنشورات:', error);
+                showToast('⚠️ حدث خطأ في تحميل المنشورات', 3000);
             }
         }
-
-        // ============================================================
-        // ===== إضافة صورة جديدة =====
-        // ============================================================
-
-        const fileInput = document.getElementById('fileInput');
-        const addBtn = document.getElementById('addBtn');
-        const uploadInput = document.getElementById('uploadInput');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
-
-        addBtn.onclick = () => fileInput.click();
-        uploadInput.onclick = () => fileInput.click();
-
-        fileInput.onchange = async function() {
-            const file = this.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showToast('⚠️ الرجاء اختيار ملف صورة فقط');
-                this.value = '';
-                return;
-            }
-
-            addBtn.disabled = true;
-            addBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الضغط...';
-            progressBar.classList.add('active');
-
-            try {
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += 5;
-                    if (progress >= 90) clearInterval(progressInterval);
-                    progressFill.style.width = progress + '%';
-                }, 100);
-
-                const compressed = await compressImage(file, 1200, 1200, 0.8);
-
-                clearInterval(progressInterval);
-                progressFill.style.width = '100%';
-
-                await addPost(compressed);
-
-                progressFill.style.width = '0%';
-                progressBar.classList.remove('active');
-                addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> إضافة';
-                addBtn.disabled = false;
-
-            } catch (error) {
-                console.error('❌ خطأ في معالجة الصورة:', error);
-                showToast('⚠️ حدث خطأ في معالجة الصورة', 3000);
-                progressFill.style.width = '0%';
-                progressBar.classList.remove('active');
-                addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> إضافة';
-                addBtn.disabled = false;
-            }
-
-            this.value = '';
-        };
 
         // ============================================================
         // ===== التحقق من المشرف =====
@@ -1808,6 +1999,17 @@
         });
 
         // ============================================================
+        // ===== اختصارات لوحة المفاتيح =====
+        // ============================================================
+
+        document.getElementById('postTextInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                publishPost();
+            }
+        });
+
+        // ============================================================
         // ===== تهيئة التطبيق =====
         // ============================================================
 
@@ -1819,9 +2021,9 @@
                 setTimeout(() => {
                     const count = allPosts.length;
                     if (count === 0) {
-                        showToast('👋 مرحباً! أضف صورتك الأولى', 2500);
+                        showToast('👋 مرحباً! انشر أول منشور لك', 2500);
                     } else {
-                        showToast(`👋 مرحباً! لديك ${count} صورة`, 2000);
+                        showToast(`👋 مرحباً! لديك ${count} منشور`, 2000);
                     }
                 }, 500);
 
