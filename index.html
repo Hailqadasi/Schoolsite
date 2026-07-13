@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📸 معرض الصور - تصميم فيسبوك</title>
+    <title>📸 معرض الصور - عرض عمودي</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -20,23 +20,124 @@
         body {
             background: #f0f2f5;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
         .container {
-            width: 100%;
             max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* ===== بطاقة شبيهة بفيسبوك ===== */
+        /* ===== رأس الصفحة ===== */
+        .page-header {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+        }
+
+        .page-header h1 i {
+            color: #1877f2;
+        }
+
+        .page-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #65676b;
+        }
+
+        .page-header .user-info .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* ===== زر إضافة صورة ===== */
+        .upload-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .upload-section .upload-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .upload-section .upload-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e4e6eb;
+            border-radius: 20px;
+            background: #f0f2f5;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #65676b;
+            font-size: 14px;
+        }
+
+        .upload-section .upload-input:hover {
+            background: #e4e6eb;
+        }
+
+        .upload-section .upload-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #1877f2;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .upload-section .upload-btn:hover {
+            background: #166fe5;
+            transform: scale(1.02);
+        }
+
+        /* ===== بطاقة المنشور ===== */
         .post-card {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.4s ease;
             transition: all 0.3s ease;
         }
 
@@ -46,7 +147,7 @@
 
         /* ===== رأس المنشور ===== */
         .post-header {
-            padding: 16px 20px 12px;
+            padding: 14px 18px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -56,19 +157,18 @@
         .post-user {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .post-avatar {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             flex-shrink: 0;
         }
@@ -80,7 +180,7 @@
 
         .post-username {
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             color: #1a1a1a;
         }
 
@@ -96,97 +196,65 @@
             font-size: 10px;
         }
 
-        .post-options {
+        .post-delete-btn {
+            background: none;
+            border: none;
             color: #65676b;
             cursor: pointer;
             padding: 6px 10px;
             border-radius: 50%;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            font-size: 16px;
         }
 
-        .post-options:hover {
-            background: #f0f2f5;
-        }
-
-        /* ===== محتوى المنشور ===== */
-        .post-content {
-            padding: 0 0 8px;
-        }
-
-        .post-text {
-            padding: 0 20px 8px;
-            font-size: 15px;
-            color: #1a1a1a;
-            line-height: 1.5;
-            min-height: 20px;
-        }
-
-        .post-text .placeholder-text {
-            color: #65676b;
-            font-style: italic;
+        .post-delete-btn:hover {
+            background: #fee;
+            color: #ff4d4d;
         }
 
         /* ===== صورة المنشور ===== */
         .post-image-wrapper {
-            position: relative;
             background: #f0f2f5;
-            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .post-image-wrapper img {
             width: 100%;
             height: auto;
-            max-height: 550px;
+            max-height: 500px;
             object-fit: contain;
-            display: none;
-            background: #fff;
-        }
-
-        .post-image-wrapper .image-placeholder {
-            text-align: center;
-            color: #65676b;
-            padding: 40px 20px;
-        }
-
-        .post-image-wrapper .image-placeholder i {
-            font-size: 80px;
-            margin-bottom: 12px;
             display: block;
-            opacity: 0.3;
-        }
-
-        .post-image-wrapper .image-placeholder p {
-            font-size: 14px;
+            background: #fff;
         }
 
         /* ===== أزرار التفاعل ===== */
         .post-actions {
             display: flex;
             justify-content: space-around;
-            padding: 8px 16px;
+            padding: 6px 16px;
             border-top: 1px solid #f0f2f5;
             border-bottom: 1px solid #f0f2f5;
         }
 
         .post-actions button {
             flex: 1;
-            padding: 10px 8px;
+            padding: 8px 6px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             background: transparent;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #65676b;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .post-actions button:hover {
@@ -206,28 +274,25 @@
         }
 
         .post-actions button i {
-            font-size: 18px;
-        }
-
-        .post-actions button.danger:hover {
-            color: #ff4d4d;
+            font-size: 16px;
         }
 
         /* ===== قسم التعليقات ===== */
         .comments-section {
-            padding: 12px 20px 16px;
+            padding: 10px 18px 14px;
             background: #fafafa;
+            border-top: 1px solid #f0f2f5;
         }
 
         .comments-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .comments-header h4 {
-            font-size: 14px;
+            font-size: 13px;
             color: #65676b;
             font-weight: 500;
         }
@@ -240,11 +305,10 @@
             color: #65676b;
         }
 
-        /* ===== قائمة التعليقات ===== */
         .comments-list {
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .comments-list::-webkit-scrollbar {
@@ -263,8 +327,8 @@
 
         .comment-item {
             display: flex;
-            gap: 10px;
-            padding: 8px 0;
+            gap: 8px;
+            padding: 6px 0;
             border-bottom: 1px solid #f0f2f5;
             animation: fadeIn 0.3s ease;
         }
@@ -274,15 +338,14 @@
         }
 
         .comment-avatar {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             flex-shrink: 0;
         }
@@ -293,19 +356,19 @@
 
         .comment-user {
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             color: #1a1a1a;
         }
 
         .comment-text {
-            font-size: 14px;
+            font-size: 13px;
             color: #1a1a1a;
             word-wrap: break-word;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .comment-time {
-            font-size: 11px;
+            font-size: 10px;
             color: #65676b;
             margin-top: 2px;
         }
@@ -313,46 +376,46 @@
         .no-comments {
             text-align: center;
             color: #65676b;
-            font-size: 14px;
-            padding: 20px 0;
+            font-size: 13px;
+            padding: 15px 0;
         }
 
         .no-comments i {
             display: block;
-            font-size: 30px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            margin-bottom: 6px;
             opacity: 0.3;
         }
 
         /* ===== إضافة تعليق ===== */
         .add-comment {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             padding-top: 8px;
             border-top: 1px solid #f0f2f5;
         }
 
         .add-comment .comment-input-avatar {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4facfe, #00f2fe);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             flex-shrink: 0;
         }
 
         .add-comment input {
             flex: 1;
-            padding: 10px 14px;
+            padding: 8px 14px;
             border: 1px solid #e4e6eb;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
             transition: border-color 0.3s;
             background: #f0f2f5;
@@ -368,8 +431,8 @@
         }
 
         .add-comment .send-btn {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border: none;
             border-radius: 50%;
             background: #1877f2;
@@ -393,32 +456,30 @@
             transform: none;
         }
 
-        /* ===== زر إضافة صورة (فيسبوك) ===== */
-        .facebook-upload-btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            background: #1877f2;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
+        /* ===== رسالة لا توجد صور ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .facebook-upload-btn:hover {
-            background: #166fe5;
-            transform: scale(1.01);
+        .empty-state i {
+            font-size: 80px;
+            color: #ccd0d5;
+            margin-bottom: 16px;
         }
 
-        .facebook-upload-btn:active {
-            transform: scale(0.98);
+        .empty-state h3 {
+            color: #65676b;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #8a8f94;
+            font-size: 14px;
         }
 
         /* ===== رسائل الإشعار ===== */
@@ -451,7 +512,7 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-8px);
             }
             to {
                 opacity: 1;
@@ -459,14 +520,14 @@
             }
         }
 
-        @keyframes zoomIn {
+        @keyframes fadeInUp {
             from {
-                transform: scale(0.95);
                 opacity: 0;
+                transform: translateY(20px);
             }
             to {
-                transform: scale(1);
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -475,29 +536,40 @@
             body {
                 padding: 10px;
             }
+            .page-header {
+                padding: 14px 16px;
+            }
+            .page-header h1 {
+                font-size: 20px;
+            }
+            .upload-section {
+                padding: 12px 14px;
+                flex-wrap: wrap;
+            }
+            .upload-section .upload-input {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+            .upload-section .upload-btn {
+                font-size: 13px;
+                padding: 8px 16px;
+                width: 100%;
+            }
             .post-header {
-                padding: 12px 16px 10px;
-            }
-            .post-text {
-                padding: 0 16px 6px;
-                font-size: 14px;
-            }
-            .post-image-wrapper {
-                min-height: 200px;
+                padding: 10px 14px 8px;
             }
             .post-actions button {
                 font-size: 12px;
-                padding: 8px 4px;
+                padding: 6px 4px;
             }
             .post-actions button i {
-                font-size: 16px;
+                font-size: 14px;
             }
             .comments-section {
-                padding: 10px 16px 12px;
+                padding: 8px 14px 10px;
             }
-            .add-comment input {
-                font-size: 13px;
-                padding: 8px 12px;
+            .post-image-wrapper img {
+                max-height: 300px;
             }
         }
     </style>
@@ -505,98 +577,39 @@
 
 <body>
     <div class="container">
-        <div class="post-card">
-            <!-- ===== رأس المنشور ===== -->
-            <div class="post-header">
-                <div class="post-user">
-                    <div class="post-avatar" id="userAvatar">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="post-user-info">
-                        <span class="post-username" id="userName">مستخدم معرض الصور</span>
-                        <span class="post-time">
-                            <i class="fa-regular fa-clock"></i>
-                            <span id="postTime">الآن</span>
-                            <span>·</span>
-                            <i class="fa-solid fa-globe"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class="post-options" id="adminIndicator" style="display:none;" title="مشرف">
-                    <i class="fa-solid fa-shield-halved" style="color:#1877f2;"></i>
+        <!-- ===== رأس الصفحة ===== -->
+        <div class="page-header">
+            <h1><i class="fa-solid fa-images"></i> معرض الصور</h1>
+            <div class="user-info">
+                <span id="userIdDisplay">مستخدم</span>
+                <div class="avatar" id="userAvatar">
+                    <i class="fa-regular fa-user"></i>
                 </div>
             </div>
+        </div>
 
-            <!-- ===== محتوى المنشور ===== -->
-            <div class="post-content">
-                <div class="post-text" id="postText">
-                    <span class="placeholder-text">📸 أضف صورة لمشاركتها مع الآخرين</span>
-                </div>
-
-                <div class="post-image-wrapper">
-                    <img id="preview" />
-                    <div class="image-placeholder" id="imagePlaceholder">
-                        <i class="fa-regular fa-image"></i>
-                        <p>لا توجد صورة حالياً</p>
-                    </div>
-                </div>
+        <!-- ===== قسم إضافة صورة ===== -->
+        <div class="upload-section">
+            <div class="upload-avatar">
+                <i class="fa-regular fa-user"></i>
             </div>
+            <input type="text" class="upload-input" id="uploadInput" placeholder="ماذا تريد مشاركته؟" readonly />
+            <button class="upload-btn" id="addBtn">
+                <i class="fa-solid fa-plus"></i> إضافة
+            </button>
+            <input type="file" id="fileInput" accept="image/*" hidden />
+        </div>
 
-            <!-- ===== زر إضافة صورة (شبيه بفيسبوك) ===== -->
-            <div style="padding: 12px 20px;">
-                <button class="facebook-upload-btn" id="addBtn">
-                    <i class="fa-solid fa-plus"></i>
-                    إضافة صورة جديدة
-                </button>
-                <input type="file" id="fileInput" accept="image/*" hidden />
-            </div>
+        <!-- ===== حاوية الصور ===== -->
+        <div id="postsContainer">
+            <!-- سيتم إضافة الصور هنا عبر JavaScript -->
+        </div>
 
-            <!-- ===== أزرار التفاعل ===== -->
-            <div class="post-actions">
-                <button id="likeBtn">
-                    <i class="fa-regular fa-thumbs-up"></i>
-                    <span>إعجاب</span>
-                    <span id="likesCount" style="font-size:12px;color:#65676b;"></span>
-                </button>
-                <button id="commentToggleBtn">
-                    <i class="fa-regular fa-comment"></i>
-                    <span>تعليق</span>
-                    <span id="commentCount" style="font-size:12px;color:#65676b;"></span>
-                </button>
-                <button id="shareBtn">
-                    <i class="fa-regular fa-share-from-square"></i>
-                    <span>مشاركة</span>
-                </button>
-                <button id="deleteBtn" class="danger">
-                    <i class="fa-regular fa-trash-can"></i>
-                    <span>حذف</span>
-                </button>
-            </div>
-
-            <!-- ===== قسم التعليقات ===== -->
-            <div class="comments-section" id="commentsSection">
-                <div class="comments-header">
-                    <h4>💬 التعليقات</h4>
-                    <span class="comment-count" id="commentCountBadge">0</span>
-                </div>
-
-                <div class="comments-list" id="commentsList">
-                    <div class="no-comments" id="noComments">
-                        <i class="fa-regular fa-comment-dots"></i>
-                        <p>لا توجد تعليقات بعد، كن أول من يعلق!</p>
-                    </div>
-                </div>
-
-                <div class="add-comment">
-                    <div class="comment-input-avatar">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <input type="text" id="commentInput" placeholder="اكتب تعليقاً..." />
-                    <button class="send-btn" id="sendCommentBtn">
-                        <i class="fa-regular fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
+        <!-- ===== حالة فارغة ===== -->
+        <div class="empty-state" id="emptyState">
+            <i class="fa-regular fa-images"></i>
+            <h3>لا توجد صور</h3>
+            <p>أضف صورتك الأولى لمشاركتها مع الآخرين</p>
         </div>
     </div>
 
@@ -605,29 +618,8 @@
 
     <script>
         // ============================================================
-        // ===== جافا سكريبت - تصميم فيسبوك =====
+        // ===== جافا سكريبت - عرض عمودي مع تعليقات =====
         // ============================================================
-
-        // ===== العناصر =====
-        const fileInput = document.getElementById("fileInput");
-        const addBtn = document.getElementById("addBtn");
-        const preview = document.getElementById("preview");
-        const imagePlaceholder = document.getElementById("imagePlaceholder");
-        const postText = document.getElementById("postText");
-        const postTime = document.getElementById("postTime");
-
-        const likeBtn = document.getElementById("likeBtn");
-        const likesCount = document.getElementById("likesCount");
-
-        const deleteBtn = document.getElementById("deleteBtn");
-        const shareBtn = document.getElementById("shareBtn");
-        const commentToggleBtn = document.getElementById("commentToggleBtn");
-        const commentsSection = document.getElementById("commentsSection");
-        const commentsList = document.getElementById("commentsList");
-        const noComments = document.getElementById("noComments");
-        const commentInput = document.getElementById("commentInput");
-        const sendCommentBtn = document.getElementById("sendCommentBtn");
-        const commentCountBadge = document.getElementById("commentCountBadge");
 
         // ===== معرف المستخدم =====
         function getUserId() {
@@ -639,14 +631,11 @@
             return userId;
         }
         const currentUserId = getUserId();
+        document.getElementById("userIdDisplay").textContent = "مستخدم " + currentUserId.substring(0, 6);
 
         // ===== حالة المشرف =====
         const ADMIN_PASSWORD = "admin123";
         let isAdmin = localStorage.getItem("isAdmin") === "true";
-
-        if (isAdmin) {
-            document.getElementById("adminIndicator").style.display = "block";
-        }
 
         // ===== دالة الإشعارات =====
         function showToast(message, duration = 2500) {
@@ -657,21 +646,316 @@
             toast._timer = setTimeout(() => toast.classList.remove("show"), duration);
         }
 
-        // ===== تحديث وقت المنشور =====
-        function updatePostTime() {
-            const now = new Date();
-            postTime.textContent = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        // ===== دالة ألوان الأفاتار =====
+        function getAvatarColor(userId) {
+            const colors = ['#4facfe', '#a18cd1', '#fbc2eb', '#f6d365', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#f39c12',
+                '#e74c3c'
+            ];
+            let hash = 0;
+            for (let i = 0; i < userId.length; i++) {
+                hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return colors[Math.abs(hash) % colors.length];
         }
-        updatePostTime();
+
+        // ===== تنسيق النص =====
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== الحصول على وقت منشور =====
+        function getPostTime(timestamp) {
+            const now = new Date();
+            const postDate = new Date(timestamp);
+            const diff = Math.floor((now - postDate) / 1000);
+
+            if (diff < 60) return 'الآن';
+            if (diff < 3600) return Math.floor(diff / 60) + ' دقيقة';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' ساعة';
+            if (diff < 604800) return Math.floor(diff / 86400) + ' يوم';
+            return postDate.toLocaleDateString('ar-EG');
+        }
 
         // ============================================================
-        // ===== إدارة الصورة =====
+        // ===== إدارة الصور =====
         // ============================================================
 
-        // ===== فتح اختيار الملف =====
+        // ===== تحميل البيانات من localStorage =====
+        function loadPosts() {
+            try {
+                const data = localStorage.getItem("postsData");
+                if (data) {
+                    return JSON.parse(data);
+                }
+            } catch (e) {
+                console.error("خطأ في تحميل البيانات", e);
+            }
+            return [];
+        }
+
+        // ===== حفظ البيانات في localStorage =====
+        function savePosts(posts) {
+            localStorage.setItem("postsData", JSON.stringify(posts));
+        }
+
+        // ===== إضافة صورة جديدة =====
+        function addPost(imageSrc) {
+            const posts = loadPosts();
+
+            const newPost = {
+                id: Date.now(),
+                image: imageSrc,
+                userId: currentUserId,
+                timestamp: Date.now(),
+                likes: 0,
+                likedBy: [],
+                comments: []
+            };
+
+            posts.unshift(newPost); // إضافة في البداية
+            savePosts(posts);
+            renderPosts();
+            showToast("✅ تم نشر الصورة بنجاح");
+        }
+
+        // ===== حذف صورة =====
+        function deletePost(postId) {
+            let posts = loadPosts();
+            const post = posts.find(p => p.id === postId);
+
+            if (!post) return;
+
+            // التحقق من الصلاحية
+            const canDelete = post.userId === currentUserId || isAdmin;
+
+            if (!canDelete) {
+                showToast("⛔ لا يمكنك حذف صورة مستخدم آخر", 3000);
+                return;
+            }
+
+            if (!confirm("هل أنت متأكد من حذف هذه الصورة؟")) return;
+
+            posts = posts.filter(p => p.id !== postId);
+            savePosts(posts);
+            renderPosts();
+            showToast("🗑️ تم حذف الصورة");
+        }
+
+        // ===== الإعجاب بصورة =====
+        function toggleLike(postId) {
+            const posts = loadPosts();
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            const index = post.likedBy.indexOf(currentUserId);
+            if (index === -1) {
+                post.likedBy.push(currentUserId);
+                post.likes++;
+            } else {
+                post.likedBy.splice(index, 1);
+                post.likes--;
+            }
+
+            savePosts(posts);
+            renderPosts();
+        }
+
+        // ===== إضافة تعليق =====
+        function addComment(postId, text) {
+            if (!text || text.trim() === "") return;
+
+            const posts = loadPosts();
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            post.comments.push({
+                id: Date.now(),
+                userId: currentUserId,
+                text: text.trim(),
+                timestamp: Date.now()
+            });
+
+            savePosts(posts);
+            renderPosts();
+            showToast("💬 تم إضافة تعليق");
+        }
+
+        // ============================================================
+        // ===== عرض الصور =====
+        // ============================================================
+
+        function renderPosts() {
+            const posts = loadPosts();
+            const container = document.getElementById("postsContainer");
+            const emptyState = document.getElementById("emptyState");
+
+            if (posts.length === 0) {
+                container.innerHTML = "";
+                emptyState.style.display = "block";
+                return;
+            }
+
+            emptyState.style.display = "none";
+            container.innerHTML = "";
+
+            posts.forEach((post, index) => {
+                const postCard = document.createElement("div");
+                postCard.className = "post-card";
+                postCard.style.animationDelay = (index * 0.05) + "s";
+
+                const isLiked = post.likedBy && post.likedBy.includes(currentUserId);
+                const userName = "مستخدم " + post.userId.substring(0, 6);
+                const avatarColor = getAvatarColor(post.userId);
+                const timeAgo = getPostTime(post.timestamp);
+
+                // بناء التعليقات
+                let commentsHTML = '';
+                if (post.comments && post.comments.length > 0) {
+                    post.comments.forEach(comment => {
+                        const commentUser = "مستخدم " + comment.userId.substring(0, 6);
+                        const commentColor = getAvatarColor(comment.userId);
+                        const commentTime = getPostTime(comment.timestamp);
+                        commentsHTML += `
+                            <div class="comment-item">
+                                <div class="comment-avatar" style="background: ${commentColor};">
+                                    ${commentUser.charAt(0).toUpperCase()}
+                                </div>
+                                <div class="comment-body">
+                                    <div class="comment-user">${commentUser}</div>
+                                    <div class="comment-text">${escapeHtml(comment.text)}</div>
+                                    <div class="comment-time">${commentTime}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    commentsHTML = `
+                        <div class="no-comments">
+                            <i class="fa-regular fa-comment-dots"></i>
+                            <p>لا توجد تعليقات بعد</p>
+                        </div>
+                    `;
+                }
+
+                postCard.innerHTML = `
+                    <!-- رأس المنشور -->
+                    <div class="post-header">
+                        <div class="post-user">
+                            <div class="post-avatar" style="background: ${avatarColor};">
+                                ${userName.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="post-user-info">
+                                <span class="post-username">${userName}</span>
+                                <span class="post-time">
+                                    <i class="fa-regular fa-clock"></i>
+                                    ${timeAgo}
+                                    <span>·</span>
+                                    <i class="fa-solid fa-globe"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <button class="post-delete-btn" onclick="deletePost(${post.id})" title="حذف">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <!-- الصورة -->
+                    <div class="post-image-wrapper">
+                        <img src="${post.image}" alt="صورة منشور" loading="lazy" />
+                    </div>
+
+                    <!-- أزرار التفاعل -->
+                    <div class="post-actions">
+                        <button class="${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                            <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up"></i>
+                            <span>إعجاب</span>
+                            ${post.likes > 0 ? `<span style="font-size:11px;color:#65676b;">(${post.likes})</span>` : ''}
+                        </button>
+                        <button onclick="toggleComments(${post.id})">
+                            <i class="fa-regular fa-comment"></i>
+                            <span>تعليق</span>
+                            ${post.comments && post.comments.length > 0 ? `<span style="font-size:11px;color:#65676b;">(${post.comments.length})</span>` : ''}
+                        </button>
+                        <button onclick="sharePost('${post.image}')">
+                            <i class="fa-regular fa-share-from-square"></i>
+                            <span>مشاركة</span>
+                        </button>
+                    </div>
+
+                    <!-- التعليقات -->
+                    <div class="comments-section" id="comments-${post.id}">
+                        <div class="comments-header">
+                            <h4>💬 التعليقات</h4>
+                            <span class="comment-count">${post.comments ? post.comments.length : 0}</span>
+                        </div>
+                        <div class="comments-list">
+                            ${commentsHTML}
+                        </div>
+                        <div class="add-comment">
+                            <div class="comment-input-avatar">
+                                <i class="fa-regular fa-user"></i>
+                            </div>
+                            <input type="text" id="commentInput-${post.id}" placeholder="اكتب تعليقاً..." />
+                            <button class="send-btn" onclick="handleSendComment(${post.id})">
+                                <i class="fa-regular fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(postCard);
+
+                // إضافة حدث Enter للتعليق
+                const commentInput = postCard.querySelector(`#commentInput-${post.id}`);
+                commentInput.onkeydown = (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSendComment(post.id);
+                    }
+                };
+            });
+        }
+
+        // ===== وظائف مساعدة =====
+        function handleSendComment(postId) {
+            const input = document.getElementById(`commentInput-${postId}`);
+            if (input) {
+                addComment(postId, input.value);
+            }
+        }
+
+        function toggleComments(postId) {
+            const section = document.getElementById(`comments-${postId}`);
+            if (section) {
+                section.style.display = section.style.display === "none" ? "block" : "none";
+            }
+        }
+
+        function sharePost(imageSrc) {
+            if (navigator.share) {
+                navigator.share({
+                    title: "📸 معرض الصور",
+                    text: "شاهد هذه الصورة الرائعة!",
+                }).catch(() => {});
+            } else {
+                showToast("📋 تم نسخ رابط الصورة للحافظة");
+                navigator.clipboard.writeText("📸 شاهد هذه الصورة من معرضي!");
+            }
+        }
+
+        // ============================================================
+        // ===== إضافة صورة جديدة =====
+        // ============================================================
+
+        const fileInput = document.getElementById("fileInput");
+        const addBtn = document.getElementById("addBtn");
+        const uploadInput = document.getElementById("uploadInput");
+
         addBtn.onclick = () => fileInput.click();
+        uploadInput.onclick = () => fileInput.click();
 
-        // ===== اختيار صورة جديدة =====
         fileInput.onchange = function() {
             const file = this.files[0];
             if (!file) return;
@@ -684,282 +968,42 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const image = e.target.result;
-                preview.src = image;
-                preview.style.display = "block";
-                imagePlaceholder.style.display = "none";
-                postText.innerHTML = "📸 تمت مشاركة صورة جديدة";
-
-                const imageData = {
-                    src: image,
-                    userId: currentUserId,
-                    timestamp: Date.now()
-                };
-                localStorage.setItem("savedImage", JSON.stringify(imageData));
-                showToast("✅ تم نشر الصورة بنجاح");
-                updatePostTime();
+                addPost(e.target.result);
             };
             reader.readAsDataURL(file);
             this.value = "";
         };
 
-        // ===== تحميل الصورة المحفوظة =====
-        const savedImageData = localStorage.getItem("savedImage");
-        if (savedImageData) {
-            try {
-                const data = JSON.parse(savedImageData);
-                preview.src = data.src;
-                preview.style.display = "block";
-                imagePlaceholder.style.display = "none";
-                postText.innerHTML = "📸 تمت مشاركة صورة جديدة";
-            } catch (e) {
-                localStorage.removeItem("savedImage");
-            }
-        }
-
         // ============================================================
-        // ===== الإعجابات =====
+        // ===== التحقق من المشرف (النقر المزدوج على الأفاتار) =====
         // ============================================================
 
-        let likes = Number(localStorage.getItem("likes")) || 0;
-        updateLikesDisplay();
-
-        function updateLikesDisplay() {
-            likesCount.textContent = likes > 0 ? likes : "";
-            if (likes > 0) {
-                likeBtn.classList.add("liked");
-                likeBtn.querySelector("i").className = "fa-solid fa-thumbs-up";
-            } else {
-                likeBtn.classList.remove("liked");
-                likeBtn.querySelector("i").className = "fa-regular fa-thumbs-up";
-            }
-        }
-
-        likeBtn.onclick = () => {
-            likes++;
-            localStorage.setItem("likes", likes);
-            updateLikesDisplay();
-            likeBtn.style.transform = "scale(1.1)";
-            setTimeout(() => (likeBtn.style.transform = ""), 200);
-            showToast("👍 تم الإعجاب!");
-        };
-
-        // ============================================================
-        // ===== التعليقات =====
-        // ============================================================
-
-        let comments = [];
-
-        // تحميل التعليقات
-        function loadComments() {
-            try {
-                const saved = localStorage.getItem("comments");
-                if (saved) {
-                    comments = JSON.parse(saved);
-                }
-            } catch (e) {
-                comments = [];
-            }
-            renderComments();
-        }
-
-        // حفظ التعليقات
-        function saveComments() {
-            localStorage.setItem("comments", JSON.stringify(comments));
-        }
-
-        // عرض التعليقات
-        function renderComments() {
-            commentsList.innerHTML = "";
-
-            if (comments.length === 0) {
-                commentsList.innerHTML = `
-                    <div class="no-comments">
-                        <i class="fa-regular fa-comment-dots"></i>
-                        <p>لا توجد تعليقات بعد، كن أول من يعلق!</p>
-                    </div>
-                `;
-                commentCountBadge.textContent = "0";
-                return;
-            }
-
-            comments.forEach((comment, index) => {
-                const commentDiv = document.createElement("div");
-                commentDiv.className = "comment-item";
-                commentDiv.innerHTML = `
-                    <div class="comment-avatar" style="background: ${getAvatarColor(comment.userId)};">
-                        ${comment.userName.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="comment-body">
-                        <div class="comment-user">${comment.userName}</div>
-                        <div class="comment-text">${escapeHtml(comment.text)}</div>
-                        <div class="comment-time">${comment.time}</div>
-                    </div>
-                `;
-                commentsList.appendChild(commentDiv);
-            });
-
-            commentCountBadge.textContent = comments.length;
-            commentsList.scrollTop = commentsList.scrollHeight;
-        }
-
-        // ألوان عشوائية للأفاتار
-        function getAvatarColor(userId) {
-            const colors = ['#4facfe', '#a18cd1', '#fbc2eb', '#f6d365', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d'];
-            let hash = 0;
-            for (let i = 0; i < userId.length; i++) {
-                hash = userId.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            return colors[Math.abs(hash) % colors.length];
-        }
-
-        // تنسيق النص
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // إضافة تعليق
-        function addComment(text) {
-            if (!text || text.trim() === "") return;
-
-            const userName = "مستخدم " + currentUserId.substring(0, 6);
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-
-            comments.push({
-                id: Date.now(),
-                userId: currentUserId,
-                userName: userName,
-                text: text.trim(),
-                time: timeStr,
-                timestamp: now.getTime()
-            });
-
-            saveComments();
-            renderComments();
-            commentInput.value = "";
-            showToast("💬 تم إضافة تعليقك");
-
-            // إظهار قسم التعليقات تلقائياً
-            commentsSection.style.display = "block";
-        }
-
-        // ===== إرسال التعليق =====
-        sendCommentBtn.onclick = () => {
-            addComment(commentInput.value);
-        };
-
-        commentInput.onkeydown = (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                addComment(commentInput.value);
-            }
-        };
-
-        // ===== تبديل إظهار/إخفاء التعليقات =====
-        let commentsVisible = true;
-
-        commentToggleBtn.onclick = () => {
-            commentsVisible = !commentsVisible;
-            commentsSection.style.display = commentsVisible ? "block" : "none";
-            commentToggleBtn.querySelector("span").textContent = commentsVisible ? "تعليق" : "تعليق";
-        };
-
-        // تحميل التعليقات عند البدء
-        loadComments();
-
-        // ============================================================
-        // ===== حذف الصورة =====
-        // ============================================================
-
-        deleteBtn.onclick = () => {
-            const hasImage = preview.src && preview.style.display !== "none";
-            if (!hasImage) {
-                showToast("⚠️ لا توجد صورة لحذفها");
-                return;
-            }
-
-            let imageOwnerId = null;
-            const savedData = localStorage.getItem("savedImage");
-            if (savedData) {
-                try {
-                    const data = JSON.parse(savedData);
-                    imageOwnerId = data.userId;
-                } catch (e) {}
-            }
-
-            const canDelete = !imageOwnerId || imageOwnerId === currentUserId || isAdmin;
-
-            if (!canDelete) {
-                showToast("⛔ لا يمكنك حذف صورة مستخدم آخر", 3000);
-                return;
-            }
-
-            if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) {
-                preview.removeAttribute("src");
-                preview.style.display = "none";
-                imagePlaceholder.style.display = "flex";
-                postText.innerHTML = '<span class="placeholder-text">📸 أضف صورة لمشاركتها مع الآخرين</span>';
-                localStorage.removeItem("savedImage");
-                showToast("🗑️ تم حذف الصورة");
-            }
-        };
-
-        // ============================================================
-        // ===== المشاركة =====
-        // ============================================================
-
-        shareBtn.onclick = async () => {
-            const hasImage = preview.src && preview.style.display !== "none";
-
-            if (!hasImage) {
-                showToast("⚠️ لا توجد صورة للمشاركة");
-                return;
-            }
-
-            try {
-                const response = await fetch(preview.src);
-                const blob = await response.blob();
-
-                if (navigator.share) {
-                    await navigator.share({
-                        title: "📸 معرض الصور",
-                        text: "شارك صورة رائعة!",
-                        files: [new File([blob], "image.jpg", { type: blob.type })],
-                    });
-                    showToast("✅ تمت المشاركة بنجاح");
-                } else {
-                    await navigator.clipboard.writeText("📸 شاهد هذه الصورة من معرضي!");
-                    showToast("📋 تم نسخ النص للحافظة");
-                }
-            } catch (err) {
-                if (err.name !== "AbortError") {
-                    showToast("⚠️ حدث خطأ أثناء المشاركة");
-                }
-            }
-        };
-
-        // ============================================================
-        // ===== التحقق من المشرف (النقر المزدوج على الأيقونة) =====
-        // ============================================================
-
-        document.getElementById("adminIndicator").addEventListener("dblclick", () => {
+        document.getElementById("userAvatar").addEventListener("dblclick", () => {
             const password = prompt("🔐 أدخل الرمز السري للمشرف:");
             if (password === ADMIN_PASSWORD) {
                 isAdmin = true;
                 localStorage.setItem("isAdmin", "true");
-                document.getElementById("adminIndicator").style.display = "block";
                 showToast("✅ تم تفعيل صلاحية المشرف", 3000);
+                renderPosts();
             } else if (password !== null) {
                 showToast("❌ رمز سري غير صحيح", 2000);
             }
         });
 
+        // ============================================================
+        // ===== تحميل الصور عند بدء الصفحة =====
+        // ============================================================
+
+        renderPosts();
+
         // ===== رسالة ترحيب =====
         setTimeout(() => {
-            showToast("👋 مرحباً بك في معرض الصور!", 2000);
+            const posts = loadPosts();
+            if (posts.length === 0) {
+                showToast("👋 مرحباً! أضف صورتك الأولى", 2500);
+            } else {
+                showToast(`👋 مرحباً! لديك ${posts.length} صورة`, 2000);
+            }
         }, 500);
     </script>
 </body>
