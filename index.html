@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📸 معرض الصور المتقدم</title>
+    <title>📸 معرض الصور - الملف الشخصي</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -50,6 +50,12 @@
             color: #1877f2;
         }
 
+        .page-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .page-header .user-info {
             display: flex;
             align-items: center;
@@ -72,6 +78,25 @@
         }
         .page-header .user-info .avatar:hover {
             transform: scale(1.05);
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #e4e6eb;
+            color: #65676b;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: none;
+        }
+        .back-btn:hover {
+            background: #ccd0d5;
+        }
+        .back-btn.visible {
+            display: inline-block;
         }
 
         /* ===== شريط البحث ===== */
@@ -208,6 +233,109 @@
             width: 0%;
         }
 
+        /* ===== الملف الشخصي ===== */
+        .profile-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+        .profile-card.visible {
+            display: block;
+        }
+
+        .profile-card .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 auto 12px;
+        }
+
+        .profile-card .profile-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .profile-card .profile-id {
+            font-size: 13px;
+            color: #65676b;
+            margin-bottom: 16px;
+        }
+
+        .profile-card .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 0;
+            border-top: 1px solid #f0f2f5;
+            border-bottom: 1px solid #f0f2f5;
+            margin-bottom: 16px;
+        }
+
+        .profile-card .profile-stats .stat {
+            text-align: center;
+        }
+
+        .profile-card .profile-stats .stat .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .profile-card .profile-stats .stat .stat-label {
+            font-size: 12px;
+            color: #65676b;
+        }
+
+        .profile-card .profile-bio {
+            font-size: 14px;
+            color: #65676b;
+            padding: 8px 0;
+        }
+
+        .profile-card .profile-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .profile-card .profile-actions button {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-card .profile-actions .view-posts-btn {
+            background: #1877f2;
+            color: #fff;
+        }
+        .profile-card .profile-actions .view-posts-btn:hover {
+            background: #166fe5;
+            transform: scale(1.02);
+        }
+        .profile-card .profile-actions .close-profile-btn {
+            background: #e4e6eb;
+            color: #65676b;
+        }
+        .profile-card .profile-actions .close-profile-btn:hover {
+            background: #ccd0d5;
+        }
+
         /* ===== بطاقة المنشور ===== */
         .post-card {
             background: #fff;
@@ -235,6 +363,10 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .post-user:hover {
+            opacity: 0.8;
         }
         .post-avatar {
             width: 38px;
@@ -820,6 +952,10 @@
                 max-width: 95%;
                 max-height: 80%;
             }
+            .profile-card .profile-stats {
+                flex-direction: column;
+                gap: 12px;
+            }
         }
     </style>
 </head>
@@ -828,17 +964,24 @@
     <div class="container">
         <!-- ===== رأس الصفحة ===== -->
         <div class="page-header">
-            <h1><i class="fa-solid fa-images"></i> معرض الصور</h1>
-            <div class="user-info">
-                <span id="userIdDisplay">مستخدم</span>
-                <div class="avatar" id="userAvatar" title="انقر مرتين لتفعيل المشرف">
-                    <i class="fa-regular fa-user"></i>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="back-btn" id="backBtn" onclick="closeProfile()">
+                    <i class="fa-solid fa-arrow-right"></i> رجوع
+                </button>
+                <h1><i class="fa-solid fa-images"></i> معرض الصور</h1>
+            </div>
+            <div class="header-actions">
+                <div class="user-info">
+                    <span id="userIdDisplay">مستخدم</span>
+                    <div class="avatar" id="userAvatar" title="انقر مرتين لتفعيل المشرف">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- ===== شريط البحث ===== -->
-        <div class="search-bar">
+        <div class="search-bar" id="searchBar">
             <i class="fa-solid fa-search" style="color:#65676b;"></i>
             <input type="text" id="searchInput" placeholder="ابحث عن مستخدم..." />
             <button onclick="searchPosts()"><i class="fa-solid fa-search"></i> بحث</button>
@@ -846,7 +989,7 @@
         </div>
 
         <!-- ===== قسم إضافة صورة ===== -->
-        <div class="upload-section">
+        <div class="upload-section" id="uploadSection">
             <div class="upload-avatar">
                 <i class="fa-regular fa-user"></i>
             </div>
@@ -854,9 +997,39 @@
             <button class="upload-btn" id="addBtn">
                 <i class="fa-solid fa-plus"></i> إضافة
             </button>
-            <input type="file" id="fileInput" accept="image/*" hidden multiple />
+            <input type="file" id="fileInput" accept="image/*" hidden />
             <div class="progress-bar" id="progressBar">
                 <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- ===== الملف الشخصي ===== -->
+        <div class="profile-card" id="profileCard">
+            <div class="profile-avatar" id="profileAvatar">م</div>
+            <div class="profile-name" id="profileName">مستخدم</div>
+            <div class="profile-id" id="profileId">المعرف: ---</div>
+            <div class="profile-stats">
+                <div class="stat">
+                    <div class="stat-number" id="profilePosts">0</div>
+                    <div class="stat-label">📸 صور</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="profileLikes">0</div>
+                    <div class="stat-label">❤️ إعجابات</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="profileComments">0</div>
+                    <div class="stat-label">💬 تعليقات</div>
+                </div>
+            </div>
+            <div class="profile-bio" id="profileBio">📱 مستخدم في معرض الصور</div>
+            <div class="profile-actions">
+                <button class="view-posts-btn" onclick="viewUserPosts()">
+                    <i class="fa-regular fa-images"></i> عرض صوره
+                </button>
+                <button class="close-profile-btn" onclick="closeProfile()">
+                    <i class="fa-regular fa-xmark"></i> إغلاق
+                </button>
             </div>
         </div>
 
@@ -896,7 +1069,7 @@
 
     <script>
         // ============================================================
-        // ===== جافا سكريبت المتقدم (المصحح) =====
+        // ===== جافا سكريبت =====
         // ============================================================
 
         // ===== المتغيرات العامة =====
@@ -906,6 +1079,8 @@
         let filteredPosts = [];
         let confirmCallback = null;
         let db = null;
+        let viewingUserId = null; // المستخدم الذي نعرض ملفه
+        let isProfileView = false;
 
         // ===== معرف المستخدم =====
         function initUserId() {
@@ -929,7 +1104,7 @@
         // ===== IndexedDB =====
         // ============================================================
 
-        const DB_NAME = 'GalleryDB_V2';
+        const DB_NAME = 'GalleryDB_V3';
         const DB_VERSION = 1;
 
         function openDB() {
@@ -959,41 +1134,26 @@
             });
         }
 
-        // ===== إضافة أو تحديث منشور =====
         function savePostToDB(post) {
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['posts'], 'readwrite');
                 const store = transaction.objectStore('posts');
                 const request = store.put(post);
-                request.onsuccess = () => {
-                    console.log('✅ تم حفظ المنشور:', post.id);
-                    resolve();
-                };
-                request.onerror = () => {
-                    console.error('❌ خطأ في حفظ المنشور:', request.error);
-                    reject(request.error);
-                };
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
             });
         }
 
-        // ===== حذف منشور =====
         function deletePostFromDB(id) {
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['posts'], 'readwrite');
                 const store = transaction.objectStore('posts');
                 const request = store.delete(id);
-                request.onsuccess = () => {
-                    console.log('✅ تم حذف المنشور:', id);
-                    resolve();
-                };
-                request.onerror = () => {
-                    console.error('❌ خطأ في حذف المنشور:', request.error);
-                    reject(request.error);
-                };
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
             });
         }
 
-        // ===== جلب جميع المنشورات =====
         function getAllPostsFromDB() {
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['posts'], 'readonly');
@@ -1001,15 +1161,10 @@
                 const request = store.getAll();
                 request.onsuccess = () => {
                     const posts = request.result || [];
-                    // ترتيب تنازلي حسب التاريخ
                     posts.sort((a, b) => b.timestamp - a.timestamp);
-                    console.log('✅ تم جلب ' + posts.length + ' منشور');
                     resolve(posts);
                 };
-                request.onerror = () => {
-                    console.error('❌ خطأ في جلب المنشورات:', request.error);
-                    reject(request.error);
-                };
+                request.onerror = () => reject(request.error);
             });
         }
 
@@ -1051,6 +1206,87 @@
                 reader.onerror = reject;
                 reader.readAsDataURL(file);
             });
+        }
+
+        // ============================================================
+        // ===== الملف الشخصي =====
+        // ============================================================
+
+        function openProfile(userId) {
+            viewingUserId = userId;
+            isProfileView = true;
+
+            // إظهار زر الرجوع
+            document.getElementById('backBtn').classList.add('visible');
+
+            // إخفاء شريط البحث وقسم الإضافة
+            document.getElementById('searchBar').style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'none';
+
+            // جلب بيانات المستخدم
+            const userPosts = allPosts.filter(p => p.userId === userId);
+            const userName = 'مستخدم ' + userId.substring(0, 6);
+            const avatarColor = getAvatarColor(userId);
+
+            // حساب الإحصائيات
+            let totalLikes = 0;
+            let totalComments = 0;
+            userPosts.forEach(post => {
+                totalLikes += post.likes || 0;
+                totalComments += (post.comments || []).length;
+            });
+
+            // عرض الملف الشخصي
+            const profileCard = document.getElementById('profileCard');
+            document.getElementById('profileAvatar').textContent = userName.charAt(0).toUpperCase();
+            document.getElementById('profileAvatar').style.background = avatarColor;
+            document.getElementById('profileName').textContent = userName;
+            document.getElementById('profileId').textContent = 'المعرف: ' + userId.substring(0, 12) + '...';
+            document.getElementById('profilePosts').textContent = userPosts.length;
+            document.getElementById('profileLikes').textContent = totalLikes;
+            document.getElementById('profileComments').textContent = totalComments;
+
+            // تحديث السيرة الذاتية
+            let bio = '📱 مستخدم في معرض الصور';
+            if (userPosts.length > 0) {
+                bio = `📸 نشر ${userPosts.length} صورة`;
+                if (totalLikes > 0) bio += ` · ❤️ ${totalLikes} إعجاب`;
+                if (totalComments > 0) bio += ` · 💬 ${totalComments} تعليق`;
+            }
+            document.getElementById('profileBio').textContent = bio;
+
+            profileCard.classList.add('visible');
+
+            // عرض صور المستخدم فقط
+            filteredPosts = userPosts;
+            renderPosts(filteredPosts);
+
+            if (userPosts.length === 0) {
+                showToast('👤 هذا المستخدم لم ينشر أي صور بعد', 2500);
+            }
+        }
+
+        function closeProfile() {
+            viewingUserId = null;
+            isProfileView = false;
+
+            document.getElementById('backBtn').classList.remove('visible');
+            document.getElementById('searchBar').style.display = 'flex';
+            document.getElementById('uploadSection').style.display = 'flex';
+            document.getElementById('profileCard').classList.remove('visible');
+
+            filteredPosts = [...allPosts];
+            renderPosts(filteredPosts);
+
+            // إلغاء أي بحث
+            document.getElementById('searchInput').value = '';
+        }
+
+        function viewUserPosts() {
+            if (viewingUserId) {
+                // بالفعل نعرض صوره
+                showToast('📸 جاري عرض صور المستخدم', 1500);
+            }
         }
 
         // ============================================================
@@ -1096,6 +1332,10 @@
                         await deletePostFromDB(postId);
                         await loadPosts();
                         showToast('🗑️ تم حذف الصورة');
+                        // إذا كنا في عرض ملف شخصي، نحدثه
+                        if (isProfileView && viewingUserId) {
+                            openProfile(viewingUserId);
+                        }
                     } catch (error) {
                         console.error('❌ خطأ في حذف المنشور:', error);
                         showToast('⚠️ حدث خطأ في حذف الصورة', 3000);
@@ -1120,6 +1360,10 @@
             try {
                 await savePostToDB(post);
                 await loadPosts();
+                // تحديث الملف الشخصي إذا كان مفتوحاً
+                if (isProfileView && viewingUserId) {
+                    openProfile(viewingUserId);
+                }
             } catch (error) {
                 console.error('❌ خطأ في تحديث الإعجاب:', error);
                 showToast('⚠️ حدث خطأ', 2000);
@@ -1143,6 +1387,9 @@
                 await savePostToDB(post);
                 await loadPosts();
                 showToast('💬 تم إضافة تعليق');
+                if (isProfileView && viewingUserId) {
+                    openProfile(viewingUserId);
+                }
             } catch (error) {
                 console.error('❌ خطأ في إضافة التعليق:', error);
                 showToast('⚠️ حدث خطأ', 2000);
@@ -1171,6 +1418,9 @@
                         await savePostToDB(post);
                         await loadPosts();
                         showToast('🗑️ تم حذف التعليق');
+                        if (isProfileView && viewingUserId) {
+                            openProfile(viewingUserId);
+                        }
                     } catch (error) {
                         console.error('❌ خطأ في حذف التعليق:', error);
                         showToast('⚠️ حدث خطأ', 2000);
@@ -1184,6 +1434,7 @@
         // ============================================================
 
         function searchPosts() {
+            if (isProfileView) return;
             const query = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!query) {
                 filteredPosts = [...allPosts];
@@ -1200,6 +1451,7 @@
         }
 
         function clearSearch() {
+            if (isProfileView) return;
             document.getElementById('searchInput').value = '';
             filteredPosts = [...allPosts];
             renderPosts(filteredPosts);
@@ -1250,7 +1502,6 @@
             emptyState.style.display = 'none';
             container.innerHTML = '';
 
-            // استخدام DocumentFragment للتحسين
             const fragment = document.createDocumentFragment();
 
             posts.forEach((post) => {
@@ -1259,7 +1510,6 @@
                 const avatarColor = getAvatarColor(post.userId);
                 const timeAgo = getPostTime(post.timestamp);
 
-                // بناء التعليقات
                 let commentsHTML = '';
                 if (post.comments && post.comments.length > 0) {
                     post.comments.forEach(comment => {
@@ -1296,11 +1546,10 @@
 
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
-                postCard.dataset.postId = post.id;
 
                 postCard.innerHTML = `
                     <div class="post-header">
-                        <div class="post-user">
+                        <div class="post-user" onclick="openProfile('${post.userId}')" title="انقر لعرض الملف الشخصي">
                             <div class="post-avatar" style="background: ${avatarColor};">
                                 ${userName.charAt(0).toUpperCase()}
                             </div>
@@ -1367,7 +1616,6 @@
 
                 fragment.appendChild(postCard);
 
-                // إضافة حدث Enter للتعليق
                 const commentInput = postCard.querySelector(`#commentInput-${post.id}`);
                 if (commentInput) {
                     commentInput.onkeydown = (e) => {
@@ -1471,7 +1719,11 @@
         async function loadPosts() {
             try {
                 allPosts = await getAllPostsFromDB();
-                filteredPosts = [...allPosts];
+                if (isProfileView && viewingUserId) {
+                    filteredPosts = allPosts.filter(p => p.userId === viewingUserId);
+                } else {
+                    filteredPosts = [...allPosts];
+                }
                 renderPosts(filteredPosts);
                 console.log('✅ تم تحميل ' + allPosts.length + ' صورة');
             } catch (error) {
@@ -1503,13 +1755,11 @@
                 return;
             }
 
-            // تعطيل الزر وإظهار التحميل
             addBtn.disabled = true;
             addBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الضغط...';
             progressBar.classList.add('active');
 
             try {
-                // محاكاة تقدم التحميل
                 let progress = 0;
                 const progressInterval = setInterval(() => {
                     progress += 5;
@@ -1517,7 +1767,6 @@
                     progressFill.style.width = progress + '%';
                 }, 100);
 
-                // ضغط الصورة
                 const compressed = await compressImage(file, 1200, 1200, 0.8);
 
                 clearInterval(progressInterval);
