@@ -1,4 +1,6 @@
- <!DOCTYPE html>
+ 
+
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -9,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
     <style>
-        /* ===== CSS (نفس الكود السابق مع تعديلات بسيطة) ===== */
+        /* ===== جميع التنسيقات السابقة ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1383,8 +1385,7 @@
 
     <script>
         // ============================================================
-        // ===== مفتاح ImgBB (استبدله بمفتاحك) =====
-        // سجل في https://imgbb.com/ واحصل على مفتاح مجاني
+        // ===== مفتاح ImgBB =====
         // ============================================================
         const IMGBB_API_KEY = '1325c7cdc0aaa248f2175858733c3231';
 
@@ -1486,22 +1487,73 @@
         });
 
         // ============================================================
-        // ===== رفع الصور إلى السحابة (ImgBB) =====
+        // ===== رفع الصور إلى السحابة (ImgBB) مع تحسينات =====
         // ============================================================
 
         async function uploadToImgBB(imageDataUrl) {
             try {
-                // تحويل base64 إلى Blob
+                // 1. تحويل base64 إلى Blob
                 const response = await fetch(imageDataUrl);
                 const blob = await response.blob();
 
+                // 2. التحقق من حجم الصورة (حد أقصى 32MB)
+                if (blob.size > 32 * 1024 * 1024) {
+                    throw new Error('حجم الصورة كبير جداً (الحد الأقصى 32MB)');
+                }
+
+                // 3. إنشاء FormData
                 const formData = new FormData();
                 formData.append('image', blob, 'image.jpg');
                 formData.append('key', IMGBB_API_KEY);
+                formData.append('name', 'post_' + Date.now());
+                formData.append('expiration', '0'); // لا تنتهي صلاحيتها
 
-                // إضافة اسم للتجربة
-                const name = 'post_' + Date.now();
-                formData.append('name', name);
+                // 4. إرسال الطلب
+                const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // 5. قراءة النتيجة
+                const result = await uploadResponse.json();
+
+                if (result.success) {
+                    console.log('✅ تم رفع الصورة للسحابة:', result.data.url);
+                    return result.data.url;
+                } else {
+                    // عرض تفاصيل الخطأ
+                    const errorMsg = result.error?.message || 'فشل رفع الصورة';
+                    console.error('❌ فشل رفع الصورة:', errorMsg);
+                    throw new Error(errorMsg);
+                }
+            } catch (error) {
+                console.error('❌ خطأ في رفع الصورة:', error.message);
+                // في حالة الفشل، نستخدم الصورة محلياً (base64)
+                showToast('⚠️ فشل الرفع للسحابة، تم الحفظ محلياً', 3000);
+                return imageDataUrl;
+            }
+        }
+
+        // ============================================================
+        // ===== اختبار اتصال ImgBB =====
+        // ============================================================
+
+        async function testImgBBConnection() {
+            try {
+                // إنشاء صورة اختبارية صغيرة
+                const canvas = document.createElement('canvas');
+                canvas.width = 10;
+                canvas.height = 10;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#1877f2';
+                ctx.fillRect(0, 0, 10, 10);
+                const testImage = canvas.toDataURL('image/jpeg', 0.5);
+
+                const formData = new FormData();
+                const response = await fetch(testImage);
+                const blob = await response.blob();
+                formData.append('image', blob, 'test.jpg');
+                formData.append('key', IMGBB_API_KEY);
 
                 const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
                     method: 'POST',
@@ -1511,17 +1563,15 @@
                 const result = await uploadResponse.json();
 
                 if (result.success) {
-                    console.log('✅ تم رفع الصورة للسحابة:', result.data.url);
-                    return result.data.url;
+                    console.log('✅ اتصال ImgBB ناجح! المفتاح صحيح.');
+                    return true;
                 } else {
-                    console.error('❌ فشل رفع الصورة:', result.error);
-                    throw new Error(result.error?.message || 'فشل رفع الصورة');
+                    console.error('❌ فشل اختبار اتصال ImgBB:', result.error?.message);
+                    return false;
                 }
             } catch (error) {
-                console.error('❌ خطأ في رفع الصورة:', error);
-                // في حالة الفشل، نستخدم الصورة محلياً (base64)
-                showToast('⚠️ فشل الرفع للسحابة، تم الحفظ محلياً', 3000);
-                return imageDataUrl;
+                console.error('❌ خطأ في اختبار اتصال ImgBB:', error.message);
+                return false;
             }
         }
 
@@ -1529,7 +1579,7 @@
         // ===== IndexedDB =====
         // ============================================================
 
-        const DB_NAME = 'GalleryDB_V6';
+        const DB_NAME = 'GalleryDB_V7';
         const DB_VERSION = 1;
 
         function openDB() {
@@ -1752,29 +1802,36 @@
         async function addPost(text, imageData) {
             if (!text && !imageData) {
                 showToast('⚠️ الرجاء كتابة نص أو إضافة صورة', 2500);
-                return;
+                return false;
             }
 
-            // رفع الصورة للسحابة إذا وجدت
             let imageUrl = null;
+
+            // محاولة رفع الصورة للسحابة إذا وجدت
             if (imageData) {
                 try {
-                    showToast('📤 جاري رفع الصورة للسحابة...', 2000);
+                    showToast('📤 جاري رفع الصورة للسحابة...', 3000);
                     imageUrl = await uploadToImgBB(imageData);
-                    if (imageUrl !== imageData) {
-                        showToast('✅ تم رفع الصورة للسحابة', 1500);
+
+                    if (imageUrl && imageUrl !== imageData) {
+                        showToast('✅ تم رفع الصورة للسحابة بنجاح', 2000);
+                    } else {
+                        // إذا عادت نفس الصورة (فشل الرفع)
+                        imageUrl = imageData;
+                        showToast('⚠️ تم حفظ الصورة محلياً (فشل الرفع للسحابة)', 3000);
                     }
                 } catch (error) {
                     console.error('❌ خطأ في رفع الصورة:', error);
-                    imageUrl = imageData; // استخدام الصورة محلياً في حالة الفشل
-                    showToast('⚠️ تم حفظ الصورة محلياً', 2000);
+                    imageUrl = imageData;
+                    showToast('⚠️ تم حفظ الصورة محلياً', 3000);
                 }
             }
 
+            // إنشاء المنشور
             const post = {
                 id: Date.now(),
                 text: text || '',
-                image: imageUrl, // رابط الصورة على السحابة أو محلياً
+                image: imageUrl,
                 userId: currentUserId,
                 userName: currentUserName,
                 timestamp: Date.now(),
@@ -1786,12 +1843,14 @@
             try {
                 await savePostToDB(post);
                 await loadPosts();
-                showToast('✅ تم نشر المنشور بنجاح');
+                showToast('✅ تم نشر المنشور بنجاح', 2000);
                 document.getElementById('postTextInput').value = '';
                 removeImage();
+                return true;
             } catch (error) {
                 console.error('❌ خطأ في إضافة المنشور:', error);
                 showToast('⚠️ حدث خطأ في نشر المنشور', 3000);
+                return false;
             }
         }
 
@@ -1913,7 +1972,7 @@
         // ===== النشر =====
         // ============================================================
 
-        function publishPost() {
+        async function publishPost() {
             const text = document.getElementById('postTextInput').value.trim();
             const image = tempImageData;
 
@@ -1922,15 +1981,19 @@
                 return;
             }
 
-            // تعطيل الزر أثناء النشر
             const publishBtn = document.getElementById('publishBtn');
             publishBtn.disabled = true;
             publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر...';
 
-            addPost(text, image).finally(() => {
+            try {
+                await addPost(text, image);
+            } catch (error) {
+                console.error('❌ خطأ في النشر:', error);
+                showToast('⚠️ حدث خطأ في النشر', 3000);
+            } finally {
                 publishBtn.disabled = false;
                 publishBtn.innerHTML = '<i class="fa-regular fa-paper-plane"></i> نشر';
-            });
+            }
         }
 
         // ============================================================
@@ -2344,10 +2407,13 @@
                 await openDB();
                 await loadPosts();
 
-                // التحقق من وجود مفتاح API
-                if (IMGBB_API_KEY === 'YOUR_FREE_API_KEY_HERE') {
-                    showToast('⚠️ يرجى إضافة مفتاح ImgBB في الكود', 4000);
-                    console.warn('⚠️ يرجى إضافة مفتاح ImgBB في المتغير IMGBB_API_KEY');
+                // اختبار اتصال ImgBB
+                const isConnected = await testImgBBConnection();
+                if (!isConnected) {
+                    showToast('⚠️ مشكلة في الاتصال بالسحابة، سيتم الحفظ محلياً', 4000);
+                    console.warn('⚠️ فشل اختبار اتصال ImgBB');
+                } else {
+                    console.log('✅ اتصال ImgBB ناجح');
                 }
 
                 setTimeout(() => {
