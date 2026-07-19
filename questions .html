@@ -1,0 +1,185 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>أسئلة الدرس - الموسوعة التعليمية</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+
+body{
+background:#f4f7fb;
+}
+
+
+header{
+
+background:#fb8c00;
+color:white;
+padding:20px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+
+}
+
+
+.container{
+
+padding:20px;
+max-width:700px;
+margin:auto;
+
+}
+
+
+.question-box{
+
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+margin-bottom:20px;
+
+}
+
+
+.question{
+
+font-size:20px;
+font-weight:bold;
+margin-bottom:20px;
+
+}
+
+
+.option{
+
+display:block;
+background:#f5f5f5;
+padding:15px;
+border-radius:12px;
+margin-bottom:12px;
+cursor:pointer;
+font-size:17px;
+
+}
+
+
+.option:hover{
+
+background:#fff3e0;
+
+}
+
+
+button{
+
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+background:#1565C0;
+color:white;
+font-size:18px;
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+❓ أسئلة الدرس
+</header>
+
+
+<div class="container">
+
+
+<div class="question-box">
+
+
+<div class="question">
+1- ما هو السؤال الأول في الدرس؟
+</div>
+
+<label class="option">
+<input type="radio" name="answer">
+ الإجابة الأولى
+</label>
+
+
+<label class="option">
+<input type="radio" name="answer">
+ الإجابة الثانية
+</label>
+
+
+<label class="option">
+<input type="radio" name="answer">
+ الإجابة الثالثة
+</label>
+
+
+<label class="option">
+<input type="radio" name="answer">
+ الإجابة الرابعة
+</label>
+
+
+<button onclick="checkAnswer()">
+إرسال الإجابة
+</button>
+
+
+</div>
+
+
+<div id="result" 
+style="
+margin-top:20px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+color:#1565C0;
+">
+</div>
+
+
+</div>
+
+
+<script>
+
+function checkAnswer(){
+
+document.getElementById("result").innerHTML =
+"تم تسجيل إجابتك ✅";
+
+}
+
+</script>
+
+
+</body>
+</html>
