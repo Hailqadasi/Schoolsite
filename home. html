@@ -1,0 +1,298 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الموسوعة التعليمية اليمنية</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+.side-menu{
+position:fixed;
+top:0;
+right:-300px;
+width:280px;
+height:100%;
+background:#fff;
+z-index:2000;
+padding:25px;
+box-shadow:-5px 0 15px rgba(0,0,0,.2);
+transition:.4s;
+}
+
+.side-menu h2{
+color:#1565C0;
+margin-bottom:25px;
+}
+
+.side-menu a{
+display:block;
+padding:15px;
+text-decoration:none;
+color:#333;
+font-size:17px;
+border-bottom:1px solid #eee;
+}
+
+.side-menu a i{
+margin-left:10px;
+color:#1565C0;
+}
+
+.close{
+font-size:25px;
+cursor:pointer;
+margin-bottom:20px;
+}
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:#f4f7fb;
+color:#222;
+}
+
+header{
+background:#1565C0;
+color:#fff;
+padding:15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 3px 10px rgba(0,0,0,.2);
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+}
+
+.menu{
+font-size:28px;
+cursor:pointer;
+}
+
+.container{
+padding:20px;
+}
+
+.search{
+background:#fff;
+border-radius:15px;
+display:flex;
+align-items:center;
+padding:12px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.search i{
+color:#1565C0;
+margin-left:10px;
+}
+
+.search input{
+border:none;
+outline:none;
+width:100%;
+font-size:16px;
+}
+
+.hero{
+background:linear-gradient(135deg,#1565C0,#42A5F5);
+color:#fff;
+padding:25px;
+border-radius:20px;
+text-align:center;
+margin-bottom:25px;
+}
+
+.hero h2{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:16px;
+}
+
+.subjects{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:15px;
+}
+
+.card{
+background:#fff;
+border-radius:18px;
+padding:20px;
+text-align:center;
+text-decoration:none;
+color:#222;
+box-shadow:0 4px 12px rgba(0,0,0,.1);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card i{
+font-size:38px;
+color:#1565C0;
+margin-bottom:12px;
+}
+
+.card h3{
+font-size:18px;
+margin-bottom:6px;
+}
+
+.card p{
+font-size:14px;
+color:#666;
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">
+<i class="fas fa-graduation-cap"></i>
+ الموسوعة التعليمية
+</div>
+
+<div class="menu">
+<i class="fas fa-bars"></i>
+</div>
+</header>
+
+<div class="container">
+
+<div class="search">
+<i class="fas fa-search"></i>
+<input type="text" placeholder="ابحث عن مادة أو درس...">
+</div>
+
+<div class="hero">
+<h2>مرحبًا بك 👋</h2>
+<p>اختر المادة الدراسية لبدء التعلم</p>
+</div>
+
+<div class="subjects">
+
+<a class="card" href="math.html">
+<i class="fas fa-square-root-alt"></i>
+<h3>الرياضيات</h3>
+<p>جميع الدروس</p>
+</a>
+
+<a class="card" href="physics.html">
+<i class="fas fa-atom"></i>
+<h3>الفيزياء</h3>
+<p>شرح وملخص</p>
+</a>
+<a class="card" href="physics.html">
+<i class="fas fa-atom"></i>
+<h3>الفيزياء</h3>
+<p>شرح وملخص</p>
+</a>
+<a class="card" href="chemistry.html">
+<i class="fas fa-flask"></i>
+<h3>الكيمياء</h3>
+<p>شرح وملخص وأسئلة</p>
+</a>
+
+<a class="card" href="biology.html">
+<i class="fas fa-dna"></i>
+<h3>الأحياء</h3>
+<p>دروس وتمارين</p>
+</a>
+
+<a class="card" href="arabic.html">
+<i class="fas fa-book"></i>
+<h3>اللغة العربية</h3>
+<p>نحو وبلاغة ونصوص</p>
+</a>
+
+<a class="card" href="english.html">
+<i class="fas fa-language"></i>
+<h3>اللغة الإنجليزية</h3>
+<p>Grammar و Reading</p>
+</a>
+
+<a class="card" href="islamic.html">
+<i class="fas fa-mosque"></i>
+<h3>التربية الإسلامية</h3>
+<p>دروس ومراجعات</p>
+</a>
+
+<a class="card" href="quran.html">
+<i class="fas fa-book-quran"></i>
+<h3>القرآن الكريم</h3>
+<p>تفسير وحفظ</p>
+</a>
+
+</div>
+
+</div>
+
+
+<!-- القائمة الجانبية -->
+
+<div class="side-menu" id="sideMenu">
+
+<div class="close" onclick="closeMenu()">
+<i class="fas fa-times"></i>
+</div>
+
+<h2>القائمة</h2>
+
+<a href="home.html">
+<i class="fas fa-home"></i>
+الرئيسية
+</a>
+
+<a href="#">
+<i class="fas fa-book"></i>
+المواد الدراسية
+</a>
+
+<a href="#">
+<i class="fas fa-star"></i>
+المفضلة
+</a>
+
+<a href="#">
+<i class="fas fa-info-circle"></i>
+عن الموسوعة
+</a>
+
+</div>
+
+
+<script>
+
+const menu=document.querySelector(".menu");
+const side=document.getElementById("sideMenu");
+
+menu.onclick=function(){
+side.style.right="0";
+}
+
+function closeMenu(){
+side.style.right="-300px";
+}
+
+</script>
+
+</body>
+</html>
