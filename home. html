@@ -1,298 +1,1393 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الموسوعة التعليمية اليمنية</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبتي - استخلاص ذكي</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', Tahoma, Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #2563eb); color: #fff; min-height: 100vh; padding-bottom: 30px; }
+        header { padding: 20px; text-align: center; background: rgba(255, 255, 255, .08); backdrop-filter: blur(10px); }
+        #title { font-size: 28px; font-weight: bold; }
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-.side-menu{
-position:fixed;
-top:0;
-right:-300px;
-width:280px;
-height:100%;
-background:#fff;
-z-index:2000;
-padding:25px;
-box-shadow:-5px 0 15px rgba(0,0,0,.2);
-transition:.4s;
-}
+        #adminBar { background: rgba(0, 0, 0, 0.5); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid rgba(255, 255, 255, 0.1); }
+        #adminBar .status { font-size: 16px; font-weight: bold; }
+        .role-admin { color: #fbbf24; } .role-guest { color: #94a3b8; }
+        .btn-admin { padding: 6px 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; transition: .3s; color: #fff; }
+        .btn-login { background: #16a34a; } .btn-logout { background: #ef4444; } .btn-change-pass { background: #f59e0b; }
+        .btn-ai-settings { background: #8b5cf6; } .btn-upload-admin { background: #0ea5e9; } .btn-clear-admin { background: #dc2626; }
+        .btn-export { background: #8b5cf6; } .btn-import { background: #f59e0b; }
+        .btn-admin:hover { transform: scale(1.05); }
+        .admin-tools { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.side-menu h2{
-color:#1565C0;
-margin-bottom:25px;
-}
+        .main-area { padding: 25px 20px 10px; max-width: 800px; margin: 0 auto; }
+        .main-area .search-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .main-area .search-row input[type="text"] { flex: 3; min-width: 200px; padding: 14px 18px; font-size: 18px; border: none; border-radius: 12px; outline: none; }
+        .main-area .search-row select { flex: 2; min-width: 160px; padding: 14px 18px; font-size: 18px; border: none; border-radius: 12px; outline: none; background: #fff; color: #1e293b; cursor: pointer; direction: rtl; }
+        .main-area .search-row select option { padding: 8px; }
 
-.side-menu a{
-display:block;
-padding:15px;
-text-decoration:none;
-color:#333;
-font-size:17px;
-border-bottom:1px solid #eee;
-}
+        .action-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+        .action-buttons button { flex: 1; min-width: 90px; padding: 14px 8px; font-size: 16px; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; transition: .3s; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .action-buttons button:hover { transform: scale(1.03); }
+        .btn-main-search { background: #16a34a; } .btn-main-view { background: #2563eb; }
+        .btn-main-search-all { background: #f59e0b; } 
+        .btn-main-chatgpt { background: #10a37f; }
+        .btn-main-import { background: #f59e0b; }
+        .btn-main-download { background: #ef4444; }
+        .action-buttons button:disabled { background: #4b5563; cursor: not-allowed; opacity: 0.6; transform: none; }
 
-.side-menu a i{
-margin-left:10px;
-color:#1565C0;
-}
+        #resultsContainer { margin: 25px 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .result-item { background: rgba(255, 255, 255, .12); border-radius: 12px; padding: 15px; margin-top: 10px; border-right: 3px solid #60a5fa; }
+        .result-item .book-source { font-size: 14px; color: #93c5fd; margin-bottom: 6px; }
+        mark { background: yellow; color: #000; padding: 2px 4px; border-radius: 4px; }
+        .no-result { background: rgba(255, 0, 0, .2); border: 1px solid #ff6b6b; padding: 15px; border-radius: 12px; }
+        .search-result-title { margin: 15px 0 10px 0; font-size: 20px; font-weight: bold; }
+        .empty-state { text-align: center; padding: 40px 20px; background: rgba(255, 255, 255, .05); border-radius: 20px; }
+        .book-group-title { font-size: 18px; color: #fcd34d; margin-top: 20px; margin-bottom: 10px; border-right: 4px solid #f59e0b; padding-right: 12px; }
 
-.close{
-font-size:25px;
-cursor:pointer;
-margin-bottom:20px;
-}
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Cairo',sans-serif;
-}
+        .ai-answer-box { background: rgba(249, 115, 22, 0.15); border: 2px solid #f97316; border-radius: 14px; padding: 20px; margin-bottom: 15px; }
+        .ai-answer-box .ai-answer { line-height: 1.9; font-size: 18px; white-space: pre-wrap; }
+        .ai-answer-box .ai-model-info { font-size: 13px; color: #94a3b8; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
 
-body{
-background:#f4f7fb;
-color:#222;
-}
+        .chatgpt-redirect-box { background: rgba(16, 163, 127, 0.15); border: 2px solid #10a37f; border-radius: 14px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        .chatgpt-redirect-box .chatgpt-icon { font-size: 48px; margin-bottom: 10px; display: block; }
+        .chatgpt-redirect-box .chatgpt-message { font-size: 18px; margin-bottom: 15px; }
+        .chatgpt-redirect-box .btn-open-chatgpt { background: #10a37f; border: none; color: #fff; padding: 12px 30px; border-radius: 12px; font-size: 18px; cursor: pointer; font-weight: bold; transition: .3s; }
+        .chatgpt-redirect-box .btn-open-chatgpt:hover { transform: scale(1.05); background: #0d8a6a; }
 
-header{
-background:#1565C0;
-color:#fff;
-padding:15px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-position:sticky;
-top:0;
-z-index:1000;
-box-shadow:0 3px 10px rgba(0,0,0,.2);
-}
+        .share-info-box { background: rgba(139, 92, 246, 0.15); border: 2px solid #8b5cf6; border-radius: 14px; padding: 20px; margin: 15px 0; }
+        .share-info-box .share-icon { font-size: 40px; display: block; text-align: center; margin-bottom: 10px; }
+        .share-info-box .share-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 10px; color: #c4b5fd; }
+        .share-info-box .share-details { font-size: 14px; color: #94a3b8; line-height: 1.8; }
 
-.logo{
-font-size:22px;
-font-weight:bold;
-}
+        .import-box { background: rgba(245, 158, 11, 0.15); border: 2px solid #f59e0b; border-radius: 14px; padding: 20px; margin: 15px 0; }
+        .import-box .import-icon { font-size: 40px; display: block; text-align: center; margin-bottom: 10px; }
+        .import-box .import-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 10px; color: #fbbf24; }
+        .import-box .import-details { font-size: 14px; color: #94a3b8; line-height: 1.8; text-align: center; }
 
-.menu{
-font-size:28px;
-cursor:pointer;
-}
+        .download-box { background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; border-radius: 14px; padding: 20px; margin: 15px 0; }
+        .download-box .download-icon { font-size: 40px; display: block; text-align: center; margin-bottom: 10px; }
+        .download-box .download-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 10px; color: #fca5a5; }
+        .download-box .download-details { font-size: 14px; color: #94a3b8; line-height: 1.8; text-align: center; }
+        .download-box .url-input-area { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 15px 0; }
+        .download-box .url-input-area input { flex: 1; min-width: 200px; padding: 12px; border-radius: 10px; border: none; font-size: 14px; direction: ltr; }
+        .download-box .url-input-area button { background: #ef4444; border: none; color: #fff; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: .3s; }
+        .download-box .url-input-area button:hover { transform: scale(1.05); background: #dc2626; }
+        .download-box .url-input-area button:disabled { background: #4b5563; cursor: not-allowed; opacity: 0.6; }
 
-.container{
-padding:20px;
-}
+        .reader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f3f4f6; z-index: 3000; display: none; flex-direction: column; direction: rtl; font-family: 'Cairo', 'Tahoma', Arial, sans-serif; }
+        .reader-overlay.active { display: flex; }
+        .reader-overlay.night-mode { background: #0f172a; color: #e2e8f0; }
+        .reader-overlay.night-mode .reader-header { background: #1e293b; border-bottom: 1px solid #334155; }
+        .reader-overlay.night-mode .reader-content .line { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .reader-overlay.night-mode .reader-content .line.highlight { background: rgba(251, 191, 36, 0.2); border-right: 4px solid #fbbf24; }
+        .reader-overlay.night-mode .reader-content .line-number { color: #64748b; }
+        .reader-overlay.night-mode .reader-footer { background: #1e293b; border-top: 1px solid #334155; }
 
-.search{
-background:#fff;
-border-radius:15px;
-display:flex;
-align-items:center;
-padding:12px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-margin-bottom:20px;
-}
+        .reader-header { background: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #e5e7eb; flex-shrink: 0; }
+        .reader-header .book-title { font-size: 20px; font-weight: bold; color: #1e293b; }
+        .reader-overlay.night-mode .reader-header .book-title { color: #fcd34d; }
+        .reader-header .reader-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .reader-header .reader-controls button { padding: 6px 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; background: #e5e7eb; color: #1e293b; transition: .2s; }
+        .reader-overlay.night-mode .reader-header .reader-controls button { background: #334155; color: #f1f5f9; }
+        .reader-header .reader-controls button:hover { transform: scale(1.05); }
+        .reader-header .reader-controls .btn-close-reader { background: #ef4444; color: #fff; }
+        .reader-header .reader-controls .btn-close-reader:hover { background: #dc2626; }
 
-.search i{
-color:#1565C0;
-margin-left:10px;
-}
+        .reader-content { flex: 1; overflow-y: auto; padding: 25px 40px; line-height: 2.2; font-size: 20px; direction: rtl; text-align: justify; }
+        .reader-content .line { padding: 6px 10px; border-radius: 8px; border-right: 3px solid transparent; }
+        .reader-content .line.highlight { background: rgba(251, 191, 36, 0.25); border-right: 4px solid #fbbf24; }
+        .reader-content .line-number { color: #9ca3af; font-size: 14px; margin-left: 10px; font-weight: bold; }
 
-.search input{
-border:none;
-outline:none;
-width:100%;
-font-size:16px;
-}
+        .reader-footer { background: #fff; padding: 10px 20px; border-top: 2px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .reader-footer .progress-bar { flex: 1; height: 8px; background: #e5e7eb; border-radius: 10px; overflow: hidden; min-width: 100px; }
+        .reader-overlay.night-mode .reader-footer .progress-bar { background: #334155; }
+        .reader-footer .progress-bar .progress-fill { height: 100%; width: 0%; background: #2563eb; border-radius: 10px; transition: width 0.3s; }
+        .reader-footer .progress-text { font-size: 14px; color: #64748b; min-width: 60px; }
+        .reader-overlay.night-mode .reader-footer .progress-text { color: #94a3b8; }
+        .reader-footer .font-size-controls { display: flex; gap: 5px; }
+        .reader-footer .font-size-controls button { padding: 4px 12px; border: none; border-radius: 6px; cursor: pointer; background: #e5e7eb; font-weight: bold; font-size: 16px; }
+        .reader-overlay.night-mode .reader-footer .font-size-controls button { background: #334155; color: #f1f5f9; }
 
-.hero{
-background:linear-gradient(135deg,#1565C0,#42A5F5);
-color:#fff;
-padding:25px;
-border-radius:20px;
-text-align:center;
-margin-bottom:25px;
-}
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; display: none; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: #1e293b; padding: 30px; border-radius: 20px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+        .modal-box h3 { margin-bottom: 15px; color: #fcd34d; }
+        .modal-box label { display: block; margin-top: 10px; font-size: 14px; color: #94a3b8; }
+        .modal-box input, .modal-box select { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 5px; font-size: 16px; direction: ltr; }
+        .modal-box select { background: #fff; color: #1e293b; cursor: pointer; }
+        .modal-box .hint { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        .modal-box .hint a { color: #93c5fd; }
+        .modal-box .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; }
+        .modal-box .modal-actions button { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; color: #fff; }
+        .modal-box .modal-actions .btn-save { background: #16a34a; }
+        .modal-box .modal-actions .btn-cancel { background: #6b7280; }
 
-.hero h2{
-font-size:28px;
-margin-bottom:10px;
-}
+        .btn-download { background: #10a37f; border: none; color: #fff; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: .3s; }
+        .btn-download:hover { transform: scale(1.05); background: #0d8a6a; }
+        .btn-copy { background: #8b5cf6; border: none; color: #fff; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: .3s; }
+        .btn-copy:hover { transform: scale(1.05); background: #7c3aed; }
+        .file-path-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 10px; text-align: right; }
+        .file-path-box p { color: #94a3b8; font-size: 13px; line-height: 1.8; }
+        .file-path-box strong { color: #fbbf24; }
 
-.hero p{
-font-size:16px;
-}
+        .progress-bar-custom { width: 100%; height: 6px; background: #334155; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-bar-custom .progress-fill-custom { height: 100%; width: 0%; background: #10a37f; border-radius: 10px; transition: width 0.3s; }
+        .loading-text { color: #94a3b8; font-size: 14px; text-align: center; }
 
-.subjects{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-gap:15px;
-}
-
-.card{
-background:#fff;
-border-radius:18px;
-padding:20px;
-text-align:center;
-text-decoration:none;
-color:#222;
-box-shadow:0 4px 12px rgba(0,0,0,.1);
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
-}
-
-.card i{
-font-size:38px;
-color:#1565C0;
-margin-bottom:12px;
-}
-
-.card h3{
-font-size:18px;
-margin-bottom:6px;
-}
-
-.card p{
-font-size:14px;
-color:#666;
-}
-</style>
+        .auto-download-notice { background: rgba(16, 163, 127, 0.15); border: 2px solid #10a37f; border-radius: 14px; padding: 15px 20px; margin: 15px 0; text-align: center; }
+        .auto-download-notice .status-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+        .auto-download-notice .status-text { font-size: 16px; color: #e2e8f0; }
+        .auto-download-notice .status-detail { font-size: 14px; color: #94a3b8; margin-top: 5px; }
+    </style>
 </head>
 <body>
 
-<header>
-<div class="logo">
-<i class="fas fa-graduation-cap"></i>
- الموسوعة التعليمية
-</div>
+    <header><div id="title">📚 مكتبتي - استخلاص ذكي</div></header>
 
-<div class="menu">
-<i class="fas fa-bars"></i>
-</div>
-</header>
+    <!-- شريط المشرف -->
+    <div id="adminBar">
+        <div class="status" id="adminStatus">👤 <span class="role-guest">زائر</span></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <span id="adminTools" style="display:none; display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn-admin btn-upload-admin" onclick="document.getElementById('fileInput').click()">📂 رفع</button>
+                <input type="file" id="fileInput" class="file-input" accept=".txt,.pdf" style="display:none;" onchange="uploadNewBook(event)" multiple>
+                <button class="btn-admin btn-export" onclick="exportBooks()">📤 تصدير</button>
+                <button class="btn-admin btn-clear-admin" onclick="deleteAllBooks()">🗑️ حذف الكل</button>
+                <button class="btn-admin btn-ai-settings" id="aiSettingsBtn" onclick="showAISettings()">⚙️ AI</button>
+            </span>
+            <button class="btn-admin btn-login" id="loginBtn" onclick="loginAdmin()">🔑 تسجيل الدخول</button>
+            <button class="btn-admin btn-logout" id="logoutBtn" onclick="logoutAdmin()" style="display:none;">🚪 خروج</button>
+            <button class="btn-admin btn-change-pass" id="changePassBtn" onclick="showChangePass()" style="display:none;">🔑 تغيير كلمة</button>
+        </div>
+    </div>
 
-<div class="container">
+    <!-- المنطقة الرئيسية -->
+    <div class="main-area">
+        <div class="search-row">
+            <input type="text" id="searchInput" placeholder="اكتب سؤالك أو كلمة للبحث...">
+            <select id="bookSelector">
+                <option value="">-- اختر كتاب --</option>
+            </select>
+        </div>
+        <div class="action-buttons">
+            <button class="btn-main-search" id="btnSearch" onclick="searchSelectedBook()">🔍 بحث</button>
+            <button class="btn-main-view" id="btnView" onclick="viewSelectedBook()">📖 عرض</button>
+            <button class="btn-main-search-all" onclick="searchAllBooks()">🌍 بحث الكل</button>
+            <button class="btn-main-chatgpt" onclick="searchInChatGPT()">💬 ChatGPT</button>
+            <button class="btn-main-import" onclick="document.getElementById('userImportInput').click()">📥 استيراد</button>
+            <button class="btn-main-download" onclick="showDownloadBox()">⬇️ تنزيل الكتاب من الرابط</button>
+            <input type="file" id="userImportInput" accept=".json" style="display:none;" onchange="importBooks(event)">
+        </div>
+    </div>
 
-<div class="search">
-<i class="fas fa-search"></i>
-<input type="text" placeholder="ابحث عن مادة أو درس...">
-</div>
+    <!-- حاوية النتائج -->
+    <div id="resultsContainer">
+        <div class="empty-state">
+            <h3>📖 مرحباً بك</h3>
+            <p>ابحث في كتبك، أو ابحث مباشرة في ChatGPT.<br>
+            <small style="color:#94a3b8;">📂 يمكنك رفع ملفات .txt و .pdf</small></p>
+            <div class="auto-download-notice" id="autoDownloadNotice">
+                <span class="status-icon">⏳</span>
+                <div class="status-text" id="autoDownloadStatus">جاري تحميل الكتاب من الرابط...</div>
+                <div class="status-detail" id="autoDownloadDetail">https://drive.google.com/file/d/1NuAt2ozcu6LZ6G3k0v1iNAI9WvIR3J22/</div>
+                <div class="progress-bar-custom" style="margin-top: 10px;">
+                    <div class="progress-fill-custom" id="autoProgressFill" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="share-info-box" style="margin-top: 20px; text-align: right;">
+                <span class="share-icon">📚</span>
+                <div class="share-title">مشاركة الكتب مع مستخدمين آخرين</div>
+                <div class="share-details">
+                    <p>📤 <strong>للمشرف فقط:</strong> اضغط على زر "تصدير" في شريط المشرف لتحميل جميع الكتب كملف JSON.</p>
+                    <p>📥 <strong>لجميع المستخدمين:</strong> اضغط على زر "استيراد" واختر ملف JSON، أو استخدم "تنزيل من رابط".</p>
+                    <p style="color: #fbbf24; margin-top: 8px;">💡 بهذه الطريقة يمكنك مشاركة مكتبتك مع أي شخص!</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="hero">
-<h2>مرحبًا بك 👋</h2>
-<p>اختر المادة الدراسية لبدء التعلم</p>
-</div>
+    <!-- القارئ -->
+    <div class="reader-overlay" id="readerOverlay">
+        <div class="reader-header">
+            <span class="book-title" id="readerBookTitle">📖 عنوان الكتاب</span>
+            <div class="reader-controls">
+                <button onclick="toggleNightMode()">🌙</button>
+                <button class="btn-close-reader" onclick="closeReader()">✕</button>
+            </div>
+        </div>
+        <div class="reader-content" id="readerContent"></div>
+        <div class="reader-footer">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <span class="progress-text" id="progressText">0%</span>
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">أ-</button>
+                <button onclick="changeFontSize(2)">أ+</button>
+            </div>
+        </div>
+    </div>
 
-<div class="subjects">
+    <!-- نافذة تغيير كلمة المرور -->
+    <div class="modal-overlay" id="changePassModal">
+        <div class="modal-box">
+            <h3>🔑 تغيير كلمة المرور</h3>
+            <input type="password" id="currentPassInput" placeholder="الحالية">
+            <input type="password" id="newPassInput" placeholder="الجديدة">
+            <input type="password" id="confirmPassInput" placeholder="تأكيد الجديدة">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeChangePass()">إلغاء</button>
+                <button class="btn-save" onclick="saveNewPassword()">حفظ</button>
+            </div>
+        </div>
+    </div>
 
-<a class="card" href="math.html">
-<i class="fas fa-square-root-alt"></i>
-<h3>الرياضيات</h3>
-<p>جميع الدروس</p>
-</a>
+    <!-- نافذة إعدادات الذكاء الاصطناعي -->
+    <div class="modal-overlay" id="aiSettingsModal">
+        <div class="modal-box">
+            <h3>🤖 إعدادات OpenRouter</h3>
+            <label>رابط API</label>
+            <input type="text" id="aiApiUrl" placeholder="https://openrouter.ai/api/v1/chat/completions" value="https://openrouter.ai/api/v1/chat/completions">
+            <label>مفتاح API</label>
+            <input type="password" id="aiApiKey" placeholder="مفتاح OpenRouter...">
+            <label>النموذج</label>
+            <select id="aiModel">
+                <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (مجاني)</option>
+                <option value="google/gemini-2.0-pro-exp-02-05:free">Gemini 2.0 Pro (مجاني)</option>
+                <option value="meta-llama/llama-3.1-8b-instruct:free">Llama 3.1 8B (مجاني)</option>
+                <option value="mistralai/mistral-7b-instruct:free">Mistral 7B (مجاني)</option>
+                <option value="deepseek/deepseek-chat:free">DeepSeek Chat (مجاني)</option>
+                <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="openai/gpt-4-turbo">GPT-4 Turbo</option>
+                <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+            </select>
+            <div class="hint">💡 احصل على مفتاح مجاني: <a href="https://openrouter.ai/keys" target="_blank">OpenRouter Keys</a></div>
+            <div class="hint">⚠️ النماذج المجانية محدودة بعدد الطلبات في اليوم</div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAISettings()">إلغاء</button>
+                <button class="btn-save" onclick="saveAISettings()">حفظ</button>
+            </div>
+        </div>
+    </div>
 
-<a class="card" href="physics.html">
-<i class="fas fa-atom"></i>
-<h3>الفيزياء</h3>
-<p>شرح وملخص</p>
-</a>
-<a class="card" href="physics.html">
-<i class="fas fa-atom"></i>
-<h3>الفيزياء</h3>
-<p>شرح وملخص</p>
-</a>
-<a class="card" href="chemistry.html">
-<i class="fas fa-flask"></i>
-<h3>الكيمياء</h3>
-<p>شرح وملخص وأسئلة</p>
-</a>
+    <script>
+        // ============================================================
+        // 1. الصلاحيات + إعدادات AI (نفس الكود السابق)
+        // ============================================================
+        let allBooksCache = [];
+        let isAdmin = false;
+        const ADMIN_PASS_KEY = 'admin_password';
+        const DEFAULT_PASS = 'admin123';
+        const AI_CONFIG_KEY = 'ai_config';
 
-<a class="card" href="biology.html">
-<i class="fas fa-dna"></i>
-<h3>الأحياء</h3>
-<p>دروس وتمارين</p>
-</a>
+        if (!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, DEFAULT_PASS);
 
-<a class="card" href="arabic.html">
-<i class="fas fa-book"></i>
-<h3>اللغة العربية</h3>
-<p>نحو وبلاغة ونصوص</p>
-</a>
+        function getAIConfig() {
+            try { const raw = localStorage.getItem(AI_CONFIG_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+            return { 
+                apiUrl: 'https://openrouter.ai/api/v1/chat/completions', 
+                apiKey: '', 
+                model: 'google/gemini-2.0-flash-exp:free' 
+            };
+        }
 
-<a class="card" href="english.html">
-<i class="fas fa-language"></i>
-<h3>اللغة الإنجليزية</h3>
-<p>Grammar و Reading</p>
-</a>
+        function showAISettings() {
+            if (!isAdmin) { alert('⛔ فقط المشرف'); return; }
+            const config = getAIConfig();
+            document.getElementById('aiApiUrl').value = config.apiUrl || 'https://openrouter.ai/api/v1/chat/completions';
+            document.getElementById('aiApiKey').value = config.apiKey || '';
+            document.getElementById('aiModel').value = config.model || 'google/gemini-2.0-flash-exp:free';
+            document.getElementById('aiSettingsModal').classList.add('active');
+        }
+        function closeAISettings() { document.getElementById('aiSettingsModal').classList.remove('active'); }
+        function saveAISettings() {
+            const config = {
+                apiUrl: document.getElementById('aiApiUrl').value.trim(),
+                apiKey: document.getElementById('aiApiKey').value.trim(),
+                model: document.getElementById('aiModel').value.trim()
+            };
+            if (!config.apiUrl || !config.apiKey || !config.model) { alert('❌ املأ جميع الحقول'); return; }
+            localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
+            alert('✅ تم حفظ إعدادات OpenRouter.');
+            closeAISettings();
+        }
 
-<a class="card" href="islamic.html">
-<i class="fas fa-mosque"></i>
-<h3>التربية الإسلامية</h3>
-<p>دروس ومراجعات</p>
-</a>
+        function checkAdminStatus() {
+            isAdmin = localStorage.getItem('isAdminLoggedIn') === 'true';
+            updateAdminUI();
+        }
 
-<a class="card" href="quran.html">
-<i class="fas fa-book-quran"></i>
-<h3>القرآن الكريم</h3>
-<p>تفسير وحفظ</p>
-</a>
+        function updateAdminUI() {
+            const status = document.getElementById('adminStatus');
+            status.innerHTML = isAdmin ? '👑 <span class="role-admin">مشرف</span>' : '👤 <span class="role-guest">زائر</span>';
+            document.getElementById('loginBtn').style.display = isAdmin ? 'none' : 'inline-block';
+            document.getElementById('logoutBtn').style.display = isAdmin ? 'inline-block' : 'none';
+            document.getElementById('changePassBtn').style.display = isAdmin ? 'inline-block' : 'none';
+            document.getElementById('adminTools').style.display = isAdmin ? 'flex' : 'none';
+            document.getElementById('aiSettingsBtn').style.display = isAdmin ? 'inline-block' : 'none';
+            populateDropdown(allBooksCache);
+        }
 
-</div>
+        function loginAdmin() {
+            const pass = prompt('🔐 كلمة المرور:');
+            if (!pass) return;
+            if (pass === localStorage.getItem(ADMIN_PASS_KEY)) {
+                isAdmin = true;
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                updateAdminUI();
+                alert('✅ تم تسجيل الدخول.');
+            } else alert('❌ غير صحيحة.');
+        }
+        function logoutAdmin() {
+            if (!confirm('تسجيل الخروج؟')) return;
+            isAdmin = false;
+            localStorage.removeItem('isAdminLoggedIn');
+            updateAdminUI();
+        }
+        function showChangePass() { document.getElementById('changePassModal').classList.add('active'); }
+        function closeChangePass() { document.getElementById('changePassModal').classList.remove('active'); }
+        function saveNewPassword() {
+            const current = document.getElementById('currentPassInput').value;
+            const newPass = document.getElementById('newPassInput').value;
+            const confirm = document.getElementById('confirmPassInput').value;
+            if (current !== localStorage.getItem(ADMIN_PASS_KEY)) { alert('❌ الحالية غير صحيحة'); return; }
+            if (newPass.length < 4) { alert('❌ 4 أحرف على الأقل'); return; }
+            if (newPass !== confirm) { alert('❌ غير متطابقتين'); return; }
+            localStorage.setItem(ADMIN_PASS_KEY, newPass);
+            alert('✅ تم التغيير');
+            closeChangePass();
+        }
 
-</div>
+        // ============================================================
+        // 2. قاعدة البيانات (IndexedDB)
+        // ============================================================
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('MultiBooksDB', 2);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('books')) db.createObjectStore('books', { keyPath: 'id' });
+                };
+                request.onsuccess = (e) => resolve(e.target.result);
+                request.onerror = (e) => reject('فشل فتح DB');
+            });
+        }
 
+        async function getAllBooks() {
+            try {
+                const db = await openDB();
+                const transaction = db.transaction(['books'], 'readonly');
+                const store = transaction.objectStore('books');
+                return new Promise((resolve, reject) => {
+                    const request = store.getAll();
+                    request.onsuccess = () => { db.close();
+                        allBooksCache = request.result || [];
+                        resolve(allBooksCache); };
+                    request.onerror = (e) => { db.close();
+                        reject(e); };
+                });
+            } catch (e) { return []; }
+        }
 
-<!-- القائمة الجانبية -->
+        async function addBookToDB(text, name) {
+            if (!isAdmin) { alert('⛔ فقط المشرف'); return false; }
+            try {
+                const db = await openDB();
+                const transaction = db.transaction(['books'], 'readwrite');
+                const store = transaction.objectStore('books');
+                const book = { id: Date.now() + '_' + name, name, text, size: text.length, addedAt: new Date().toISOString() };
+                return new Promise((resolve, reject) => {
+                    const request = store.add(book);
+                    request.onsuccess = () => { db.close(); resolve(true); };
+                    request.onerror = (e) => { db.close(); reject(e); };
+                });
+            } catch (e) { return false; }
+        }
 
-<div class="side-menu" id="sideMenu">
+        async function deleteBookById(id) {
+            if (!isAdmin) { alert('⛔ فقط المشرف'); return false; }
+            try {
+                const db = await openDB();
+                const transaction = db.transaction(['books'], 'readwrite');
+                const store = transaction.objectStore('books');
+                return new Promise((resolve, reject) => {
+                    const request = store.delete(id);
+                    request.onsuccess = () => { db.close(); resolve(true); };
+                    request.onerror = (e) => { db.close(); reject(e); };
+                });
+            } catch (e) { return false; }
+        }
 
-<div class="close" onclick="closeMenu()">
-<i class="fas fa-times"></i>
-</div>
+        async function deleteAllBooks() {
+            if (!isAdmin) { alert('⛔ فقط المشرف'); return; }
+            if (!confirm('⚠️ حذف جميع الكتب؟')) return;
+            const books = await getAllBooks();
+            for (let b of books) await deleteBookById(b.id);
+            await refreshUI();
+            alert('✅ تم حذف جميع الكتب.');
+        }
 
-<h2>القائمة</h2>
+        // ============================================================
+        // 2.1 تصدير (للمشرف فقط) - نسخة مبسطة
+        // ============================================================
+        async function exportBooks() {
+            if (!isAdmin) {
+                alert('⛔ فقط المشرف يمكنه تصدير الكتب.');
+                return;
+            }
+            
+            const books = await getAllBooks();
+            if (books.length === 0) {
+                alert('📭 لا توجد كتب لتصديرها.');
+                return;
+            }
+            
+            try {
+                const exportData = books.map(book => ({
+                    id: book.id,
+                    name: book.name,
+                    text: book.text,
+                    size: book.size,
+                    addedAt: book.addedAt
+                }));
+                
+                const json = JSON.stringify(exportData, null, 2);
+                const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const fileName = 'مكتبتي_' + new Date().toISOString().slice(0,10) + '.json';
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 1000);
+                
+                const container = document.getElementById('resultsContainer');
+                container.innerHTML = `
+                    <div class="share-info-box" style="border-color: #10a37f; background: rgba(16,163,127,0.15);">
+                        <span class="share-icon" style="font-size: 48px;">✅</span>
+                        <div class="share-title" style="color: #10a37f;">تم تصدير ${books.length} كتاب بنجاح!</div>
+                        <div class="share-details" style="text-align: center;">
+                            <p style="font-size: 18px; color: #fbbf24; margin: 10px 0;">
+                                📁 اسم الملف: <strong>${fileName}</strong>
+                            </p>
+                            <p style="color: #94a3b8; font-size: 14px;">
+                                💾 تم حفظ الملف في مجلد <strong>التنزيلات (Downloads)</strong>
+                            </p>
+                            <div style="margin: 15px 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn-download" onclick="window.open('${url}', '_blank')">
+                                    📥 تحميل مرة أخرى
+                                </button>
+                                <button class="btn-copy" onclick="copyFileName('${fileName}')">
+                                    📋 نسخ اسم الملف
+                                </button>
+                            </div>
+                            <div class="file-path-box">
+                                <p>
+                                    📌 <strong>خطوات مشاركة الكتب:</strong><br>
+                                    1️⃣ ارفع هذا الملف على Google Drive أو أي خدمة استضافة<br>
+                                    2️⃣ أنشئ رابط مشاركة<br>
+                                    3️⃣ أرسل الرابط للمستخدمين لاستخدامه مع زر "تنزيل من رابط"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('خطأ في التصدير:', error);
+                alert('❌ حدث خطأ: ' + error.message);
+            }
+        }
 
-<a href="home.html">
-<i class="fas fa-home"></i>
-الرئيسية
-</a>
+        function copyFileName(fileName) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fileName).then(() => {
+                    alert('✅ تم نسخ اسم الملف: ' + fileName);
+                }).catch(() => {
+                    fallbackCopy(fileName);
+                });
+            } else {
+                fallbackCopy(fileName);
+            }
+        }
 
-<a href="#">
-<i class="fas fa-book"></i>
-المواد الدراسية
-</a>
+        function fallbackCopy(text) {
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ تم نسخ اسم الملف: ' + text);
+            } catch (e) {
+                alert('❌ فشل النسخ. اسم الملف: ' + text);
+            }
+        }
 
-<a href="#">
-<i class="fas fa-star"></i>
-المفضلة
-</a>
+        // ============================================================
+        // 2.2 استيراد من ملف (لجميع المستخدمين)
+        // ============================================================
+        async function importBooks(event) {
+            try {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const text = await file.text();
+                const books = JSON.parse(text);
+                
+                if (!Array.isArray(books) || books.length === 0) {
+                    alert('❌ الملف غير صالح أو لا يحتوي على كتب.');
+                    event.target.value = '';
+                    return;
+                }
+                
+                if (!confirm(`⚠️ سيتم استيراد ${books.length} كتاب. هل تريد المتابعة؟`)) {
+                    event.target.value = '';
+                    return;
+                }
+                
+                let success = 0;
+                let failed = 0;
+                
+                for (let book of books) {
+                    if (book.name && book.text) {
+                        const newBook = {
+                            id: Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '_' + book.name,
+                            name: book.name,
+                            text: book.text,
+                            size: book.text.length,
+                            addedAt: new Date().toISOString()
+                        };
+                        
+                        try {
+                            const db = await openDB();
+                            const transaction = db.transaction(['books'], 'readwrite');
+                            const store = transaction.objectStore('books');
+                            await new Promise((resolve, reject) => {
+                                const request = store.add(newBook);
+                                request.onsuccess = () => { db.close(); resolve(); };
+                                request.onerror = (e) => { db.close(); reject(e); };
+                            });
+                            success++;
+                        } catch (e) {
+                            failed++;
+                            console.error('فشل استيراد كتاب:', book.name, e);
+                        }
+                    } else {
+                        failed++;
+                    }
+                }
+                
+                await refreshUI();
+                
+                let message = `✅ تم استيراد ${success} كتاب بنجاح!`;
+                if (failed > 0) message += ` ❌ فشل استيراد ${failed} كتاب.`;
+                alert(message);
+                
+            } catch (e) {
+                console.error(e);
+                alert(`❌ فشل استيراد الملف: ${e.message}`);
+            }
+            
+            event.target.value = '';
+        }
 
-<a href="#">
-<i class="fas fa-info-circle"></i>
-عن الموسوعة
-</a>
+        // ============================================================
+        // 2.3 تنزيل واستيراد من رابط (لجميع المستخدمين)
+        // ============================================================
+        function showDownloadBox() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div class="download-box">
+                    <span class="download-icon">⬇️</span>
+                    <div class="download-title">تنزيل واستيراد الكتب من رابط</div>
+                    <div class="download-details">
+                        <p>أدخل رابط ملف JSON (مثل رابط Google Drive أو Dropbox)</p>
+                        <div class="url-input-area">
+                            <input type="text" id="downloadUrlInput" placeholder="https://drive.google.com/..." dir="ltr">
+                            <button onclick="downloadAndImport()" id="downloadBtn">📥 تنزيل واستيراد</button>
+                        </div>
+                        <div id="downloadProgress" style="display: none;">
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill-custom" id="downloadProgressFill"></div>
+                            </div>
+                            <div class="loading-text" id="downloadStatusText">جاري التحميل...</div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 13px; color: #64748b; text-align: right;">
+                            <p>💡 <strong>كيفية الحصول على رابط من Google Drive:</strong></p>
+                            <p>1. ارفع ملف JSON على Google Drive</p>
+                            <p>2. اضغط على الملف → مشاركة → تغيير إلى "أي شخص لديه الرابط"</p>
+                            <p>3. انسخ الرابط والصقه هنا</p>
+                            <p style="color: #fbbf24; margin-top: 5px;">⚠️ تأكد من أن الرابط عام (Anyone with the link can view)</p>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 13px; color: #64748b; text-align: right; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                            <p>📌 <strong>روابط مباشرة بديلة:</strong></p>
+                            <p>• <a href="#" onclick="setExampleUrl('https://raw.githubusercontent.com/username/repo/main/books.json')" style="color: #93c5fd; text-decoration: none;">GitHub Raw</a></p>
+                            <p>• <a href="#" onclick="setExampleUrl('https://gist.githubusercontent.com/username/id/raw/books.json')" style="color: #93c5fd; text-decoration: none;">GitHub Gist</a></p>
+                            <p>• <a href="#" onclick="setExampleUrl('https://www.dropbox.com/s/xxxxx/books.json?dl=1')" style="color: #93c5fd; text-decoration: none;">Dropbox (استخدم ?dl=1)</a></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-</div>
+        function setExampleUrl(url) {
+            document.getElementById('downloadUrlInput').value = url;
+        }
 
+        async function downloadAndImport() {
+            const urlInput = document.getElementById('downloadUrlInput');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                alert('✏️ يرجى إدخال رابط الملف.');
+                return;
+            }
+            
+            const progressDiv = document.getElementById('downloadProgress');
+            const progressFill = document.getElementById('downloadProgressFill');
+            const statusText = document.getElementById('downloadStatusText');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            progressDiv.style.display = 'block';
+            downloadBtn.disabled = true;
+            progressFill.style.width = '10%';
+            statusText.textContent = 'جاري الاتصال بالرابط...';
+            
+            try {
+                let finalUrl = url;
+                
+                if (url.includes('drive.google.com')) {
+                    statusText.textContent = 'جاري معالجة رابط Google Drive...';
+                    progressFill.style.width = '20%';
+                    
+                    let fileId = '';
+                    const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    if (idMatch) {
+                        fileId = idMatch[1];
+                        finalUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                    } else {
+                        const idMatch2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+                        if (idMatch2) {
+                            fileId = idMatch2[1];
+                            finalUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                        }
+                    }
+                    
+                    if (!fileId) {
+                        throw new Error('لم نتمكن من استخراج معرف الملف من رابط Google Drive. تأكد من أن الرابط صحيح.');
+                    }
+                }
+                
+                if (url.includes('dropbox.com') && !url.includes('dl=1')) {
+                    finalUrl = url + (url.includes('?') ? '&dl=1' : '?dl=1');
+                }
+                
+                statusText.textContent = 'جاري تحميل الملف...';
+                progressFill.style.width = '40%';
+                
+                const response = await fetch(finalUrl);
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error('❌ لا يوجد صلاحية للوصول إلى الملف. تأكد من أن الرابط عام.');
+                    } else if (response.status === 404) {
+                        throw new Error('❌ الملف غير موجود. تأكد من صحة الرابط.');
+                    } else {
+                        throw new Error(`❌ فشل التحميل: ${response.status} ${response.statusText}`);
+                    }
+                }
+                
+                progressFill.style.width = '70%';
+                statusText.textContent = 'جاري معالجة الملف...';
+                
+                const text = await response.text();
+                let books;
+                
+                try {
+                    books = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('❌ الملف ليس بصيغة JSON صالحة.');
+                }
+                
+                if (!Array.isArray(books) || books.length === 0) {
+                    throw new Error('❌ الملف لا يحتوي على كتب صالحة.');
+                }
+                
+                progressFill.style.width = '85%';
+                statusText.textContent = `جاري استيراد ${books.length} كتاب...`;
+                
+                let success = 0;
+                let failed = 0;
+                
+                for (let book of books) {
+                    if (book.name && book.text) {
+                        const newBook = {
+                            id: Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '_' + book.name,
+                            name: book.name,
+                            text: book.text,
+                            size: book.text.length,
+                            addedAt: new Date().toISOString()
+                        };
+                        
+                        try {
+                            const db = await openDB();
+                            const transaction = db.transaction(['books'], 'readwrite');
+                            const store = transaction.objectStore('books');
+                            await new Promise((resolve, reject) => {
+                                const request = store.add(newBook);
+                                request.onsuccess = () => { db.close(); resolve(); };
+                                request.onerror = (e) => { db.close(); reject(e); };
+                            });
+                            success++;
+                        } catch (e) {
+                            failed++;
+                            console.error('فشل استيراد كتاب:', book.name, e);
+                        }
+                    } else {
+                        failed++;
+                    }
+                }
+                
+                progressFill.style.width = '100%';
+                statusText.textContent = '✅ تم الاستيراد بنجاح!';
+                
+                await refreshUI();
+                
+                let message = `✅ تم استيراد ${success} كتاب بنجاح من الرابط!`;
+                if (failed > 0) message += ` ❌ فشل استيراد ${failed} كتاب.`;
+                alert(message);
+                
+            } catch (error) {
+                console.error('خطأ في التحميل:', error);
+                progressFill.style.width = '100%';
+                statusText.textContent = '❌ ' + error.message;
+                alert('❌ ' + error.message);
+            } finally {
+                downloadBtn.disabled = false;
+                setTimeout(() => {
+                    progressDiv.style.display = 'none';
+                    progressFill.style.width = '0%';
+                }, 5000);
+            }
+        }
 
-<script>
+        // ============================================================
+        // 2.4 قراءة PDF واستخراج النص
+        // ============================================================
+        async function extractTextFromPDF(pdfData) {
+            const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+            let fullText = '';
+            const totalPages = pdf.numPages;
+            for (let i = 1; i <= totalPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                fullText += pageText + '\n\n';
+            }
+            return fullText;
+        }
 
-const menu=document.querySelector(".menu");
-const side=document.getElementById("sideMenu");
+        // ============================================================
+        // 2.5 رفع الملفات (للمشرف فقط)
+        // ============================================================
+        async function uploadNewBook(event) {
+            if (!isAdmin) { alert('⛔ فقط المشرف يمكنه رفع الكتب.');
+                event.target.value = ''; return; }
+            const files = event.target.files;
+            let success = 0,
+                fail = 0;
+            for (let file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['txt', 'pdf'].includes(ext)) {
+                    alert(`❌ "${file.name}" ليس .txt أو .pdf، تخطي.`);
+                    fail++;
+                    continue;
+                }
+                try {
+                    let text = '';
+                    if (ext === 'txt') {
+                        text = await file.text();
+                    } else if (ext === 'pdf') {
+                        const arrayBuffer = await file.arrayBuffer();
+                        text = await extractTextFromPDF(arrayBuffer);
+                    }
+                    if (text.trim().length === 0) {
+                        alert(`⚠️ "${file.name}" لا يحتوي على نص قابل للقراءة.`);
+                        fail++;
+                        continue;
+                    }
+                    const added = await addBookToDB(text, file.name);
+                    if (added) success++;
+                    else fail++;
+                } catch (e) {
+                    console.error(e);
+                    alert(`❌ فشل قراءة "${file.name}": ${e.message}`);
+                    fail++;
+                }
+            }
+            event.target.value = '';
+            await refreshUI();
+            alert(`✅ رفع ${success} كتاب.${fail ? ' ❌ فشل ' + fail : ''}`);
+        }
 
-menu.onclick=function(){
-side.style.right="0";
-}
+        // ============================================================
+        // 2.6 تحميل تلقائي من الرابط عند فتح الصفحة
+        // ============================================================
+        async function autoDownloadBook() {
+            const autoUrl = 'https://drive.google.com/file/d/1NuAt2ozcu6LZ6G3k0v1iNAI9WvIR3J22/view?usp=drivesdk';
+            const notice = document.getElementById('autoDownloadNotice');
+            const statusText = document.getElementById('autoDownloadStatus');
+            const statusDetail = document.getElementById('autoDownloadDetail');
+            const progressFill = document.getElementById('autoProgressFill');
+            
+            try {
+                statusText.textContent = '⏳ جاري تحميل الكتاب من الرابط...';
+                statusDetail.textContent = autoUrl;
+                progressFill.style.width = '10%';
+                
+                // استخراج معرف الملف
+                let fileId = '';
+                const idMatch = autoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (idMatch) {
+                    fileId = idMatch[1];
+                } else {
+                    const idMatch2 = autoUrl.match(/id=([a-zA-Z0-9_-]+)/);
+                    if (idMatch2) {
+                        fileId = idMatch2[1];
+                    }
+                }
+                
+                if (!fileId) {
+                    throw new Error('لم نتمكن من استخراج معرف الملف من الرابط.');
+                }
+                
+                const finalUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                statusText.textContent = '📥 جاري تحميل الملف...';
+                progressFill.style.width = '30%';
+                
+                const response = await fetch(finalUrl);
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error('⚠️ لا يوجد صلاحية للوصول إلى الملف. تأكد من أن الرابط عام.');
+                    } else if (response.status === 404) {
+                        throw new Error('⚠️ الملف غير موجود. تأكد من صحة الرابط.');
+                    } else {
+                        throw new Error(`⚠️ فشل التحميل: ${response.status} ${response.statusText}`);
+                    }
+                }
+                
+                progressFill.style.width = '60%';
+                statusText.textContent = '🔄 جاري معالجة الملف...';
+                
+                const text = await response.text();
+                let books;
+                
+                try {
+                    books = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('⚠️ الملف ليس بصيغة JSON صالحة.');
+                }
+                
+                if (!Array.isArray(books) || books.length === 0) {
+                    throw new Error('⚠️ الملف لا يحتوي على كتب صالحة.');
+                }
+                
+                progressFill.style.width = '80%';
+                statusText.textContent = `📚 جاري استيراد ${books.length} كتاب...`;
+                
+                // استيراد الكتب
+                let success = 0;
+                let failed = 0;
+                
+                for (let book of books) {
+                    if (book.name && book.text) {
+                        const newBook = {
+                            id: Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '_' + book.name,
+                            name: book.name,
+                            text: book.text,
+                            size: book.text.length,
+                            addedAt: new Date().toISOString()
+                        };
+                        
+                        try {
+                            const db = await openDB();
+                            const transaction = db.transaction(['books'], 'readwrite');
+                            const store = transaction.objectStore('books');
+                            await new Promise((resolve, reject) => {
+                                const request = store.add(newBook);
+                                request.onsuccess = () => { db.close(); resolve(); };
+                                request.onerror = (e) => { db.close(); reject(e); };
+                            });
+                            success++;
+                        } catch (e) {
+                            failed++;
+                            console.error('فشل استيراد كتاب:', book.name, e);
+                        }
+                    } else {
+                        failed++;
+                    }
+                }
+                
+                progressFill.style.width = '100%';
+                
+                if (success > 0) {
+                    statusText.textContent = `✅ تم استيراد ${success} كتاب بنجاح!`;
+                    statusDetail.textContent = `📚 ${success} كتاب مستورد من الرابط`;
+                    notice.style.borderColor = '#10a37f';
+                    notice.style.background = 'rgba(16, 163, 127, 0.2)';
+                    
+                    await refreshUI();
+                } else {
+                    statusText.textContent = '⚠️ لم يتم استيراد أي كتاب.';
+                    statusDetail.textContent = 'تأكد من أن الملف يحتوي على كتب صالحة.';
+                }
+                
+                if (failed > 0) {
+                    statusText.textContent += ` ❌ فشل استيراد ${failed} كتاب.`;
+                }
+                
+            } catch (error) {
+                console.error('خطأ في التحميل التلقائي:', error);
+                statusText.textContent = '⚠️ ' + error.message;
+                statusDetail.textContent = 'يمكنك استخدام زر "تنزيل الكتاب من الرابط" للمحاولة مرة أخرى.';
+                progressFill.style.width = '100%';
+                notice.style.borderColor = '#ef4444';
+                notice.style.background = 'rgba(239, 68, 68, 0.15)';
+            }
+        }
 
-function closeMenu(){
-side.style.right="-300px";
-}
+        // ============================================================
+        // 3. الواجهة الرئيسية
+        // ============================================================
+        function populateDropdown(books) {
+            const select = document.getElementById('bookSelector');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">-- اختر كتاب --</option>';
+            if (books && books.length > 0) {
+                books.forEach(book => {
+                    const opt = document.createElement('option');
+                    opt.value = book.id;
+                    opt.textContent = book.name + ' (' + book.size.toLocaleString() + ' حرف)';
+                    select.appendChild(opt);
+                });
+            }
+            if (currentVal && books.some(b => b.id === currentVal)) select.value = currentVal;
+            updateButtons();
+        }
 
-</script>
+        function getSelectedBookId() { return document.getElementById('bookSelector').value; }
+
+        function getSelectedBook() {
+            const id = getSelectedBookId();
+            return allBooksCache.find(b => b.id === id);
+        }
+
+        function updateButtons() {
+            const hasBook = !!getSelectedBook();
+            document.getElementById('btnSearch').disabled = !hasBook;
+            document.getElementById('btnView').disabled = !hasBook;
+        }
+
+        async function refreshUI() {
+            const books = await getAllBooks();
+            populateDropdown(books);
+            const container = document.getElementById('resultsContainer');
+            if (books.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📖 لا توجد كتب</h3>
+                        <p>${isAdmin ? 'ارفع ملفات .txt أو .pdf' : 'قم باستيراد الكتب باستخدام أحد الخيارات أدناه'}</p>
+                        <div class="auto-download-notice" id="autoDownloadNotice">
+                            <span class="status-icon">⏳</span>
+                            <div class="status-text" id="autoDownloadStatus">جاري تحميل الكتاب من الرابط...</div>
+                            <div class="status-detail" id="autoDownloadDetail">https://drive.google.com/file/d/1NuAt2ozcu6LZ6G3k0v1iNAI9WvIR3J22/</div>
+                            <div class="progress-bar-custom" style="margin-top: 10px;">
+                                <div class="progress-fill-custom" id="autoProgressFill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="share-info-box" style="margin-top: 20px; text-align: right;">
+                            <span class="share-icon">📚</span>
+                            <div class="share-title">مشاركة الكتب مع مستخدمين آخرين</div>
+                            <div class="share-details">
+                                <p>📤 <strong>للمشرف فقط:</strong> اضغط على زر "تصدير" في شريط المشرف لتحميل جميع الكتب كملف JSON.</p>
+                                <p>📥 <strong>لجميع المستخدمين:</strong> استخدم زر "استيراد" أو "تنزيل من رابط".</p>
+                                <p style="color: #fbbf24; margin-top: 8px;">💡 بهذه الطريقة يمكنك مشاركة مكتبتك مع أي شخص!</p>
+                            </div>
+                        </div>
+                        <div class="import-box" style="margin-top: 15px;">
+                            <span class="import-icon">📥</span>
+                            <div class="import-title">استيراد كتب من ملف</div>
+                            <div class="import-details">
+                                <p>اختر ملف JSON تم تصديره من التطبيق لاستيراد الكتب.</p>
+                                <div style="margin-top: 10px;">
+                                    <button class="btn-admin btn-import" onclick="document.getElementById('userImportInput').click()" 
+                                            style="background: #f59e0b; padding: 10px 25px; font-size: 16px;">
+                                        📂 اختيار ملف
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="download-box" style="margin-top: 15px;">
+                            <span class="download-icon">⬇️</span>
+                            <div class="download-title">تنزيل من رابط</div>
+                            <div class="download-details">
+                                <p>أدخل رابط ملف JSON لتنزيله واستيراده تلقائياً</p>
+                                <div style="margin-top: 10px;">
+                                    <button onclick="showDownloadBox()" 
+                                            style="background: #ef4444; border: none; color: #fff; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold;">
+                                        ⬇️ فتح نافذة التنزيل
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                // إعادة ربط عناصر التحميل التلقائي
+                window.autoDownloadBook();
+            } else {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📖 اختر كتاباً من القائمة</h3>
+                        <p>ابحث في كتبك، أو ابحث في <b>💬 ChatGPT</b>.</p>
+                        <div class="share-info-box" style="margin-top: 20px; text-align: right;">
+                            <span class="share-icon">📚</span>
+                            <div class="share-title">مشاركة الكتب مع مستخدمين آخرين</div>
+                            <div class="share-details">
+                                <p>📤 <strong>للمشرف فقط:</strong> اضغط على زر "تصدير" في شريط المشرف لتحميل جميع الكتب كملف JSON.</p>
+                                <p>📥 <strong>لجميع المستخدمين:</strong> استخدم زر "استيراد" أو "تنزيل من رابط".</p>
+                                <p style="color: #fbbf24; margin-top: 8px;">💡 بهذه الطريقة يمكنك مشاركة مكتبتك مع أي شخص!</p>
+                            </div>
+                        </div>
+                        <div class="import-box" style="margin-top: 15px;">
+                            <span class="import-icon">📥</span>
+                            <div class="import-title">استيراد كتب إضافية</div>
+                            <div class="import-details">
+                                <p>اختر ملف JSON لإضافة كتب جديدة إلى المكتبة.</p>
+                                <div style="margin-top: 10px;">
+                                    <button class="btn-admin btn-import" onclick="document.getElementById('userImportInput').click()" 
+                                            style="background: #f59e0b; padding: 10px 25px; font-size: 16px;">
+                                        📂 اختيار ملف
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="download-box" style="margin-top: 15px;">
+                            <span class="download-icon">⬇️</span>
+                            <div class="download-title">تنزيل من رابط</div>
+                            <div class="download-details">
+                                <p>أدخل رابط ملف JSON لتنزيله واستيراده تلقائياً</p>
+                                <div style="margin-top: 10px;">
+                                    <button onclick="showDownloadBox()" 
+                                            style="background: #ef4444; border: none; color: #fff; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-weight: bold;">
+                                        ⬇️ فتح نافذة التنزيل
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            updateButtons();
+        }
+
+        // ============================================================
+        // 4. الأزرار الأساسية (بحث، عرض، بحث الكل، ChatGPT)
+        // ============================================================
+        async function searchSelectedBook() {
+            const book = getSelectedBook();
+            if (!book) { alert('اختر كتاباً أولاً'); return; }
+            const word = document.getElementById('searchInput').value.trim();
+            if (!word) { alert('✏️ اكتب كلمة للبحث'); return; }
+            const container = document.getElementById('resultsContainer');
+            const lines = book.text.split(/\r?\n/);
+            let html = '',
+                count = 0;
+            lines.forEach((line, idx) => {
+                if (line.toLowerCase().includes(word.toLowerCase())) {
+                    count++;
+                    const highlighted = line.replace(new RegExp(word, 'gi'), '<mark>$&</mark>');
+                    html += `
+                            <div class="result-item">
+                                <div class="book-source">📌 نتيجة ${count} (سطر ${idx+1})</div>
+                                <p>${highlighted}</p>
+                                <button style="margin-top:8px; background:#06b6d4; border:none; color:#fff; padding:6px 16px; border-radius:8px; cursor:pointer;" 
+                                        onclick="openReader('${book.id}', ${idx})">📖 فتح القارئ</button>
+                            </div>
+                        `;
+                }
+            });
+            if (count === 0) {
+                container.innerHTML = `<div class="no-result">😞 لم نعثر على "${word}" في "${book.name}".</div>`;
+            } else {
+                container.innerHTML =
+                    `<div class="search-result-title">🔍 نتائج البحث عن "${word}" في "${book.name}" (${count})</div>` +
+                    html;
+            }
+        }
+
+        function viewSelectedBook() {
+            const book = getSelectedBook();
+            if (!book) { alert('اختر كتاباً أولاً'); return; }
+            openReader(book.id, -1);
+        }
+
+        async function searchAllBooks() {
+            const word = document.getElementById('searchInput').value.trim();
+            if (!word) { alert('✏️ اكتب كلمة للبحث'); return; }
+            const books = await getAllBooks();
+            if (books.length === 0) { alert('📭 لا توجد كتب'); return; }
+            const container = document.getElementById('resultsContainer');
+            let totalResults = 0;
+            let html = '';
+            books.forEach(book => {
+                const lines = book.text.split(/\r?\n/);
+                let bookCount = 0,
+                    bookHtml = '';
+                lines.forEach((line, idx) => {
+                    if (line.toLowerCase().includes(word.toLowerCase())) {
+                        bookCount++;
+                        totalResults++;
+                        const highlighted = line.replace(new RegExp(word, 'gi'), '<mark>$&</mark>');
+                        bookHtml += `
+                                <div class="result-item">
+                                    <div class="book-source">📌 نتيجة ${bookCount} (سطر ${idx+1})</div>
+                                    <p>${highlighted}</p>
+                                    <button style="margin-top:8px; background:#06b6d4; border:none; color:#fff; padding:6px 16px; border-radius:8px; cursor:pointer;" 
+                                            onclick="openReader('${book.id}', ${idx})">📖 فتح القارئ</button>
+                                </div>
+                            `;
+                    }
+                });
+                if (bookCount > 0) {
+                    html += `
+                            <div class="book-group-title">📘 ${book.name} (${bookCount} نتيجة)</div>
+                            ${bookHtml}
+                        `;
+                }
+            });
+            if (totalResults === 0) {
+                container.innerHTML =
+                    `<div class="no-result">😞 لم نعثر على "${word}" في أي من الكتب (${books.length} كتاب).</div>`;
+            } else {
+                container.innerHTML = `
+                        <div style="background:rgba(16,185,129,.2); padding:12px 16px; border-radius:10px; margin-bottom:15px;">
+                            <strong>✅ النتائج:</strong> ${totalResults} نتيجة في ${books.filter(b => b.text.toLowerCase().includes(word.toLowerCase())).length} كتب.
+                        </div>
+                        ${html}
+                    `;
+            }
+        }
+
+        // ============================================================
+        // 4.1 💬 البحث في ChatGPT
+        // ============================================================
+        function searchInChatGPT() {
+            const question = document.getElementById('searchInput').value.trim();
+            if (!question) {
+                alert('✏️ اكتب سؤالك أولاً للبحث في ChatGPT.');
+                return;
+            }
+            
+            const encodedQuestion = encodeURIComponent(question);
+            const chatgptUrl = `https://chat.openai.com/?q=${encodedQuestion}`;
+            const chatgptComUrl = `https://chatgpt.com/?q=${encodedQuestion}`;
+            
+            const container = document.getElementById('resultsContainer');
+            
+            container.innerHTML = `
+                <div class="chatgpt-redirect-box">
+                    <span class="chatgpt-icon">💬</span>
+                    <div class="chatgpt-message">
+                        <strong>سيتم فتح ChatGPT للإجابة على سؤالك:</strong><br>
+                        <span style="color: #94a3b8; font-size: 16px;">"${question}"</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn-open-chatgpt" onclick="window.open('${chatgptUrl}', '_blank')">
+                            🚀 فتح ChatGPT
+                        </button>
+                        <button class="btn-open-chatgpt" style="background: #1a7f64;" onclick="window.open('${chatgptComUrl}', '_blank')">
+                            🌐 فتح ChatGPT (رابط بديل)
+                        </button>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 14px; color: #94a3b8;">
+                        💡 سيتم فتح ChatGPT في نافذة جديدة. قد تحتاج إلى تسجيل الدخول إلى حساب ChatGPT.
+                    </div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #64748b;">
+                        📋 إذا لم يعمل الرابط، يمكنك نسخ السؤال ولصقه يدوياً في ChatGPT.
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // 5. قارئ النصوص
+        // ============================================================
+        let currentReaderBookId = null;
+        let currentHighlightedLine = -1;
+        let readerLines = [];
+        let isNightMode = false;
+        let currentFontSize = 20;
+
+        function saveReadingProgress(bookId, lineIndex) {
+            if (!bookId) return;
+            try { localStorage.setItem('reading_progress_' + bookId, String(lineIndex)); } catch (e) {}
+        }
+
+        function getReadingProgress(bookId) {
+            try { const v = localStorage.getItem('reading_progress_' + bookId); return v ? parseInt(v, 10) : -1; } catch (
+            e) { return -1; }
+        }
+
+        function openReader(bookId, highlightLine = -1) {
+            const book = allBooksCache.find(b => b.id === bookId);
+            if (!book) { alert('الكتاب غير موجود'); return; }
+            currentReaderBookId = bookId;
+            const lines = book.text.split(/\r?\n/);
+            readerLines = lines;
+            let targetLine = highlightLine;
+            if (targetLine < 0 || targetLine >= lines.length) {
+                const saved = getReadingProgress(bookId);
+                if (saved >= 0 && saved < lines.length) targetLine = saved;
+                else targetLine = 0;
+            }
+            currentHighlightedLine = targetLine;
+            document.getElementById('readerBookTitle').textContent = `📖 ${book.name}`;
+            const content = document.getElementById('readerContent');
+            let html = '';
+            lines.forEach((line, idx) => {
+                const hl = (idx === targetLine) ? 'highlight' : '';
+                const displayLine = line || ' ';
+                html +=
+                    `<div class="line ${hl}" id="reader-line-${idx}"><span class="line-number">${idx+1}</span> ${displayLine}</div>`;
+            });
+            content.innerHTML = html;
+            const overlay = document.getElementById('readerOverlay');
+            overlay.classList.add('active');
+            if (isNightMode) overlay.classList.add('night-mode');
+            else overlay.classList.remove('night-mode');
+            content.style.fontSize = currentFontSize + 'px';
+            updateProgress(targetLine, lines.length);
+            setTimeout(() => {
+                const target = document.getElementById(`reader-line-${targetLine}`);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
+            saveReadingProgress(bookId, targetLine);
+            content.onscroll = function() {
+                const rect = content.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                let bestLine = 0,
+                    bestDist = Infinity;
+                const allLines = content.querySelectorAll('.line');
+                allLines.forEach((el, idx) => {
+                    const r = el.getBoundingClientRect();
+                    const mid = r.top + r.height / 2;
+                    const d = Math.abs(mid - centerY);
+                    if (d < bestDist) { bestDist = d;
+                        bestLine = idx; }
+                });
+                if (bestLine !== currentHighlightedLine && bestLine < lines.length) {
+                    currentHighlightedLine = bestLine;
+                    allLines.forEach(el => el.classList.remove('highlight'));
+                    if (allLines[bestLine]) allLines[bestLine].classList.add('highlight');
+                    saveReadingProgress(bookId, bestLine);
+                    updateProgress(bestLine, lines.length);
+                }
+            };
+        }
+
+        function updateProgress(currentLine, totalLines) {
+            const pct = totalLines > 0 ? Math.round(((currentLine + 1) / totalLines) * 100) : 0;
+            document.getElementById('progressFill').style.width = Math.min(pct, 100) + '%';
+            document.getElementById('progressText').textContent = Math.min(pct, 100) + '%';
+        }
+
+        function closeReader() {
+            document.getElementById('readerOverlay').classList.remove('active');
+            if (currentReaderBookId && currentHighlightedLine >= 0) {
+                saveReadingProgress(currentReaderBookId, currentHighlightedLine);
+            }
+        }
+
+        function toggleNightMode() {
+            const overlay = document.getElementById('readerOverlay');
+            isNightMode = !isNightMode;
+            overlay.classList.toggle('night-mode', isNightMode);
+        }
+
+        function changeFontSize(delta) {
+            currentFontSize = Math.min(36, Math.max(14, currentFontSize + delta));
+            document.getElementById('readerContent').style.fontSize = currentFontSize + 'px';
+        }
+
+        // ============================================================
+        // 6. التهيئة
+        // ============================================================
+        window.onload = async function() {
+            checkAdminStatus();
+            await refreshUI();
+            const select = document.getElementById('bookSelector');
+            if (select.options.length > 1) select.selectedIndex = 1;
+            updateButtons();
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (document.getElementById('readerOverlay').classList.contains('active')) closeReader();
+                    if (document.getElementById('changePassModal').classList.contains('active')) closeChangePass();
+                    if (document.getElementById('aiSettingsModal').classList.contains('active')) closeAISettings();
+                }
+            });
+
+            document.getElementById('changePassModal').addEventListener('click', function(e) {
+                if (e.target === this) closeChangePass();
+            });
+            document.getElementById('aiSettingsModal').addEventListener('click', function(e) {
+                if (e.target === this) closeAISettings();
+            });
+            document.getElementById('bookSelector').addEventListener('change', updateButtons);
+            
+            // محاولة التحميل التلقائي
+            setTimeout(autoDownloadBook, 1000);
+        };
+
+        // تعريف الدوال في النطاق العالمي
+        window.searchSelectedBook = searchSelectedBook;
+        window.viewSelectedBook = viewSelectedBook;
+        window.searchAllBooks = searchAllBooks;
+        window.searchInChatGPT = searchInChatGPT;
+        window.openReader = openReader;
+        window.closeReader = closeReader;
+        window.toggleNightMode = toggleNightMode;
+        window.changeFontSize = changeFontSize;
+        window.uploadNewBook = uploadNewBook;
+        window.deleteAllBooks = deleteAllBooks;
+        window.exportBooks = exportBooks;
+        window.importBooks = importBooks;
+        window.showDownloadBox = showDownloadBox;
+        window.downloadAndImport = downloadAndImport;
+        window.setExampleUrl = setExampleUrl;
+        window.copyFileName = copyFileName;
+        window.loginAdmin = loginAdmin;
+        window.logoutAdmin = logoutAdmin;
+        window.showChangePass = showChangePass;
+        window.closeChangePass = closeChangePass;
+        window.saveNewPassword = saveNewPassword;
+        window.showAISettings = showAISettings;
+        window.closeAISettings = closeAISettings;
+        window.saveAISettings = saveAISettings;
+        window.autoDownloadBook = autoDownloadBook;
+    </script>
 
 </body>
 </html>
