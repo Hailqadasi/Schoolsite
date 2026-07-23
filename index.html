@@ -1,5 +1,4 @@
-```html
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -14,7 +13,7 @@
         .main-area { padding: 25px 20px 10px; max-width: 900px; margin: 0 auto; }
         
         /* حقل البحث عن الكتاب مع الزر */
-        .book-search-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; }
+        .book-search-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
         .book-search-row .search-input-wrapper { flex: 1; min-width: 200px; position: relative; }
         .book-search-row .search-input-wrapper input[type="text"] { 
             width: 100%; padding: 14px 18px; font-size: 18px; border: none; border-radius: 12px; outline: none; 
@@ -29,7 +28,7 @@
         
         .book-search-results { 
             background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 8px; 
-            margin-bottom: 15px; max-height: 250px; overflow-y: auto; display: none;
+            margin-bottom: 10px; max-height: 250px; overflow-y: auto; display: none;
             border: 2px solid rgba(139, 92, 246, 0.3);
         }
         .book-search-results.active { display: block; }
@@ -48,23 +47,53 @@
         
         .selected-book-display {
             background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; border-radius: 12px;
-            padding: 12px 18px; margin-bottom: 15px; display: flex; justify-content: space-between;
+            padding: 12px 18px; margin-bottom: 10px; display: flex; justify-content: space-between;
             align-items: center; flex-wrap: wrap; gap: 10px;
         }
         .selected-book-display .label { font-size: 14px; color: #94a3b8; }
         .selected-book-display .book-name { font-size: 18px; font-weight: bold; color: #34d399; }
         .selected-book-display .no-book { color: #94a3b8; font-size: 16px; }
 
+        /* صف البحث عن الكلمات داخل الكتاب */
+        .search-text-row { 
+            display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 15px 0;
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-text-row input[type="text"] {
+            flex: 1; min-width: 150px; padding: 12px 16px; font-size: 16px;
+            border: none; border-radius: 10px; outline: none; background: #fff; color: #1e293b;
+        }
+        .search-text-row .btn-text-search {
+            background: #16a34a; color: #fff; border: none; border-radius: 10px;
+            padding: 12px 20px; cursor: pointer; font-size: 16px; font-weight: bold;
+            transition: .3s; min-width: 80px;
+        }
+        .search-text-row .btn-text-search:hover { transform: scale(1.05); background: #15803d; }
+        .search-text-row .btn-text-search-all {
+            background: #f59e0b; color: #fff; border: none; border-radius: 10px;
+            padding: 12px 20px; cursor: pointer; font-size: 16px; font-weight: bold;
+            transition: .3s; min-width: 80px;
+        }
+        .search-text-row .btn-text-search-all:hover { transform: scale(1.05); background: #d97706; }
+
         .action-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
         .action-buttons button { flex: 1; min-width: 90px; padding: 14px 8px; font-size: 16px; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; transition: .3s; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .action-buttons button:hover { transform: scale(1.03); }
-        .btn-main-search { background: #16a34a; } .btn-main-view { background: #2563eb; }
-        .btn-main-search-all { background: #f59e0b; } 
+        .btn-main-view { background: #2563eb; }
         .btn-main-chatgpt { background: #10a37f; }
         .btn-main-import { background: #f59e0b; }
-        .btn-main-upload-user { background: #0ea5e9; }
         .btn-main-download-import { background: #8b5cf6; }
+        .btn-main-upload-user { background: #0ea5e9; }
         .action-buttons button:disabled { background: #4b5563; cursor: not-allowed; opacity: 0.6; transform: none; }
+
+        .btn-delete-selected { 
+            background: #ef4444; color: #fff; border: none; border-radius: 14px;
+            padding: 14px 20px; cursor: pointer; font-size: 16px; font-weight: bold;
+            transition: .3s; min-width: 80px; flex: 0.5;
+        }
+        .btn-delete-selected:hover { transform: scale(1.05); background: #dc2626; }
+        .btn-delete-selected:disabled { background: #4b5563; cursor: not-allowed; opacity: 0.6; transform: none; }
 
         #resultsContainer { margin: 25px 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
         .result-item { background: rgba(255, 255, 255, .12); border-radius: 12px; padding: 15px; margin-top: 10px; border-right: 3px solid #60a5fa; position: relative; }
@@ -134,10 +163,12 @@
         .file-input-label-user { background: #0ea5e9; padding: 14px 25px; border-radius: 14px; font-size: 16px; display: inline-block; cursor: pointer; text-align: center; flex: 1; min-width: 90px; font-weight: bold; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: .3s; }
         .file-input-label-user:hover { background: #0284c7; transform: scale(1.03); }
 
-        /* تنسيق شريط التمرير للنتائج */
         .book-search-results::-webkit-scrollbar { width: 6px; }
         .book-search-results::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
         .book-search-results::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 10px; }
+
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .flex-grow { flex: 1; min-width: 80px; }
     </style>
 </head>
 <body>
@@ -167,22 +198,29 @@
             <span style="font-size:14px; color:#94a3b8;" id="selectedBookSize"></span>
         </div>
 
-        <!-- القائمة المنسدلة الأصلية (مخفية للتوافق مع الكود القديم) -->
+        <!-- صف البحث عن الكلمات داخل الكتاب -->
+        <div class="search-text-row">
+            <input type="text" id="searchInput" placeholder="✏️ اكتب كلمة أو سؤالاً للبحث في الكتاب...">
+            <button class="btn-text-search" onclick="searchSelectedBook()">🔍 بحث</button>
+            <button class="btn-text-search-all" onclick="searchAllBooks()">🌍 بحث الكل</button>
+        </div>
+
+        <!-- القائمة المنسدلة الأصلية (مخفية للتوافق) -->
         <select id="bookSelector">
             <option value="">-- اختر كتاب --</option>
         </select>
 
+        <!-- أزرار الإجراءات -->
         <div class="action-buttons">
-            <button class="btn-main-search" id="btnSearch" onclick="searchSelectedBook()">🔍 بحث</button>
             <button class="btn-main-view" id="btnView" onclick="viewSelectedBook()">📖 عرض</button>
-            <button class="btn-main-search-all" onclick="searchAllBooks()">🌍 بحث الكل</button>
             <button class="btn-main-chatgpt" onclick="searchInChatGPT()">💬 ChatGPT</button>
             <button class="btn-main-import" onclick="document.getElementById('userImportInput').click()">📥 استيراد</button>
-            <button class="btn-main-download-import" onclick="openGoogleDrive()">📥 انزل الكتب ثم استوردها</button>
+            <button class="btn-main-download-import" onclick="openGoogleDrive()">📥 انزل الكتب</button>
             <label class="file-input-label-user btn-main-upload-user">
                 📤 رفع كتاب
                 <input type="file" id="userUploadInput" accept=".txt" style="display:none;" onchange="userUploadBook(event)" multiple>
             </label>
+            <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedBook()" disabled>🗑️ حذف</button>
             <input type="file" id="userImportInput" accept=".json" style="display:none;" onchange="importBooks(event)">
         </div>
     </div>
@@ -334,7 +372,7 @@
         }
 
         // ============================================================
-        // 2. البحث عن كتاب بالاسم (الميزة الجديدة)
+        // 2. البحث عن كتاب بالاسم
         // ============================================================
         function searchBooksByName(query) {
             const resultsContainer = document.getElementById('bookSearchResults');
@@ -380,27 +418,22 @@
 
             selectedBookId = bookId;
             
-            // تحديث عرض الكتاب المحدد
             document.getElementById('selectedBookName').textContent = book.name;
             document.getElementById('selectedBookName').className = 'book-name';
             document.getElementById('selectedBookSize').textContent = `(${book.size.toLocaleString()} حرف)`;
             
-            // تحديث القائمة المنسدلة المخفية
             const select = document.getElementById('bookSelector');
             select.value = bookId;
             
-            // إخفاء نتائج البحث
             document.getElementById('bookSearchResults').classList.remove('active');
             document.getElementById('bookSearchInput').value = book.name;
             
-            // تحديث الأزرار
             updateButtons();
-            
             showToast(`✅ تم اختيار "${book.name}"`);
         }
 
         // ============================================================
-        // 4. معالجة ضغطات المفاتيح في حقل البحث
+        // 4. معالجة ضغطات المفاتيح
         // ============================================================
         let searchSelectedIndex = -1;
 
@@ -478,7 +511,7 @@
         }
 
         // ============================================================
-        // 6. استيراد من ملف (لجميع المستخدمين)
+        // 6. استيراد من ملف
         // ============================================================
         async function importBooks(event) {
             try {
@@ -601,7 +634,6 @@
                     select.appendChild(opt);
                 });
             }
-            // محاولة استعادة الاختيار السابق
             if (selectedBookId && books.some(b => b.id === selectedBookId)) {
                 select.value = selectedBookId;
             } else if (currentVal && books.some(b => b.id === currentVal)) {
@@ -628,8 +660,8 @@
 
         function updateButtons() {
             const hasBook = !!getSelectedBook();
-            document.getElementById('btnSearch').disabled = !hasBook;
             document.getElementById('btnView').disabled = !hasBook;
+            document.getElementById('btnDeleteSelected').disabled = !hasBook;
         }
 
         function updateSelectedBookDisplay() {
@@ -708,7 +740,7 @@
                     <div class="empty-state">
                         <h3>📖 اختر كتاباً من القائمة</h3>
                         <p>ابحث في كتبك، أو ابحث في <b>💬 ChatGPT</b>.</p>
-                        <p style="color: #94a3b8; font-size: 14px; margin-top: 5px;">🗑️ لحذف كتاب، اختره من القائمة المنسدلة ثم اضغط على زر الحذف 🗑️</p>
+                        <p style="color: #94a3b8; font-size: 14px; margin-top: 5px;">🗑️ لحذف كتاب، اختره ثم اضغط على زر الحذف 🗑️</p>
                         <div class="share-info-box" style="margin-top: 20px; text-align: right;">
                             <span class="share-icon">📚</span>
                             <div class="share-title">مشاركة الكتب مع مستخدمين آخرين</div>
@@ -767,11 +799,11 @@
         }
 
         // ============================================================
-        // 10. الأزرار الأساسية (بحث، عرض، بحث الكل، ChatGPT)
+        // 10. البحث عن الكلمات داخل الكتاب
         // ============================================================
         async function searchSelectedBook() {
             const book = getSelectedBook();
-            if (!book) { showToast('اختر كتاباً أولاً', 'error'); return; }
+            if (!book) { showToast('⚠️ اختر كتاباً أولاً', 'error'); return; }
             const word = document.getElementById('searchInput').value.trim();
             if (!word) { showToast('✏️ اكتب كلمة للبحث', 'error'); return; }
             const container = document.getElementById('resultsContainer');
@@ -799,12 +831,6 @@
                     `<div class="search-result-title">🔍 نتائج البحث عن "${word}" في "${book.name}" (${count})</div>` +
                     html;
             }
-        }
-
-        function viewSelectedBook() {
-            const book = getSelectedBook();
-            if (!book) { showToast('اختر كتاباً أولاً', 'error'); return; }
-            openReader(book.id, -1);
         }
 
         async function searchAllBooks() {
@@ -855,7 +881,7 @@
         }
 
         // ============================================================
-        // 10.1 💬 البحث في ChatGPT
+        // 11. 💬 البحث في ChatGPT
         // ============================================================
         function searchInChatGPT() {
             const question = document.getElementById('searchInput').value.trim();
@@ -896,7 +922,16 @@
         }
 
         // ============================================================
-        // 11. قارئ النصوص
+        // 12. عرض الكتاب (قارئ النصوص)
+        // ============================================================
+        function viewSelectedBook() {
+            const book = getSelectedBook();
+            if (!book) { showToast('⚠️ اختر كتاباً أولاً', 'error'); return; }
+            openReader(book.id, -1);
+        }
+
+        // ============================================================
+        // 13. قارئ النصوص
         // ============================================================
         let currentReaderBookId = null;
         let currentHighlightedLine = -1;
@@ -996,7 +1031,7 @@
         }
 
         // ============================================================
-        // 12. التهيئة
+        // 14. التهيئة
         // ============================================================
         window.onload = async function() {
             await refreshUI();
@@ -1030,4 +1065,3 @@
 
 </body>
 </html>
-``` 
