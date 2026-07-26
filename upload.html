@@ -1,0 +1,197 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>إنشاء منشور - Tofolati</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+padding:20px;
+text-align:center;
+}
+
+.box{
+background:white;
+padding:20px;
+border-radius:15px;
+}
+
+textarea,input,button{
+width:90%;
+padding:12px;
+margin:10px;
+font-size:16px;
+}
+
+button{
+background:#2196f3;
+color:white;
+border:0;
+border-radius:10px;
+}
+
+img{
+max-width:250px;
+border-radius:10px;
+}
+
+#msg{
+margin-top:15px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>إنشاء منشور</h2>
+
+<textarea id="text" placeholder="بماذا تفكر؟"></textarea>
+
+<input type="file" id="file" accept="image/*">
+
+<br>
+
+<img id="preview">
+
+<button onclick="post()">نشر</button>
+
+<div id="msg"></div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL="https://zytvinuynkatrlbrpmko.supabase.co";
+
+const SUPABASE_KEY="ضع المفتاح هنا";
+
+
+const supabaseClient=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+document.getElementById("file").onchange=function(){
+
+let img=document.getElementById("preview");
+
+img.src=URL.createObjectURL(this.files[0]);
+
+};
+
+
+async function post(){
+
+let msg=document.getElementById("msg");
+
+let text=document.getElementById("text").value;
+
+let file=document.getElementById("file").files[0];
+
+
+msg.innerHTML="جاري النشر...";
+
+
+const {data:userData}=await supabaseClient.auth.getUser();
+
+const user=userData.user;
+
+
+if(!user){
+
+msg.innerHTML="يجب تسجيل الدخول";
+
+return;
+
+}
+
+
+// جلب اسم المستخدم
+
+const {data:profile}=await supabaseClient
+.from("profiles")
+.select("username")
+.eq("id",user.id)
+.single();
+
+
+
+let url="";
+
+
+if(file){
+
+let filename=Date.now()+"_"+file.name;
+
+
+const {error}=await supabaseClient
+.storage
+.from("images")
+.upload(filename,file);
+
+
+if(error){
+
+msg.innerHTML=error.message;
+return;
+
+}
+
+
+const {data:urlData}=supabaseClient
+.storage
+.from("images")
+.getPublicUrl(filename);
+
+
+url=urlData.publicUrl;
+
+}
+
+
+
+// حفظ المنشور
+
+const {error}=await supabaseClient
+.from("posts")
+.insert({
+
+text:text,
+media_url:url,
+media_type:file?"image":null,
+user_id:user.id,
+user_name:profile.username,
+timestamp:Date.now(),
+likes:0
+
+});
+
+
+if(error){
+
+msg.innerHTML=error.message;
+return;
+
+}
+
+
+msg.innerHTML="تم نشر المنشور ✅";
+
+
+}
+
+</script>
+
+</body>
+</html>
