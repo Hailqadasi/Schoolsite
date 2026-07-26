@@ -1,0 +1,107 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>تسجيل الدخول - Tofolati</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f2f2f2;
+    text-align:center;
+    padding:30px;
+}
+
+input,button{
+    width:90%;
+    padding:12px;
+    margin:8px;
+    font-size:16px;
+}
+
+button{
+    background:#2196f3;
+    color:white;
+    border:0;
+    border-radius:8px;
+}
+
+#msg{
+    margin-top:15px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>تسجيل الدخول</h2>
+
+<input id="email" placeholder="البريد الإلكتروني">
+
+<input id="password" type="password" placeholder="كلمة المرور">
+
+<button onclick="login()">دخول</button>
+
+<div id="msg"></div>
+
+
+<script>
+
+const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
+
+const SUPABASE_KEY = " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
+
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+async function login(){
+
+let email =
+document.getElementById("email").value;
+
+let password =
+document.getElementById("password").value;
+
+let msg =
+document.getElementById("msg");
+
+
+msg.innerHTML="جاري الدخول...";
+
+
+const {data,error}=await supabaseClient.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+
+if(error){
+msg.innerHTML=error.message;
+return;
+}
+
+
+msg.innerHTML="تم تسجيل الدخول بنجاح ✅";
+
+
+// الانتقال إلى صفحة المنشورات
+setTimeout(()=>{
+window.location.href="feed.html";
+},1000);
+
+
+}
+
+</script>
+
+</body>
+</html>
