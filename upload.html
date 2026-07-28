@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>إنشاء منشور - Tofolati</title>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 
 body{
@@ -107,8 +107,8 @@ input{
 <div class="box">
 
 
-<div class="user">
-👤 المستخدم
+<div class="user" id="username">
+جاري تحميل المستخدم...
 </div>
 
 
@@ -145,7 +145,51 @@ img.style.display="block";
 
 }
 
+const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
 
+const SUPABASE_KEY = "ضع المفتاح هنا";
+
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+async function loadUser(){
+
+const {data:{session}} = await supabaseClient.auth.getSession();
+
+
+if(!session){
+document.getElementById("username").innerHTML =
+"يجب تسجيل الدخول";
+return;
+}
+
+
+const {data:profile,error}=await supabaseClient
+.from("profiles")
+.select("username")
+.eq("id",session.user.id)
+.single();
+
+
+if(error){
+document.getElementById("username").innerHTML =
+"خطأ في جلب المستخدم";
+return;
+}
+
+
+document.getElementById("username").innerHTML =
+"👤 " + profile.username;
+
+
+}
+
+
+loadUser();
 </script>
 
 
