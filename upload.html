@@ -239,8 +239,11 @@ await supabaseClient
 
 
 if(uploadError){
-    alert(uploadError.message);
+    alert("خطأ رفع الصورة: " + uploadError.message);
     return;
+}
+
+alert("تم رفع الصورة إلى Storage بنجاح");
 }
 
 
