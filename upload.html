@@ -184,7 +184,117 @@ document.getElementById("username").innerHTML =
 
 
 }
+async function createPost(){
 
+let text = document.getElementById("postText").value;
+
+let file = document.getElementById("imageFile").files[0];
+
+
+const {data:{session}} = await supabaseClient.auth.getSession();
+
+
+if(!session){
+    alert("يجب تسجيل الدخول");
+    return;
+}
+
+
+const user = session.user;
+
+
+// جلب اسم المستخدم
+
+const {data:profile,error:profileError} =
+await supabaseClient
+.from("profiles")
+.select("username")
+.eq("id",user.id)
+.single();
+
+
+if(profileError){
+    alert(profileError.message);
+    return;
+}
+
+
+let imageUrl = "";
+let mediaType = null;
+
+
+// رفع الصورة إذا وجدت
+
+if(file){
+
+let fileName = Date.now() + "_" + file.name;
+
+
+const {error:uploadError} =
+await supabaseClient
+.storage
+.from("images")
+.upload(fileName,file);
+
+
+if(uploadError){
+    alert(uploadError.message);
+    return;
+}
+
+
+const {data:urlData} =
+supabaseClient
+.storage
+.from("images")
+.getPublicUrl(fileName);
+
+
+imageUrl = urlData.publicUrl;
+mediaType = "image";
+
+}
+
+
+// حفظ المنشور
+
+const {error} =
+await supabaseClient
+.from("posts")
+.insert({
+
+text:text,
+
+media_url:imageUrl,
+
+media_type:mediaType,
+
+user_id:user.id,
+
+user_name:profile.username,
+
+timestamp:Date.now(),
+
+likes:0
+
+});
+
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+
+alert("تم نشر المنشور بنجاح ✅");
+
+
+window.location.href="feed.html";
+
+
+}
 
 loadUser();
 </script>
