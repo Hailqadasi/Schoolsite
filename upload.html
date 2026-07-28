@@ -1,197 +1,154 @@
  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>إنشاء منشور - Tofolati</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
+
 body{
-font-family:Arial;
-background:#f2f2f2;
-padding:20px;
-text-align:center;
+    font-family:Arial;
+    background:#f2f2f2;
+    margin:0;
+    padding:15px;
+}
+
+.header{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.header h2{
+    margin:0;
+    color:#2196f3;
+}
+
+.back{
+    background:#eee;
+    border:0;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    font-size:20px;
 }
 
 .box{
-background:white;
-padding:20px;
-border-radius:15px;
+    background:white;
+    margin-top:15px;
+    padding:15px;
+    border-radius:15px;
 }
 
-textarea,input,button{
-width:90%;
-padding:12px;
-margin:10px;
-font-size:16px;
+.user{
+    font-weight:bold;
+    font-size:18px;
+    margin-bottom:15px;
 }
 
-button{
-background:#2196f3;
-color:white;
-border:0;
-border-radius:10px;
+textarea{
+    width:100%;
+    height:120px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:10px;
+    font-size:16px;
+    resize:none;
 }
 
-img{
-max-width:250px;
-border-radius:10px;
+input{
+    margin-top:15px;
 }
 
-#msg{
-margin-top:15px;
+#preview{
+    width:100%;
+    margin-top:15px;
+    border-radius:12px;
+    display:none;
 }
+
+.post-btn{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    background:#2196f3;
+    color:white;
+    border:0;
+    border-radius:10px;
+    font-size:18px;
+}
+
 </style>
 
 </head>
 
+
 <body>
 
-<div class="box">
+
+<div class="header">
+
+<button class="back" onclick="history.back()">←</button>
 
 <h2>إنشاء منشور</h2>
 
-<textarea id="text" placeholder="بماذا تفكر؟"></textarea>
-
-<input type="file" id="file" accept="image/*">
-
-<br>
-
-<img id="preview">
-
-<button onclick="post()">نشر</button>
-
-<div id="msg"></div>
+<div></div>
 
 </div>
 
 
+
+<div class="box">
+
+
+<div class="user">
+👤 المستخدم
+</div>
+
+
+<textarea placeholder="بماذا تفكر؟"></textarea>
+
+
+<input type="file" accept="image/*" onchange="previewImage(event)">
+
+
+
+<img id="preview">
+
+
+
+<button class="post-btn">
+نشر المنشور
+</button>
+
+
+</div>
+
+
+
 <script>
 
-const SUPABASE_URL="https://zytvinuynkatrlbrpmko.supabase.co";
 
-const SUPABASE_KEY="ضع المفتاح هنا";
-
-
-const supabaseClient=supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-
-document.getElementById("file").onchange=function(){
+function previewImage(event){
 
 let img=document.getElementById("preview");
 
-img.src=URL.createObjectURL(this.files[0]);
+img.src=URL.createObjectURL(event.target.files[0]);
 
-};
-
-
-async function post(){
-
-let msg=document.getElementById("msg");
-
-let text=document.getElementById("text").value;
-
-let file=document.getElementById("file").files[0];
-
-
-msg.innerHTML="جاري النشر...";
-
-
-const {data:userData}=await supabaseClient.auth.getUser();
-
-const user=userData.user;
-
-
-if(!user){
-
-msg.innerHTML="يجب تسجيل الدخول";
-
-return;
+img.style.display="block";
 
 }
 
-
-// جلب اسم المستخدم
-
-const {data:profile}=await supabaseClient
-.from("profiles")
-.select("username")
-.eq("id",user.id)
-.single();
-
-
-
-let url="";
-
-
-if(file){
-
-let filename=Date.now()+"_"+file.name;
-
-
-const {error}=await supabaseClient
-.storage
-.from("images")
-.upload(filename,file);
-
-
-if(error){
-
-msg.innerHTML=error.message;
-return;
-
-}
-
-
-const {data:urlData}=supabaseClient
-.storage
-.from("images")
-.getPublicUrl(filename);
-
-
-url=urlData.publicUrl;
-
-}
-
-
-
-// حفظ المنشور
-
-const {error}=await supabaseClient
-.from("posts")
-.insert({
-
-text:text,
-media_url:url,
-media_type:file?"image":null,
-user_id:user.id,
-user_name:profile.username,
-timestamp:Date.now(),
-likes:0
-
-});
-
-
-if(error){
-
-msg.innerHTML=error.message;
-return;
-
-}
-
-
-msg.innerHTML="تم نشر المنشور ✅";
-
-
-}
 
 </script>
 
+
 </body>
+
 </html>
