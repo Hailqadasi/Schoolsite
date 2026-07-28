@@ -177,10 +177,9 @@ const {data:profile,error}=await supabaseClient
 
 if(error){
 document.getElementById("username").innerHTML =
-"خطأ في جلب المستخدم";
+error.message;
 return;
 }
-
 
 document.getElementById("username").innerHTML =
 "👤 " + profile.username;
