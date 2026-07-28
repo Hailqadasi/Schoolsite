@@ -227,8 +227,9 @@ let mediaType = null;
 
 if(file){
 
-let fileName = Date.now() + "_" + file.name;
+alert("تم اختيار الصورة: " + file.name);
 
+let fileName = Date.now() + "_" + file.name;
 
 const {error:uploadError} =
 await supabaseClient
