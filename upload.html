@@ -245,7 +245,7 @@ console.log(uploadError);
 
 
 if(uploadError){
-    alert("خطأ رفع الصورة: " + uploadError.message);
+    alert(JSON.stringify(uploadError));
     return;
 }
 
