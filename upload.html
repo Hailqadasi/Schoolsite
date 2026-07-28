@@ -234,11 +234,14 @@ alert("تم اختيار الصورة: " + file.name);
 let fileName = Date.now() + "_" + file.name;
 
 
-const {error:uploadError} =
+const {data:uploadData, error:uploadError} =
 await supabaseClient
 .storage
 .from("images")
 .upload(fileName,file);
+
+console.log(uploadData);
+console.log(uploadError);
 
 
 if(uploadError){
