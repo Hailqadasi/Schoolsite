@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Tofolati</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -14,6 +12,34 @@ body{
     background:#f2f2f2;
     margin:0;
     padding:15px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:white;
+padding:12px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+color:#2196f3;
+}
+
+.icons button{
+width:45px;
+height:45px;
+margin-right:8px;
+border:none;
+border-radius:50%;
+background:#f0f2f5;
+font-size:20px;
+cursor:pointer;
 }
 
 .post{
@@ -43,126 +69,52 @@ body{
     margin-top:10px;
 }
 </style>
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:white;
-padding:12px;
-border-radius:12px;
-margin-bottom:15px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-
-.logo{
-font-size:24px;
-font-weight:bold;
-color:#2196f3;
-}
-
-.icons button{
-width:45px;
-height:45px;
-margin-right:8px;
-border:none;
-border-radius:50%;
-background:#f0f2f5;
-font-size:20px;
-cursor:pointer;
-}
 </head>
 
 <body>
 <div class="header">
-
 <div class="logo">🌸 Tofolati</div>
-
 <div class="icons">
 <button onclick="alert('البحث قريبًا')">🔍</button>
-
 <button onclick="location.href='upload.html'">➕</button>
-
 <button onclick="alert('الملف الشخصي قريبًا')">👤</button>
 </div>
-
 </div>
-<h2>Tofolati</h2>
 
 <div id="posts"></div>
 
-
 <script>
-
 const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
 
-const SUPABASE_KEY = "  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0  ";
-
-
-const supabaseClient = supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function loadPosts(){
+    const {data, error} = await supabaseClient
+        .from("posts")
+        .select("*")
+        .order("id", {ascending: false});
 
-const {data,error}=await supabaseClient
-.from("posts")
-.select("*")
-.order("id",{ascending:false});
+    if(error){
+        document.getElementById("posts").innerHTML = error.message;
+        return;
+    }
 
-
-if(error){
-document.getElementById("posts").innerHTML=
-error.message;
-return;
+    let html = "";
+    data.forEach(post => {
+        html += `
+        <div class="post">
+            <div class="name">${post.user_name}</div>
+            <div class="text">${post.text || ""}</div>
+            <img src="${post.media_url}" alt="صورة المنشور">
+            <div class="likes">❤️ ${post.likes || 0}</div>
+        </div>
+        `;
+    });
+    document.getElementById("posts").innerHTML = html;
 }
-
-
-let html="";
-
-
-data.forEach(post=>{
-
-html+=`
-
-<div class="post">
-
-<div class="name">
-${post.user_name}
-</div>
-
-
-<div class="text">
-${post.text || ""}
-</div>
-
-
-<img src="${post.media_url}">
-
-
-<div class="likes">
-❤️ ${post.likes || 0}
-</div>
-
-
-</div>
-
-`;
-
-});
-
-
-document.getElementById("posts").innerHTML=html;
-
-
-}
-
 
 loadPosts();
-
-
 </script>
-
 </body>
 </html>
