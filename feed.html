@@ -117,6 +117,21 @@ async function loadPosts(){
                 <span id="likes-${post.id}">${post.likes || 0}</span>
                 إعجاب
             </div>
+            <div class="comments">
+
+<input 
+id="comment-${post.id}" 
+placeholder="اكتب تعليقًا..."
+>
+
+<button onclick="addComment(${post.id})">
+إرسال
+</button>
+
+</div>
+
+<div id="comments-${post.id}">
+</div>
         </div>
         `;
     });
