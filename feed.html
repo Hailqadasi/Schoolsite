@@ -27,7 +27,13 @@ border-radius:12px;
 margin-bottom:15px;
 box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
-
+.comment{
+    background:#f8f8f8;
+    padding:8px;
+    margin-top:8px;
+    border-radius:8px;
+    text-align:right;
+}
 .logo{
 font-size:24px;
 font-weight:bold;
@@ -183,7 +189,37 @@ async function loadPosts(){
         await loadComments(post.id);
     }
 }
+async function loadComments(postId){
 
+const {data,error} = await supabaseClient
+.from("comments")
+.select("*")
+.eq("post_id",postId)
+.order("timestamp",{ascending:true});
+
+if(error){
+    return;
+}
+
+let html = "";
+
+data.forEach(comment=>{
+
+html += `
+<div class="comment">
+
+<b>${comment.user_name}</b><br>
+
+${comment.text}
+
+</div>
+`;
+
+});
+
+document.getElementById("comments-"+postId).innerHTML = html;
+
+}
 loadPosts();
 
 async function likePost(id){
@@ -233,7 +269,9 @@ async function likePost(id){
 
     document.getElementById("likes-"+id).innerHTML = newLikes;
 }
-
+data.forEach(post=>{
+    loadComments(post.id);
+});
 async function addComment(postId){
     const input = document.getElementById("comment-" + postId);
     const text = input.value.trim();
