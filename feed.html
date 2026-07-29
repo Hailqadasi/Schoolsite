@@ -238,10 +238,30 @@ if(error){
 
 // حفظ التعليق
 
-const {error} = await supabaseClient
+const {data, error} = await supabaseClient
 .from("comments")
 .insert({
 
+post_id: postId,
+
+user_id: user.id,
+
+user_name: profile.username,
+
+text: text
+
+})
+.select();
+
+
+console.log(data);
+console.log(error);
+if(error){
+    alert(error.message);
+    return;
+}
+
+alert("تم الحفظ بنجاح");
 post_id: postId,
 
 user_id: user.id,
