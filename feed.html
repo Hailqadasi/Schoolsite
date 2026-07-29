@@ -267,7 +267,7 @@ async function addComment(postId){
     // حفظ التعليق
     const {data, error} = await supabaseClient
         .from("comments")
-        ..insert({
+        .insert({
 
 post_id: postId,
 
