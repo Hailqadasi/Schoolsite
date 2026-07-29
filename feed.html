@@ -300,9 +300,30 @@ async function addComment(postId) {
 }
 
 // دالة حذف التعليق
-function deleteComment(id) {
-    alert("حذف التعليق رقم: " + id);
-    // يمكنك إضافة الكود الفعلي للحذف هنا
+async function deleteComment(id){
+
+alert("رقم التعليق: " + id);
+
+const {data,error} = await supabaseClient
+.from("comments")
+.delete()
+.eq("id", id)
+.select();
+
+
+console.log(data);
+console.log(error);
+
+
+if(error){
+    alert("خطأ: " + error.message);
+    return;
+}
+
+alert("تم الحذف بنجاح");
+
+location.reload();
+
 }
 
 // تحميل المنشورات عند بدء التشغيل
