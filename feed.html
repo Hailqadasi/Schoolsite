@@ -171,7 +171,7 @@ data.forEach(comment => {
 });
 
 commentsContainer.innerHTML = html;
-
+     }    
 async function loadPosts() {
     const { data, error } = await supabaseClient
         .from("posts")
