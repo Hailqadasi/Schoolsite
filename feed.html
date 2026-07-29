@@ -122,7 +122,11 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // دالة لعرض التعليقات الخاصة بمنشور معين
-async function loadComments(postId) {
+async function loadComments(postId) 
+{
+ const {data:{session}} = await supabaseClient.auth.getSession();
+
+const currentUser = session ? session.user.id : null;
     const { data, error } = await supabaseClient
         .from("comments")
         .select("*")
@@ -147,9 +151,11 @@ async function loadComments(postId) {
                 <strong>${comment.user_name || 'مستخدم'}</strong>
                 <span style="color:#777; font-size:12px; margin-right:10px;">${new Date(comment.timestamp).toLocaleString("ar")}</span>
                 <div>${comment.text}</div>
-                <button onclick="deleteComment(${comment.id})" style="background:none; border:none; color:#f44336; cursor:pointer;">🗑 حذف</button>
-            </div>
-        `;
+                ${comment.user_id === currentUser ? `
+<button onclick="deleteComment(${comment.id})">
+🗑 حذف
+</button>
+` : ""}
     });
     commentsContainer.innerHTML = html;
 }
