@@ -230,8 +230,8 @@ await supabaseClient
 .single();
 
 
-if(profileError){
-    alert(profileError.message);
+if(error){
+    alert(JSON.stringify(error));
     return;
 }
 
