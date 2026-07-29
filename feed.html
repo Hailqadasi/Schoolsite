@@ -5,24 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tofolati</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-.comments{
-    margin-top:15px;
-}
-
-.comments input{
-    width:70%;
-    padding:8px;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-.comments button{
-    padding:8px;
-    border:0;
-    border-radius:8px;
-    background:#2196f3;
-    color:white;
-}
 <style>
 body{
     font-family: Arial, sans-serif;
@@ -89,6 +71,25 @@ cursor:pointer;
 .likes{
     margin-top:10px;
 }
+
+.comments{
+    margin-top:15px;
+}
+
+.comments input{
+    width:70%;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.comments button{
+    padding:8px;
+    border:0;
+    border-radius:8px;
+    background:#2196f3;
+    color:white;
+}
 </style>
 </head>
 
@@ -135,20 +136,10 @@ async function loadPosts(){
                 إعجاب
             </div>
             <div class="comments">
-
-<input 
-id="comment-${post.id}" 
-placeholder="اكتب تعليقًا..."
->
-
-<button onclick="addComment(${post.id})">
-إرسال
-</button>
-
-</div>
-
-<div id="comments-${post.id}">
-</div>
+                <input id="comment-${post.id}" placeholder="اكتب تعليقًا...">
+                <button onclick="addComment(${post.id})">إرسال</button>
+            </div>
+            <div id="comments-${post.id}"></div>
         </div>
         `;
     });
@@ -159,70 +150,51 @@ placeholder="اكتب تعليقًا..."
 loadPosts();
 
 async function likePost(id){
+    const {data:{session}} = await supabaseClient.auth.getSession();
 
-const {data:{session}} = await supabaseClient.auth.getSession();
+    if(!session){
+        alert("يجب تسجيل الدخول");
+        return;
+    }
 
-if(!session){
-    alert("يجب تسجيل الدخول");
-    return;
-}
+    const userId = session.user.id;
 
-const userId = session.user.id;
+    const {data:post,error:getError} = await supabaseClient
+        .from("posts")
+        .select("likes, liked_by")
+        .eq("id",id)
+        .single();
 
+    if(getError){
+        alert(getError.message);
+        return;
+    }
 
-// جلب بيانات المنشور
+    let likedBy = post.liked_by || [];
 
-const {data:post,error:getError} = await supabaseClient
-.from("posts")
-.select("likes, liked_by")
-.eq("id",id)
-.single();
+    if(likedBy.includes(userId)){
+        alert("لقد أعجبت بهذا المنشور سابقًا");
+        return;
+    }
 
+    likedBy.push(userId);
 
-if(getError){
-    alert(getError.message);
-    return;
-}
+    const newLikes = (post.likes || 0) + 1;
 
+    const {error:updateError} = await supabaseClient
+        .from("posts")
+        .update({
+            likes:newLikes,
+            liked_by:likedBy
+        })
+        .eq("id",id);
 
-// التأكد هل أعجب المستخدم من قبل
+    if(updateError){
+        alert(updateError.message);
+        return;
+    }
 
-let likedBy = post.liked_by || [];
-
-
-if(likedBy.includes(userId)){
-    alert("لقد أعجبت بهذا المنشور سابقًا");
-    return;
-}
-
-
-// إضافة المستخدم للقائمة وزيادة العدد
-
-likedBy.push(userId);
-
-
-const newLikes = (post.likes || 0) + 1;
-
-
-const {error:updateError} = await supabaseClient
-.from("posts")
-.update({
-    likes:newLikes,
-    liked_by:likedBy
-})
-.eq("id",id);
-
-
-if(updateError){
-    alert(updateError.message);
-    return;
-}
-
-
-// تحديث الرقم على الشاشة
-
-document.getElementById("likes-"+id).innerHTML = newLikes;
-
+    document.getElementById("likes-"+id).innerHTML = newLikes;
 }
 </script>
 </body>
