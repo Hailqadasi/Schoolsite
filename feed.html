@@ -39,7 +39,11 @@ font-size:24px;
 font-weight:bold;
 color:#2196f3;
 }
-
+.comment-time{
+    font-size:12px;
+    color:#777;
+    margin:4px 0 6px 0;
+}
 .icons button{
 width:45px;
 height:45px;
@@ -208,9 +212,15 @@ data.forEach(comment=>{
 html += `
 <div class="comment">
 
-<b>${comment.user_name}</b><br>
+<b>${comment.user_name}</b>
 
+<div class="comment-time">
+${new Date(comment.timestamp).toLocaleString("ar")}
+</div>
+
+<div>
 ${comment.text}
+</div>
 
 </div>
 `;
