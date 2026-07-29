@@ -267,12 +267,19 @@ async function addComment(postId){
     // حفظ التعليق
     const {data, error} = await supabaseClient
         .from("comments")
-        .insert({
-            post_id: postId,
-            user_id: user.id,
-            user_name: profile.username || 'مستخدم',
-            text: text
-        })
+        ..insert({
+
+post_id: postId,
+
+user_id: user.id,
+
+user_name: profile.username,
+
+text: text,
+
+timestamp: Date.now()
+
+})
         .select();
 
     if(error){
