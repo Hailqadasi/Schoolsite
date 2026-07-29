@@ -13,7 +13,11 @@ body{
     margin:0;
     padding:15px;
 }
-
+.time{
+    color:#777;
+    font-size:13px;
+    margin-top:3px;
+}
 .header{
 display:flex;
 justify-content:space-between;
@@ -104,7 +108,13 @@ async function loadPosts(){
     data.forEach(post => {
         html += `
         <div class="post">
-            <div class="name">${post.user_name}</div>
+            <div class="name">
+${post.user_name}
+</div>
+
+<div class="time">
+${new Date(post.timestamp).toLocaleString("ar")}
+</div>
             <div class="text">${post.text || ""}</div>
             <img src="${post.media_url}" alt="صورة المنشور">
             <div class="likes">❤️ ${post.likes || 0}</div>
