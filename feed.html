@@ -117,14 +117,27 @@ ${new Date(post.timestamp).toLocaleString("ar")}
 </div>
             <div class="text">${post.text || ""}</div>
             <img src="${post.media_url}" alt="صورة المنشور">
-            <div class="likes">❤️ ${post.likes || 0}</div>
-        </div>
-        `;
-    });
+            <div class="likes">
+<button onclick="likePost(${post.id})">
+❤️
+</button>
+
+<span id="likes-${post.id}">
+${post.likes || 0}
+</span>
+إعجاب
+</div>
+       
+    };
     document.getElementById("posts").innerHTML = html;
 }
 
 loadPosts();
+function likePost(id){
+
+alert("تم الضغط على إعجاب للمنشور رقم: " + id);
+
+}
 </script>
 </body>
 </html>
