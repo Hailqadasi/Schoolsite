@@ -8,7 +8,7 @@
 
 <style>
 body{
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background:#f2f2f2;
     margin:0;
     padding:15px;
@@ -108,42 +108,27 @@ async function loadPosts(){
     data.forEach(post => {
         html += `
         <div class="post">
-            <div class="name">
-${post.user_name}
-</div>
-
-<div class="time">
-${new Date(post.timestamp).toLocaleString("ar")}
-</div>
+            <div class="name">${post.user_name || 'مستخدم'}</div>
+            <div class="time">${new Date(post.timestamp).toLocaleString("ar")}</div>
             <div class="text">${post.text || ""}</div>
-            <img src="${post.media_url}" alt="صورة المنشور">
+            ${post.media_url ? `<img src="${post.media_url}" alt="صورة المنشور">` : ''}
             <div class="likes">
-<button onclick="likePost(${post.id})">
-❤️
-</button>
+                <button onclick="likePost(${post.id})">❤️</button>
+                <span id="likes-${post.id}">${post.likes || 0}</span>
+                إعجاب
+            </div>
+        </div>
+        `;
+    });
 
-<span id="likes-${post.id}">
-${post.likes || 0}
-</span>
-إعجاب
-</div>
-       
-    </div>
-
-`;
-
-});
-
-document.getElementById("posts").innerHTML = html;
-
+    document.getElementById("posts").innerHTML = html;
 }
+
 loadPosts();
+
 function likePost(id){
-
-alert("تم الضغط على إعجاب للمنشور رقم: " + id);
-
+    alert("تم الضغط على إعجاب للمنشور رقم: " + id);
 }
 </script>
 </body>
 </html>
-
