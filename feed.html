@@ -127,7 +127,15 @@ async function loadPosts(){
 loadPosts();
 
 function likePost(id){
-    alert("تم الضغط على إعجاب للمنشور رقم: " + id);
+
+const span = document.getElementById("likes-" + id);
+
+let count = parseInt(span.innerHTML);
+
+count++;
+
+span.innerHTML = count;
+
 }
 </script>
 </body>
