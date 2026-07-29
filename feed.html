@@ -127,7 +127,7 @@ async function loadComments(postId) {
         .from("comments")
         .select("*")
         .eq("post_id", postId)
-        .order("id", { ascending: true });
+        .order("timestamp", { ascending: true });
 
     const commentsContainer = document.getElementById("comments-" + postId);
     if (error) {
@@ -135,7 +135,7 @@ async function loadComments(postId) {
         return;
     }
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         commentsContainer.innerHTML = "";
         return;
     }
@@ -147,19 +147,20 @@ async function loadComments(postId) {
                 <strong>${comment.user_name || 'مستخدم'}</strong>
                 <span style="color:#777; font-size:12px; margin-right:10px;">${new Date(comment.timestamp).toLocaleString("ar")}</span>
                 <div>${comment.text}</div>
+                <button onclick="deleteComment(${comment.id})" style="background:none; border:none; color:#f44336; cursor:pointer;">🗑 حذف</button>
             </div>
         `;
     });
     commentsContainer.innerHTML = html;
 }
 
-async function loadPosts(){
-    const {data, error} = await supabaseClient
+async function loadPosts() {
+    const { data, error } = await supabaseClient
         .from("posts")
         .select("*")
-        .order("id", {ascending: false});
+        .order("id", { ascending: false });
 
-    if(error){
+    if (error) {
         document.getElementById("posts").innerHTML = "خطأ في تحميل المنشورات: " + error.message;
         return;
     }
@@ -193,68 +194,32 @@ async function loadPosts(){
         await loadComments(post.id);
     }
 }
-async function loadComments(postId){
 
-const {data,error} = await supabaseClient
-.from("comments")
-.select("*")
-.eq("post_id",postId)
-.order("timestamp",{ascending:true});
+// دالة الإعجاب
+async function likePost(id) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
 
-if(error){
-    return;
-}
-
-html += `
-<div class="comment">
-
-<b>${comment.user_name}</b>
-
-<div class="comment-time">
-${new Date(comment.timestamp).toLocaleString("ar")}
-</div>
-
-<div>
-${comment.text}
-</div>
-
-<button onclick="deleteComment(${comment.id})">
-🗑 حذف
-</button>
-
-</div>
-`;
-});
-
-document.getElementById("comments-"+postId).innerHTML = html;
-
-}
-loadPosts();
-
-async function likePost(id){
-    const {data:{session}} = await supabaseClient.auth.getSession();
-
-    if(!session){
+    if (!session) {
         alert("يجب تسجيل الدخول");
         return;
     }
 
     const userId = session.user.id;
 
-    const {data:post,error:getError} = await supabaseClient
+    const { data: post, error: getError } = await supabaseClient
         .from("posts")
         .select("likes, liked_by")
-        .eq("id",id)
+        .eq("id", id)
         .single();
 
-    if(getError){
+    if (getError) {
         alert(getError.message);
         return;
     }
 
     let likedBy = post.liked_by || [];
 
-    if(likedBy.includes(userId)){
+    if (likedBy.includes(userId)) {
         alert("لقد أعجبت بهذا المنشور سابقًا");
         return;
     }
@@ -263,36 +228,35 @@ async function likePost(id){
 
     const newLikes = (post.likes || 0) + 1;
 
-    const {error:updateError} = await supabaseClient
+    const { error: updateError } = await supabaseClient
         .from("posts")
         .update({
-            likes:newLikes,
-            liked_by:likedBy
+            likes: newLikes,
+            liked_by: likedBy
         })
-        .eq("id",id);
+        .eq("id", id);
 
-    if(updateError){
+    if (updateError) {
         alert(updateError.message);
         return;
     }
 
-    document.getElementById("likes-"+id).innerHTML = newLikes;
+    document.getElementById("likes-" + id).innerHTML = newLikes;
 }
-data.forEach(post=>{
-    loadComments(post.id);
-});
-async function addComment(postId){
+
+// دالة إضافة تعليق
+async function addComment(postId) {
     const input = document.getElementById("comment-" + postId);
     const text = input.value.trim();
 
-    if(!text){
+    if (!text) {
         alert("اكتب تعليقًا أولًا");
         return;
     }
 
-    const {data:{session}} = await supabaseClient.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
 
-    if(!session){
+    if (!session) {
         alert("يجب تسجيل الدخول");
         return;
     }
@@ -300,36 +264,30 @@ async function addComment(postId){
     const user = session.user;
 
     // جلب اسم المستخدم
-    const {data:profile, error:profileError} = await supabaseClient
+    const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
         .select("username")
         .eq("id", user.id)
         .single();
 
-    if(profileError){
+    if (profileError) {
         alert("خطأ في جلب بيانات المستخدم: " + profileError.message);
         return;
     }
 
     // حفظ التعليق
-    const {data, error} = await supabaseClient
+    const { data, error } = await supabaseClient
         .from("comments")
         .insert({
-
-post_id: postId,
-
-user_id: user.id,
-
-user_name: profile.username,
-
-text: text,
-
-timestamp: Date.now()
-
-})
+            post_id: postId,
+            user_id: user.id,
+            user_name: profile.username,
+            text: text,
+            timestamp: Date.now()
+        })
         .select();
 
-    if(error){
+    if (error) {
         alert("خطأ في حفظ التعليق: " + error.message);
         return;
     }
@@ -340,11 +298,15 @@ timestamp: Date.now()
     // إعادة تحميل التعليقات لهذا المنشور
     await loadComments(postId);
 }
- function deleteComment(id){
 
-alert("حذف التعليق رقم: " + id);
-
+// دالة حذف التعليق
+function deleteComment(id) {
+    alert("حذف التعليق رقم: " + id);
+    // يمكنك إضافة الكود الفعلي للحذف هنا
 }
+
+// تحميل المنشورات عند بدء التشغيل
+loadPosts();
 </script>
 </body>
 </html>
