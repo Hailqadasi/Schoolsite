@@ -196,6 +196,74 @@ async function likePost(id){
 
     document.getElementById("likes-"+id).innerHTML = newLikes;
 }
+ async function addComment(postId){
+
+const input = document.getElementById("comment-" + postId);
+
+const text = input.value.trim();
+
+if(!text){
+    alert("اكتب تعليقًا أولًا");
+    return;
+}
+
+
+const {data:{session}} = await supabaseClient.auth.getSession();
+
+
+if(!session){
+    alert("يجب تسجيل الدخول");
+    return;
+}
+
+
+const user = session.user;
+
+
+// جلب اسم المستخدم
+
+const {data:profile,error:profileError} =
+await supabaseClient
+.from("profiles")
+.select("username")
+.eq("id",user.id)
+.single();
+
+
+if(profileError){
+    alert(profileError.message);
+    return;
+}
+
+
+// حفظ التعليق
+
+const {error} = await supabaseClient
+.from("comments")
+.insert({
+
+post_id: postId,
+
+user_id: user.id,
+
+user_name: profile.username,
+
+text: text
+
+});
+
+
+if(error){
+    alert(error.message);
+    return;
+}
+
+
+alert("تم إضافة التعليق ✅");
+
+input.value="";
+
+}
 </script>
 </body>
 </html>
