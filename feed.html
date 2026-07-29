@@ -205,10 +205,6 @@ if(error){
     return;
 }
 
-let html = "";
-
-data.forEach(comment=>{
-
 html += `
 <div class="comment">
 
@@ -222,9 +218,12 @@ ${new Date(comment.timestamp).toLocaleString("ar")}
 ${comment.text}
 </div>
 
+<button onclick="deleteComment(${comment.id})">
+🗑 حذف
+</button>
+
 </div>
 `;
-
 });
 
 document.getElementById("comments-"+postId).innerHTML = html;
