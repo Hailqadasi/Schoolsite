@@ -145,20 +145,32 @@ const currentUser = session ? session.user.id : null;
     }
 
     let html = "<br><hr>";
-    data.forEach(comment => {
-        html += `
-            <div style="margin-top:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                <strong>${comment.user_name || 'مستخدم'}</strong>
-                <span style="color:#777; font-size:12px; margin-right:10px;">${new Date(comment.timestamp).toLocaleString("ar")}</span>
-                <div>${comment.text}</div>
-                ${comment.user_id === currentUser ? `
-<button onclick="deleteComment(${comment.id})">
-🗑 حذف
-</button>
-` : ""}
-    });
-    commentsContainer.innerHTML = html;
-}
+
+data.forEach(comment => {
+
+    html += `
+        <div style="margin-top:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+
+            <strong>${comment.user_name || 'مستخدم'}</strong>
+
+            <span style="color:#777; font-size:12px; margin-right:10px;">
+            ${new Date(comment.timestamp).toLocaleString("ar")}
+            </span>
+
+            <div>${comment.text}</div>
+
+            ${comment.user_id === currentUser ? `
+            <button onclick="deleteComment(${comment.id})">
+            🗑 حذف
+            </button>
+            ` : ""}
+
+        </div>
+    `;
+
+});
+
+commentsContainer.innerHTML = html;
 
 async function loadPosts() {
     const { data, error } = await supabaseClient
