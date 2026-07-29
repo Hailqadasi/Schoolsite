@@ -128,23 +128,68 @@ loadPosts();
 
 async function likePost(id){
 
-const span = document.getElementById("likes-" + id);
+const {data:{session}} = await supabaseClient.auth.getSession();
 
-let count = parseInt(span.innerHTML) + 1;
-
-const {error} = await supabaseClient
-.from("posts")
-.update({
-likes: count
-})
-.eq("id", id);
-
-if(error){
-    alert(error.message);
+if(!session){
+    alert("يجب تسجيل الدخول");
     return;
 }
 
-span.innerHTML = count;
+const userId = session.user.id;
+
+
+// جلب بيانات المنشور
+
+const {data:post,error:getError} = await supabaseClient
+.from("posts")
+.select("likes, liked_by")
+.eq("id",id)
+.single();
+
+
+if(getError){
+    alert(getError.message);
+    return;
+}
+
+
+// التأكد هل أعجب المستخدم من قبل
+
+let likedBy = post.liked_by || [];
+
+
+if(likedBy.includes(userId)){
+    alert("لقد أعجبت بهذا المنشور سابقًا");
+    return;
+}
+
+
+// إضافة المستخدم للقائمة وزيادة العدد
+
+likedBy.push(userId);
+
+
+const newLikes = (post.likes || 0) + 1;
+
+
+const {error:updateError} = await supabaseClient
+.from("posts")
+.update({
+    likes:newLikes,
+    liked_by:likedBy
+})
+.eq("id",id);
+
+
+if(updateError){
+    alert(updateError.message);
+    return;
+}
+
+
+// تحديث الرقم على الشاشة
+
+document.getElementById("likes-"+id).innerHTML = newLikes;
 
 }
 </script>
