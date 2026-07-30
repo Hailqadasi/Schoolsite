@@ -6,9 +6,8 @@
     <title>الملف الشخصي</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* أنماطك ثابتة وجيدة */
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             background: #f2f2f2;
             margin: 0;
             padding: 15px;
@@ -28,6 +27,7 @@
             border-radius: 50%;
             object-fit: cover;
             background: #ddd;
+            border: 3px solid #4CAF50;
         }
         .name {
             font-size: 24px;
@@ -64,6 +64,8 @@
             width: 100%;
             border-radius: 10px;
             margin: 10px 0;
+            max-height: 400px;
+            object-fit: cover;
         }
         #myPosts {
             max-width: 600px;
@@ -72,7 +74,6 @@
         h2 {
             margin-top: 30px;
         }
-        /* إضافة بعض التنسيق للأزرار */
         button {
             background: #4CAF50;
             color: white;
@@ -81,12 +82,40 @@
             border-radius: 8px;
             cursor: pointer;
             margin-top: 10px;
+            font-size: 16px;
+            transition: background 0.3s;
         }
         button:hover {
             background: #45a049;
         }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
         input[type="file"] {
             margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -96,7 +125,8 @@
         <br><br>
         <input id="avatarFile" type="file" accept="image/*" onchange="previewAvatar(event)">
         <br><br>
-        <button onclick="uploadAvatar()">حفظ الصورة</button>
+        <button id="uploadBtn" onclick="uploadAvatar()">حفظ الصورة</button>
+        <div id="uploadStatus"></div>
         
         <div id="username" class="name">...</div>
         <div id="email" class="email">...</div>
@@ -132,7 +162,7 @@
                 // جلب اسم المستخدم من جدول profiles
                 const { data: profile, error: profileError } = await supabaseClient
                     .from("profiles")
-                    .select("username, avatar_url") // جلب رابط الصورة أيضاً
+                    .select("username, avatar_url")
                     .eq("id", user.id)
                     .single();
 
@@ -141,7 +171,6 @@
                     document.getElementById("username").innerHTML = "مستخدم";
                 } else {
                     document.getElementById("username").innerHTML = profile.username || "مستخدم";
-                    // إذا كانت هناك صورة محفوظة، عرضها
                     if (profile.avatar_url) {
                         document.getElementById("avatar").src = profile.avatar_url;
                     }
@@ -188,12 +217,12 @@
 
                 if (error) {
                     console.error("خطأ في جلب المنشورات:", error);
-                    document.getElementById("myPosts").innerHTML = "<p>حدث خطأ في تحميل المنشورات</p>";
+                    document.getElementById("myPosts").innerHTML = `<div class="error">حدث خطأ في تحميل المنشورات</div>`;
                     return;
                 }
 
                 if (!data || data.length === 0) {
-                    document.getElementById("myPosts").innerHTML = "<p>لا توجد منشورات حتى الآن</p>";
+                    document.getElementById("myPosts").innerHTML = "<p class='loading'>لا توجد منشورات حتى الآن</p>";
                     return;
                 }
 
@@ -201,9 +230,9 @@
                 data.forEach(post => {
                     html += `
                         <div class="post">
-                            <div class="time">${new Date(post.timestamp).toLocaleString("ar")}</div>
+                            <div class="time">📅 ${new Date(post.timestamp).toLocaleString("ar")}</div>
                             <div class="text">${post.text || ""}</div>
-                            ${post.media_url ? `<img src="${post.media_url}" alt="صورة المنشور">` : ""}
+                            ${post.media_url ? `<img src="${post.media_url}" alt="صورة المنشور" loading="lazy">` : ""}
                             <div>❤️ ${post.likes || 0}</div>
                         </div>
                     `;
@@ -213,61 +242,88 @@
 
             } catch (error) {
                 console.error("خطأ في تحميل المنشورات:", error);
-                document.getElementById("myPosts").innerHTML = "<p>حدث خطأ في تحميل المنشورات</p>";
+                document.getElementById("myPosts").innerHTML = "<div class='error'>حدث خطأ في تحميل المنشورات</div>";
             }
         }
 
         // ===== دالة معاينة الصورة قبل الرفع =====
         function previewAvatar(event) {
             const file = event.target.files[0];
-            if (!file) {
+            if (!file) return;
+            
+            // التحقق من حجم الصورة (حد أقصى 5 ميجابايت)
+            if (file.size > 5 * 1024 * 1024) {
+                alert("حجم الصورة كبير جداً. الحد الأقصى 5 ميجابايت.");
+                event.target.value = '';
                 return;
             }
-            // عرض الصورة محلياً
+            
+            // التحقق من نوع الملف
+            if (!file.type.startsWith('image/')) {
+                alert("الرجاء اختيار ملف صورة فقط.");
+                event.target.value = '';
+                return;
+            }
+            
             document.getElementById("avatar").src = URL.createObjectURL(file);
         }
 
-        // ===== دالة رفع الصورة إلى Supabase Storage =====
+        // ===== دالة رفع الصورة إلى Supabase Storage (نسخة واحدة فقط) =====
         async function uploadAvatar() {
             const fileInput = document.getElementById('avatarFile');
             const file = fileInput.files[0];
+            const statusDiv = document.getElementById('uploadStatus');
+            const uploadBtn = document.getElementById('uploadBtn');
 
+            // التحقق من اختيار ملف
             if (!file) {
                 alert('الرجاء اختيار صورة أولاً.');
                 return;
             }
 
+            // تعطيل الزر أثناء الرفع
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'جاري الرفع...';
+            statusDiv.innerHTML = '';
+
             try {
+                // التحقق من جلسة المستخدم
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 if (!session) {
                     alert("يجب تسجيل الدخول");
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'حفظ الصورة';
                     return;
                 }
 
                 const user = session.user;
-                // مسار فريد للصورة باستخدام معرف المستخدم ووقت الرفع
-                const filePath = `public/avatars/${user.id}/${Date.now()}_${file.name}`;
+                
+                // إنشاء مسار فريد للصورة
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
                 // 1. رفع الملف إلى التخزين
                 const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                    .from('avatars') // اسم الـ Bucket يجب أن يتطابق مع ما أنشأته في Supabase
-                    .upload(filePath, file, {
+                    .from('avatars')
+                    .upload(fileName, file, {
                         cacheControl: '3600',
-                        upsert: true // استبدال الصورة القديمة إذا وجدت
+                        upsert: true
                     });
 
                 if (uploadError) {
                     console.error("خطأ في رفع الصورة:", uploadError);
-                    alert("فشل رفع الصورة: " + uploadError.message);
+                    statusDiv.innerHTML = `<div class="error">❌ فشل رفع الصورة: ${uploadError.message}</div>`;
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'حفظ الصورة';
                     return;
                 }
 
-                // 2. الحصول على الرابط العام للصورة
+                // 2. الحصول على الرابط العام
                 const { data: { publicUrl } } = supabaseClient.storage
                     .from('avatars')
-                    .getPublicUrl(filePath);
+                    .getPublicUrl(fileName);
 
-                // 3. تحديث رابط الصورة في جدول profiles
+                // 3. تحديث قاعدة البيانات
                 const { error: updateError } = await supabaseClient
                     .from('profiles')
                     .update({ avatar_url: publicUrl })
@@ -275,91 +331,30 @@
 
                 if (updateError) {
                     console.error("خطأ في تحديث قاعدة البيانات:", updateError);
-                    alert("تم رفع الصورة ولكن فشل تحديث الملف الشخصي.");
+                    statusDiv.innerHTML = `<div class="error">❌ تم رفع الصورة ولكن فشل تحديث الملف الشخصي: ${updateError.message}</div>`;
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'حفظ الصورة';
                     return;
                 }
 
-                // 4. تحديث الصورة المعروضة في الصفحة
+                // 4. تحديث الصورة المعروضة
                 document.getElementById('avatar').src = publicUrl;
-                alert('تم تحديث الصورة بنجاح!');
+                statusDiv.innerHTML = `<div class="success">✅ تم تحديث الصورة بنجاح!</div>`;
+                
+                // إفراغ حقل الملف
+                fileInput.value = '';
 
             } catch (error) {
                 console.error("حدث خطأ غير متوقع:", error);
-                alert("حدث خطأ غير متوقع أثناء رفع الصورة.");
+                statusDiv.innerHTML = `<div class="error">❌ حدث خطأ غير متوقع: ${error.message}</div>`;
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'حفظ الصورة';
             }
         }
 
         // ===== تنفيذ التحميل عند فتح الصفحة =====
         loadProfile();
-async function uploadAvatar(){
-
-const file = document.getElementById("avatarFile").files[0];
-
-if(!file){
-    alert("اختر صورة أولًا");
-    return;
-}
-
-
-const {data:{session}} =
-await supabaseClient.auth.getSession();
-
-if(!session){
-    alert("يجب تسجيل الدخول");
-    return;
-}
-
-
-const user = session.user;
-
-
-const fileName = Date.now() + "_" + file.name;
-
-const {error:uploadError} =
-await supabaseClient
-.storage
-.from("avatars")
-.upload(fileName,file);
-
-
-if(uploadError){
-    alert("خطأ رفع الصورة: " + uploadError.message);
-    return;
-}
-
-
-// الحصول على رابط الصورة
-
-const {data:urlData} =
-supabaseClient
-.storage
-.from("avatars")
-.getPublicUrl(fileName);
-
-
-const avatarUrl = urlData.publicUrl;
-
-
-// حفظ الرابط في profiles
-
-const {error:updateError} =
-await supabaseClient
-.from("profiles")
-.update({
-    avatar_url: avatarUrl
-})
-.eq("id",user.id);
-
-
-if(updateError){
-    alert("خطأ حفظ الرابط: " + updateError.message);
-    return;
-}
-
-
-alert("تم حفظ الصورة الشخصية ✅");
-
-}
     </script>
 </body>
 </html>
