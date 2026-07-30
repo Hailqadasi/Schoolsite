@@ -313,8 +313,7 @@ if(!session){
 const user = session.user;
 
 
-const fileName = user.id + "_" + Date.now() + "_" + file.name;
-
+const fileName = Date.now() + "_" + file.name;
 
 const {error:uploadError} =
 await supabaseClient
