@@ -139,9 +139,10 @@
     <script>
         // ===== تهيئة Supabase =====
         const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         // ===== دالة تحميل الملف الشخصي =====
         async function loadProfile() {
             try {
@@ -267,7 +268,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             document.getElementById("avatar").src = URL.createObjectURL(file);
         }
 
-        // ===== دالة رفع الصورة إلى Supabase Storage (نسخة واحدة فقط) =====
+        // ===== دالة رفع الصورة إلى Supabase Storage =====
         async function uploadAvatar() {
             const fileInput = document.getElementById('avatarFile');
             const file = fileInput.files[0];
