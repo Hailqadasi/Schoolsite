@@ -6,6 +6,7 @@
     <title>الملف الشخصي</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* أنماطك ثابتة وجيدة */
         body {
             font-family: Arial;
             background: #f2f2f2;
@@ -71,35 +72,48 @@
         h2 {
             margin-top: 30px;
         }
+        /* إضافة بعض التنسيق للأزرار */
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        input[type="file"] {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="card">
         <img id="avatar" class="avatar" src="https://via.placeholder.com/120">
-     <br><br>
-
-<input
-id="avatarFile"
-type="file"
-accept="image/*"
-onchange="previewAvatar(event)">
-
-<br><br>
-
-<button onclick="uploadAvatar()">
-حفظ الصورة
-</button>
-        <div id="username" class="name">...</div>
+        <br><br>
+        <input id="avatarFile" type="file" accept="image/*" onchange="previewAvatar(event)">
+        <br><br>
+        <button onclick="uploadAvatar()">حفظ الصورة</button>
         
+        <div id="username" class="name">...</div>
+        <div id="email" class="email">...</div>
+        <div class="stats">📝 عدد المنشورات: <span id="postsCount">0</span></div>
+    </div>
+
+    <h2>منشوراتي</h2>
+    <div id="myPosts"></div>
+
     <script>
+        // ===== تهيئة Supabase =====
         const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // تنفيذ الدوال عند تحميل الصفحة
-        loadProfile();
-
+        // ===== دالة تحميل الملف الشخصي =====
         async function loadProfile() {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -118,7 +132,7 @@ onchange="previewAvatar(event)">
                 // جلب اسم المستخدم من جدول profiles
                 const { data: profile, error: profileError } = await supabaseClient
                     .from("profiles")
-                    .select("username")
+                    .select("username, avatar_url") // جلب رابط الصورة أيضاً
                     .eq("id", user.id)
                     .single();
 
@@ -127,6 +141,10 @@ onchange="previewAvatar(event)">
                     document.getElementById("username").innerHTML = "مستخدم";
                 } else {
                     document.getElementById("username").innerHTML = profile.username || "مستخدم";
+                    // إذا كانت هناك صورة محفوظة، عرضها
+                    if (profile.avatar_url) {
+                        document.getElementById("avatar").src = profile.avatar_url;
+                    }
                 }
 
                 // حساب عدد المنشورات
@@ -142,7 +160,7 @@ onchange="previewAvatar(event)">
                     document.getElementById("postsCount").innerHTML = count || 0;
                 }
 
-                // تحميل المنشورات بعد تحميل الملف الشخصي
+                // تحميل المنشورات
                 await loadMyPosts();
 
             } catch (error) {
@@ -151,6 +169,7 @@ onchange="previewAvatar(event)">
             }
         }
 
+        // ===== دالة تحميل منشورات المستخدم =====
         async function loadMyPosts() {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -197,24 +216,82 @@ onchange="previewAvatar(event)">
                 document.getElementById("myPosts").innerHTML = "<p>حدث خطأ في تحميل المنشورات</p>";
             }
         }
-     <div id="email" class="email">...</div>
-        <div class="stats">📝 عدد المنشورات: <span id="postsCount">0</span></div>
-    </div>
 
-    <h2>منشوراتي</h2>
-    <div id="myPosts"></div>
-function previewAvatar(event){
+        // ===== دالة معاينة الصورة قبل الرفع =====
+        function previewAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            // عرض الصورة محلياً
+            document.getElementById("avatar").src = URL.createObjectURL(file);
+        }
 
-const file = event.target.files[0];
+        // ===== دالة رفع الصورة إلى Supabase Storage =====
+        async function uploadAvatar() {
+            const fileInput = document.getElementById('avatarFile');
+            const file = fileInput.files[0];
 
-if(!file){
-    return;
-}
+            if (!file) {
+                alert('الرجاء اختيار صورة أولاً.');
+                return;
+            }
 
-document.getElementById("avatar").src =
-URL.createObjectURL(file);
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    alert("يجب تسجيل الدخول");
+                    return;
+                }
 
-}
+                const user = session.user;
+                // مسار فريد للصورة باستخدام معرف المستخدم ووقت الرفع
+                const filePath = `public/avatars/${user.id}/${Date.now()}_${file.name}`;
+
+                // 1. رفع الملف إلى التخزين
+                const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                    .from('avatars') // اسم الـ Bucket يجب أن يتطابق مع ما أنشأته في Supabase
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: true // استبدال الصورة القديمة إذا وجدت
+                    });
+
+                if (uploadError) {
+                    console.error("خطأ في رفع الصورة:", uploadError);
+                    alert("فشل رفع الصورة: " + uploadError.message);
+                    return;
+                }
+
+                // 2. الحصول على الرابط العام للصورة
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('avatars')
+                    .getPublicUrl(filePath);
+
+                // 3. تحديث رابط الصورة في جدول profiles
+                const { error: updateError } = await supabaseClient
+                    .from('profiles')
+                    .update({ avatar_url: publicUrl })
+                    .eq('id', user.id);
+
+                if (updateError) {
+                    console.error("خطأ في تحديث قاعدة البيانات:", updateError);
+                    alert("تم رفع الصورة ولكن فشل تحديث الملف الشخصي.");
+                    return;
+                }
+
+                // 4. تحديث الصورة المعروضة في الصفحة
+                document.getElementById('avatar').src = publicUrl;
+                alert('تم تحديث الصورة بنجاح!');
+
+            } catch (error) {
+                console.error("حدث خطأ غير متوقع:", error);
+                alert("حدث خطأ غير متوقع أثناء رفع الصورة.");
+            }
+        }
+
+        // ===== تنفيذ التحميل عند فتح الصفحة =====
+        loadProfile();
+
     </script>
 </body>
 </html>
