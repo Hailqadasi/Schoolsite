@@ -291,7 +291,76 @@
 
         // ===== تنفيذ التحميل عند فتح الصفحة =====
         loadProfile();
+async function uploadAvatar(){
 
+const file = document.getElementById("avatarFile").files[0];
+
+if(!file){
+    alert("اختر صورة أولًا");
+    return;
+}
+
+
+const {data:{session}} =
+await supabaseClient.auth.getSession();
+
+if(!session){
+    alert("يجب تسجيل الدخول");
+    return;
+}
+
+
+const user = session.user;
+
+
+const fileName = user.id + "_" + Date.now() + "_" + file.name;
+
+
+const {error:uploadError} =
+await supabaseClient
+.storage
+.from("avatars")
+.upload(fileName,file);
+
+
+if(uploadError){
+    alert("خطأ رفع الصورة: " + uploadError.message);
+    return;
+}
+
+
+// الحصول على رابط الصورة
+
+const {data:urlData} =
+supabaseClient
+.storage
+.from("avatars")
+.getPublicUrl(fileName);
+
+
+const avatarUrl = urlData.publicUrl;
+
+
+// حفظ الرابط في profiles
+
+const {error:updateError} =
+await supabaseClient
+.from("profiles")
+.update({
+    avatar_url: avatarUrl
+})
+.eq("id",user.id);
+
+
+if(updateError){
+    alert("خطأ حفظ الرابط: " + updateError.message);
+    return;
+}
+
+
+alert("تم حفظ الصورة الشخصية ✅");
+
+}
     </script>
 </body>
 </html>
