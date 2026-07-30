@@ -155,6 +155,66 @@ if(countError){
 document.getElementById("postsCount").innerHTML =
 count || 0;
 } 
+ async function loadMyPosts() {
+
+const {data:{session}} =
+await supabaseClient.auth.getSession();
+
+if(!session){
+    return;
+}
+
+const user = session.user;
+
+
+const {data,error} = await supabaseClient
+.from("posts")
+.select("*")
+.eq("user_id", user.id)
+.order("id",{ascending:false});
+
+
+if(error){
+    alert(error.message);
+    return;
+}
+
+
+let html = "";
+
+
+data.forEach(post=>{
+
+html += `
+
+<div class="post">
+
+<div class="time">
+${new Date(post.timestamp).toLocaleString("ar")}
+</div>
+
+<div class="text">
+${post.text || ""}
+</div>
+
+${post.media_url ? 
+`<img src="${post.media_url}" style="width:100%;border-radius:10px;">`
+: ""}
+
+<div>
+❤️ ${post.likes || 0}
+</div>
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById("myPosts").innerHTML = html;
+
+}
 </script>
 </body>
 </html>
