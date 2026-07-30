@@ -76,6 +76,59 @@ font-size:18px;
 </div>
 
 </div>
+<script>
 
+const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
+const SUPABASE_KEY = "ضع هنا نفس مفتاح SUPABASE_KEY الموجود في feed.html";
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+loadProfile();
+
+async function loadProfile(){
+
+const {data:{session}} =
+await supabaseClient.auth.getSession();
+
+if(!session){
+    alert("يجب تسجيل الدخول");
+    location.href="login.html";
+    return;
+}
+
+const user = session.user;
+
+
+// عرض البريد الإلكتروني
+
+document.getElementById("email").innerHTML =
+user.email;
+
+
+// جلب اسم المستخدم
+
+const {data:profile,error} =
+await supabaseClient
+.from("profiles")
+.select("username")
+.eq("id",user.id)
+.single();
+
+
+if(error){
+    alert(error.message);
+    return;
+}
+
+
+document.getElementById("username").innerHTML =
+profile.username;
+
+}
+
+</script>
 </body>
 </html>
