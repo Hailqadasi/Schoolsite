@@ -89,7 +89,7 @@ SUPABASE_KEY
 loadProfile();
 
 async function loadProfile(){
-
+alert("تم تشغيل الملف الشخصي");
 const {data:{session}} =
 await supabaseClient.auth.getSession();
 
