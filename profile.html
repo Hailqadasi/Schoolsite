@@ -128,7 +128,22 @@ document.getElementById("username").innerHTML =
 profile.username;
 
 }
+// حساب عدد المنشورات
 
+const {count,error:countError} = await supabaseClient
+.from("posts")
+.select("*",{count:"exact",head:true})
+.eq("user_id",user.id);
+
+
+if(countError){
+    alert(countError.message);
+    return;
+}
+
+
+document.getElementById("postsCount").innerHTML =
+count || 0;
 </script>
 </body>
 </html>
