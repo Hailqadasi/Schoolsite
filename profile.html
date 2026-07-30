@@ -1,220 +1,195 @@
  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>الملف الشخصي</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-
-body{
-font-family:Arial;
-background:#f2f2f2;
-margin:0;
-padding:15px;
-text-align:center;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
-}
-
-.avatar{
-width:120px;
-height:120px;
-border-radius:50%;
-object-fit:cover;
-background:#ddd;
-}
-
-.name{
-font-size:24px;
-font-weight:bold;
-margin-top:15px;
-}
-
-.email{
-color:#666;
-margin-top:5px;
-}
-
-.stats{
-margin-top:20px;
-font-size:18px;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>الملف الشخصي</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ddd;
+        }
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .email {
+            color: #666;
+            margin-top: 5px;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .post {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+            margin: 15px auto;
+            max-width: 600px;
+            text-align: right;
+        }
+        .post .time {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .post .text {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .post img {
+            width: 100%;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        #myPosts {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="card">
+        <img id="avatar" class="avatar" src="https://via.placeholder.com/120">
+        <div id="username" class="name">...</div>
+        <div id="email" class="email">...</div>
+        <div class="stats">📝 عدد المنشورات: <span id="postsCount">0</span></div>
+    </div>
 
-<div class="card">
+    <h2>منشوراتي</h2>
+    <div id="myPosts"></div>
 
-<img id="avatar" class="avatar" src="https://via.placeholder.com/120">
+    <script>
+        const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
 
-<div id="username" class="name">
-...
-</div>
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<div id="email" class="email">
-...
-</div>
+        // تنفيذ الدوال عند تحميل الصفحة
+        loadProfile();
 
-<div class="stats">
+        async function loadProfile() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
 
-📝 عدد المنشورات:
-<span id="postsCount">0</span>
+                if (!session) {
+                    alert("يجب تسجيل الدخول");
+                    location.href = "login.html";
+                    return;
+                }
 
-</div>
+                const user = session.user;
 
-</div>
- <div class="stats">
+                // عرض البريد الإلكتروني
+                document.getElementById("email").innerHTML = user.email;
 
-📝 عدد المنشورات:
-<span id="postsCount">0</span>
+                // جلب اسم المستخدم من جدول profiles
+                const { data: profile, error: profileError } = await supabaseClient
+                    .from("profiles")
+                    .select("username")
+                    .eq("id", user.id)
+                    .single();
 
-</div>
+                if (profileError) {
+                    console.error("خطأ في جلب الملف الشخصي:", profileError);
+                    document.getElementById("username").innerHTML = "مستخدم";
+                } else {
+                    document.getElementById("username").innerHTML = profile.username || "مستخدم";
+                }
 
-<h2>منشوراتي</h2>
+                // حساب عدد المنشورات
+                const { count, error: countError } = await supabaseClient
+                    .from("posts")
+                    .select("*", { count: "exact", head: true })
+                    .eq("user_id", user.id);
 
-<div id="myPosts"></div>
-<script>
+                if (countError) {
+                    console.error("خطأ في حساب المنشورات:", countError);
+                    document.getElementById("postsCount").innerHTML = "0";
+                } else {
+                    document.getElementById("postsCount").innerHTML = count || 0;
+                }
 
-const SUPABASE_URL = "https://zytvinuynkatrlbrpmko.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5dHZpbnV5bmthdHJsYnJwbWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5NzM3MzgsImV4cCI6MjEwMDU0OTczOH0.QLqDKJD9xwZVWLztGbFzTkUPfHp-TEGElNJ12I9wow0";
+                // تحميل المنشورات بعد تحميل الملف الشخصي
+                await loadMyPosts();
 
-const supabaseClient = supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+            } catch (error) {
+                console.error("خطأ عام:", error);
+                alert("حدث خطأ أثناء تحميل البيانات");
+            }
+        }
 
-loadProfile();
+        async function loadMyPosts() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
 
-async function loadProfile(){
-alert("تم تشغيل الملف الشخصي");
-const {data:{session}} =
-await supabaseClient.auth.getSession();
+                if (!session) {
+                    return;
+                }
 
-if(!session){
-    alert("يجب تسجيل الدخول");
-    location.href="login.html";
-    return;
-}
+                const user = session.user;
 
-const user = session.user;
+                const { data, error } = await supabaseClient
+                    .from("posts")
+                    .select("*")
+                    .eq("user_id", user.id)
+                    .order("id", { ascending: false });
 
+                if (error) {
+                    console.error("خطأ في جلب المنشورات:", error);
+                    document.getElementById("myPosts").innerHTML = "<p>حدث خطأ في تحميل المنشورات</p>";
+                    return;
+                }
 
-// عرض البريد الإلكتروني
+                if (!data || data.length === 0) {
+                    document.getElementById("myPosts").innerHTML = "<p>لا توجد منشورات حتى الآن</p>";
+                    return;
+                }
 
-document.getElementById("email").innerHTML =
-user.email;
+                let html = "";
+                data.forEach(post => {
+                    html += `
+                        <div class="post">
+                            <div class="time">${new Date(post.timestamp).toLocaleString("ar")}</div>
+                            <div class="text">${post.text || ""}</div>
+                            ${post.media_url ? `<img src="${post.media_url}" alt="صورة المنشور">` : ""}
+                            <div>❤️ ${post.likes || 0}</div>
+                        </div>
+                    `;
+                });
 
+                document.getElementById("myPosts").innerHTML = html;
 
-// جلب اسم المستخدم
-
-const {data:profile,error} =
-await supabaseClient
-.from("profiles")
-.select("username")
-.eq("id",user.id)
-.single();
-
-
-if(error){
-    alert(error.message);
-    return;
-}
-
-
-document.getElementById("username").innerHTML =
-profile.username;
-
-
-// حساب عدد المنشورات
-
-const {count,error:countError} = await supabaseClient
-.from("posts")
-.select("*",{count:"exact",head:true})
-.eq("user_id",user.id);
-
-
-if(countError){
-    alert(countError.message);
-    return;
-}
-
-
-document.getElementById("postsCount").innerHTML =
-count || 0;
-} 
- async function loadMyPosts() {
-
-const {data:{session}} =
-await supabaseClient.auth.getSession();
-
-if(!session){
-    return;
-}
-
-const user = session.user;
-
-
-const {data,error} = await supabaseClient
-.from("posts")
-.select("*")
-.eq("user_id", user.id)
-.order("id",{ascending:false});
-
-
-if(error){
-    alert(error.message);
-    return;
-}
-
-
-let html = "";
-
-
-data.forEach(post=>{
-
-html += `
-
-<div class="post">
-
-<div class="time">
-${new Date(post.timestamp).toLocaleString("ar")}
-</div>
-
-<div class="text">
-${post.text || ""}
-</div>
-
-${post.media_url ? 
-`<img src="${post.media_url}" style="width:100%;border-radius:10px;">`
-: ""}
-
-<div>
-❤️ ${post.likes || 0}
-</div>
-
-</div>
-
-`;
-
-});
-
-
-document.getElementById("myPosts").innerHTML = html;
-
-}
-</script>
+            } catch (error) {
+                console.error("خطأ في تحميل المنشورات:", error);
+                document.getElementById("myPosts").innerHTML = "<p>حدث خطأ في تحميل المنشورات</p>";
+            }
+        }
+    </script>
 </body>
 </html>
