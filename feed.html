@@ -176,12 +176,15 @@ async function loadPosts() {
     alert("بدأ تحميل المنشورات");
 
     const { data, error } = await supabaseClient
-        .from("posts")
-        .select("*")
-        .order("id", { ascending: false });    if (error) {
-        document.getElementById("posts").innerHTML = "خطأ في تحميل المنشورات: " + error.message;
-        return;
-    }
+    .from("posts")
+    .select("*")
+    .order("id", { ascending: false });
+
+alert("عدد المنشورات: " + (data ? data.length : "لا توجد بيانات"));
+
+if(error){
+    alert("خطأ: " + error.message);
+}
 
     let html = "";
     for (const post of data) {
