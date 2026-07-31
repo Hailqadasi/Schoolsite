@@ -175,15 +175,18 @@ async function loadPosts() {
 
     alert("بدأ تحميل المنشورات");
 
+    alert("قبل الاتصال بسوبابيس");
+
     const { data, error } = await supabaseClient
         .from("posts")
         .select("*")
         .order("id", { ascending: false });
 
-    console.log("البيانات:", data);
-    console.log("الخطأ:", error);
-alert(JSON.stringify(data));
-alert(JSON.stringify(error));
+    alert("بعد الاتصال بسوبابيس");
+
+    alert(JSON.stringify(data));
+    alert(JSON.stringify(error));
+
 }
     if (error) {
         document.getElementById("posts").innerHTML = "خطأ في تحميل المنشورات: " + error.message;
