@@ -182,7 +182,8 @@ async function loadPosts() {
 
     console.log("البيانات:", data);
     console.log("الخطأ:", error);
-
+alert(JSON.stringify(data));
+alert(JSON.stringify(error));
 }
     if (error) {
         document.getElementById("posts").innerHTML = "خطأ في تحميل المنشورات: " + error.message;
