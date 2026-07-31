@@ -229,10 +229,9 @@ let mediaType = null;
 
 if(file){
 
-alert("تم اختيار الصورة: " + file.name);
+ 
 
-let fileName = Date.now() + "_" + file.name;
-
+let fileName = Date.now() + "_" + file.name.replace(/\s+/g, "_");
 
 const {data:uploadData, error:uploadError} =
 await supabaseClient
@@ -249,8 +248,6 @@ if(uploadError){
     return;
 }
 
-
-alert("تم رفع الصورة إلى Storage بنجاح");
 
 
 const {data:urlData} =
@@ -294,9 +291,6 @@ alert(error.message);
 return;
 
 }
-
-
-alert("تم نشر المنشور بنجاح ✅");
 
 
 window.location.href="feed.html";
