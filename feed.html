@@ -172,16 +172,10 @@ data.forEach(comment => {
 commentsContainer.innerHTML = html;
      }    
 async function loadPosts() {
-
-    alert("بدأ تحميل المنشورات");
-
     const { data, error } = await supabaseClient
     .from("posts")
     .select("*")
     .order("id", { ascending: false });
-
-alert("عدد المنشورات: " + (data ? data.length : "لا توجد بيانات"));
-
 if(error){
     alert("خطأ: " + error.message);
 }
@@ -313,7 +307,7 @@ async function addComment(postId) {
         return;
     }
 
-    alert("تم إضافة التعليق ✅");
+    
     input.value = "";
 
     // إعادة تحميل التعليقات لهذا المنشور
@@ -323,7 +317,6 @@ async function addComment(postId) {
 // دالة حذف التعليق
 async function deleteComment(id){
 
-alert("رقم التعليق: " + id);
 
 const {data,error} = await supabaseClient
 .from("comments")
@@ -341,7 +334,7 @@ if(error){
     return;
 }
 
-alert("تم الحذف بنجاح");
+
 
 location.reload();
 
