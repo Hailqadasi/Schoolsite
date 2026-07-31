@@ -172,11 +172,13 @@ data.forEach(comment => {
 commentsContainer.innerHTML = html;
      }    
 async function loadPosts() {
+
+    alert("بدأ تحميل المنشورات");
+
     const { data, error } = await supabaseClient
         .from("posts")
         .select("*")
         .order("id", { ascending: false });
-
     if (error) {
         document.getElementById("posts").innerHTML = "خطأ في تحميل المنشورات: " + error.message;
         return;
