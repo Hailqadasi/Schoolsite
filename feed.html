@@ -243,23 +243,29 @@ async function likePost(id) {
 
     const newLikes = (post.likes || 0) + 1;
 
-    const { error: updateError } = await supabaseClient
-        .from("posts")
-        .update({
-            likes: newLikes,
-            liked_by: likedBy
-        })
-        .eq("id", id);
+    const { data: updatedData, error: updateError } = await supabaseClient
+    .from("posts")
+    .update({
+        likes: newLikes,
+        liked_by: likedBy
+    })
+    .eq("id", id)
+    .select();
 
+console.log(updatedData);
     if (updateError) {
-    console.error(updateError);
-    alert("خطأ التحديث: " + JSON.stringify(updateError));
+    alert("خطأ: " + updateError.message);
     return;
 }
 
-alert("تم تحديث الإعجاب في قاعدة البيانات");
-document.getElementById("likes-" + id).innerHTML = newLikes; 
-}   
+if (!updatedData || updatedData.length === 0) {
+    alert("لم يتم تحديث أي صف في قاعدة البيانات");
+    return;
+}
+
+alert("تم تحديث الإعجاب");
+document.getElementById("likes-" + id).innerHTML = newLikes;
+ } 
 // دالة إضافة تعليق
 async function addComment(postId) {
     const input = document.getElementById("comment-" + postId);
