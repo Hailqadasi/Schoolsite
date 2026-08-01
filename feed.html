@@ -258,8 +258,8 @@ async function likePost(id) {
 }
 
 alert("تم تحديث الإعجاب في قاعدة البيانات");
-document.getElementById("likes-" + id).innerHTML = newLikes;
-
+document.getElementById("likes-" + id).innerHTML = newLikes; 
+}   
 // دالة إضافة تعليق
 async function addComment(postId) {
     const input = document.getElementById("comment-" + postId);
