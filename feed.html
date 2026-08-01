@@ -187,16 +187,20 @@ async function loadComments(postId) {
 }
 
 async function loadPosts() {
-    const { data, error } = await supabaseClient
-        .from("posts")
-        .select("*")
-        .order("id", { ascending: false });
+  const { data, error } = await supabaseClient
+    .from("posts")
+    .select("*");
 
-    if (error) {
-        alert("خطأ في تحميل المنشورات: " + error.message);
-        console.error("Error loading posts:", error);
-        return;
-    }
+  console.log("المنشورات:", data);
+  console.log("الخطأ:", error);
+
+  if (error) {
+    alert("خطأ: " + error.message);
+    return;
+  }
+
+  alert("عدد المنشورات: " + data.length);
+}
 
     let html = "";
     for (const post of data) {
