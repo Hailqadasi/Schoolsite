@@ -252,12 +252,13 @@ async function likePost(id) {
         .eq("id", id);
 
     if (updateError) {
-        alert(updateError.message);
-        return;
-    }
-
-    document.getElementById("likes-" + id).innerHTML = newLikes;
+    console.error(updateError);
+    alert("خطأ التحديث: " + JSON.stringify(updateError));
+    return;
 }
+
+alert("تم تحديث الإعجاب في قاعدة البيانات");
+document.getElementById("likes-" + id).innerHTML = newLikes;
 
 // دالة إضافة تعليق
 async function addComment(postId) {
