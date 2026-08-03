@@ -6,7 +6,7 @@
     <title>📸  الملاك الصغير </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
-        /* ===== جميع التنسيقات السابقة ===== */
+        /* ===== جميع التنسيقات ===== */
         * {
             margin: 0;
             padding: 0;
@@ -250,9 +250,6 @@
             margin-bottom: 16px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
         }
-        /* ... باقي التنسيقات كما هي ... */
-        
-        /* ===== باقي التنسيقات ===== */
         .upload-section .upload-header { display: flex; gap: 10px; align-items: flex-start; }
         .upload-section .upload-avatar {
             width: 36px;
@@ -938,7 +935,6 @@
                 sortedPosts.sort((a, b) => b.timestamp - a.timestamp);
             }
 
-            // إذا كان هناك بحث نشط، نطبق التصفية أيضاً
             if (searchQuery.length > 0) {
                 sortedPosts = sortedPosts.filter(post => {
                     const userName = post.userName || 'مستخدم';
@@ -967,7 +963,6 @@
 
             clearBtn.style.display = 'block';
 
-            // البحث عن المستخدمين
             const users = {};
             allPosts.forEach(post => {
                 const userName = post.userName || 'مستخدم';
@@ -1014,7 +1009,6 @@
             resultsContainer.innerHTML = resultsHTML;
             resultsContainer.classList.add('active');
 
-            // تطبيق التصفية والترتيب معاً
             let filtered = allPosts.filter(post => {
                 const userName = post.userName || 'مستخدم';
                 return userName.toLowerCase().includes(query.toLowerCase());
@@ -1287,7 +1281,7 @@
                             <span>تعليق</span>
                             ${post.comments && post.comments.length > 0 ? `<span class="action-count">(${post.comments.length})</span>` : ''}
                         </button>
-                        <button onclick="sharePost('${post.mediaUrl || ''}', '${escapeHtml(post.text || '').replace(/'/g, "\\'")}')">
+                        <button onclick="sharePost('${post.id}')" title="مشاركة">
                             <i class="fa-regular fa-share-from-square"></i>
                             <span>مشاركة</span>
                         </button>
@@ -1475,6 +1469,229 @@
         }
 
         // ============================================================
+        // ===== دوال المشاركة =====
+        // ============================================================
+        function sharePost(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) {
+                showToast('⚠️ المنشور غير موجود', 2000);
+                return;
+            }
+
+            const userName = post.userName || 'مستخدم';
+            const text = post.text || '📸 شاهد هذا المنشور!';
+            const mediaUrl = post.mediaUrl || '';
+            const time = getTime(post.timestamp);
+            const likes = post.likes || 0;
+            const postUrl = window.location.href;
+
+            let shareText = `📸 *منشور من ${userName}*\n\n`;
+            shareText += `📝 ${text}\n\n`;
+            if (mediaUrl) {
+                shareText += `🖼️ الصورة: ${mediaUrl}\n\n`;
+            }
+            shareText += `❤️ ${likes} إعجاب\n`;
+            shareText += `🕐 ${time}\n\n`;
+            shareText += `🔗 ${postUrl}`;
+
+            const encodedText = encodeURIComponent(shareText);
+            
+            const whatsappUrl = `https://wa.me/?text=${encodedText}`;
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}&quote=${encodedText}`;
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(postUrl)}&text=${encodedText}`;
+
+            showShareOptions(whatsappUrl, twitterUrl, facebookUrl, telegramUrl, shareText, mediaUrl);
+        }
+
+        function showShareOptions(whatsappUrl, twitterUrl, facebookUrl, telegramUrl, shareText, mediaUrl) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                backdrop-filter: blur(8px);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                animation: fadeIn 0.3s ease;
+            `;
+
+            modal.innerHTML = `
+                <div style="
+                    background: #fff;
+                    border-radius: 16px;
+                    padding: 24px;
+                    max-width: 400px;
+                    width: 90%;
+                    text-align: center;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                ">
+                    <h3 style="margin-bottom: 16px; color: #1a1a1a; font-size: 20px;">
+                        <i class="fa-solid fa-share-nodes" style="color: #1877f2;"></i>
+                        مشاركة المنشور
+                    </h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button onclick="window.open('${whatsappUrl}', '_blank')" style="
+                            padding: 12px 16px;
+                            border: none;
+                            border-radius: 12px;
+                            background: #25D366;
+                            color: #fff;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-brands fa-whatsapp" style="font-size: 24px;"></i>
+                            مشاركة عبر واتساب
+                        </button>
+                        
+                        <button onclick="window.open('${telegramUrl}', '_blank')" style="
+                            padding: 12px 16px;
+                            border: none;
+                            border-radius: 12px;
+                            background: #26A5E4;
+                            color: #fff;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-brands fa-telegram" style="font-size: 24px;"></i>
+                            مشاركة عبر تيليجرام
+                        </button>
+                        
+                        <button onclick="window.open('${twitterUrl}', '_blank')" style="
+                            padding: 12px 16px;
+                            border: none;
+                            border-radius: 12px;
+                            background: #000;
+                            color: #fff;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-brands fa-x-twitter" style="font-size: 24px;"></i>
+                            مشاركة عبر X (تويتر)
+                        </button>
+                        
+                        <button onclick="window.open('${facebookUrl}', '_blank')" style="
+                            padding: 12px 16px;
+                            border: none;
+                            border-radius: 12px;
+                            background: #1877f2;
+                            color: #fff;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-brands fa-facebook" style="font-size: 24px;"></i>
+                            مشاركة عبر فيسبوك
+                        </button>
+                        
+                        <button onclick="copyShareText('${shareText.replace(/'/g, "\\'")}', '${mediaUrl}')" style="
+                            padding: 12px 16px;
+                            border: none;
+                            border-radius: 12px;
+                            background: #f0f2f5;
+                            color: #1a1a1a;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-regular fa-copy" style="font-size: 20px;"></i>
+                            نسخ النص
+                        </button>
+                    </div>
+                    
+                    <button onclick="this.parentElement.parentElement.remove()" style="
+                        margin-top: 16px;
+                        padding: 8px 24px;
+                        border: none;
+                        border-radius: 8px;
+                        background: #e4e6eb;
+                        color: #65676b;
+                        font-size: 14px;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                    " onmouseover="this.style.background='#d0d2d6'" onmouseout="this.style.background='#e4e6eb'">
+                        إلغاء
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        function copyShareText(shareText, mediaUrl) {
+            let fullText = shareText;
+            if (mediaUrl) {
+                fullText += `\n\n🖼️ ${mediaUrl}`;
+            }
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(fullText).then(() => {
+                    showToast('✅ تم نسخ النص للحافظة', 2000);
+                }).catch(() => {
+                    fallbackCopy(fullText);
+                });
+            } else {
+                fallbackCopy(fullText);
+            }
+            
+            const modal = document.querySelector('div[style*="position: fixed"][style*="backdrop-filter"]');
+            if (modal) modal.remove();
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            textarea.remove();
+            showToast('✅ تم نسخ النص للحافظة', 2000);
+        }
+
+        // ============================================================
         // ===== باقي الدوال =====
         // ============================================================
         function toggleComments(postId) {
@@ -1517,19 +1734,6 @@
             document.body.style.overflow = '';
             const video = document.getElementById('lightboxVideo');
             video.pause();
-        }
-
-        function sharePost(imageSrc, text) {
-            const shareText = text || '📸 شاهد هذا المنشور!';
-            if (navigator.share) {
-                navigator.share({ title: 'المعرض', text: shareText }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(shareText).then(() => {
-                    showToast('📋 تم نسخ النص للحافظة');
-                }).catch(() => {
-                    showToast('📋 يمكنك مشاركة هذا المنشور يدوياً');
-                });
-            }
         }
 
         document.getElementById('fileInput').onchange = async function() {
