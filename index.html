@@ -1,171 +1,1955 @@
  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-<meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✨ سَنا – معرض المشاركة العصري</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    /* ===== متغيرات أنيقة ===== */
+    :root {
+      --primary: #6C5CE7;
+      --primary-dark: #4a3db8;
+      --primary-light: #a29bfe;
+      --secondary: #00b894;
+      --accent: #fd79a8;
+      --gold: #fdcb6e;
+      --danger: #e17055;
+      --bg: #f4f6fc;
+      --text: #1e1e2f;
+      --text-secondary: #6c6f8a;
+      --border: #e2e6f0;
+      --white: #ffffff;
+      --shadow: 0 12px 32px rgba(108, 92, 231, 0.12);
+      --radius: 20px;
+      --radius-full: 50px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      padding-top: 20px;
+      position: relative;
+    }
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    /* ===== نافذة الدخول الأنيقة ===== */
+    .login-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 30, 47, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.4s ease;
+    }
+    .login-overlay.active { display: flex; }
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-radius: 40px;
+      padding: 44px 36px;
+      max-width: 400px;
+      width: 92%;
+      text-align: center;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: var(--transition);
+    }
+    .login-box .login-icon {
+      font-size: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .login-box h2 { font-size: 26px; color: var(--text); font-weight: 700; letter-spacing: -0.5px; }
+    .login-box p { font-size: 14px; color: var(--text-secondary); margin: 4px 0 20px; }
+    .login-box input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 60px;
+      font-size: 16px;
+      outline: none;
+      background: var(--bg);
+      text-align: right;
+      transition: var(--transition);
+    }
+    .login-box input:focus { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15); }
+    .login-box .login-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 18px;
+      transition: var(--transition);
+      box-shadow: 0 8px 24px rgba(108, 92, 231, 0.35);
+    }
+    .login-box .login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(108, 92, 231, 0.45); }
+    .login-box .login-error { color: var(--danger); font-size: 13px; margin-top: 8px; display: none; }
+    .login-box .login-error.show { display: block; }
+    #passwordField { display: none; margin-top: 12px; }
 
-<title>Rasidna - تأكيد البريد</title>
+    /* ===== رأس الصفحة العصري ===== */
+    .page-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 60px;
+      padding: 10px 18px 10px 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 28px rgba(108, 92, 231, 0.10);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: var(--transition);
+    }
+    .page-header .header-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .page-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .page-header h1 i { -webkit-text-fill-color: var(--primary); font-size: 22px; }
+    .page-header .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .page-header .header-actions button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 40px;
+      background: var(--bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .page-header .header-actions button:hover {
+      background: var(--white);
+      border-color: var(--border);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+    .page-header .header-actions button i { font-size: 15px; }
+    .page-header .header-actions .sync-btn { background: var(--secondary); color: white; }
+    .page-header .header-actions .sync-btn:hover { background: #00a381; }
+    .page-header .header-actions .clear-btn { background: var(--danger); color: white; }
+    .page-header .header-actions .clear-btn:hover { background: #c0392b; }
+    .page-header .header-actions .reels-go-btn {
+      background: linear-gradient(135deg, #fd79a8, #e17055);
+      color: white;
+      box-shadow: 0 4px 12px rgba(225, 112, 85, 0.3);
+    }
+    .page-header .header-actions .reels-go-btn:hover { transform: scale(1.03); box-shadow: 0 6px 18px rgba(225, 112, 85, 0.4); }
+    .page-header .header-actions .quiz-btn {
+      background: var(--gold);
+      color: var(--text);
+    }
+    .page-header .header-actions .quiz-btn:hover { background: #f0b400; transform: scale(1.03); }
+    .page-header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px 12px 4px 6px;
+      border-radius: 60px;
+      background: var(--bg);
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .page-header .user-info:hover { background: var(--white); border-color: var(--border); }
+    .page-header .user-info .user-name-display { font-weight: 600; color: var(--text); }
+    .page-header .user-info .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+    }
+    .admin-badge {
+      background: var(--danger);
+      color: white;
+      font-size: 9px;
+      padding: 2px 10px;
+      border-radius: 40px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
 
-<style>
+    /* ===== تبديل الأقسام ===== */
+    .tab-switch {
+      display: flex;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 60px;
+      padding: 4px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      border-radius: 60px;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .tab-btn:hover { background: rgba(108, 92, 231, 0.06); }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 6px 16px rgba(108, 92, 231, 0.3);
+    }
 
-*{
-box-sizing:border-box;
-}
+    /* ===== زر تحميل الكل ===== */
+    .load-all-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 60px;
+      background: var(--white);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border);
+    }
+    .load-all-btn:hover { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108, 92, 231, 0.25); }
+    .load-all-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-body{
-margin:0;
-font-family:Arial,Tahoma,sans-serif;
-background:linear-gradient(145deg,#f4f7fb,#e8edf8);
-color:#172033;
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-}
+    /* ===== الاختبار ===== */
+    .quiz-page {
+      display: none;
+      background: var(--white);
+      border-radius: 32px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .quiz-page.active { display: block; animation: fadeIn 0.3s ease; }
+    .quiz-page .quiz-header h2 {
+      font-size: 22px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+    .quiz-page .quiz-header h2 i { color: var(--gold); }
+    .quiz-page .question {
+      margin-bottom: 20px;
+      padding: 18px 16px;
+      background: var(--bg);
+      border-radius: 20px;
+    }
+    .quiz-page .question .q-text { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .quiz-page .question .options label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--white);
+      border-radius: 60px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    .quiz-page .question .options label:hover { border-color: var(--primary-light); background: #f8f6ff; }
+    .quiz-page .question .options input[type="radio"] { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+    .quiz-page .question .options label.correct { border-color: var(--secondary); background: #e8f5e9; }
+    .quiz-page .question .options label.wrong { border-color: var(--danger); background: #fce4ec; }
+    .quiz-page .submit-quiz-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
+    }
+    .quiz-page .submit-quiz-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(108, 92, 231, 0.4); }
+    .quiz-page .quiz-result { text-align: center; padding: 20px; background: var(--bg); border-radius: 24px; margin-top: 16px; display: none; }
+    .quiz-page .quiz-result .score { font-size: 42px; font-weight: 800; color: var(--primary); }
+    .quiz-page .quiz-result .stars { font-size: 44px; margin-top: 4px; }
+    .quiz-page .reset-quiz-btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 60px;
+      background: var(--secondary);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 10px;
+      display: none;
+    }
+    .quiz-page .reset-quiz-btn:hover { background: #00a381; transform: scale(1.02); }
 
-.card{
-width:calc(100% - 36px);
-max-width:460px;
-background:white;
-border-radius:26px;
-padding:35px 25px;
-text-align:center;
-box-shadow:0 12px 35px rgba(23,43,133,.12);
-}
+    /* ===== شريط البحث ===== */
+    .search-section {
+      background: var(--white);
+      border-radius: 60px;
+      padding: 6px 16px 6px 6px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border-radius: 60px;
+      padding: 2px 10px 2px 2px;
+      transition: var(--transition);
+    }
+    .search-container:focus-within { background: var(--white); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2); }
+    .search-icon { color: var(--text-secondary); font-size: 16px; padding: 6px; }
+    .search-container input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text);
+      padding: 10px 0;
+      text-align: right;
+    }
+    .search-clear {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    .search-clear:hover { background: var(--border); }
+    .search-results {
+      display: none;
+      margin-top: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+    .search-results.active { display: block; }
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .search-result-item:hover { background: var(--bg); }
+    .search-result-item .result-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .search-result-item .result-name { font-weight: 600; color: var(--text); }
+    .search-result-item .result-count { font-size: 12px; color: var(--text-secondary); }
 
-.logo{
-width:90px;
-height:90px;
-margin:0 auto 20px;
-border-radius:50%;
-background:#e8edff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:42px;
-}
+    /* ===== منطقة النشر ===== */
+    .upload-section {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 18px 18px 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .upload-section .upload-header { display: flex; gap: 12px; align-items: flex-start; }
+    .upload-section .upload-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(108, 92, 231, 0.2);
+    }
+    .upload-section .upload-textarea {
+      flex: 1;
+      min-height: 52px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      font-size: 15px;
+      outline: none;
+      resize: vertical;
+      background: var(--bg);
+      font-family: inherit;
+      text-align: right;
+      transition: var(--transition);
+    }
+    .upload-section .upload-textarea:focus { border-color: var(--primary); background: var(--white); }
+    .upload-section .upload-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .upload-section .upload-tools .tools-left { display: flex; gap: 8px; flex-wrap: wrap; }
+    .upload-section .upload-tools .tools-left button {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 60px;
+      background: var(--bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .upload-section .upload-tools .tools-left button:hover { background: var(--border); }
+    .upload-section .upload-tools .tools-left .media-btn.has-media {
+      background: var(--primary);
+      color: white;
+    }
+    .upload-section .upload-tools .publish-btn {
+      padding: 10px 28px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 16px rgba(108, 92, 231, 0.25);
+    }
+    .upload-section .upload-tools .publish-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(108, 92, 231, 0.35); }
+    .upload-section .media-preview-container {
+      display: none;
+      margin-top: 12px;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .upload-section .media-preview-container.visible { display: block; }
+    .upload-section .media-preview-container img,
+    .upload-section .media-preview-container video { width: 100%; max-height: 200px; object-fit: contain; background: white; }
+    .upload-section .media-preview-container .remove-media {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .upload-section .media-preview-container .remove-media:hover { background: var(--danger); transform: scale(1.1); }
 
-h1{
-color:#172b85;
-margin:0 0 15px;
-font-size:28px;
-}
+    /* ===== بطاقات المنشورات ===== */
+    .post-card {
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      margin-bottom: 18px;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      animation: fadeIn 0.4s ease;
+    }
+    .post-card:hover { box-shadow: 0 12px 36px rgba(108, 92, 231, 0.08); }
+    .post-header {
+      padding: 14px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .post-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+    .post-username { font-weight: 700; font-size: 15px; color: var(--text); }
+    .post-time { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+    .post-content { padding: 12px 18px 6px; }
+    .post-text {
+      font-size: 20px;
+      color: var(--text);
+      line-height: 1.8;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      font-weight: 400;
+    }
+    .post-text.collapsed { max-height: 140px; overflow: hidden; position: relative; }
+    .post-text.collapsed::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(transparent, var(--white));
+    }
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      padding: 6px 0;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+    .read-more-btn:hover { color: var(--primary-dark); text-decoration: underline; }
+    .post-media-wrapper {
+      background: var(--bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .post-media-wrapper.visible { display: flex; }
+    .post-media-wrapper img,
+    .post-media-wrapper video { width: 100%; max-height: 380px; object-fit: contain; background: white; }
 
-.message{
-font-size:17px;
-line-height:1.8;
-color:#5d687d;
-margin-bottom:25px;
-}
+    .post-actions {
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 14px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .post-actions button {
+      flex: 1;
+      padding: 8px 4px;
+      border: none;
+      border-radius: 40px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .post-actions button:hover { background: var(--bg); }
+    .post-actions button.liked { color: var(--danger); }
+    .post-actions button.liked i { font-weight: 900; }
+    .post-actions .action-count { font-size: 13px; color: var(--text-secondary); }
+    .delete-btn,
+    .admin-delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: 40px;
+      transition: var(--transition);
+    }
+    .delete-btn:hover { background: var(--bg); color: var(--danger); transform: scale(1.1); }
+    .admin-delete-btn:hover { background: var(--danger); color: white; transform: scale(1.1); }
+    .admin-user-delete-btn {
+      background: #fce4ec;
+      border: none;
+      cursor: pointer;
+      color: var(--danger);
+      font-size: 11px;
+      padding: 2px 12px;
+      border-radius: 40px;
+      transition: var(--transition);
+      margin-right: 4px;
+      font-weight: 600;
+    }
+    .admin-user-delete-btn:hover { background: var(--danger); color: white; }
 
-.success{
-color:#16856f;
-font-weight:bold;
-}
+    .comments-section {
+      padding: 10px 18px 14px;
+      background: #fafbff;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+    .comments-section.visible { display: block; animation: fadeIn 0.3s ease; }
+    .comments-header h4 { font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+    .comments-list { max-height: 200px; overflow-y: auto; margin-bottom: 8px; }
+    .comment-item {
+      display: flex;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .comment-user { font-weight: 600; font-size: 13px; color: var(--text); }
+    .comment-text { font-size: 14px; color: var(--text); word-wrap: break-word; }
+    .comment-time { font-size: 10px; color: var(--text-secondary); }
+    .add-comment {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .add-comment input {
+      flex: 1;
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 60px;
+      font-size: 14px;
+      outline: none;
+      background: var(--bg);
+      text-align: right;
+      transition: var(--transition);
+    }
+    .add-comment input:focus { border-color: var(--primary); background: var(--white); }
+    .add-comment .send-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(108, 92, 231, 0.2);
+    }
+    .add-comment .send-btn:hover { transform: scale(1.05); }
 
-button{
-width:100%;
-height:53px;
-border:0;
-border-radius:15px;
-background:#172b85;
-color:white;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
-}
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      background: var(--white);
+      border-radius: 32px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+    .empty-state i { font-size: 64px; color: #ccd0d5; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 20px; color: var(--text-secondary); font-weight: 500; }
+    .empty-state p { font-size: 15px; color: #8a8f94; }
 
-.small{
-margin-top:18px;
-font-size:12px;
-color:#9aa3b5;
-}
+    /* ===== Lightbox ===== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(20px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .lightbox.active { display: flex; animation: fadeIn 0.3s ease; }
+    .lightbox img,
+    .lightbox video { max-width: 90%; max-height: 85%; border-radius: 20px; object-fit: contain; }
+    .lightbox .close-lightbox {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 12px 18px;
+      border-radius: 60px;
+      transition: var(--transition);
+    }
+    .lightbox .close-lightbox:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+    .lightbox .lightbox-info {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 15px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+      padding: 8px 24px;
+      border-radius: 60px;
+    }
 
-</style>
+    /* ===== مودال ===== */
+    .custom-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .custom-modal.active { display: flex; animation: fadeIn 0.3s ease; }
+    .custom-modal .modal-content {
+      background: var(--white);
+      border-radius: 32px;
+      padding: 32px 28px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+    }
+    .custom-modal .modal-content .modal-icon { font-size: 48px; color: var(--danger); margin-bottom: 8px; }
+    .custom-modal .modal-content h3 { font-size: 22px; color: var(--text); }
+    .custom-modal .modal-content p { font-size: 16px; color: var(--text-secondary); margin: 6px 0 20px; }
+    .custom-modal .modal-content .modal-buttons { display: flex; gap: 12px; justify-content: center; }
+    .custom-modal .modal-content .modal-buttons button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 60px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .custom-modal .modal-content .modal-buttons .confirm-btn { background: var(--danger); color: white; }
+    .custom-modal .modal-content .modal-buttons .confirm-btn:hover { background: #c0392b; transform: scale(1.02); }
+    .custom-modal .modal-content .modal-buttons .cancel-btn { background: var(--bg); color: var(--text-secondary); }
+    .custom-modal .modal-content .modal-buttons .cancel-btn:hover { background: var(--border); }
 
+    /* ===== توست ===== */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(30, 30, 47, 0.9);
+      backdrop-filter: blur(14px);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 60px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      max-width: 90%;
+      text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .loading-spinner { text-align: center; padding: 40px; color: var(--text-secondary); }
+    .loading-spinner i { font-size: 36px; color: var(--primary); animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      .login-box { padding: 28px 16px; }
+      .page-header { padding: 8px 12px; border-radius: 40px; }
+      .page-header h1 { font-size: 17px; }
+      .page-header .header-actions button { font-size: 11px; padding: 6px 10px; }
+      .post-text { font-size: 18px; }
+    }
+  </style>
 </head>
-
 <body>
+  <!-- ===== نافذة الدخول ===== -->
+  <div class="login-overlay active" id="loginOverlay">
+    <div class="login-box">
+      <div class="login-icon"><i class="fa-regular fa-user"></i></div>
+      <h2>مرحباً بك 👋</h2>
+      <p>أدخل اسمك للمشاركة في المعرض</p>
+      <input type="text" id="loginNameInput" placeholder="اسمك..." maxlength="30" />
+      <div id="passwordField">
+        <input type="password" id="loginPasswordInput" placeholder="🔑 كلمة مرور المشرف" />
+      </div>
+      <div class="login-error" id="loginError">⚠️ الرجاء إدخال اسم صحيح</div>
+      <button class="login-btn" id="loginBtn"><i class="fa-regular fa-arrow-right"></i> دخول</button>
+    </div>
+  </div>
 
-<div class="card">
+  <div class="container">
+    <!-- ===== الرأس ===== -->
+    <div class="page-header" id="pageHeader">
+      <div class="header-left">
+        <h1><i class="fa-regular fa-images"></i> سَنا</h1>
+        <div class="header-actions">
+          <button onclick="resetAndLoad()" title="تحديث"><i class="fa-regular fa-rotate"></i></button>
+          <button onclick="sortByLikes()" id="sortBtn" title="ترتيب"><i class="fa-regular fa-fire"></i> الأكثر تفاعلاً</button>
+          <button onclick="syncPosts()" class="sync-btn"><i class="fa-regular fa-sync"></i> مزامنة</button>
+          <button onclick="clearLocalStorage()" class="clear-btn"><i class="fa-regular fa-trash"></i> مسح</button>
+          <button onclick="window.location='go:b'" class="reels-go-btn"><i class="fa-regular fa-film"></i> ريلز</button>
+          <button onclick="switchTab('quiz')" class="quiz-btn"><i class="fa-regular fa-brain"></i> اختبار</button>
+        </div>
+      </div>
+      <div class="user-info" id="userInfo">
+        <span class="user-name-display" id="userNameDisplay">مستخدم</span>
+        <span id="adminBadge" style="display:none;" class="admin-badge">مشرف</span>
+        <div class="avatar" id="userAvatar"><span id="avatarLetter">م</span></div>
+      </div>
+    </div>
 
-<div class="logo">
-💳
-</div>
+    <!-- ===== التبويبات ===== -->
+    <div class="tab-switch">
+      <button class="tab-btn active" onclick="switchTab('posts')" id="postsTab"><i class="fa-regular fa-newspaper"></i> المنشورات</button>
+      <button class="tab-btn" onclick="switchTab('quiz')" id="quizTab"><i class="fa-regular fa-brain"></i> اختبار</button>
+    </div>
 
-<h1>
-Rasidna
-</h1>
+    <!-- ===== قسم المنشورات ===== -->
+    <div id="postsSection">
+      <div class="search-section">
+        <div class="search-container">
+          <i class="fa-regular fa-magnifying-glass search-icon"></i>
+          <input type="text" id="searchInput" placeholder="🔍 ابحث باسم المستخدم..." oninput="searchPosts()" />
+          <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none;"><i class="fa-regular fa-xmark"></i></button>
+        </div>
+        <div id="searchResults" class="search-results"></div>
+      </div>
 
-<div id="message" class="message">
-جاري التحقق من البريد الإلكتروني...
-</div>
+      <button class="load-all-btn" id="loadAllBtn" onclick="loadAllPosts()">
+        <i class="fa-regular fa-download"></i> تحميل جميع المنشورات
+      </button>
 
-<button
-id="continueBtn"
-style="display:none;"
-onclick="goToApp()">
+      <div class="upload-section" id="uploadSection">
+        <div class="upload-header">
+          <div class="upload-avatar" id="uploadAvatar">م</div>
+          <textarea class="upload-textarea" id="postTextInput" placeholder="ماذا تريد أن تنشر؟ (نص، صورة، فيديو)"></textarea>
+        </div>
+        <div class="media-preview-container" id="mediaPreviewContainer">
+          <img id="mediaPreviewImg" src="" alt="معاينة" style="display:none;" />
+          <video id="mediaPreviewVideo" src="" controls style="display:none;max-height:200px;"></video>
+          <button class="remove-media" onclick="removeMedia()"><i class="fa-regular fa-xmark"></i></button>
+        </div>
+        <div id="progressContainer" style="display:none; margin-top:10px;">
+          <div class="progress-track" style="background:var(--border); border-radius:10px; height:6px; overflow:hidden;">
+            <div class="progress-bar" id="progressBar" style="width:0%; background:linear-gradient(90deg, var(--primary), var(--primary-light)); height:100%; transition:width 0.4s ease;"></div>
+          </div>
+          <p class="progress-text" id="progressText" style="font-size:12px; color:var(--text-secondary); margin-top:4px; text-align:center;">⏳ جاري الرفع...</p>
+        </div>
+        <div class="upload-tools">
+          <div class="tools-left">
+            <button class="media-btn" onclick="document.getElementById('fileInput').click()"><i class="fa-regular fa-image"></i> <span id="mediaBtnText">إضافة وسائط</span></button>
+            <input type="file" id="fileInput" accept="image/*,video/*" hidden />
+          </div>
+          <button class="publish-btn" id="publishBtn" onclick="publishPost()"><i class="fa-regular fa-paper-plane"></i> نشر</button>
+        </div>
+      </div>
 
-العودة إلى Rasidna
+      <div id="postsContainer">
+        <div class="loading-spinner"><i class="fa-regular fa-spinner"></i><p>جاري التحميل...</p></div>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fa-regular fa-images"></i>
+        <h3>لا توجد منشورات</h3>
+        <p>انشر أول منشور لتشاركه مع الجميع</p>
+      </div>
+    </div>
 
-</button>
+    <!-- ===== قسم الاختبار ===== -->
+    <div class="quiz-page" id="quizPage">
+      <div class="quiz-header"><h2><i class="fa-regular fa-brain"></i> اختبر معلوماتك</h2></div>
+      <div id="quizContent"></div>
+    </div>
 
-<div class="small">
-محفظتك الرقمية بأمان وسهولة
-</div>
+    <div class="footer">
+      <p>هذا التطبيق هو مشروع مستقل للأغراض التعليمية والتواصل الاجتماعي. جميع المحتويات المنشورة هي ملك لأصحابها.</p>
+      <p style="margin-top:4px;">© 2024 جميع الحقوق محفوظة</p>
+    </div>
+  </div>
 
-</div>
+  <!-- ===== Lightbox ===== -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="close-lightbox" onclick="closeLightbox()"><i class="fa-regular fa-xmark"></i></button>
+    <img id="lightboxImage" src="" alt="وسائط مكبرة" style="display:none;" />
+    <video id="lightboxVideo" src="" controls style="display:none;width:80%;"></video>
+    <div class="lightbox-info" id="lightboxInfo"></div>
+  </div>
 
+  <!-- ===== مودال التأكيد ===== -->
+  <div class="custom-modal" id="confirmModal">
+    <div class="modal-content">
+      <div class="modal-icon"><i class="fa-regular fa-triangle-exclamation"></i></div>
+      <h3 id="confirmTitle">تأكيد الحذف</h3>
+      <p id="confirmMessage">هل أنت متأكد؟</p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeConfirm()">إلغاء</button>
+        <button class="confirm-btn" id="confirmYesBtn">تأكيد</button>
+      </div>
+    </div>
+  </div>
 
-<script>
+  <!-- ===== توست ===== -->
+  <div id="toast"></div>
 
-const message =
-document.getElementById("message");
+  <!-- ===== Firebase ===== -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-const continueBtn =
-document.getElementById("continueBtn");
+  <script>
+    // ============================================================
+    // 🔥 إعدادات Firebase
+    // ============================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhh7mLHhKQsauhSTbojBVgtraLZLA3fcc",
+      authDomain: "tofolati-38ac4.firebaseapp.com",
+      databaseURL: "https://tofolati-38ac4-default-rtdb.firebaseio.com",
+      projectId: "tofolati-38ac4",
+      storageBucket: "tofolati-38ac4.firebasestorage.app",
+      messagingSenderId: "635017833018",
+      appId: "1:635017833018:web:YOUR_WEB_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
+    // ============================================================
+    // متغيرات عامة
+    // ============================================================
+    const CLOUD_NAME = 'demo';
+    const UPLOAD_PRESET = 'ml_default';
+    const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+    const ADMIN_PASSWORD = 'admin123';
 
-/*
-ننتظر لحظة حتى يعالج Supabase
-رمز التأكيد الموجود في الرابط.
-*/
+    let currentUserName = '';
+    let currentUserId = '';
+    let isAdmin = false;
+    let allPosts = [];
+    let tempMediaFile = null;
+    let confirmCallback = null;
+    let isSaving = false;
+    let sortMode = 'recent';
+    let searchQuery = '';
+    let currentTab = 'posts';
+    let lastPostTimestamp = null;
+    let hasMorePosts = true;
+    let isLoadingMore = false;
+    const POSTS_PER_PAGE = 10;
 
-setTimeout(function(){
+    // ============================================================
+    // دوال أساسية
+    // ============================================================
+    function resetPagination() { lastPostTimestamp = null; hasMorePosts = true; isLoadingMore = false; }
 
-message.className =
-"message success";
+    async function loadAllPosts() {
+      const btn = document.getElementById('loadAllBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin"></i> جاري التحميل...';
+      showToast('🔄 جاري تحميل جميع المنشورات...', 1500);
+      try {
+        const snapshot = await database.ref('posts').once('value');
+        const data = snapshot.val();
+        if (data) {
+          allPosts = Object.values(data);
+          allPosts.sort((a, b) => b.timestamp - a.timestamp);
+          hasMorePosts = false;
+          lastPostTimestamp = null;
+          if (currentTab === 'posts') applySorting();
+          showToast(`✅ تم تحميل ${allPosts.length} منشور`, 2000);
+        } else showToast('⚠️ لا توجد منشورات', 2000);
+      } catch (e) { showToast('⚠️ فشل التحميل', 3000); } finally { btn.disabled = false;
+        btn.innerHTML = '<i class="fa-regular fa-download"></i> تحميل جميع المنشورات'; }
+    }
 
-message.innerHTML =
-"✅ تم تأكيد بريدك الإلكتروني بنجاح.<br><br>" +
-"يمكنك الآن العودة إلى تطبيق Rasidna وتسجيل الدخول.";
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('postsTab').classList.toggle('active', tab === 'posts');
+      document.getElementById('quizTab').classList.toggle('active', tab === 'quiz');
+      document.getElementById('postsSection').style.display = tab === 'posts' ? 'block' : 'none';
+      document.getElementById('quizPage').classList.toggle('active', tab === 'quiz');
+      if (tab === 'quiz') renderQuiz();
+      else if (tab === 'posts') { if (allPosts.length === 0) loadPosts(false); else applySorting(); }
+    }
 
-continueBtn.style.display =
-"block";
+    // ============================================================
+    // الاختبار
+    // ============================================================
+    const quizQuestions = [
+      { question: "ما هي عاصمة مصر؟", options: ["القاهرة", "الإسكندرية", "الجيزة", "الأقصر"], answer: 0 },
+      { question: "كم عدد الكواكب في المجموعة الشمسية؟", options: ["7", "8", "9", "10"], answer: 1 },
+      { question: "من هو مؤسس مايكروسوفت؟", options: ["ستيف جوبز", "بيل غيتس", "مارك زوكربيرغ", "إيلون ماسك"], answer: 1 },
+      { question: "ما هي لغة الويب من جانب العميل؟", options: ["Python", "JavaScript", "Java", "C++"], answer: 1 },
+      { question: "ما هو أكبر محيط في العالم؟", options: ["الأطلسي", "الهندي", "الهادئ", "المتجمد الشمالي"], answer: 2 }
+    ];
+    let quizSubmitted = false;
 
-},1500);
+    function renderQuiz() {
+      const container = document.getElementById('quizContent');
+      let html = '';
+      quizQuestions.forEach((q, i) => {
+        html += `
+          <div class="question" id="question-${i}">
+            <div class="q-text">${i+1}. ${q.question}</div>
+            <div class="options">
+              ${q.options.map((opt, oi) => `<label><input type="radio" name="q${i}" value="${oi}" /> ${opt}</label>`).join('')}
+            </div>
+          </div>
+        `;
+      });
+      html += `
+        <button class="submit-quiz-btn" id="submitQuizBtn" onclick="submitQuiz()">تأكيد الإجابات</button>
+        <div class="quiz-result" id="quizResult">
+          <div class="stars" id="quizStars">⭐⭐⭐</div>
+          <div class="score" id="quizScore">0/5</div>
+          <div class="message" id="quizMessage">ابدأ الاختبار!</div>
+        </div>
+        <button class="reset-quiz-btn" id="resetQuizBtn" onclick="resetQuiz()">إعادة الاختبار</button>
+      `;
+      container.innerHTML = html;
+      quizSubmitted = false;
+      document.getElementById('submitQuizBtn').disabled = false;
+      document.getElementById('resetQuizBtn').style.display = 'none';
+      document.getElementById('quizResult').style.display = 'none';
+    }
 
+    function submitQuiz() {
+      if (quizSubmitted) { showToast('⚠️ لقد أجبت بالفعل! اضغط "إعادة الاختبار"', 3000); return; }
+      let correct = 0,
+        allAnswered = true;
+      quizQuestions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!selected) { allAnswered = false; return; }
+        const val = parseInt(selected.value);
+        const labels = document.querySelectorAll(`#question-${i} .options label`);
+        labels.forEach((label, idx) => { if (idx === q.answer) label.classList.add('correct'); else if (idx === val && idx !==
+            q.answer) label.classList.add('wrong'); });
+        if (val === q.answer) correct++;
+      });
+      if (!allAnswered) { showToast('⚠️ أجب على جميع الأسئلة!', 3000); return; }
+      quizSubmitted = true;
+      document.getElementById('submitQuizBtn').disabled = true;
+      const resultDiv = document.getElementById('quizResult');
+      document.getElementById('quizScore').textContent = `${correct}/${quizQuestions.length}`;
+      const pct = (correct / quizQuestions.length) * 100;
+      let stars = '',
+        msg = '';
+      if (pct === 100) { stars = '🌟🌟🌟';
+        msg = '🎉 ممتاز! إجابة 100%!'; } else if (pct >= 80) { stars = '⭐⭐⭐';
+        msg = '👏 رائع جداً!'; } else if (pct >= 60) { stars = '⭐⭐';
+        msg = '💪 جيد، يمكن تحسين!'; } else if (pct >= 40) { stars = '⭐';
+        msg = '📖 حاول مرة أخرى!'; } else { stars = '💪';
+        msg = '📚 لا بأس، الممارسة تصنع الإتقان!'; }
+      document.getElementById('quizStars').textContent = stars;
+      document.getElementById('quizMessage').textContent = msg;
+      resultDiv.style.display = 'block';
+      document.getElementById('resetQuizBtn').style.display = 'inline-block';
+    }
 
-/*
-نضع رابط تطبيق Rasidna هنا لاحقًا
-إذا حصلنا على رابط عام للتطبيق.
+    function resetQuiz() { renderQuiz();
+      showToast('🔄 تم إعادة الاختبار', 2000); }
 
-حاليًا الزر يعرض رسالة فقط.
-*/
+    // ============================================================
+    // Firebase و التخزين
+    // ============================================================
+    async function loadPostsFromFirebase(loadMore = false) {
+      try {
+        let query = database.ref('posts').orderByChild('timestamp').limitToLast(POSTS_PER_PAGE);
+        if (loadMore && lastPostTimestamp) query = query.endAt(lastPostTimestamp);
+        const snapshot = await query.once('value');
+        const data = snapshot.val();
+        if (!data) { hasMorePosts = false; return []; }
+        let posts = Object.values(data);
+        posts.sort((a, b) => b.timestamp - a.timestamp);
+        if (posts.length > 0) lastPostTimestamp = posts[posts.length - 1].timestamp;
+        if (posts.length < POSTS_PER_PAGE) hasMorePosts = false;
+        return posts;
+      } catch (e) { console.error(e); throw e; }
+    }
 
-function goToApp(){
+    async function savePostsToFirebase(posts) {
+      if (isSaving) return false;
+      isSaving = true;
+      try {
+        const obj = {};
+        posts.forEach(p => obj[p.id] = p);
+        await database.ref('posts').set(obj);
+        saveToLocalStorage({ posts });
+        return true;
+      } catch (e) { console.error(e);
+        saveToLocalStorage({ posts });
+        showToast('⚠️ تم الحفظ محلياً', 3000); return false; } finally { isSaving = false; }
+    }
 
-alert(
-"افتح تطبيق Rasidna وسجّل الدخول باستخدام بريدك الإلكتروني وكلمة المرور."
-);
+    function saveToLocalStorage(data) {
+      try {
+        const existing = JSON.parse(localStorage.getItem('gallery_data') || '{}');
+        if (data.posts) existing.posts = data.posts;
+        localStorage.setItem('gallery_data', JSON.stringify(existing));
+        localStorage.setItem('gallery_posts_count', data.posts ? data.posts.length : 0);
+      } catch (e) { console.warn(e); }
+    }
 
-}
+    function loadFromLocalStorage() {
+      try { return JSON.parse(localStorage.getItem('gallery_data') || '{}'); } catch (e) { return {}; }
+    }
 
-</script>
+    function clearLocalStorage() {
+      showConfirm('تنظيف التخزين المحلي', 'سيتم حذف البيانات المحلية فقط، ولن تتأثر السحابة.', () => {
+        localStorage.removeItem('gallery_data');
+        localStorage.removeItem('gallery_posts_count');
+        showToast('🗑️ تم التنظيف', 2000);
+        resetAndLoad();
+      });
+    }
 
+    function listenForUpdates() {
+      database.ref('posts').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          resetPagination();
+          allPosts = Object.values(data);
+          allPosts.sort((a, b) => b.timestamp - a.timestamp);
+          if (currentTab === 'posts') applySorting();
+          saveToLocalStorage({ posts: allPosts });
+          if (allPosts.length < POSTS_PER_PAGE) hasMorePosts = false;
+          else hasMorePosts = true;
+        }
+      });
+    }
+
+    // ============================================================
+    // تحميل وعرض المنشورات
+    // ============================================================
+    async function loadPosts(loadMore = false) {
+      if (currentTab !== 'posts') return;
+      const container = document.getElementById('postsContainer');
+      const loading = container.querySelector('.loading-spinner');
+      if (!loadMore) { if (loading) loading.style.display = 'block';
+        allPosts = [];
+        resetPagination();
+        document.getElementById('emptyState').style.display = 'none'; } else { if (isLoadingMore || !hasMorePosts) return;
+        isLoadingMore = true;
+        showLoadingIndicator(); }
+      try {
+        const newPosts = await loadPostsFromFirebase(loadMore);
+        if (loadMore) {
+          const existing = new Set(allPosts.map(p => p.id));
+          const unique = newPosts.filter(p => !existing.has(p.id));
+          allPosts = [...allPosts, ...unique];
+        } else allPosts = newPosts;
+        if (currentTab === 'posts') applySorting();
+        if (!loadMore) {
+          showToast(`✅ تم تحميل ${allPosts.length} منشور`, 1500);
+          if (allPosts.length === 0) document.getElementById('emptyState').style.display = 'block';
+        }
+      } catch (e) {
+        console.error(e);
+        const local = loadFromLocalStorage();
+        if (local.posts && local.posts.length > 0) { allPosts = local.posts; if (currentTab === 'posts') applySorting();
+          showToast('📱 عرض منشورات محفوظة', 2000); } else { if (!loadMore) document.getElementById('emptyState').style
+            .display = 'block'; }
+      } finally { if (loading) loading.style.display = 'none';
+        removeLoadingIndicator();
+        isLoadingMore = false; }
+    }
+
+    function resetAndLoad() { if (currentTab === 'posts') loadPosts(false); }
+
+    function showLoadingIndicator() {
+      let el = document.getElementById('loadingMore');
+      if (!el) { el = document.createElement('div');
+        el.id = 'loadingMore';
+        document.getElementById('postsContainer').appendChild(el); }
+      el.innerHTML = '<i class="fa-regular fa-spinner fa-spin"></i> جاري تحميل المزيد...';
+      el.style.display = 'block';
+    }
+
+    function removeLoadingIndicator() {
+      const el = document.getElementById('loadingMore');
+      if (el) el.style.display = 'none';
+    }
+
+    // ============================================================
+    // ترتيب وبحث
+    // ============================================================
+    function sortByLikes() {
+      if (currentTab !== 'posts') { showToast('⚠️ الترتيب متاح فقط في المنشورات', 2000); return; }
+      const btn = document.getElementById('sortBtn');
+      if (sortMode === 'recent') {
+        sortMode = 'likes';
+        btn.innerHTML = '<i class="fa-regular fa-clock"></i> الأحدث';
+        btn.style.background = 'var(--primary)';
+        btn.style.color = '#fff';
+        showToast('🔥 تم الترتيب حسب الأكثر تفاعلاً', 1500);
+      } else {
+        sortMode = 'recent';
+        btn.innerHTML = '<i class="fa-regular fa-fire"></i> الأكثر تفاعلاً';
+        btn.style.background = 'var(--bg)';
+        btn.style.color = 'var(--text-secondary)';
+        showToast('🕐 تم الترتيب حسب الأحدث', 1500);
+      }
+      applySorting();
+    }
+
+    function applySorting() {
+      if (currentTab !== 'posts') return;
+      let sorted = [...allPosts];
+      if (sortMode === 'likes') sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      else sorted.sort((a, b) => b.timestamp - a.timestamp);
+      if (searchQuery.length > 0) sorted = sorted.filter(p => (p.userName || '').toLowerCase().includes(searchQuery
+        .toLowerCase()));
+      renderPosts(sorted);
+    }
+
+    function searchPosts() {
+      if (currentTab !== 'posts') { document.getElementById('searchResults').classList.remove('active');
+        document.getElementById('searchClear').style.display = 'none'; return; }
+      const q = document.getElementById('searchInput').value.trim();
+      searchQuery = q;
+      const results = document.getElementById('searchResults');
+      const clearBtn = document.getElementById('searchClear');
+      if (q.length === 0) { results.classList.remove('active');
+        clearBtn.style.display = 'none';
+        applySorting(); return; }
+      clearBtn.style.display = 'block';
+      const users = {};
+      allPosts.forEach(p => {
+        const name = p.userName || 'مستخدم';
+        if (name.toLowerCase().includes(q.toLowerCase())) {
+          if (!users[p.userId]) users[p.userId] = { userId: p.userId, userName: name, posts: [], avatarColor: getAvatarColor(
+              p.userId) };
+          users[p.userId].posts.push(p);
+        }
+      });
+      const arr = Object.values(users);
+      if (arr.length === 0) { results.innerHTML = `<div class="no-results">❌ لا توجد نتائج لـ "${q}"</div>`; results
+          .classList.add('active');
+        applySorting(); return; }
+      let html = '';
+      arr.forEach(u => {
+        const preview = (u.posts[0]?.text || 'لا يوجد نص').slice(0, 30) + '...';
+        html += `
+          <div class="search-result-item" onclick="filterByUser('${u.userId}')">
+            <div class="result-avatar" style="background:${u.avatarColor};">${u.userName.charAt(0).toUpperCase()}</div>
+            <div><div class="result-name">${u.userName}</div><div class="result-count">${u.posts.length} منشور</div></div>
+            <div style="font-size:11px;color:var(--text-secondary);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${preview}</div>
+          </div>
+        `;
+      });
+      results.innerHTML = html;
+      results.classList.add('active');
+      let filtered = allPosts.filter(p => (p.userName || '').toLowerCase().includes(q.toLowerCase()));
+      if (sortMode === 'likes') filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      else filtered.sort((a, b) => b.timestamp - a.timestamp);
+      renderPosts(filtered);
+    }
+
+    function filterByUser(userId) {
+      let filtered = allPosts.filter(p => p.userId === userId);
+      if (sortMode === 'likes') filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      else filtered.sort((a, b) => b.timestamp - a.timestamp);
+      renderPosts(filtered);
+      document.getElementById('searchResults').classList.remove('active');
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchClear').style.display = 'none';
+      searchQuery = '';
+      const u = allPosts.find(p => p.userId === userId);
+      showToast(`👤 عرض ${filtered.length} منشور لـ ${u?.userName || 'المستخدم'}`, 2000);
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchResults').classList.remove('active');
+      document.getElementById('searchClear').style.display = 'none';
+      searchQuery = '';
+      if (currentTab === 'posts') applySorting();
+      showToast('🔄 عرض جميع المنشورات', 1500);
+    }
+
+    // ============================================================
+    // عرض المنشورات
+    // ============================================================
+    function renderPosts(posts) {
+      if (currentTab !== 'posts') return;
+      const container = document.getElementById('postsContainer');
+      const empty = document.getElementById('emptyState');
+      const loading = container.querySelector('.loading-spinner');
+      if (loading) loading.style.display = 'none';
+      if (!posts || posts.length === 0) {
+        container.innerHTML = '';
+        const more = document.getElementById('loadingMore');
+        if (more) container.appendChild(more);
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      const more = document.getElementById('loadingMore');
+      container.innerHTML = '';
+      if (more) container.appendChild(more);
+
+      posts.forEach(post => {
+        const isLiked = post.likedBy && post.likedBy.includes(currentUserId);
+        const userName = post.userName || 'مستخدم';
+        const color = getAvatarColor(post.userId);
+        const time = getTime(post.timestamp);
+        const isOwner = post.userId === currentUserId;
+
+        let delBtns = '';
+        if (isOwner) delBtns +=
+          `<button class="delete-btn" onclick="deletePost('${post.id}')"><i class="fa-regular fa-trash-can"></i></button>`;
+        if (isAdmin && !isOwner) delBtns +=
+          `<button class="admin-delete-btn" onclick="adminDeletePost('${post.id}')"><i class="fa-regular fa-user-shield"></i></button>`;
+
+        const hasText = post.text && post.text.trim() !== '';
+        const isLong = (post.text?.length || 0) > 250;
+        const textHTML = hasText ? `
+          <div class="post-text ${isLong ? 'collapsed' : ''}" id="text-${post.id}">${escapeHtml(post.text)}</div>
+          ${isLong ? `<button class="read-more-btn" onclick="toggleReadMore('${post.id}')">عرض المزيد</button>` : ''}
+        ` : '';
+
+        let mediaHTML = '';
+        if (post.mediaUrl && post.mediaUrl !== '') {
+          const isVideo = post.mediaType === 'video';
+          mediaHTML = `
+            <div class="post-media-wrapper visible" onclick="${isVideo ? '' : `openLightbox('${post.mediaUrl}','${userName}','${time}','image')`}">
+              ${isVideo ? `<video controls src="${post.mediaUrl}" preload="metadata"></video>` : `<img src="${post.mediaUrl}" alt="صورة" loading="lazy" />`}
+            </div>
+          `;
+        }
+
+        let commentsHTML = '';
+        if (post.comments && post.comments.length > 0) {
+          post.comments.forEach(c => {
+            const cUser = c.userName || 'مستخدم';
+            const cColor = getAvatarColor(c.userId);
+            commentsHTML += `
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:${cColor};">${cUser.charAt(0).toUpperCase()}</div>
+                <div><div class="comment-user">${cUser}</div><div class="comment-text">${escapeHtml(c.text)}</div><div class="comment-time">${getTime(c.timestamp)}</div></div>
+              </div>
+            `;
+          });
+        } else commentsHTML = `<div class="no-comments">لا توجد تعليقات</div>`;
+
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        card.id = `post-${post.id}`;
+        card.innerHTML = `
+          <div class="post-header">
+            <div class="post-user" onclick="openProfile('${post.userId}')">
+              <div class="post-avatar" style="background:${color};">${userName.charAt(0).toUpperCase()}</div>
+              <div>
+                <div class="post-username">${userName} ${isOwner ? '👤' : ''} ${isAdmin ? `<button class="admin-user-delete-btn" onclick="adminDeleteUser('${post.userId}','${userName}')"><i class="fa-regular fa-user-slash"></i> حذف</button>` : ''}</div>
+                <div class="post-time"><i class="fa-regular fa-clock"></i> ${time}</div>
+              </div>
+            </div>
+            <div>${delBtns}</div>
+          </div>
+          <div class="post-content">${textHTML}</div>
+          ${mediaHTML}
+          <div class="post-actions">
+            <button class="${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')" id="like-btn-${post.id}">
+              <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> <span>تفاعل</span> <span class="action-count" id="like-count-${post.id}">${post.likes > 0 ? `(${post.likes})` : ''}</span>
+            </button>
+            <button onclick="toggleComments('${post.id}')"><i class="fa-regular fa-comment"></i> <span>تعليق</span> ${post.comments && post.comments.length > 0 ? `<span class="action-count">(${post.comments.length})</span>` : ''}</button>
+            <button onclick="sharePost()"><i class="fa-regular fa-share-from-square"></i> <span>مشاركة</span></button>
+          </div>
+          <div class="comments-section" id="comments-${post.id}">
+            <div class="comments-header"><h4>💬 التعليقات</h4><span class="comment-count">${post.comments ? post.comments.length : 0}</span></div>
+            <div class="comments-list">${commentsHTML}</div>
+            <div class="add-comment">
+              <input type="text" id="commentInput-${post.id}" placeholder="اكتب تعليقاً..." />
+              <button class="send-btn" onclick="addCommentHandler('${post.id}')"><i class="fa-regular fa-paper-plane"></i></button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+        const inp = card.querySelector(`#commentInput-${post.id}`);
+        if (inp) inp.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault();
+            addCommentHandler(post.id); } };
+      });
+    }
+
+    function toggleReadMore(id) {
+      const el = document.getElementById(`text-${id}`);
+      if (!el) return;
+      const btn = el.nextElementSibling;
+      if (el.classList.contains('collapsed')) { el.classList.remove('collapsed');
+        el.classList.add('expanded'); if (btn) btn.textContent = 'عرض أقل'; } else { el.classList.add('collapsed');
+        el.classList.remove('expanded'); if (btn) btn.textContent = 'عرض المزيد'; }
+    }
+
+    // ============================================================
+    // التفاعلات
+    // ============================================================
+    async function toggleLike(postId) {
+      const idx = allPosts.findIndex(p => p.id === postId);
+      if (idx === -1) return;
+      const post = allPosts[idx];
+      if (!post.likedBy) post.likedBy = [];
+      if (typeof post.likes !== 'number') post.likes = 0;
+      const ui = post.likedBy.indexOf(currentUserId);
+      if (ui === -1) { post.likedBy.push(currentUserId);
+        post.likes++; } else { post.likedBy.splice(ui, 1);
+        post.likes--; }
+      allPosts[idx] = post;
+      await savePostsToFirebase(allPosts);
+      updateLikeUI(postId, post.likes, post.likedBy.includes(currentUserId));
+    }
+
+    function updateLikeUI(id, likes, liked) {
+      const btn = document.getElementById(`like-btn-${id}`);
+      const count = document.getElementById(`like-count-${id}`);
+      if (btn) { const icon = btn.querySelector('i'); if (icon) icon.className = liked ? 'fa-solid fa-heart' :
+          'fa-regular fa-heart';
+        btn.className = liked ? 'liked' : ''; }
+      if (count) count.textContent = likes > 0 ? `(${likes})` : '';
+    }
+
+    async function addCommentHandler(postId) {
+      const input = document.getElementById(`commentInput-${postId}`);
+      if (!input || !input.value.trim()) { showToast('⚠️ اكتب تعليقاً', 2000); return; }
+      const post = allPosts.find(p => p.id === postId);
+      if (!post) { showToast('⚠️ المنشور غير موجود', 2000); return; }
+      if (!post.comments) post.comments = [];
+      post.comments.push({ id: Date.now() + '_' + Math.random().toString(36).substring(2, 6), userId: currentUserId,
+        userName: currentUserName, text: input.value.trim(), timestamp: Date.now() });
+      await savePostsToFirebase(allPosts);
+      input.value = '';
+      if (currentTab === 'posts') applySorting();
+      showToast('💬 تم إضافة تعليق', 1500);
+    }
+
+    function toggleComments(id) {
+      const el = document.getElementById(`comments-${id}`);
+      if (el) el.classList.toggle('visible');
+    }
+
+    function sharePost() {
+      const msg = encodeURIComponent('انضم إلينا في المعرض وشارك منشوراتك');
+      const url = encodeURIComponent('https://hailqadasi.github.io/Schoolsite/');
+      window.open(`https://wa.me/?text=${msg}%0A%0A${url}`, '_blank');
+      showToast('📱 جاري فتح واتساب...', 2000);
+    }
+
+    // ============================================================
+    // حذف
+    // ============================================================
+    async function deletePost(postId) {
+      const post = allPosts.find(p => p.id === postId);
+      if (!post || post.userId !== currentUserId) { showToast('⛔ لا يمكنك الحذف', 3000); return; }
+      showConfirm('تأكيد الحذف', 'هل أنت متأكد؟', async () => {
+        allPosts = allPosts.filter(p => p.id !== postId);
+        await savePostsToFirebase(allPosts);
+        const card = document.getElementById(`post-${postId}`);
+        if (card) { card.classList.add('deleting');
+          setTimeout(() => { card.remove(); if (allPosts.length === 0) document.getElementById('emptyState').style
+              .display = 'block'; }, 300); } else if (currentTab === 'posts') applySorting();
+        showToast('🗑️ تم الحذف', 2000);
+      });
+    }
+
+    function adminDeletePost(postId) {
+      if (!isAdmin) { showToast('⛔ صلاحية مشرف مطلوبة', 3000); return; }
+      showConfirm('حذف المنشور (مشرف)', 'هل أنت متأكد؟', async () => {
+        allPosts = allPosts.filter(p => p.id !== postId);
+        await savePostsToFirebase(allPosts);
+        const card = document.getElementById(`post-${postId}`);
+        if (card) card.remove();
+        if (allPosts.length === 0) document.getElementById('emptyState').style.display = 'block';
+        showToast('🗑️ تم حذف المنشور بواسطة المشرف', 2000);
+      });
+    }
+
+    function adminDeleteUser(userId, userName) {
+      if (!isAdmin) { showToast('⛔ صلاحية مشرف مطلوبة', 3000); return; }
+      if (userId === currentUserId) { showToast('⛔ لا يمكنك حذف حسابك', 3000); return; }
+      const count = allPosts.filter(p => p.userId === userId).length;
+      if (count === 0) { showToast('⚠️ لا توجد منشورات لهذا المستخدم', 2000); return; }
+      showConfirm(`حذف المستخدم: ${userName}`, `سيتم حذف ${count} منشور. هل أنت متأكد؟`, async () => {
+        allPosts = allPosts.filter(p => p.userId !== userId);
+        await savePostsToFirebase(allPosts);
+        if (currentTab === 'posts') applySorting();
+        showToast(`🗑️ تم حذف جميع منشورات ${userName} (${count} منشور)`, 3000);
+      });
+    }
+
+    // ============================================================
+    // النشر والوسائط
+    // ============================================================
+    async function publishPost() {
+      if (currentTab !== 'posts') return;
+      const text = document.getElementById('postTextInput').value.trim();
+      const media = tempMediaFile;
+      if (!text && !media) { showToast('⚠️ اكتب نصاً أو أضف وسائط', 2500); return; }
+      const btn = document.getElementById('publishBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin"></i> جاري النشر...';
+      const progressContainer = document.getElementById('progressContainer');
+      progressContainer.style.display = 'block';
+      updateProgress(0, '⏳ بدء النشر...');
+
+      const tempId = Date.now() + '_temp';
+      const tempPost = { id: tempId, text: text || '', mediaUrl: null, mediaType: null, userId: currentUserId,
+        userName: currentUserName, timestamp: Date.now(), likes: 0, likedBy: [], comments: [], isTemp: true };
+      allPosts.unshift(tempPost);
+      if (currentTab === 'posts') renderPosts(allPosts);
+
+      try {
+        let mediaUrl = null,
+          mediaType = null;
+        if (media) {
+          updateProgress(10, '⏳ تجهيز الملف...');
+          let fileToUpload = media.file;
+          if (media.type === 'image' && media.file) {
+            updateProgress(20, '⏳ ضغط الصورة...');
+            const compressed = await compressImage(media.file, 600, 600, 0.4);
+            fileToUpload = dataURLtoFile(compressed, media.file.name);
+          }
+          updateProgress(40, '⏳ رفع الوسائط...');
+          const url = await uploadToCloudinary(fileToUpload);
+          mediaUrl = url;
+          mediaType = media.type;
+          updateProgress(70, '✅ تم رفع الوسائط');
+        }
+        updateProgress(80, '⏳ حفظ المنشور...');
+        allPosts = allPosts.filter(p => p.id !== tempId);
+        const realPost = { id: Date.now() + '_' + Math.random().toString(36).substring(2, 6), text: text || '',
+          mediaUrl, mediaType, userId: currentUserId, userName: currentUserName, timestamp: Date.now(), likes: 0,
+          likedBy: [], comments: [] };
+        allPosts.unshift(realPost);
+        await savePostsToFirebase(allPosts);
+        updateProgress(100, '✅ تم النشر! 🎉');
+        showToast('✅ تم نشر المنشور', 2000);
+        document.getElementById('postTextInput').value = '';
+        removeMedia();
+        if (currentTab === 'posts') applySorting();
+      } catch (e) {
+        console.error(e);
+        updateProgress(0, '⚠️ فشل النشر');
+        showToast('⚠️ فشل النشر: ' + e.message, 4000);
+        allPosts = allPosts.filter(p => p.id !== tempId);
+        if (currentTab === 'posts') renderPosts(allPosts);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-regular fa-paper-plane"></i> نشر';
+        setTimeout(() => { progressContainer.style.display = 'none'; }, 3000);
+      }
+    }
+
+    function updateProgress(pct, msg) {
+      const bar = document.getElementById('progressBar');
+      const txt = document.getElementById('progressText');
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.textContent = msg;
+    }
+
+    function compressImage(file, maxW = 600, maxH = 600, quality = 0.4) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width,
+              h = img.height;
+            if (w > maxW) { h = (h * maxW) / w;
+              w = maxW; }
+            if (h > maxH) { w = (w * maxH) / h;
+              h = maxH; }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function dataURLtoFile(dataURL, filename) {
+      const arr = dataURL.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new File([u8arr], filename, { type: mime });
+    }
+
+    async function uploadToCloudinary(file) {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      try {
+        const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.secure_url) return data.secure_url;
+        throw new Error(data.error?.message || 'فشل الرفع');
+      } catch (e) {
+        if (file.type.startsWith('image/')) return await compressImage(file);
+        throw new Error('فشل رفع الفيديو');
+      }
+    }
+
+    document.getElementById('fileInput').onchange = async function() {
+      const file = this.files[0];
+      if (!file) return;
+      const isImage = file.type.startsWith('image/');
+      const isVideo = file.type.startsWith('video/');
+      if (!isImage && !isVideo) { showToast('⚠️ اختر صورة أو فيديو', 3000);
+        this.value = ''; return; }
+      if (isVideo && file.size > 100 * 1024 * 1024) { showToast('⚠️ الفيديو كبير جداً (حد 100 ميجا)', 3000);
+        this.value = ''; return; }
+      try {
+        let dataUrl, type = 'image';
+        if (isImage) { dataUrl = await compressImage(file, 400, 400, 0.5);
+          type = 'image'; } else { dataUrl = URL.createObjectURL(file);
+          type = 'video'; }
+        tempMediaFile = { file, dataUrl, type };
+        const img = document.getElementById('mediaPreviewImg');
+        const vid = document.getElementById('mediaPreviewVideo');
+        const container = document.getElementById('mediaPreviewContainer');
+        if (type === 'video') { img.style.display = 'none';
+          vid.style.display = 'block';
+          vid.src = dataUrl;
+          vid.load(); } else { vid.style.display = 'none';
+          img.style.display = 'block';
+          img.src = dataUrl; }
+        container.classList.add('visible');
+        document.querySelector('.media-btn').classList.add('has-media');
+        document.getElementById('mediaBtnText').textContent = 'تغيير الوسائط';
+        showToast('✅ تم إضافة الوسائط', 1500);
+      } catch (e) { showToast('⚠️ خطأ في معالجة الوسائط', 3000); }
+      this.value = '';
+    };
+
+    function removeMedia() {
+      if (tempMediaFile && tempMediaFile.type === 'video') URL.revokeObjectURL(tempMediaFile.dataUrl);
+      tempMediaFile = null;
+      document.getElementById('mediaPreviewImg').style.display = 'none';
+      document.getElementById('mediaPreviewVideo').style.display = 'none';
+      document.getElementById('mediaPreviewVideo').src = '';
+      document.getElementById('mediaPreviewContainer').classList.remove('visible');
+      document.querySelector('.media-btn').classList.remove('has-media');
+      document.getElementById('mediaBtnText').textContent = 'إضافة وسائط';
+    }
+
+    // ============================================================
+    // أدوات مساعدة
+    // ============================================================
+    function getAvatarColor(id) {
+      const colors = ['#6C5CE7', '#A29BFE', '#00B894', '#55EFC4', '#E17055', '#FDCB6E', '#0984E3', '#74B9FF'];
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
+      return colors[Math.abs(hash) % colors.length];
+    }
+
+    function getTime(ts) {
+      const diff = Math.floor((Date.now() - ts) / 1000);
+      if (diff < 60) return 'الآن';
+      if (diff < 3600) return Math.floor(diff / 60) + ' دقيقة';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' ساعة';
+      if (diff < 604800) return Math.floor(diff / 86400) + ' يوم';
+      return new Date(ts).toLocaleDateString('ar-EG');
+    }
+
+    function escapeHtml(t) { const d = document.createElement('div');
+      d.textContent = t; return d.innerHTML; }
+
+    function openProfile(userId) {
+      const posts = allPosts.filter(p => p.userId === userId);
+      const name = userId === currentUserId ? currentUserName : 'مستخدم ' + userId.substring(0, 6);
+      showToast(`📝 ${name} لديه ${posts.length} منشور`, 2500);
+    }
+
+    function openLightbox(src, userName, time, type = 'image') {
+      const img = document.getElementById('lightboxImage');
+      const vid = document.getElementById('lightboxVideo');
+      const info = document.getElementById('lightboxInfo');
+      if (type === 'video') { img.style.display = 'none';
+        vid.style.display = 'block';
+        vid.src = src;
+        vid.load();
+        vid.play(); } else { vid.style.display = 'none';
+        vid.pause();
+        img.style.display = 'block';
+        img.src = src; }
+      info.textContent = `${userName} · ${time}`;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+      document.getElementById('lightboxVideo').pause();
+    }
+
+    // ============================================================
+    // تسجيل الدخول
+    // ============================================================
+    function loginUser(name, password) {
+      name = name.trim();
+      if (!name || name.length < 2) { document.getElementById('loginError').classList.add('show');
+        document.getElementById('loginError').textContent = '⚠️ اسم صحيح مطلوب'; return; }
+      const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN', 'administrator', 'ادمن'];
+      const isAdminName = adminNames.includes(name);
+      if (isAdminName) {
+        if (!password || password.trim() !== ADMIN_PASSWORD) { document.getElementById('loginError').classList.add('show');
+          document.getElementById('loginError').textContent = '⚠️ كلمة مرور المشرف غير صحيحة'; return; }
+      }
+      isAdmin = isAdminName;
+      currentUserName = name;
+      currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      localStorage.setItem('userName', currentUserName);
+      localStorage.setItem('userId', currentUserId);
+      localStorage.setItem('isAdmin', isAdmin ? 'true' : 'false');
+      document.getElementById('loginOverlay').classList.remove('active');
+      updateUI();
+      showToast(isAdmin ? '🛡️ مرحباً أيها المشرف!' : `👋 مرحباً ${currentUserName}!`, 2500);
+      loadPosts(false);
+    }
+
+    document.getElementById('loginNameInput').addEventListener('input', function() {
+      const name = this.value.trim();
+      const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN', 'administrator', 'ادمن'];
+      document.getElementById('passwordField').style.display = adminNames.includes(name) ? 'block' : 'none';
+      document.getElementById('loginError').classList.remove('show');
+    });
+    document.getElementById('loginBtn').onclick = () => {
+      loginUser(document.getElementById('loginNameInput').value, document.getElementById('loginPasswordInput').value);
+    };
+    document.getElementById('loginNameInput').onkeydown = (e) => { if (e.key === 'Enter') loginUser(document.getElementById(
+        'loginNameInput').value, document.getElementById('loginPasswordInput').value); };
+    document.getElementById('loginPasswordInput').onkeydown = (e) => { if (e.key === 'Enter') loginUser(document
+        .getElementById('loginNameInput').value, document.getElementById('loginPasswordInput').value); };
+
+    function checkLogin() {
+      const name = localStorage.getItem('userName');
+      const id = localStorage.getItem('userId');
+      const admin = localStorage.getItem('isAdmin');
+      if (name && id) { currentUserName = name;
+        currentUserId = id;
+        isAdmin = admin === 'true';
+        document.getElementById('loginOverlay').classList.remove('active');
+        updateUI(); return true; }
+      return false;
+    }
+
+    function updateUI() {
+      const letter = currentUserName.charAt(0).toUpperCase();
+      document.getElementById('userNameDisplay').textContent = currentUserName;
+      document.getElementById('avatarLetter').textContent = letter;
+      document.getElementById('uploadAvatar').textContent = letter;
+      document.getElementById('adminBadge').style.display = isAdmin ? 'inline' : 'none';
+    }
+
+    document.getElementById('userInfo').onclick = () => {
+      const newName = prompt('✏️ أدخل اسمك الجديد:', currentUserName);
+      if (newName && newName.trim().length >= 2) {
+        const name = newName.trim();
+        const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN', 'administrator', 'ادمن'];
+        if (adminNames.includes(name)) {
+          const pass = prompt('🔑 أدخل كلمة مرور المشرف:');
+          if (!pass || pass.trim() !== ADMIN_PASSWORD) { showToast('⚠️ كلمة مرور غير صحيحة', 3000); return; }
+        }
+        isAdmin = adminNames.includes(name);
+        currentUserName = name;
+        localStorage.setItem('userName', currentUserName);
+        localStorage.setItem('isAdmin', isAdmin ? 'true' : 'false');
+        updateUI();
+        showToast(isAdmin ? '🛡️ تم الترقية إلى مشرف!' : `✅ تم تغيير الاسم إلى ${currentUserName}`, 2000);
+      }
+    };
+
+    // ============================================================
+    // عرض وإشعارات
+    // ============================================================
+    function showToast(msg, dur = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    function showConfirm(title, msg, onConfirm) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = msg;
+      document.getElementById('confirmModal').classList.add('active');
+      confirmCallback = onConfirm;
+    }
+
+    function closeConfirm() { document.getElementById('confirmModal').classList.remove('active');
+      confirmCallback = null; }
+    document.getElementById('confirmYesBtn').onclick = () => { if (confirmCallback) confirmCallback();
+      closeConfirm(); };
+
+    function syncPosts() {
+      if (!navigator.onLine) { showToast('⚠️ لا يوجد اتصال', 3000); return; }
+      showToast('🔄 جاري المزامنة...', 1500);
+      loadPosts(false).then(() => showToast('✅ تمت المزامنة', 2000)).catch(() => showToast('⚠️ فشل المزامنة', 3000));
+    }
+
+    // ============================================================
+    // تهيئة التطبيق
+    // ============================================================
+    async function initApp() {
+      if (!checkLogin()) { document.getElementById('loginOverlay').classList.add('active');
+        document.getElementById('loginNameInput').focus(); return; }
+      try {
+        switchTab('posts');
+        await loadPosts(false);
+        listenForUpdates();
+        setupInfiniteScroll();
+        showToast(`👋 مرحباً ${currentUserName}${isAdmin ? ' (مشرف)' : ''}!`, 2000);
+      } catch (e) { console.error(e);
+        showToast('⚠️ خطأ في تهيئة التطبيق', 3000); }
+    }
+
+    function setupInfiniteScroll() {
+      let timeout = null;
+      const handler = () => {
+        if (timeout) return;
+        timeout = setTimeout(() => { timeout = null; if (currentTab !== 'posts' || isLoadingMore || !hasMorePosts)
+            return; const el = document.getElementById('postsContainer'); if (window.scrollY + window.innerHeight >=
+            el.offsetHeight - 200) loadPosts(true); }, 200);
+      };
+      window.removeEventListener('scroll', handler);
+      window.addEventListener('scroll', handler);
+    }
+
+    // ============================================================
+    // بدء التشغيل
+    // ============================================================
+    initApp();
+
+    // إضافة دعم للـ Enter في حقل النشر
+    document.getElementById('postTextInput').onkeydown = (e) => { if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault();
+        publishPost(); } };
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeLightbox();
+        closeConfirm(); } });
+  </script>
 </body>
-
 </html>
