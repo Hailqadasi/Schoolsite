@@ -717,7 +717,7 @@ const SUPABASE_URL =
 
 
 const SUPABASE_ANON_KEY =
-    "ضع هنا Publishable key الخاص بمشروعك";
+    "sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
 
 
 const supabaseClient =
