@@ -1,0 +1,1028 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>إضافة إعلان | صلة</title>
+
+<meta name="description"
+      content="أضف إعلانك إلى منصة صلة">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Tahoma,sans-serif;
+    background:#f5f7f8;
+    color:#222;
+    line-height:1.8;
+}
+
+header{
+    background:#fff;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.header{
+    max-width:900px;
+    margin:auto;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    text-decoration:none;
+}
+
+.logo-icon{
+    width:45px;
+    height:45px;
+    background:#0f766e;
+    color:#fff;
+    border-radius:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    font-weight:bold;
+}
+
+.logo-name{
+    color:#0f766e;
+    font-size:23px;
+    font-weight:bold;
+}
+
+.logo-sub{
+    color:#777;
+    font-size:10px;
+    margin-top:-6px;
+}
+
+.home{
+    border:0;
+    background:#eef7f6;
+    color:#0f766e;
+    padding:9px 13px;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+main{
+    max-width:800px;
+    margin:auto;
+    padding:25px 15px 50px;
+}
+
+.page-title{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.page-title h1{
+    color:#0f766e;
+    font-size:29px;
+}
+
+.page-title p{
+    color:#777;
+    font-size:14px;
+}
+
+.form-box{
+    background:#fff;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+    border:1px solid #e5e7eb;
+}
+
+.field{
+    margin-bottom:17px;
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:6px;
+    font-size:14px;
+}
+
+.required{
+    color:#d33;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid #d7dddd;
+    border-radius:10px;
+    padding:12px;
+    font-family:inherit;
+    font-size:15px;
+    outline:none;
+    background:#fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#0f766e;
+    box-shadow:0 0 0 2px rgba(15,118,110,.08);
+}
+
+textarea{
+    min-height:140px;
+    resize:vertical;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.image-box{
+    border:2px dashed #cfd8d7;
+    border-radius:13px;
+    padding:18px;
+    text-align:center;
+    background:#fafcfc;
+}
+
+.image-box p{
+    color:#777;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+#imagePreview{
+    display:none;
+    width:100%;
+    max-height:300px;
+    object-fit:contain;
+    border-radius:10px;
+    margin-top:12px;
+}
+
+.publish{
+    width:100%;
+    border:0;
+    background:#0f766e;
+    color:white;
+    padding:14px;
+    border-radius:11px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:8px;
+}
+
+.publish:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:15px;
+    text-align:center;
+    font-size:14px;
+}
+
+.success{
+    background:#e9f8ef;
+    color:#176b39;
+}
+
+.error{
+    background:#fdecec;
+    color:#a52222;
+}
+
+.note{
+    background:#f5f8f8;
+    padding:12px;
+    border-radius:10px;
+    color:#666;
+    font-size:12px;
+    margin-top:15px;
+}
+
+footer{
+    background:#123b39;
+    color:#fff;
+    text-align:center;
+    padding:28px 15px;
+}
+
+footer strong{
+    font-size:21px;
+}
+
+footer p{
+    font-size:12px;
+    opacity:.8;
+}
+
+@media(max-width:600px){
+
+    main{
+        padding:18px 10px 35px;
+    }
+
+    .form-box{
+        padding:17px;
+    }
+
+    .row{
+        grid-template-columns:1fr;
+        gap:0;
+    }
+
+    .page-title h1{
+        font-size:25px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+<div class="header">
+
+<a href="index.html" class="logo">
+
+<div class="logo-icon">
+ص
+</div>
+
+<div>
+
+<div class="logo-name">
+صلة
+</div>
+
+<div class="logo-sub">
+نصل المنتج بالمستهلك
+</div>
+
+</div>
+
+</a>
+
+<button class="home"
+onclick="location.href='index.html'">
+
+🏠 الرئيسية
+
+</button>
+
+</div>
+
+</header>
+
+
+
+<main>
+
+<div class="page-title">
+
+<h1>
+📢 أضف إعلانك
+</h1>
+
+<p>
+اعرض منتجك أو خدمتك أمام الباحثين عنها
+</p>
+
+</div>
+
+
+
+<div class="form-box">
+
+
+<div id="message"
+class="message">
+</div>
+
+
+
+<form id="adForm">
+
+
+<!-- العنوان -->
+
+<div class="field">
+
+<label>
+عنوان الإعلان
+<span class="required">*</span>
+</label>
+
+<input
+type="text"
+id="title"
+placeholder="مثال: سيارة للبيع"
+maxlength="150"
+required>
+
+</div>
+
+
+
+<!-- التصنيف والمدينة -->
+
+<div class="row">
+
+
+<div class="field">
+
+<label>
+التصنيف
+<span class="required">*</span>
+</label>
+
+<select id="category" required>
+
+<option value="">
+اختر التصنيف
+</option>
+
+<option value="خدمات">
+🛠️ خدمات
+</option>
+
+<option value="عقارات">
+🏠 عقارات
+</option>
+
+<option value="سيارات">
+🚗 سيارات
+</option>
+
+<option value="وظائف">
+💼 وظائف
+</option>
+
+<option value="إلكترونيات">
+📱 إلكترونيات
+</option>
+
+<option value="زراعة">
+🌾 زراعة
+</option>
+
+<option value="أثاث">
+🛋️ أثاث
+</option>
+
+<option value="ملابس">
+👕 ملابس
+</option>
+
+<option value="أغذية">
+🍎 أغذية
+</option>
+
+<option value="أخرى">
+📦 أخرى
+</option>
+
+</select>
+
+</div>
+
+
+
+<div class="field">
+
+<label>
+المدينة
+<span class="required">*</span>
+</label>
+
+<select id="city" required>
+
+<option value="">
+اختر المدينة
+</option>
+
+<option value="صنعاء">
+صنعاء
+</option>
+
+<option value="عدن">
+عدن
+</option>
+
+<option value="تعز">
+تعز
+</option>
+
+<option value="إب">
+إب
+</option>
+
+<option value="الحديدة">
+الحديدة
+</option>
+
+<option value="حضرموت">
+حضرموت
+</option>
+
+<option value="ذمار">
+ذمار
+</option>
+
+<option value="حجة">
+حجة
+</option>
+
+<option value="المحويت">
+المحويت
+</option>
+
+<option value="عمران">
+عمران
+</option>
+
+<option value="مأرب">
+مأرب
+</option>
+
+<option value="البيضاء">
+البيضاء
+</option>
+
+<option value="شبوة">
+شبوة
+</option>
+
+<option value="أبين">
+أبين
+</option>
+
+<option value="لحج">
+لحج
+</option>
+
+<option value="الضالع">
+الضالع
+</option>
+
+<option value="ريمة">
+ريمة
+</option>
+
+<option value="صعدة">
+صعدة
+</option>
+
+<option value="الجوف">
+الجوف
+</option>
+
+<option value="سقطرى">
+سقطرى
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+
+<!-- السعر -->
+
+<div class="row">
+
+
+<div class="field">
+
+<label>
+السعر
+</label>
+
+<input
+type="number"
+id="price"
+placeholder="مثال: 50000"
+min="0">
+
+</div>
+
+
+<div class="field">
+
+<label>
+العملة</label>
+
+<select id="currency">
+
+<option value="ريال يمني">
+ريال يمني
+</option>
+
+<option value="ريال سعودي">
+ريال سعودي
+</option>
+
+<option value="دولار">
+دولار
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+
+<!-- التفاصيل -->
+
+<div class="field">
+
+<label>
+تفاصيل الإعلان
+<span class="required">*</span>
+</label>
+
+<textarea
+id="description"
+placeholder="اكتب تفاصيل المنتج أو الخدمة هنا..."
+maxlength="3000"
+required></textarea>
+
+</div>
+
+
+
+<!-- الصورة -->
+
+<div class="field">
+
+<label>
+صورة الإعلان
+</label>
+
+<div class="image-box">
+
+<p>
+يمكنك اختيار صورة للمنتج
+</p>
+
+<input
+type="file"
+id="image"
+accept="image/*">
+
+<img
+id="imagePreview"
+alt="معاينة الصورة">
+
+</div>
+
+</div>
+
+
+
+<!-- اسم المعلن -->
+
+<div class="field">
+
+<label>
+اسم المعلن
+<span class="required">*</span>
+</label>
+
+<input
+type="text"
+id="name"
+placeholder="اسمك"
+maxlength="100"
+required>
+
+</div>
+
+
+
+<!-- الهاتف -->
+
+<div class="field">
+
+<label>
+رقم الهاتف للتواصل
+<span class="required">*</span>
+</label>
+
+<input
+type="tel"
+id="phone"
+placeholder="مثال: 777123456"
+maxlength="20"
+required>
+
+</div>
+
+
+
+<button
+type="submit"
+id="publishButton"
+class="publish">
+
+📢 نشر الإعلان
+
+</button>
+
+
+<div class="note">
+
+💡 ملاحظة: بعد إرسال الإعلان سيخضع للمراجعة قبل ظهوره للزوار.
+
+</div>
+
+
+</form>
+
+</div>
+
+</main>
+
+
+
+<footer>
+
+<strong>
+صلة
+</strong>
+
+<p>
+منصة تربط المنتج بالمستهلك
+</p>
+
+<p>
+جميع الحقوق محفوظة © 2026
+</p>
+
+</footer>
+
+
+
+<script>
+
+
+/* =====================================
+   SUPABASE
+===================================== */
+
+const SUPABASE_URL =
+"https://yakmcmuzwfhtbrnmpkmd.supabase.co";
+
+
+const SUPABASE_ANON_KEY =
+"ضع هنا Publishable key الخاص بمشروعك";
+
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+
+
+/* =====================================
+   العناصر
+===================================== */
+
+const form =
+document.getElementById("adForm");
+
+const imageInput =
+document.getElementById("image");
+
+const imagePreview =
+document.getElementById("imagePreview");
+
+const message =
+document.getElementById("message");
+
+const publishButton =
+document.getElementById("publishButton");
+
+
+
+/* =====================================
+   معاينة الصورة
+===================================== */
+
+imageInput.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+if(!file){
+
+imagePreview.style.display =
+"none";
+
+return;
+
+}
+
+if(!file.type.startsWith("image/")){
+
+showMessage(
+"الملف المختار ليس صورة.",
+"error"
+);
+
+this.value = "";
+
+return;
+
+}
+
+if(file.size > 5 * 1024 * 1024){
+
+showMessage(
+"حجم الصورة يجب ألا يتجاوز 5 ميجابايت.",
+"error"
+);
+
+this.value = "";
+
+return;
+
+}
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(e){
+
+imagePreview.src =
+e.target.result;
+
+imagePreview.style.display =
+"block";
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+
+
+/* =====================================
+   إرسال الإعلان
+===================================== */
+
+form.addEventListener(
+"submit",
+async function(e){
+
+e.preventDefault();
+
+hideMessage();
+
+
+const title =
+document.getElementById("title")
+.value.trim();
+
+const category =
+document.getElementById("category")
+.value;
+
+const city =
+document.getElementById("city")
+.value;
+
+const price =
+document.getElementById("price")
+.value;
+
+const currency =
+document.getElementById("currency")
+.value;
+
+const description =
+document.getElementById("description")
+.value.trim();
+
+const name =
+document.getElementById("name")
+.value.trim();
+
+const phone =
+document.getElementById("phone")
+.value.trim();
+
+
+if(!title ||
+!category ||
+!city ||
+!description ||
+!name ||
+!phone){
+
+showMessage(
+"يرجى تعبئة جميع الحقول المطلوبة.",
+"error"
+);
+
+return;
+
+}
+
+
+
+publishButton.disabled =
+true;
+
+publishButton.textContent =
+"⏳ جاري إرسال الإعلان...";
+
+
+
+try{
+
+
+/*
+   في المرحلة الأولى
+   سنحفظ الإعلان بدون صورة.
+
+   وبعد التأكد من عمل الإضافة
+   سنربط Storage لرفع الصور.
+*/
+
+
+const { data, error } =
+await supabaseClient
+.from("ads")
+.insert([{
+
+title: title,
+
+category: category,
+
+city: city,
+
+price:
+price === ""
+? null
+: Number(price),
+
+currency: currency,
+
+description: description,
+
+name: name,
+
+phone: phone,
+
+status: "pending"
+
+}])
+.select()
+.single();
+
+
+
+if(error){
+
+console.error(error);
+
+throw error;
+
+}
+
+
+
+showMessage(
+"تم إرسال إعلانك بنجاح ✅ وسيتم مراجعته قبل نشره.",
+"success"
+);
+
+
+form.reset();
+
+imagePreview.style.display =
+"none";
+
+
+setTimeout(
+function(){
+
+location.href =
+"index.html";
+
+},
+2500
+);
+
+
+}
+catch(error){
+
+console.error(
+"Ad error:",
+error
+);
+
+
+showMessage(
+"تعذر إرسال الإعلان: " +
+(error.message || "خطأ غير معروف"),
+"error"
+);
+
+}
+finally{
+
+publishButton.disabled =
+false;
+
+publishButton.textContent =
+"📢 نشر الإعلان";
+
+}
+
+});
+
+
+
+/* =====================================
+   الرسائل
+===================================== */
+
+function showMessage(text,type){
+
+message.textContent =
+text;
+
+message.className =
+"message " + type;
+
+message.style.display =
+"block";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+function hideMessage(){
+
+message.style.display =
+"none";
+
+}
+
+
+</script>
+
+</body>
+
+</html>
