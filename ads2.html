@@ -1,0 +1,297 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة إعلان - صلة</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* نفس الستايلات السابقة مع تعديلات بسيطة */
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f5f7f8;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .btn-submit {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background: #115e59;
+        }
+        .success-msg {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .error-msg {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #0f766e;
+            text-decoration: none;
+        }
+        .image-preview {
+            max-width: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+        .image-preview img {
+            width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1 style="color: #0f766e; text-align: center;">➕ إضافة إعلان جديد</h1>
+        <p style="text-align: center; color: #666;">املأ البيانات التالية لنشر إعلانك</p>
+
+        <div id="successMsg" class="success-msg">
+            ✅ تم إضافة الإعلان بنجاح! سيتم مراجعته ونشره قريباً.
+        </div>
+        <div id="errorMsg" class="error-msg">
+            ⚠️ حدث خطأ، يرجى المحاولة مرة أخرى.
+        </div>
+
+        <form id="adForm">
+            <div class="form-group">
+                <label>📝 عنوان الإعلان *</label>
+                <input type="text" id="title" required placeholder="مثال: شقة للبيع في صنعاء">
+            </div>
+
+            <div class="form-group">
+                <label>📖 وصف الإعلان</label>
+                <textarea id="description" placeholder="صف المنتج أو الخدمة بالتفصيل..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🏷️ التصنيف *</label>
+                <select id="category" required>
+                    <option value="">اختر التصنيف</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>💰 السعر</label>
+                <input type="number" id="price" placeholder="السعر بالريال اليمني">
+            </div>
+
+            <div class="form-group">
+                <label>📍 المدينة</label>
+                <select id="city">
+                    <option value="">اختر المدينة</option>
+                    <option value="صنعاء">صنعاء</option>
+                    <option value="عدن">عدن</option>
+                    <option value="تعز">تعز</option>
+                    <option value="إب">إب</option>
+                    <option value="الحديدة">الحديدة</option>
+                    <option value="حضرموت">حضرموت</option>
+                    <option value="ذمار">ذمار</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📧 البريد الإلكتروني (للتواصل)</label>
+                <input type="email" id="userEmail" placeholder="example@email.com">
+            </div>
+
+            <div class="form-group">
+                <label>📱 رقم الهاتف (للتواصل)</label>
+                <input type="tel" id="userPhone" placeholder="777777777">
+            </div>
+
+            <div class="form-group">
+                <label>🖼️ صورة الإعلان</label>
+                <input type="file" id="imageFile" accept="image/*">
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImg" src="" alt="معاينة الصورة">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">🚀 نشر الإعلان</button>
+        </form>
+
+        <a href="index.html" class="back-link">← العودة للرئيسية</a>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://yakmcmuzwfhtbrnmpkmd.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // تحميل التصنيفات
+        async function loadCategories() {
+            const { data, error } = await supabase
+                .from('categories')
+                .select('*')
+                .order('id');
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const select = document.getElementById('category');
+            data.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.slug;
+                option.textContent = `${cat.icon || '📦'} ${cat.name}`;
+                select.appendChild(option);
+            });
+        }
+
+        // معاينة الصورة
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // رفع الصورة إلى Supabase Storage
+        async function uploadImage(file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const filePath = `ads/${fileName}`;
+
+            const { data, error } = await supabase.storage
+                .from('ad-images')
+                .upload(filePath, file);
+
+            if (error) {
+                console.error('Error uploading image:', error);
+                return null;
+            }
+
+            // الحصول على الرابط العام
+            const { data: urlData } = supabase.storage
+                .from('ad-images')
+                .getPublicUrl(filePath);
+
+            return urlData.publicUrl;
+        }
+
+        // إرسال الإعلان
+        document.getElementById('adForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const category = document.getElementById('category').value;
+            const price = document.getElementById('price').value;
+            const city = document.getElementById('city').value;
+            const userEmail = document.getElementById('userEmail').value;
+            const userPhone = document.getElementById('userPhone').value;
+            const imageFile = document.getElementById('imageFile').files[0];
+
+            // التحقق من الحقول المطلوبة
+            if (!title || !category) {
+                alert('يرجى ملء الحقول المطلوبة (*)');
+                return;
+            }
+
+            // إظهار رسالة تحميل
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.textContent = '⏳ جاري النشر...';
+            submitBtn.disabled = true;
+
+            try {
+                let imageUrl = null;
+                if (imageFile) {
+                    imageUrl = await uploadImage(imageFile);
+                }
+
+                // إضافة الإعلان
+                const { data, error } = await supabase
+                    .from('ads')
+                    .insert([{
+                        title: title,
+                        description: description,
+                        category: category,
+                        price: price || null,
+                        city: city || null,
+                        image_url: imageUrl,
+                        user_email: userEmail || null,
+                        user_phone: userPhone || null,
+                        status: 'pending' // ينتظر الموافقة
+                    }]);
+
+                if (error) throw error;
+
+                // إظهار رسالة نجاح
+                document.getElementById('successMsg').style.display = 'block';
+                document.getElementById('adForm').reset();
+                document.getElementById('imagePreview').style.display = 'none';
+                submitBtn.textContent = '✅ تم النشر!';
+
+                // إعادة التوجيه بعد 3 ثواني
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('errorMsg').style.display = 'block';
+                submitBtn.textContent = '🚀 نشر الإعلان';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // تحميل التصنيفات عند تحميل الصفحة
+        loadCategories();
+    </script>
+
+</body>
+</html>
