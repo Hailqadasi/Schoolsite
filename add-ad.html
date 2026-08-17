@@ -11,7 +11,7 @@
 <title>إضافة إعلان | صلة</title>
 
 <meta name="description"
-      content="أضف إعلانك إلى منصة صلة">
+      content="أضف إعلانك مجانًا إلى منصة صلة">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -151,7 +151,7 @@ textarea:focus{
 }
 
 textarea{
-    min-height:140px;
+    min-height:150px;
     resize:vertical;
 }
 
@@ -161,27 +161,27 @@ textarea{
     gap:12px;
 }
 
-.fee-box{
+.free-box{
     background:#eef8f7;
     border:1px solid #cde7e4;
     border-radius:13px;
     padding:15px;
-    margin:10px 0 20px;
+    margin:5px 0 20px;
     text-align:center;
 }
 
-.fee-title{
+.free-title{
     color:#555;
     font-size:14px;
 }
 
-.fee{
+.free-price{
     color:#0f766e;
-    font-size:27px;
+    font-size:28px;
     font-weight:bold;
 }
 
-.fee-note{
+.free-note{
     color:#777;
     font-size:12px;
 }
@@ -222,24 +222,26 @@ textarea{
     color:#a52222;
 }
 
-.login-box{
-    background:#fff4df;
-    border:1px solid #f0d29a;
-    border-radius:13px;
-    padding:18px;
-    text-align:center;
-    margin-bottom:18px;
+.image-box{
+    border:2px dashed #ccd8d7;
+    border-radius:12px;
+    padding:15px;
+    background:#fafcfc;
 }
 
-.login-box button{
-    border:0;
-    background:#0f766e;
-    color:white;
-    padding:10px 22px;
-    border-radius:9px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:10px;
+.image-box p{
+    color:#777;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+#imagePreview{
+    display:none;
+    width:100%;
+    max-height:300px;
+    object-fit:contain;
+    border-radius:10px;
+    margin-top:12px;
 }
 
 .note{
@@ -337,7 +339,7 @@ onclick="location.href='index.html'">
 
 <div class="page-title">
 
-<h1>📢 إضافة إعلان</h1>
+<h1>📢 أضف إعلانك مجانًا</h1>
 
 <p>
 اعرض منتجك أو خدمتك أمام الباحثين عنها
@@ -347,32 +349,10 @@ onclick="location.href='index.html'">
 
 
 
-<div id="loginBox"
-class="login-box"
-style="display:none;">
-
-<div>
-🔐 يجب تسجيل الدخول أولًا لإضافة إعلان.
-</div>
-
-<button
-onclick="location.href='login.html'">
-
-تسجيل الدخول
-
-</button>
-
-</div>
+<div class="form-box">
 
 
-
-<div
-id="formBox"
-class="form-box"
-style="display:none;">
-
-<div
-id="message"
+<div id="message"
 class="message">
 </div>
 
@@ -405,6 +385,7 @@ required>
 
 <div class="row">
 
+
 <div class="field">
 
 <label>
@@ -420,45 +401,25 @@ required>
 اختر التصنيف
 </option>
 
-<option value="خدمات">
-🛠️ خدمات
-</option>
+<option value="خدمات">🛠️ خدمات</option>
 
-<option value="عقارات">
-🏠 عقارات
-</option>
+<option value="عقارات">🏠 عقارات</option>
 
-<option value="سيارات">
-🚗 سيارات
-</option>
+<option value="سيارات">🚗 سيارات</option>
 
-<option value="وظائف">
-💼 وظائف
-</option>
+<option value="وظائف">💼 وظائف</option>
 
-<option value="إلكترونيات">
-📱 إلكترونيات
-</option>
+<option value="إلكترونيات">📱 إلكترونيات</option>
 
-<option value="زراعة">
-🌾 زراعة
-</option>
+<option value="زراعة">🌾 زراعة</option>
 
-<option value="أثاث">
-🛋️ أثاث
-</option>
+<option value="أثاث">🛋️ أثاث</option>
 
-<option value="ملابس">
-👕 ملابس
-</option>
+<option value="ملابس">👕 ملابس</option>
 
-<option value="أغذية">
-🍎 أغذية
-</option>
+<option value="أغذية">🍎 أغذية</option>
 
-<option value="أخرى">
-📦 أخرى
-</option>
+<option value="أخرى">📦 أخرى</option>
 
 </select>
 
@@ -511,6 +472,7 @@ required>
 
 <div class="row">
 
+
 <div class="field">
 
 <label>
@@ -529,7 +491,8 @@ min="0">
 <div class="field">
 
 <label>
-العملة</label>
+العملة
+</label>
 
 <select id="currency">
 
@@ -564,7 +527,8 @@ min="0">
 <input
 type="text"
 id="address"
-placeholder="مثال: صنعاء - شارع حدة">
+placeholder="مثال: صنعاء - شارع حدة"
+maxlength="200">
 
 </div>
 
@@ -587,20 +551,49 @@ maxlength="3000"></textarea>
 
 
 
-<!-- رسوم الإعلان -->
+<!-- الصورة -->
 
-<div class="fee-box">
+<div class="field">
 
-<div class="fee-title">
+<label>
+صورة الإعلان
+</label>
+
+<div class="image-box">
+
+<p>
+اختر صورة للمنتج — سيتم تجهيز رفعها إلى التخزين في الخطوة التالية.
+</p>
+
+<input
+type="file"
+id="image"
+accept="image/*">
+
+<img
+id="imagePreview"
+alt="معاينة الصورة">
+
+</div>
+
+</div>
+
+
+
+<!-- الإعلان مجاني -->
+
+<div class="free-box">
+
+<div class="free-title">
 رسوم نشر الإعلان
 </div>
 
-<div class="fee">
-500 ريال يمني
+<div class="free-price">
+مجاني 🎉
 </div>
 
-<div class="fee-note">
-تُدفع رسوم الإعلان قبل نشره.
+<div class="free-note">
+لا توجد أي رسوم في المرحلة الحالية.
 </div>
 
 </div>
@@ -612,7 +605,7 @@ type="submit"
 id="publishButton"
 class="publish">
 
-📢 متابعة نشر الإعلان
+📢 نشر الإعلان
 
 </button>
 
@@ -620,7 +613,7 @@ class="publish">
 
 <div class="note">
 
-💡 بعد حفظ الإعلان سننتقل في الخطوة التالية إلى نظام الدفع والتحقق من وصول رسوم الإعلان.
+💡 سيتم إرسال الإعلان للمراجعة أولًا، وبعد الموافقة عليه سيظهر للزوار.
 
 </div>
 
@@ -635,7 +628,9 @@ class="publish">
 
 <footer>
 
-<strong>صلة</strong>
+<strong>
+صلة
+</strong>
 
 <p>
 منصة تربط المنتج بالمستهلك
@@ -653,15 +648,14 @@ class="publish">
 
 
 /* ==========================================
-   إعداد Supabase
+   SUPABASE
 ========================================== */
 
 const SUPABASE_URL =
 "https://yakmcmuzwfhtbrnmpkmd.supabase.co";
 
-
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
+"ضع هنا Publishable key الخاص بمشروعك";
 
 
 const supabaseClient =
@@ -673,14 +667,8 @@ SUPABASE_PUBLISHABLE_KEY
 
 
 /* ==========================================
-   عناصر الصفحة
+   العناصر
 ========================================== */
-
-const loginBox =
-document.getElementById("loginBox");
-
-const formBox =
-document.getElementById("formBox");
 
 const form =
 document.getElementById("adForm");
@@ -691,84 +679,77 @@ document.getElementById("message");
 const publishButton =
 document.getElementById("publishButton");
 
+const imageInput =
+document.getElementById("image");
+
+const imagePreview =
+document.getElementById("imagePreview");
+
 
 
 /* ==========================================
-   التحقق من تسجيل الدخول
+   معاينة الصورة
 ========================================== */
 
-async function checkUser(){
+imageInput.addEventListener(
+"change",
+function(){
 
-try{
+const file =
+this.files[0];
 
-const {
-data,
-error
-} =
-await supabaseClient.auth.getSession();
+if(!file){
 
-
-if(error){
-
-console.error(error);
-
-showLogin();
+imagePreview.style.display =
+"none";
 
 return;
 
 }
 
+if(!file.type.startsWith("image/")){
 
-const session =
-data.session;
+showMessage(
+"الملف المختار ليس صورة.",
+"error"
+);
 
-
-if(!session){
-
-showLogin();
+this.value = "";
 
 return;
 
 }
 
+if(file.size > 5 * 1024 * 1024){
 
-/*
-   المستخدم مسجل الدخول
-*/
+showMessage(
+"حجم الصورة يجب ألا يتجاوز 5 ميجابايت.",
+"error"
+);
 
-loginBox.style.display =
-"none";
+this.value = "";
 
-formBox.style.display =
+return;
+
+}
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(e){
+
+imagePreview.src =
+e.target.result;
+
+imagePreview.style.display =
 "block";
 
+};
 
-}
-catch(error){
+reader.readAsDataURL(file);
 
-console.error(error);
-
-showLogin();
-
-}
-
-}
-
-
-
-/* ==========================================
-   إظهار رسالة تسجيل الدخول
-========================================== */
-
-function showLogin(){
-
-loginBox.style.display =
-"block";
-
-formBox.style.display =
-"none";
-
-}
+});
 
 
 
@@ -782,7 +763,6 @@ async function(e){
 
 e.preventDefault();
 
-
 hideMessage();
 
 
@@ -790,67 +770,41 @@ publishButton.disabled =
 true;
 
 publishButton.textContent =
-"⏳ جاري حفظ الإعلان...";
+"⏳ جاري إرسال الإعلان...";
 
 
 try{
 
 
-/* الحصول على المستخدم */
-
-const {
-data:userData,
-error:userError
-} =
-await supabaseClient.auth.getUser();
-
-
-if(userError){
-
-throw userError;
-
-}
-
-
-const user =
-userData.user;
-
-
-if(!user){
-
-showLogin();
-
-return;
-
-}
-
-
-
-/* قراءة البيانات */
-
 const title =
 document.getElementById("title")
 .value.trim();
+
 
 const category =
 document.getElementById("category")
 .value;
 
+
 const city =
 document.getElementById("city")
 .value;
 
-const priceValue =
+
+const price =
 document.getElementById("price")
 .value;
+
 
 const currency =
 document.getElementById("currency")
 .value;
 
+
 const address =
 document.getElementById("address")
 .value.trim();
+
 
 const description =
 document.getElementById("description")
@@ -863,7 +817,7 @@ document.getElementById("description")
 if(!title){
 
 showMessage(
-"اكتب عنوان الإعلان.",
+"يرجى كتابة عنوان الإعلان.",
 "error"
 );
 
@@ -875,7 +829,7 @@ return;
 if(!category){
 
 showMessage(
-"اختر تصنيف الإعلان.",
+"يرجى اختيار التصنيف.",
 "error"
 );
 
@@ -886,18 +840,23 @@ return;
 
 
 /*
-   إدخال الإعلان
+   لا نرسل:
+   user_id
+   ad_fee
+   payment_status
 
-   user_id يأتي من جلسة Supabase
-   وليس من المستخدم.
+   قاعدة البيانات ستضع:
+   ad_fee = 0
+   payment_status = free
 */
 
-const {data,error} =
-await supabaseClient
-.from("ads")
-.insert({
 
-user_id:user.id,
+const { data, error } =
+await supabaseClient
+
+.from("ads")
+
+.insert({
 
 title:title,
 
@@ -907,9 +866,9 @@ description || null,
 category:category,
 
 price:
-priceValue === ""
+price === ""
 ? null
-: Number(priceValue),
+: Number(price),
 
 currency:currency,
 
@@ -919,21 +878,19 @@ city || null,
 address:
 address || null,
 
-status:"draft",
-
-ad_fee:500,
-
-payment_status:"unpaid"
+status:"pending"
 
 })
-.select()
+
+.select("id")
 .single();
+
 
 
 if(error){
 
 console.error(
-"Supabase insert error:",
+"Supabase error:",
 error
 );
 
@@ -946,7 +903,7 @@ throw error;
 /* نجاح */
 
 showMessage(
-"تم حفظ إعلانك بنجاح ✅ رقم الإعلان: " +
+"تم إرسال إعلانك بنجاح ✅ رقم الإعلان: " +
 data.id,
 "success"
 );
@@ -954,37 +911,26 @@ data.id,
 
 form.reset();
 
+imagePreview.style.display =
+"none";
+
 
 publishButton.textContent =
-"✅ تم حفظ الإعلان";
+"✅ تم إرسال الإعلان";
 
 
 /*
-   لاحقًا سنضع هنا صفحة الدفع.
+   نترك المستخدم يرى رسالة النجاح
+   ولا نعيد توجيهه فورًا.
 */
-
-setTimeout(
-function(){
-
-alert(
-"تم حفظ إعلانك.\n\n" +
-"رسوم الإعلان: 500 ريال يمني\n\n" +
-"الخطوة التالية ستكون إتمام الدفع ثم التحقق من وصول المبلغ."
-);
-
-},
-500
-);
-
 
 }
 catch(error){
 
 console.error(error);
 
-
 showMessage(
-"حدث خطأ أثناء حفظ الإعلان: " +
+"تعذر إرسال الإعلان: " +
 (error.message || "خطأ غير معروف"),
 "error"
 );
@@ -999,10 +945,10 @@ publishButton.disabled =
 false;
 
 publishButton.textContent =
-"📢 متابعة نشر الإعلان";
+"📢 نشر الإعلان";
 
 },
-1000
+1500
 );
 
 }
@@ -1015,7 +961,10 @@ publishButton.textContent =
    الرسائل
 ========================================== */
 
-function showMessage(text,type){
+function showMessage(
+text,
+type
+){
 
 message.textContent =
 text;
@@ -1040,14 +989,6 @@ message.style.display =
 "none";
 
 }
-
-
-
-/* ==========================================
-   تشغيل الصفحة
-========================================== */
-
-checkUser();
 
 </script>
 
