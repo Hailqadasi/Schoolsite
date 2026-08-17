@@ -20,11 +20,11 @@
     <title>صلة | منصة تربط المنتج بالمستهلك</title>
 
     <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
 
 
     <style>
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -164,11 +164,9 @@
 
         .hero {
             background:
-                linear-gradient(
-                    135deg,
+                linear-gradient(135deg,
                     #0f766e,
-                    #115e59
-                );
+                    #115e59);
 
             color: white;
 
@@ -216,7 +214,7 @@
             margin: auto;
 
             box-shadow:
-                0 8px 30px rgba(0,0,0,.12);
+                0 8px 30px rgba(0, 0, 0, .12);
         }
 
 
@@ -401,7 +399,7 @@
             transform: translateY(-3px);
 
             box-shadow:
-                0 8px 25px rgba(0,0,0,.08);
+                0 8px 25px rgba(0, 0, 0, .08);
         }
 
 
@@ -704,7 +702,6 @@
             }
 
         }
-
     </style>
 
 </head>
@@ -713,575 +710,555 @@
 <body>
 
 
-<!-- =========================
+    <!-- =========================
      HEADER
-========================= -->
+    ========================= -->
 
-<header>
+    <header>
 
-    <div class="header-inner">
-
-
-        <a href="index.html" class="logo">
+        <div class="header-inner">
 
 
-            <div class="logo-icon">
-                ص
-            </div>
+            <a href="index.html" class="logo">
 
 
-            <div>
-
-                <div class="logo-text">
-                    صلة
+                <div class="logo-icon">
+                    ص
                 </div>
 
 
-                <div class="logo-subtitle">
-                    نصل المنتج بالمستهلك
+                <div>
+
+                    <div class="logo-text">
+                        صلة
+                    </div>
+
+
+                    <div class="logo-subtitle">
+                        نصل المنتج بالمستهلك
+                    </div>
+
                 </div>
+
+
+            </a>
+
+
+
+            <div class="header-buttons">
+
+
+                <button class="btn btn-login" onclick="goLogin()">
+
+                    👤 دخول
+
+                </button>
+
+
+
+                <button class="btn btn-add" onclick="openAddAd()">
+
+                    ＋ أضف إعلانك
+
+                </button>
+
 
             </div>
 
 
-        </a>
+        </div>
+
+    </header>
 
 
 
-        <div class="header-buttons">
+    <!-- =========================
+     HERO
+    ========================= -->
+
+    <section class="hero">
 
 
-            <button
-                class="btn btn-login"
-                onclick="goLogin()">
-
-                👤 دخول
-
-            </button>
+        <div class="hero-inner">
 
 
+            <h1>
+                صلة
+            </h1>
 
-            <button
-                class="btn btn-add"
-                onclick="ads2-images ()">
 
-                ＋ أضف إعلانك
+            <p>
+                نصل المنتج بالمستهلك، ونساعدك على الوصول إلى ما تبحث عنه.
+            </p>
 
-            </button>
+
+
+            <div class="search-box">
+
+
+                <input type="search" id="searchInput" placeholder="ابحث عن منتج، خدمة، سيارة، عقار..."
+                onkeydown="searchKey(event)">
+
+
+                <button class="search-btn" onclick="loadAds()">
+
+                    🔍 بحث
+
+                </button>
+
+
+            </div>
 
 
         </div>
 
 
-    </div>
-
-</header>
+    </section>
 
 
 
-<!-- =========================
-     HERO
-========================= -->
+    <!-- =========================
+     MAIN
+    ========================= -->
 
-<section class="hero">
-
-
-    <div class="hero-inner">
+    <main class="container">
 
 
-        <h1>
+        <!-- Categories -->
+
+
+        <div class="section-title">
+
+
+            <h2>
+                🏷️ التصنيفات
+            </h2>
+
+
+            <span>
+                اختر ما تبحث عنه
+            </span>
+
+
+        </div>
+
+
+
+        <div id="categories" class="categories">
+
+
+            <div class="loading">
+                جاري تحميل التصنيفات...
+            </div>
+
+
+        </div>
+
+
+
+        <br>
+
+
+
+        <!-- Filters -->
+
+
+        <div class="section-title">
+
+
+            <h2>
+                🔎 تصفية النتائج
+            </h2>
+
+
+        </div>
+
+
+
+        <div class="filters">
+
+
+            <select id="categoryFilter" onchange="loadAds()">
+
+
+                <option value="">
+                    كل التصنيفات
+                </option>
+
+
+            </select>
+
+
+
+            <select id="cityFilter" onchange="loadAds()">
+
+
+                <option value="">
+                    كل المدن
+                </option>
+
+
+                <option value="صنعاء">
+                    صنعاء
+                </option>
+
+
+                <option value="عدن">
+                    عدن
+                </option>
+
+
+                <option value="تعز">
+                    تعز
+                </option>
+
+
+                <option value="إب">
+                    إب
+                </option>
+
+
+                <option value="الحديدة">
+                    الحديدة
+                </option>
+
+
+                <option value="حضرموت">
+                    حضرموت
+                </option>
+
+
+                <option value="ذمار">
+                    ذمار
+                </option>
+
+
+                <option value="حجة">
+                    حجة
+                </option>
+
+
+                <option value="أخرى">
+                    أخرى
+                </option>
+
+
+            </select>
+
+
+        </div>
+
+
+
+        <!-- Latest ads -->
+
+
+        <div class="section-title">
+
+
+            <h2>
+                📢 أحدث الإعلانات
+            </h2>
+
+
+            <span id="adsCount">
+                ...
+            </span>
+
+
+        </div>
+
+
+
+        <div id="adsContainer" class="ads-grid">
+
+
+            <div class="loading">
+                جاري تحميل الإعلانات...
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =========================
+     FOOTER
+    ========================= -->
+
+    <footer>
+
+
+        <div class="footer-logo">
             صلة
-        </h1>
+        </div>
 
 
         <p>
-            نصل المنتج بالمستهلك، ونساعدك على الوصول إلى ما تبحث عنه.
+            منصة تربط المنتج بالمستهلك
         </p>
 
 
+        <p>
+            جميع الحقوق محفوظة © 2026
+        </p>
 
-        <div class="search-box">
 
+    </footer>
 
-            <input
-                type="search"
-                id="searchInput"
-                placeholder="ابحث عن منتج، خدمة، سيارة، عقار..."
-                onkeydown="searchKey(event)"
-            >
 
 
-            <button
-                class="search-btn"
-                onclick="loadAds()">
+    <script>
+        /* =========================================
+           SUPABASE
+        ========================================= */
 
-                🔍 بحث
 
-            </button>
+        const SUPABASE_URL =
+            "https://yakmcmuzwfhtbrnmpkmd.supabase.co";
 
 
-        </div>
+        const SUPABASE_ANON_KEY =
+            "sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
 
 
-    </div>
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
 
 
-</section>
 
+        /* =========================================
+           الحالة الحالية
+        ========================================= */
 
 
-<!-- =========================
-     MAIN
-========================= -->
+        let selectedCategory = "";
 
-<main class="container">
 
 
-    <!-- Categories -->
+        /* =========================================
+           تحميل التصنيفات
+        ========================================= */
 
 
-    <div class="section-title">
+        async function loadCategories() {
 
 
-        <h2>
-            🏷️ التصنيفات
-        </h2>
+            const container =
+                document.getElementById("categories");
 
 
-        <span>
-            اختر ما تبحث عنه
-        </span>
+            const select =
+                document.getElementById("categoryFilter");
 
 
-    </div>
 
+            const { data, error } =
+                await supabaseClient
+                .from("categories")
+                .select("*")
+                .order("id");
 
 
-    <div
-        id="categories"
-        class="categories">
 
+            if (error) {
 
-        <div class="loading">
-            جاري تحميل التصنيفات...
-        </div>
 
+                console.error(error);
 
-    </div>
 
-
-
-    <br>
-
-
-
-    <!-- Filters -->
-
-
-    <div class="section-title">
-
-
-        <h2>
-            🔎 تصفية النتائج
-        </h2>
-
-
-    </div>
-
-
-
-    <div class="filters">
-
-
-        <select
-            id="categoryFilter"
-            onchange="loadAds()">
-
-
-            <option value="">
-                كل التصنيفات
-            </option>
-
-
-        </select>
-
-
-
-        <select
-            id="cityFilter"
-            onchange="loadAds()">
-
-
-            <option value="">
-                كل المدن
-            </option>
-
-
-            <option value="صنعاء">
-                صنعاء
-            </option>
-
-
-            <option value="عدن">
-                عدن
-            </option>
-
-
-            <option value="تعز">
-                تعز
-            </option>
-
-
-            <option value="إب">
-                إب
-            </option>
-
-
-            <option value="الحديدة">
-                الحديدة
-            </option>
-
-
-            <option value="حضرموت">
-                حضرموت
-            </option>
-
-
-            <option value="ذمار">
-                ذمار
-            </option>
-
-
-            <option value="حجة">
-                حجة
-            </option>
-
-
-            <option value="أخرى">
-                أخرى
-            </option>
-
-
-        </select>
-
-
-    </div>
-
-
-
-    <!-- Latest ads -->
-
-
-    <div class="section-title">
-
-
-        <h2>
-            📢 أحدث الإعلانات
-        </h2>
-
-
-        <span id="adsCount">
-            ...
-        </span>
-
-
-    </div>
-
-
-
-    <div
-        id="adsContainer"
-        class="ads-grid">
-
-
-        <div class="loading">
-            جاري تحميل الإعلانات...
-        </div>
-
-
-    </div>
-
-
-</main>
-
-
-
-<!-- =========================
-     FOOTER
-========================= -->
-
-<footer>
-
-
-    <div class="footer-logo">
-        صلة
-    </div>
-
-
-    <p>
-        منصة تربط المنتج بالمستهلك
-    </p>
-
-
-    <p>
-        جميع الحقوق محفوظة © 2026
-    </p>
-
-
-</footer>
-
-
-
-<script>
-
-
-/* =========================================
-   SUPABASE
-========================================= */
-
-
-const SUPABASE_URL =
-    "https://yakmcmuzwfhtbrnmpkmd.supabase.co";
-
-
-const SUPABASE_ANON_KEY =
-    "sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
-
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
-
-
-
-/* =========================================
-   الحالة الحالية
-========================================= */
-
-
-let selectedCategory = "";
-
-
-
-/* =========================================
-   تحميل التصنيفات
-========================================= */
-
-
-async function loadCategories() {
-
-
-    const container =
-        document.getElementById("categories");
-
-
-    const select =
-        document.getElementById("categoryFilter");
-
-
-
-    const { data, error } =
-        await supabaseClient
-            .from("categories")
-            .select("*")
-            .order("id");
-
-
-
-    if (error) {
-
-
-        console.error(error);
-
-
-        container.innerHTML =
-            `<div class="empty">
+                container.innerHTML =
+                    `<div class="empty">
                 تعذر تحميل التصنيفات
             </div>`;
 
 
-        return;
+                return;
 
-    }
-
-
-
-    container.innerHTML = "";
+            }
 
 
 
-    data.forEach(category => {
+            container.innerHTML = "";
 
 
-        const button =
-            document.createElement("button");
+
+            data.forEach(category => {
 
 
-        button.className =
-            "category";
+                const button =
+                    document.createElement("button");
 
 
-        button.innerHTML =
-            `${category.icon || "📦"}
+                button.className =
+                    "category";
+
+
+                button.innerHTML =
+                    `${category.icon || "📦"}
              ${escapeHtml(category.name)}`;
 
 
 
-        button.onclick = () => {
+                button.onclick = () => {
 
 
-            selectedCategory =
-                category.slug;
+                    selectedCategory =
+                        category.slug;
 
 
-            select.value =
-                category.slug;
+                    select.value =
+                        category.slug;
 
 
-            document
-                .querySelectorAll(".category")
-                .forEach(b =>
-                    b.classList.remove("active")
-                );
+                    document
+                        .querySelectorAll(".category")
+                        .forEach(b =>
+                            b.classList.remove("active")
+                        );
 
 
-            button.classList.add("active");
+                    button.classList.add("active");
 
 
-            loadAds();
+                    loadAds();
 
-        };
-
-
-
-        container.appendChild(button);
+                };
 
 
 
-        const option =
-            document.createElement("option");
-
-
-        option.value =
-            category.slug;
-
-
-        option.textContent =
-            category.name;
-
-
-        select.appendChild(option);
-
-    });
-
-}
+                container.appendChild(button);
 
 
 
-/* =========================================
-   تحميل الإعلانات
-========================================= */
+                const option =
+                    document.createElement("option");
 
 
-async function loadAds() {
+                option.value =
+                    category.slug;
 
 
-    const container =
-        document.getElementById("adsContainer");
+                option.textContent =
+                    category.name;
 
 
-    const search =
-        document
-            .getElementById("searchInput")
-            .value
-            .trim();
+                select.appendChild(option);
 
+            });
 
-    const category =
-        document
-            .getElementById("categoryFilter")
-            .value;
-
-
-    const city =
-        document
-            .getElementById("cityFilter")
-            .value;
+        }
 
 
 
-    container.innerHTML =
-        `<div class="loading">
+        /* =========================================
+           تحميل الإعلانات
+        ========================================= */
+
+
+        async function loadAds() {
+
+
+            const container =
+                document.getElementById("adsContainer");
+
+
+            const search =
+                document
+                .getElementById("searchInput")
+                .value
+                .trim();
+
+
+            const category =
+                document
+                .getElementById("categoryFilter")
+                .value;
+
+
+            const city =
+                document
+                .getElementById("cityFilter")
+                .value;
+
+
+
+            container.innerHTML =
+                `<div class="loading">
             جاري البحث...
         </div>`;
 
 
 
-    let query =
-        supabaseClient
-            .from("ads")
-            .select("*")
-            .eq("status", "published")
-            .order("created_at", {
-                ascending: false
-            })
-            .limit(50);
+            let query =
+                supabaseClient
+                .from("ads")
+                .select("*")
+                .eq("status", "published")
+                .order("created_at", {
+                    ascending: false
+                })
+                .limit(50);
 
 
 
-    if (category) {
+            if (category) {
 
 
-        query =
-            query.eq(
-                "category",
-                category
-            );
+                query =
+                    query.eq(
+                        "category",
+                        category
+                    );
 
-    }
-
-
-
-    if (city) {
-
-
-        query =
-            query.eq(
-                "city",
-                city
-            );
-
-    }
+            }
 
 
 
-    if (search) {
+            if (city) {
 
 
-        query =
-            query.or(
-                `title.ilike.%${escapeFilter(search)}%,description.ilike.%${escapeFilter(search)}%`
-            );
+                query =
+                    query.eq(
+                        "city",
+                        city
+                    );
 
-    }
-
-
-
-    const { data, error } =
-        await query;
+            }
 
 
 
-    if (error) {
+            if (search) {
 
 
-        console.error(error);
+                query =
+                    query.or(
+                        `title.ilike.%${escapeFilter(search)}%,description.ilike.%${escapeFilter(search)}%`
+                    );
+
+            }
 
 
-        container.innerHTML =
-            `<div
+
+            const { data, error } =
+                await query;
+
+
+
+            if (error) {
+
+
+                console.error(error);
+
+
+                container.innerHTML =
+                    `<div
                 class="empty"
                 style="grid-column:1/-1">
 
@@ -1294,24 +1271,24 @@ async function loadAds() {
             </div>`;
 
 
-        return;
+                return;
 
-    }
-
-
-
-    document
-        .getElementById("adsCount")
-        .textContent =
-        `${data.length} إعلان`;
+            }
 
 
 
-    if (!data.length) {
+            document
+                .getElementById("adsCount")
+                .textContent =
+                `${data.length} إعلان`;
 
 
-        container.innerHTML =
-            `<div
+
+            if (!data.length) {
+
+
+                container.innerHTML =
+                    `<div
                 class="empty"
                 style="grid-column:1/-1">
 
@@ -1324,69 +1301,67 @@ async function loadAds() {
             </div>`;
 
 
-        return;
+                return;
 
-    }
-
-
-
-    container.innerHTML = "";
+            }
 
 
 
-    data.forEach(ad => {
-
-
-        const card =
-            document.createElement("article");
-
-
-        card.className =
-            "ad-card";
+            container.innerHTML = "";
 
 
 
-        let imageHTML = "";
+            data.forEach(ad => {
+
+
+                const card =
+                    document.createElement("article");
+
+
+                card.className =
+                    "ad-card";
 
 
 
-        if (ad.image_url) {
+                let imageHTML = "";
 
 
-            imageHTML =
-                `<img
+
+                if (ad.image_url) {
+
+
+                    imageHTML =
+                        `<img
                     class="ad-image"
                     src="${escapeHtml(ad.image_url)}"
                     alt="${escapeHtml(ad.title)}"
                     loading="lazy"
                 >`;
 
-        }
-
-        else {
+                } else {
 
 
-            imageHTML =
-                `<div class="no-image">
+                    imageHTML =
+                        `<div class="no-image">
                     📦
                 </div>`;
 
-        }
+                }
 
 
 
-        const price =
-            ad.price !== null &&
-            ad.price !== undefined
+                const price =
+                    ad.price !== null &&
+                    ad.price !== undefined ?
 
-            ? `${formatNumber(ad.price)}
-               ${ad.currency || "YER"}`
+                    `${formatNumber(ad.price)}
+               ${ad.currency || "YER"}` :
 
-            : "السعر عند التواصل";
+                    "السعر عند التواصل";
 
 
 
-        card.innerHTML = `
+                card.innerHTML = `
 
             ${imageHTML}
 
@@ -1419,13 +1394,13 @@ async function loadAds() {
 
 
                 ${
-                    ad.city
+                    ad.city ?
 
-                    ? `<div class="ad-location">
+                    `<div class="ad-location">
                         📍 ${escapeHtml(ad.city)}
-                       </div>`
+                       </div>` :
 
-                    : ""
+                    ""
                 }
 
 
@@ -1444,145 +1419,135 @@ async function loadAds() {
 
 
 
-        container.appendChild(card);
+                container.appendChild(card);
 
-    });
+            });
 
-}
+        }
 
 
 
-/* =========================================
-   البحث من لوحة المفاتيح
-========================================= */
+        /* =========================================
+           البحث من لوحة المفاتيح
+        ========================================= */
 
 
-function searchKey(event) {
+        function searchKey(event) {
 
 
-    if (event.key === "Enter") {
+            if (event.key === "Enter") {
 
 
-        loadAds();
+                loadAds();
 
-    }
+            }
 
-}
+        }
 
 
 
-/* =========================================
-   إضافة إعلان
-========================================= */
+        /* =========================================
+           إضافة إعلان - التصحيح هنا
+        ========================================= */
 
-/*
-   الموقع أصبح مجانيًا وبدون تسجيل دخول.
-   لذلك نفتح صفحة add-ad.html مباشرة.
-*/
+        // الدالة الجديدة لفتح ads2.html
+        function openAddAd() {
+            window.location.href = "ads2.html";
+        }
 
+        // الدالة القديمة للتوافق (في حالة استخدامها في مكان آخر)
+        function addAd() {
+            window.location.href = "ads2.html";
+        }
 
-function addAd() {
 
 
-    window.location.href =
-        "add-ad.html";
+        /* =========================================
+           تسجيل الدخول
+        ========================================= */
 
-}
 
+        function goLogin() {
 
 
-/* =========================================
-   تسجيل الدخول
-========================================= */
+            window.location.href =
+                "login.html";
 
-/*
-   زر الدخول موجود حاليًا في الواجهة،
-   لكن نظام الدخول ليس مطلوبًا لإضافة الإعلان.
-*/
+        }
 
 
-function goLogin() {
 
+        /* =========================================
+           تنسيق الأرقام
+        ========================================= */
 
-    window.location.href =
-        "login.html";
 
-}
+        function formatNumber(number) {
 
 
+            return Number(number)
+                .toLocaleString("ar-YE");
 
-/* =========================================
-   تنسيق الأرقام
-========================================= */
+        }
 
 
-function formatNumber(number) {
 
+        /* =========================================
+           حماية HTML
+        ========================================= */
 
-    return Number(number)
-        .toLocaleString("ar-YE");
 
-}
+        function escapeHtml(value) {
 
 
+            return String(value)
 
-/* =========================================
-   حماية HTML
-========================================= */
+                .replace(/&/g, "&amp;")
 
+                .replace(/</g, "&lt;")
 
-function escapeHtml(value) {
+                .replace(/>/g, "&gt;")
 
+                .replace(/"/g, "&quot;")
 
-    return String(value)
+                .replace(/'/g, "&#039;");
 
-        .replace(/&/g, "&amp;")
+        }
 
-        .replace(/</g, "&lt;")
 
-        .replace(/>/g, "&gt;")
 
-        .replace(/"/g, "&quot;")
+        function escapeFilter(value) {
 
-        .replace(/'/g, "&#039;");
 
-}
+            return String(value)
 
+                .replace(/[%_]/g, "\\$&")
 
+                .replace(/,/g, "\\,");
 
-function escapeFilter(value) {
+        }
 
 
-    return String(value)
 
-        .replace(/[%_]/g, "\\$&")
+        /* =========================================
+           التشغيل
+        ========================================= */
 
-        .replace(/,/g, "\\,");
 
-}
+        document.addEventListener(
+            "DOMContentLoaded",
+            async () => {
 
 
+                await loadCategories();
 
-/* =========================================
-   التشغيل
-========================================= */
 
+                await loadAds();
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
 
-
-        await loadCategories();
-
-
-        await loadAds();
-
-
-    }
-);
-
-</script>
+            }
+        );
+    </script>
 
 
 </body>
