@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,6 @@
     <title>إضافة إعلان - صلة</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* نفس الستايلات السابقة مع تعديلات بسيطة */
         body {
             font-family: Arial, Tahoma, sans-serif;
             background: #f5f7f8;
@@ -74,13 +73,6 @@
             border-radius: 8px;
             display: none;
         }
-        .loading-msg {
-            background: #cce5ff;
-            color: #004085;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-        }
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -96,16 +88,6 @@
             width: 100%;
             border-radius: 8px;
         }
-        .debug-info {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 12px;
-            display: none;
-            color: #666;
-        }
     </style>
 </head>
 <body>
@@ -114,9 +96,6 @@
         <h1 style="color: #0f766e; text-align: center;">➕ إضافة إعلان جديد</h1>
         <p style="text-align: center; color: #666;">املأ البيانات التالية لنشر إعلانك</p>
 
-        <div id="loadingMsg" class="loading-msg">
-            ⏳ جاري تحميل التصنيفات...
-        </div>
         <div id="successMsg" class="success-msg">
             ✅ تم إضافة الإعلان بنجاح! سيتم مراجعته ونشره قريباً.
         </div>
@@ -131,15 +110,8 @@
             </div>
 
             <div class="form-group">
-                <label>📖 وصف الإعلان</label>
-                <textarea id="description" placeholder="صف المنتج أو الخدمة بالتفصيل..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>🏷️ التصنيف *</label>
-                <select id="category" required>
-                    <option value="">جارٍ تحميل التصنيفات...</option>
-                </select>
+                <label>📖 وصف الإعلان *</label>
+                <textarea id="description" required placeholder="صف المنتج أو الخدمة بالتفصيل..."></textarea>
             </div>
 
             <div class="form-group">
@@ -158,6 +130,7 @@
                     <option value="الحديدة">الحديدة</option>
                     <option value="حضرموت">حضرموت</option>
                     <option value="ذمار">ذمار</option>
+                    <option value="أخرى ">أخرى </option>
                 </select>
             </div>
 
@@ -182,8 +155,6 @@
             <button type="submit" class="btn-submit" id="submitBtn">🚀 نشر الإعلان</button>
         </form>
 
-        <div id="debugInfo" class="debug-info"></div>
-
         <a href="index.html" class="back-link">← العودة للرئيسية</a>
     </div>
 
@@ -191,64 +162,6 @@
         const SUPABASE_URL = "https://yakmcmuzwfhtbrnmpkmd.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // تحميل التصنيفات مع معالجة أفضل للأخطاء
-        async function loadCategories() {
-            const select = document.getElementById('category');
-            const debugInfo = document.getElementById('debugInfo');
-            
-            try {
-                // إظهار رسالة التحميل
-                select.innerHTML = '<option value="">⏳ جاري تحميل التصنيفات...</option>';
-                
-                console.log('جاري تحميل التصنيفات...');
-                
-                const { data, error } = await supabase
-                    .from('categories')
-                    .select('*')
-                    .order('id');
-
-                if (error) {
-                    console.error('خطأ في تحميل التصنيفات:', error);
-                    select.innerHTML = '<option value="">❌ خطأ في تحميل التصنيفات</option>';
-                    debugInfo.textContent = `خطأ: ${error.message}`;
-                    debugInfo.style.display = 'block';
-                    return;
-                }
-
-                console.log('البيانات المستلمة:', data);
-
-                // التحقق من وجود بيانات
-                if (!data || data.length === 0) {
-                    console.warn('لا توجد تصنيفات في قاعدة البيانات');
-                    select.innerHTML = '<option value="">⚠️ لا توجد تصنيفات متاحة</option>';
-                    debugInfo.textContent = '⚠️ لا توجد تصنيفات في قاعدة البيانات. يرجى إضافة تصنيفات أولاً.';
-                    debugInfo.style.display = 'block';
-                    return;
-                }
-
-                // تنظيف القائمة وإضافة التصنيفات
-                select.innerHTML = '<option value="">اختر التصنيف</option>';
-                
-                data.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.slug;
-                    option.textContent = `${cat.icon || '📦'} ${cat.name}`;
-                    select.appendChild(option);
-                });
-
-                console.log(`تم تحميل ${data.length} تصنيف بنجاح`);
-                
-                // إخفاء معلومات التصحيح بعد نجاح التحميل
-                debugInfo.style.display = 'none';
-
-            } catch (err) {
-                console.error('خطأ غير متوقع:', err);
-                select.innerHTML = '<option value="">❌ حدث خطأ غير متوقع</option>';
-                debugInfo.textContent = `خطأ: ${err.message}`;
-                debugInfo.style.display = 'block';
-            }
-        }
 
         // معاينة الصورة
         document.getElementById('imageFile').addEventListener('change', function(e) {
@@ -270,8 +183,6 @@
                 const fileName = `${Date.now()}.${fileExt}`;
                 const filePath = `ads/${fileName}`;
 
-                console.log('جاري رفع الصورة:', filePath);
-
                 const { data, error } = await supabase.storage
                     .from('ad-images')
                     .upload(filePath, file);
@@ -281,12 +192,10 @@
                     return null;
                 }
 
-                // الحصول على الرابط العام
                 const { data: urlData } = supabase.storage
                     .from('ad-images')
                     .getPublicUrl(filePath);
 
-                console.log('تم رفع الصورة بنجاح:', urlData.publicUrl);
                 return urlData.publicUrl;
             } catch (err) {
                 console.error('خطأ في رفع الصورة:', err);
@@ -300,7 +209,6 @@
 
             const title = document.getElementById('title').value.trim();
             const description = document.getElementById('description').value.trim();
-            const category = document.getElementById('category').value;
             const price = document.getElementById('price').value;
             const city = document.getElementById('city').value;
             const userEmail = document.getElementById('userEmail').value.trim();
@@ -308,7 +216,7 @@
             const imageFile = document.getElementById('imageFile').files[0];
 
             // التحقق من الحقول المطلوبة
-            if (!title || !category) {
+            if (!title || !description) {
                 alert('يرجى ملء الحقول المطلوبة (*)');
                 return;
             }
@@ -332,8 +240,8 @@
                 // إضافة الإعلان
                 const adData = {
                     title: title,
-                    description: description || null,
-                    category: category,
+                    description: description,
+                    category: 'عام',
                     price: price ? parseFloat(price) : null,
                     city: city || null,
                     image_url: imageUrl,
@@ -370,12 +278,6 @@
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
-        });
-
-        // تحميل التصنيفات عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('تم تحميل الصفحة، جاري تحميل التصنيفات...');
-            loadCategories();
         });
     </script>
 
