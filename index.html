@@ -1,488 +1,1590 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>صلة - نصل المنتج بالمستهلك</title>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="صلة - منصة تربط المنتج بالمستهلك، وتساعدك على العثور على المنتجات والخدمات والإعلانات في مكان واحد.">
+
+    <meta name="keywords"
+        content="صلة, إعلانات, منتجات, خدمات, بيع, شراء, اليمن">
+
+    <meta name="theme-color"
+        content="#0f766e">
+
+    <title>صلة | منصة تربط المنتج بالمستهلك</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
     <style>
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
 
         body {
-            background-color: #f5f7fa;
+            font-family:
+                Arial,
+                Tahoma,
+                sans-serif;
+
+            background: #f5f7f8;
+            color: #222;
+            line-height: 1.7;
+        }
+
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+        }
+
+
+        .header-inner {
+            max-width: 1150px;
+            margin: auto;
+
+            padding: 12px 18px;
+
             display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-        }
-
-        /* بطاقة التطبيق الرئيسية – تحاكي شاشة الجوال */
-        .app-card {
-            max-width: 400px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 6px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            padding: 24px 20px 20px;
-            transition: all 0.2s ease;
-        }
-
-        /* الهيدر */
-        .header {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+
+            gap: 15px;
         }
 
-        .logo-area {
+
+        .logo {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
         }
+
 
         .logo-icon {
-            font-size: 28px;
-            color: #1e3a5f;
+            width: 45px;
+            height: 45px;
+
+            background: #0f766e;
+            color: white;
+
+            border-radius: 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+            font-weight: bold;
         }
+
 
         .logo-text {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1e3a5f;
-            letter-spacing: -0.5px;
+            font-size: 25px;
+            font-weight: bold;
+
+            color: #0f766e;
         }
 
-        .header-actions {
+
+        .logo-subtitle {
+            font-size: 11px;
+            color: #777;
+
+            margin-top: -5px;
+        }
+
+
+        .header-buttons {
             display: flex;
-            align-items: center;
-            gap: 16px;
+            gap: 8px;
         }
 
-        .header-actions .add-btn {
-            background: #eef2f7;
-            padding: 8px 14px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e3a5f;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: default;
-            transition: 0.15s;
-            border: 1px solid transparent;
-        }
 
-        .header-actions .add-btn i {
-            font-size: 14px;
-            color: #1e3a5f;
-        }
-
-        .header-actions .login-btn {
-            font-size: 15px;
-            font-weight: 600;
-            color: #1e3a5f;
-            cursor: default;
-            background: transparent;
+        .btn {
             border: none;
-            padding: 6px 4px;
-        }
+            cursor: pointer;
 
-        .header-actions .login-btn i {
-            margin-left: 4px;
+            border-radius: 10px;
+
+            padding: 9px 15px;
+
             font-size: 14px;
-            color: #1e3a5f;
+            font-weight: bold;
         }
 
-        /* الشعار الفرعي (شعار المنتج) */
-        .sub-brand {
-            margin-bottom: 24px;
+
+        .btn-login {
+            background: #eef7f6;
+            color: #0f766e;
         }
 
-        .sub-brand p {
-            font-size: 16px;
-            color: #2c3e50;
-            font-weight: 400;
-            line-height: 1.5;
-        }
 
-        .sub-brand p strong {
-            font-weight: 700;
-            color: #1e3a5f;
-        }
-
-        /* مربع البحث */
-        .search-box {
-            background: #f0f4f9;
-            border-radius: 60px;
-            padding: 6px 6px 6px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            border: 1px solid #e9edf2;
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            padding: 12px 0;
-            font-size: 15px;
-            flex: 1;
-            outline: none;
-            color: #1e2a3a;
-        }
-
-        .search-box input::placeholder {
-            color: #7e8c9e;
-            font-weight: 400;
-        }
-
-        .search-box .search-btn {
-            background: #1e3a5f;
-            border: none;
-            border-radius: 60px;
-            padding: 10px 18px;
+        .btn-add {
+            background: #0f766e;
             color: white;
-            font-size: 15px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: default;
-            transition: 0.15s;
         }
 
-        .search-box .search-btn i {
-            font-size: 16px;
+
+        /* =========================
+           HERO
+        ========================== */
+
+        .hero {
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f766e,
+                    #115e59
+                );
+
+            color: white;
+
+            padding: 50px 18px 60px;
         }
 
-        /* "اختر ما تبحث عنه" */
-        .browse-label {
-            font-size: 15px;
-            font-weight: 500;
-            color: #1e2a3a;
-            margin-bottom: 12px;
-            letter-spacing: 0.2px;
+
+        .hero-inner {
+            max-width: 950px;
+            margin: auto;
+
+            text-align: center;
         }
 
-        /* التصنيفات الثلاث (منتجات، سيارات، عقارات) */
-        .categories {
-            display: flex;
-            gap: 12px;
+
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+
+        .hero p {
+            font-size: 17px;
+            opacity: .92;
+
             margin-bottom: 28px;
         }
 
-        .category-item {
-            background: #f0f4f9;
-            padding: 10px 16px;
-            border-radius: 40px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #1e2a3a;
+
+        /* =========================
+           SEARCH
+        ========================== */
+
+        .search-box {
+            background: white;
+
+            padding: 8px;
+
+            border-radius: 15px;
+
             display: flex;
-            align-items: center;
             gap: 8px;
-            cursor: default;
-            transition: 0.1s;
-            border: 1px solid transparent;
+
+            max-width: 850px;
+            margin: auto;
+
+            box-shadow:
+                0 8px 30px rgba(0,0,0,.12);
+        }
+
+
+        .search-box input {
             flex: 1;
+
+            border: none;
+            outline: none;
+
+            padding: 13px;
+
+            font-size: 16px;
+
+            color: #222;
+
+            min-width: 0;
+        }
+
+
+        .search-btn {
+            border: none;
+
+            background: #0f766e;
+            color: white;
+
+            padding: 0 25px;
+
+            border-radius: 11px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================== */
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+
+            padding:
+                30px 18px;
+        }
+
+
+        .section-title {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 17px;
+        }
+
+
+        .section-title h2 {
+            font-size: 23px;
+        }
+
+
+        .section-title span {
+            color: #777;
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           FILTERS
+        ========================== */
+
+        .filters {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .filters select {
+            width: 100%;
+
+            border: 1px solid #ddd;
+
+            background: white;
+
+            border-radius: 10px;
+
+            padding: 12px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           CATEGORIES
+        ========================== */
+
+        .categories {
+            display: flex;
+
+            gap: 10px;
+
+            overflow-x: auto;
+
+            padding-bottom: 8px;
+
+            scrollbar-width: thin;
+        }
+
+
+        .category {
+            flex: 0 0 auto;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 13px;
+
+            padding: 11px 17px;
+
+            cursor: pointer;
+
+            transition: .2s;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            font-size: 14px;
+        }
+
+
+        .category:hover,
+        .category.active {
+            background: #0f766e;
+            color: white;
+        }
+
+
+        /* =========================
+           ADS GRID
+        ========================== */
+
+        .ads-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .ad-card {
+            background: white;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            border: 1px solid #e7e7e7;
+
+            transition:
+                transform .2s,
+                box-shadow .2s;
+        }
+
+
+        .ad-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,.08);
+        }
+
+
+        .ad-image {
+            width: 100%;
+            height: 190px;
+
+            object-fit: cover;
+
+            background: #eee;
+        }
+
+
+        .no-image {
+            width: 100%;
+            height: 190px;
+
+            background: #eef2f2;
+
+            display: flex;
+            align-items: center;
             justify-content: center;
+
+            font-size: 42px;
         }
 
-        .category-item i {
-            font-size: 16px;
-            color: #1e3a5f;
+
+        .ad-content {
+            padding: 14px;
         }
 
-        /* شريط الفلترة */
-        .filter-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8faff;
-            padding: 10px 16px;
-            border-radius: 40px;
-            margin-bottom: 22px;
-            border: 1px solid #e9edf2;
+
+        .ad-category {
+            color: #0f766e;
+
+            font-size: 12px;
+
+            margin-bottom: 4px;
         }
 
-        .filter-bar .filter-label {
-            font-size: 15px;
-            font-weight: 600;
-            color: #1e2a3a;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+
+        .ad-title {
+            font-size: 17px;
+
+            font-weight: bold;
+
+            margin-bottom: 5px;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
         }
 
-        .filter-bar .filter-label i {
-            color: #1e3a5f;
-            font-size: 14px;
-        }
 
-        .filter-options {
-            display: flex;
-            gap: 12px;
-            font-size: 14px;
-            color: #2c3e50;
-            font-weight: 500;
-        }
+        .ad-description {
+            color: #777;
 
-        .filter-options span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #ffffff;
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid #dce3ec;
             font-size: 13px;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+
+            margin-bottom: 9px;
         }
 
-        .filter-options span i {
-            font-size: 11px;
-            color: #6c7a8a;
+
+        .ad-price {
+            font-size: 17px;
+
+            font-weight: bold;
+
+            color: #0f766e;
         }
 
-        /* قسم "أحدث الإعلانات" وعدد الإعلانات */
-        .latest-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 16px;
-            padding: 0 2px;
+
+        .ad-location {
+            color: #777;
+
+            font-size: 12px;
+
+            margin-top: 4px;
         }
 
-        .latest-header h3 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e2a3a;
-        }
 
-        .latest-header .count-badge {
-            background: #eef2f7;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e3a5f;
-        }
+        .view-ad {
+            display: block;
 
-        /* حالة عدم وجود إعلانات */
-        .empty-state {
-            background: #fafcff;
-            border-radius: 24px;
-            padding: 36px 16px 28px;
             text-align: center;
-            border: 1px dashed #d0d9e6;
-            margin-bottom: 24px;
-        }
 
-        .empty-state .empty-icon {
-            font-size: 44px;
-            color: #b0c0d0;
-            margin-bottom: 12px;
-        }
+            background: #f0f7f6;
 
-        .empty-state p {
-            font-size: 16px;
-            color: #2c3e50;
-            font-weight: 500;
-        }
+            color: #0f766e;
 
-        .empty-state .sub-message {
-            font-size: 14px;
-            color: #7a8a9e;
-            margin-top: 6px;
-            font-weight: 400;
-        }
+            margin-top: 11px;
 
-        /* الفوتر */
-        .footer {
-            margin-top: 12px;
-            text-align: center;
-            border-top: 1px solid #eef2f7;
-            padding-top: 18px;
-        }
+            padding: 8px;
 
-        .footer .brand-line {
-            font-size: 16px;
-            font-weight: 500;
-            color: #1e2a3a;
-            margin-bottom: 6px;
-        }
+            border-radius: 8px;
 
-        .footer .brand-line i {
-            color: #1e3a5f;
-            margin: 0 4px;
-        }
-
-        .footer .copyright {
             font-size: 13px;
-            color: #7a8a9e;
-            letter-spacing: 0.3px;
+
+            font-weight: bold;
         }
 
-        /* أيقونات إضافية */
-        .fa-regular, .fas, .far, .fab {
-            pointer-events: none;
+
+        /* =========================
+           LOADING
+        ========================== */
+
+        .loading {
+            text-align: center;
+
+            padding: 45px;
+
+            color: #777;
         }
 
-        /* لمسات responsive */
-        @media (max-width: 420px) {
-            .app-card {
-                padding: 18px 14px;
+
+        .empty {
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: #777;
+        }
+
+
+        .empty-icon {
+            font-size: 45px;
+
+            margin-bottom: 8px;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            margin-top: 30px;
+
+            background: #123b39;
+
+            color: white;
+
+            padding: 35px 18px;
+
+            text-align: center;
+        }
+
+
+        footer .footer-logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+
+        footer p {
+            opacity: .8;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================== */
+
+        @media (max-width: 900px) {
+
+            .ads-grid {
+                grid-template-columns:
+                    repeat(3, 1fr);
             }
-            .header-actions .add-btn {
-                padding: 6px 12px;
-                font-size: 13px;
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            .header-inner {
+                padding: 10px 12px;
             }
-            .filter-options span {
-                padding: 3px 8px;
+
+
+            .logo-text {
+                font-size: 21px;
+            }
+
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+
+            .btn {
+                padding: 8px 10px;
+
                 font-size: 12px;
             }
-            .category-item {
-                padding: 8px 10px;
-                font-size: 13px;
+
+
+            /*
+              لا نخفي زر إضافة الإعلان
+              لأن الموقع الآن مجاني
+            */
+
+            .btn-add {
+                display: block;
             }
-            .search-box input {
+
+
+            .hero {
+                padding:
+                    35px 14px 42px;
+            }
+
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+
+            .hero p {
                 font-size: 14px;
             }
+
+
+            .search-box {
+                padding: 6px;
+            }
+
+
+            .search-box input {
+                padding: 11px 8px;
+
+                font-size: 14px;
+            }
+
+
+            .search-btn {
+                padding: 0 15px;
+            }
+
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+
+            .ads-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 10px;
+            }
+
+
+            .ad-image,
+            .no-image {
+                height: 145px;
+            }
+
+
+            .ad-content {
+                padding: 10px;
+            }
+
+
+            .ad-title {
+                font-size: 15px;
+            }
+
+
+            .ad-price {
+                font-size: 15px;
+            }
+
         }
 
-        /* تعديلات بسيطة لجعل التصميم مطابقاً للصور */
-        .app-card .sub-brand p {
-            font-weight: 400;
+
+        @media (max-width: 380px) {
+
+            .ads-grid {
+                grid-template-columns: 1fr;
+            }
+
         }
-        .app-card .sub-brand p strong {
-            font-weight: 700;
-        }
-        .filter-bar .filter-options span i {
-            margin-right: 2px;
-        }
-        .header-actions .add-btn i {
-            font-size: 13px;
-        }
-        .header-actions .login-btn i {
-            font-size: 13px;
-        }
+
     </style>
+
 </head>
+
+
 <body>
 
-    <div class="app-card">
 
-        <!-- الهيدر: صلة + أضف إعلانك + دخول -->
-        <div class="header">
-            <div class="logo-area">
-                <i class="fas fa-link logo-icon"></i>
-                <span class="logo-text">صلة</span>
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="header-inner">
+
+
+        <a href="index.html" class="logo">
+
+
+            <div class="logo-icon">
+                ص
             </div>
-            <div class="header-actions">
-                <span class="add-btn"><i class="fas fa-plus-circle"></i> أضف إعلانك</span>
-                <span class="login-btn"><i class="fas fa-user-circle"></i> دخول</span>
+
+
+            <div>
+
+                <div class="logo-text">
+                    صلة
+                </div>
+
+
+                <div class="logo-subtitle">
+                    نصل المنتج بالمستهلك
+                </div>
+
             </div>
+
+
+        </a>
+
+
+
+        <div class="header-buttons">
+
+
+            <button
+                class="btn btn-login"
+                onclick="goLogin()">
+
+                👤 دخول
+
+            </button>
+
+
+
+            <button
+                class="btn btn-add"
+                onclick="addAd()">
+
+                ＋ أضف إعلانك
+
+            </button>
+
+
         </div>
 
-        <!-- الشعار: نصل المنتج بالمستهلك، ونساعدك... -->
-        <div class="sub-brand">
-            <p>
-                <strong>نصل المنتج بالمستهلك</strong>، ونساعدك على الوصول إلى ما تبحث عنه.
-            </p>
-        </div>
-
-        <!-- شريط البحث -->
-        <div class="search-box">
-            <input type="text" placeholder="ابحث عن منتج، خدمة، سيارة، عقار..." />
-            <button class="search-btn"><i class="fas fa-search"></i> بحث</button>
-        </div>
-
-        <!-- "اختر ما تبحث عنه" + التصنيفات -->
-        <div class="browse-label">اختر ما تبحث عنه</div>
-        <div class="categories">
-            <div class="category-item"><i class="fas fa-tag"></i> منتجات</div>
-            <div class="category-item"><i class="fas fa-car"></i> سيارات</div>
-            <div class="category-item"><i class="fas fa-building"></i> عقارات</div>
-        </div>
-
-        <!-- فلتر النتائج -->
-        <div class="filter-bar">
-            <span class="filter-label"><i class="fas fa-sliders-h"></i> تصفية النتائج</span>
-            <div class="filter-options">
-                <span><i class="fas fa-tags"></i> كل التصنيفات</span>
-                <span><i class="fas fa-city"></i> كل المدن</span>
-            </div>
-        </div>
-
-        <!-- "أحدث الإعلانات" + 0 إعلان -->
-        <div class="latest-header">
-            <h3>أحدث الإعلانات</h3>
-            <span class="count-badge">0 إعلان</span>
-        </div>
-
-        <!-- حالة عدم وجود إعلانات (0 إعلان + رسالة) -->
-        <div class="empty-state">
-            <div class="empty-icon"><i class="fas fa-box-open"></i></div>
-            <p>لا توجد إعلانات مطابقة للبحث حالياً.</p>
-            <div class="sub-message">يمكنك إضافة إعلانك الآن</div>
-        </div>
-
-        <!-- الفوتر: صلة + حقوق النشر -->
-        <div class="footer">
-            <div class="brand-line">
-                <i class="fas fa-link"></i> صلة <span style="font-weight:300; color:#2c3e50;">منصة تربط المنتج بالمستهلك</span>
-            </div>
-            <div class="copyright">جميع الحقوق محفوظة © 2026</div>
-        </div>
 
     </div>
 
-    <!-- أي تفاعل بسيط (للمحاكاة) – اختياري -->
-    <script>
-        // مجرد محاكاة لتفاعلات وهمية – لا وظيفة حقيقية
-        (function() {
-            // إضافة تأثير بسيط عند النقر على أي عنصر تفاعلي (لإحساس المحاكاة)
-            const interactive = document.querySelectorAll('.category-item, .filter-options span, .add-btn, .login-btn, .search-btn');
-            interactive.forEach(el => {
-                el.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // مجرد وميض بسيط
-                    this.style.transition = '0.1s';
-                    this.style.opacity = '0.6';
-                    setTimeout(() => { this.style.opacity = '1'; }, 120);
-                });
-            });
+</header>
 
-            // منع إرسال النموذج عند الضغط على Enter في حقل البحث
-            const searchInput = document.querySelector('.search-box input');
-            if (searchInput) {
-                searchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const btn = document.querySelector('.search-btn');
-                        if (btn) btn.click();
-                    }
-                });
-            }
 
-            // تعطيل أي إجراء افتراضي للروابط/الأزرار
-            document.querySelectorAll('button, .add-btn, .login-btn').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    e.preventDefault();
-                });
-            });
-        })();
-    </script>
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+
+    <div class="hero-inner">
+
+
+        <h1>
+            صلة
+        </h1>
+
+
+        <p>
+            نصل المنتج بالمستهلك، ونساعدك على الوصول إلى ما تبحث عنه.
+        </p>
+
+
+
+        <div class="search-box">
+
+
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="ابحث عن منتج، خدمة، سيارة، عقار..."
+                onkeydown="searchKey(event)"
+            >
+
+
+            <button
+                class="search-btn"
+                onclick="loadAds()">
+
+                🔍 بحث
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="container">
+
+
+    <!-- Categories -->
+
+
+    <div class="section-title">
+
+
+        <h2>
+            🏷️ التصنيفات
+        </h2>
+
+
+        <span>
+            اختر ما تبحث عنه
+        </span>
+
+
+    </div>
+
+
+
+    <div
+        id="categories"
+        class="categories">
+
+
+        <div class="loading">
+            جاري تحميل التصنيفات...
+        </div>
+
+
+    </div>
+
+
+
+    <br>
+
+
+
+    <!-- Filters -->
+
+
+    <div class="section-title">
+
+
+        <h2>
+            🔎 تصفية النتائج
+        </h2>
+
+
+    </div>
+
+
+
+    <div class="filters">
+
+
+        <select
+            id="categoryFilter"
+            onchange="loadAds()">
+
+
+            <option value="">
+                كل التصنيفات
+            </option>
+
+
+        </select>
+
+
+
+        <select
+            id="cityFilter"
+            onchange="loadAds()">
+
+
+            <option value="">
+                كل المدن
+            </option>
+
+
+            <option value="صنعاء">
+                صنعاء
+            </option>
+
+
+            <option value="عدن">
+                عدن
+            </option>
+
+
+            <option value="تعز">
+                تعز
+            </option>
+
+
+            <option value="إب">
+                إب
+            </option>
+
+
+            <option value="الحديدة">
+                الحديدة
+            </option>
+
+
+            <option value="حضرموت">
+                حضرموت
+            </option>
+
+
+            <option value="ذمار">
+                ذمار
+            </option>
+
+
+            <option value="حجة">
+                حجة
+            </option>
+
+
+            <option value="أخرى">
+                أخرى
+            </option>
+
+
+        </select>
+
+
+    </div>
+
+
+
+    <!-- Latest ads -->
+
+
+    <div class="section-title">
+
+
+        <h2>
+            📢 أحدث الإعلانات
+        </h2>
+
+
+        <span id="adsCount">
+            ...
+        </span>
+
+
+    </div>
+
+
+
+    <div
+        id="adsContainer"
+        class="ads-grid">
+
+
+        <div class="loading">
+            جاري تحميل الإعلانات...
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+
+    <div class="footer-logo">
+        صلة
+    </div>
+
+
+    <p>
+        منصة تربط المنتج بالمستهلك
+    </p>
+
+
+    <p>
+        جميع الحقوق محفوظة © 2026
+    </p>
+
+
+</footer>
+
+
+
+<script>
+
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+
+const SUPABASE_URL =
+    "https://yakmcmuzwfhtbrnmpkmd.supabase.co";
+
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_TlJVUNePj0j66wALfSNm2A_78Ar_DN4";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+
+/* =========================================
+   الحالة الحالية
+========================================= */
+
+
+let selectedCategory = "";
+
+
+
+/* =========================================
+   تحميل التصنيفات
+========================================= */
+
+
+async function loadCategories() {
+
+
+    const container =
+        document.getElementById("categories");
+
+
+    const select =
+        document.getElementById("categoryFilter");
+
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("categories")
+            .select("*")
+            .order("id");
+
+
+
+    if (error) {
+
+
+        console.error(error);
+
+
+        container.innerHTML =
+            `<div class="empty">
+                تعذر تحميل التصنيفات
+            </div>`;
+
+
+        return;
+
+    }
+
+
+
+    container.innerHTML = "";
+
+
+
+    data.forEach(category => {
+
+
+        const button =
+            document.createElement("button");
+
+
+        button.className =
+            "category";
+
+
+        button.innerHTML =
+            `${category.icon || "📦"}
+             ${escapeHtml(category.name)}`;
+
+
+
+        button.onclick = () => {
+
+
+            selectedCategory =
+                category.slug;
+
+
+            select.value =
+                category.slug;
+
+
+            document
+                .querySelectorAll(".category")
+                .forEach(b =>
+                    b.classList.remove("active")
+                );
+
+
+            button.classList.add("active");
+
+
+            loadAds();
+
+        };
+
+
+
+        container.appendChild(button);
+
+
+
+        const option =
+            document.createElement("option");
+
+
+        option.value =
+            category.slug;
+
+
+        option.textContent =
+            category.name;
+
+
+        select.appendChild(option);
+
+    });
+
+}
+
+
+
+/* =========================================
+   تحميل الإعلانات
+========================================= */
+
+
+async function loadAds() {
+
+
+    const container =
+        document.getElementById("adsContainer");
+
+
+    const search =
+        document
+            .getElementById("searchInput")
+            .value
+            .trim();
+
+
+    const category =
+        document
+            .getElementById("categoryFilter")
+            .value;
+
+
+    const city =
+        document
+            .getElementById("cityFilter")
+            .value;
+
+
+
+    container.innerHTML =
+        `<div class="loading">
+            جاري البحث...
+        </div>`;
+
+
+
+    let query =
+        supabaseClient
+            .from("ads")
+            .select("*")
+            .eq("status", "published")
+            .order("created_at", {
+                ascending: false
+            })
+            .limit(50);
+
+
+
+    if (category) {
+
+
+        query =
+            query.eq(
+                "category",
+                category
+            );
+
+    }
+
+
+
+    if (city) {
+
+
+        query =
+            query.eq(
+                "city",
+                city
+            );
+
+    }
+
+
+
+    if (search) {
+
+
+        query =
+            query.or(
+                `title.ilike.%${escapeFilter(search)}%,description.ilike.%${escapeFilter(search)}%`
+            );
+
+    }
+
+
+
+    const { data, error } =
+        await query;
+
+
+
+    if (error) {
+
+
+        console.error(error);
+
+
+        container.innerHTML =
+            `<div
+                class="empty"
+                style="grid-column:1/-1">
+
+                <div class="empty-icon">
+                    ⚠️
+                </div>
+
+                حدث خطأ أثناء تحميل الإعلانات
+
+            </div>`;
+
+
+        return;
+
+    }
+
+
+
+    document
+        .getElementById("adsCount")
+        .textContent =
+        `${data.length} إعلان`;
+
+
+
+    if (!data.length) {
+
+
+        container.innerHTML =
+            `<div
+                class="empty"
+                style="grid-column:1/-1">
+
+                <div class="empty-icon">
+                    🔍
+                </div>
+
+                لا توجد إعلانات مطابقة للبحث حاليًا.
+
+            </div>`;
+
+
+        return;
+
+    }
+
+
+
+    container.innerHTML = "";
+
+
+
+    data.forEach(ad => {
+
+
+        const card =
+            document.createElement("article");
+
+
+        card.className =
+            "ad-card";
+
+
+
+        let imageHTML = "";
+
+
+
+        if (ad.image_url) {
+
+
+            imageHTML =
+                `<img
+                    class="ad-image"
+                    src="${escapeHtml(ad.image_url)}"
+                    alt="${escapeHtml(ad.title)}"
+                    loading="lazy"
+                >`;
+
+        }
+
+        else {
+
+
+            imageHTML =
+                `<div class="no-image">
+                    📦
+                </div>`;
+
+        }
+
+
+
+        const price =
+            ad.price !== null &&
+            ad.price !== undefined
+
+            ? `${formatNumber(ad.price)}
+               ${ad.currency || "YER"}`
+
+            : "السعر عند التواصل";
+
+
+
+        card.innerHTML = `
+
+            ${imageHTML}
+
+
+            <div class="ad-content">
+
+
+                <div class="ad-category">
+                    ${escapeHtml(
+                        ad.category || "أخرى"
+                    )}
+                </div>
+
+
+                <div class="ad-title">
+                    ${escapeHtml(ad.title)}
+                </div>
+
+
+                <div class="ad-description">
+                    ${escapeHtml(
+                        ad.description || ""
+                    )}
+                </div>
+
+
+                <div class="ad-price">
+                    ${price}
+                </div>
+
+
+                ${
+                    ad.city
+
+                    ? `<div class="ad-location">
+                        📍 ${escapeHtml(ad.city)}
+                       </div>`
+
+                    : ""
+                }
+
+
+                <a
+                    class="view-ad"
+                    href="ad.html?id=${encodeURIComponent(ad.id)}">
+
+                    عرض الإعلان
+
+                </a>
+
+
+            </div>
+
+        `;
+
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+
+/* =========================================
+   البحث من لوحة المفاتيح
+========================================= */
+
+
+function searchKey(event) {
+
+
+    if (event.key === "Enter") {
+
+
+        loadAds();
+
+    }
+
+}
+
+
+
+/* =========================================
+   إضافة إعلان
+========================================= */
+
+/*
+   الموقع أصبح مجانيًا وبدون تسجيل دخول.
+   لذلك نفتح صفحة add-ad.html مباشرة.
+*/
+
+
+function addAd() {
+
+
+    window.location.href =
+        "add-ad.html";
+
+}
+
+
+
+/* =========================================
+   تسجيل الدخول
+========================================= */
+
+/*
+   زر الدخول موجود حاليًا في الواجهة،
+   لكن نظام الدخول ليس مطلوبًا لإضافة الإعلان.
+*/
+
+
+function goLogin() {
+
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+/* =========================================
+   تنسيق الأرقام
+========================================= */
+
+
+function formatNumber(number) {
+
+
+    return Number(number)
+        .toLocaleString("ar-YE");
+
+}
+
+
+
+/* =========================================
+   حماية HTML
+========================================= */
+
+
+function escapeHtml(value) {
+
+
+    return String(value)
+
+        .replace(/&/g, "&")
+
+        .replace(/</g, "<")
+
+        .replace(/>/g, ">")
+
+        .replace(/"/g, """)
+
+        .replace(/'/g, "'");
+
+}
+
+
+
+function escapeFilter(value) {
+
+
+    return String(value)
+
+        .replace(/[%_]/g, "\\$&")
+
+        .replace(/,/g, "\\,");
+
+}
+
+
+
+/* =========================================
+   التشغيل
+========================================= */
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+
+        await loadCategories();
+
+
+        await loadAds();
+
+
+    }
+);
+
+</script>
+
 
 </body>
+
 </html>
