@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -7,18 +7,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* ===== المتغيرات - اللون الزيتوني ===== */
+        /* ===== جميع التنسيقات الأساسية ===== */
         :root {
             --primary: #6B8E23;
             --primary-dark: #4A6A1A;
             --primary-light: #8FBC5A;
             --primary-gradient: linear-gradient(135deg, #6B8E23, #4A6A1A);
-            --primary-gradient-light: linear-gradient(135deg, #8FBC5A, #6B8E23);
             --secondary: #2C3E50;
             --secondary-dark: #1A252F;
             --gold: #f9ca24;
             --success: #27AE60;
             --warning: #FDCB6E;
+            --danger: #E74C3C;
             --bg: #f0f2f5;
             --text: #1a1a1a;
             --text-secondary: #636e72;
@@ -110,7 +110,6 @@
             border-radius: 12px;
         }
 
-        /* ===== الحاوية الرئيسية ===== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -435,6 +434,100 @@
         .upload-section .upload-category select:focus {
             border-color: var(--primary);
         }
+
+        /* ===== مدة الإعلان ===== */
+        .upload-section .upload-duration {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .upload-section .upload-duration label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .upload-section .upload-duration .duration-info {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .upload-section .upload-duration .duration-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== إضافة عدة صور ===== */
+        .upload-section .upload-images {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .upload-section .upload-images .image-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+        .upload-section .upload-images .image-item:hover {
+            border-color: var(--primary);
+        }
+        .upload-section .upload-images .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .upload-section .upload-images .image-item .remove-img {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            width: 20px;
+            height: 20px;
+            background: var(--danger);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .upload-section .upload-images .image-item .remove-img:hover {
+            transform: scale(1.2);
+        }
+        .upload-section .upload-images .add-image-btn {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            background: var(--bg);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            transition: all 0.3s;
+            gap: 4px;
+        }
+        .upload-section .upload-images .add-image-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+        .upload-section .upload-images .add-image-btn i {
+            font-size: 24px;
+        }
+
         .upload-section .upload-tools {
             display: flex;
             justify-content: space-between;
@@ -497,42 +590,6 @@
             cursor: not-allowed;
             transform: none;
         }
-        .upload-section .media-preview-container {
-            display: none;
-            margin-top: 12px;
-            position: relative;
-            border-radius: var(--radius);
-            overflow: hidden;
-            background: var(--bg);
-        }
-        .upload-section .media-preview-container.visible {
-            display: block;
-        }
-        .upload-section .media-preview-container img,
-        .upload-section .media-preview-container video {
-            width: 100%;
-            max-height: 250px;
-            object-fit: contain;
-            background: var(--white);
-        }
-        .upload-section .media-preview-container .remove-media {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: rgba(0, 0, 0, 0.6);
-            border: none;
-            color: var(--white);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .upload-section .media-preview-container .remove-media:hover {
-            background: rgba(255, 0, 0, 0.8);
-            transform: scale(1.1);
-        }
         #progressContainer {
             display: none;
             margin-top: 12px;
@@ -570,6 +627,7 @@
             transition: all 0.3s ease;
             animation: fadeIn 0.4s ease;
             border: 1px solid var(--border);
+            position: relative;
         }
         .post-card:hover {
             box-shadow: var(--shadow-hover);
@@ -664,27 +722,27 @@
         }
         .delete-btn:hover {
             background: var(--bg);
-            color: #E74C3C;
+            color: var(--danger);
         }
         .admin-delete-btn {
             background: none;
             border: none;
             cursor: pointer;
-            color: #E74C3C;
+            color: var(--danger);
             font-size: 16px;
             padding: 4px 8px;
             border-radius: 8px;
             transition: all 0.3s;
         }
         .admin-delete-btn:hover {
-            background: #E74C3C;
+            background: var(--danger);
             color: var(--white);
         }
         .admin-user-delete-btn {
             background: none;
             border: none;
             cursor: pointer;
-            color: #E74C3C;
+            color: var(--danger);
             font-size: 12px;
             padding: 2px 8px;
             border-radius: 12px;
@@ -693,7 +751,7 @@
             margin-right: 4px;
         }
         .admin-user-delete-btn:hover {
-            background: #E74C3C;
+            background: var(--danger);
             color: var(--white);
         }
 
@@ -741,30 +799,78 @@
             text-decoration: underline;
         }
 
-        /* ===== وسائط الإعلان ===== */
-        .post-media-wrapper {
+        /* ===== سلايدر الصور - حركة تلقائية ===== */
+        .post-slider {
+            position: relative;
+            overflow: hidden;
             background: var(--bg);
-            display: none;
+            width: 100%;
+        }
+        .post-slider .slides-wrapper {
+            display: flex;
+            transition: transform 0.8s ease-in-out;
+            will-change: transform;
+        }
+        .post-slider .slide {
+            min-width: 100%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            cursor: pointer;
+            background: var(--bg);
         }
-        .post-media-wrapper.visible {
-            display: flex;
-        }
-        .post-media-wrapper img,
-        .post-media-wrapper video {
+        .post-slider .slide img {
             width: 100%;
             height: auto;
             max-height: 450px;
             object-fit: contain;
             display: block;
             background: var(--white);
+            cursor: pointer;
+            user-select: none;
         }
-        .post-media-wrapper video {
-            cursor: default;
-            max-height: 380px;
+        .post-slider .slide video {
+            width: 100%;
+            max-height: 450px;
+            object-fit: contain;
+            background: var(--white);
+        }
+        /* نقاط التنقل */
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 0;
+            background: var(--bg);
+        }
+        .slider-dots .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            padding: 0;
+        }
+        .slider-dots .dot.active {
+            background: var(--primary);
+            transform: scale(1.3);
+        }
+        .slider-dots .dot:hover {
+            background: var(--primary-light);
+        }
+        /* عدد الصور */
+        .slider-counter {
+            position: absolute;
+            bottom: 50px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: var(--white);
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            z-index: 5;
+            pointer-events: none;
         }
 
         /* ===== أزرار التفاعل ===== */
@@ -796,7 +902,7 @@
             background: var(--bg);
         }
         .post-actions button.liked {
-            color: #E74C3C;
+            color: var(--danger);
         }
         .post-actions button.liked i {
             font-weight: 900;
@@ -1037,7 +1143,7 @@
         .custom-modal .modal-content .modal-icon {
             font-size: 48px;
             margin-bottom: 12px;
-            color: #E74C3C;
+            color: var(--danger);
         }
         .custom-modal .modal-content h3 {
             font-size: 22px;
@@ -1160,7 +1266,6 @@
             margin-left: 4px;
         }
 
-        /* ===== التجاوب ===== */
         @media (max-width: 768px) {
             .container { padding: 12px; }
             .hero-banner { padding: 28px 20px; }
@@ -1169,8 +1274,8 @@
             .hero-banner .stats { gap: 12px; }
             .hero-banner .stats .stat-item { font-size: 12px; padding: 4px 12px; }
             .post-text { font-size: 18px; }
-            .post-media-wrapper img,
-            .post-media-wrapper video { max-height: 280px; }
+            .post-slider .slide img,
+            .post-slider .slide video { max-height: 280px; }
             .upload-section { padding: 16px; }
             .top-nav .logo { font-size: 22px; }
             .categories-grid { gap: 6px; }
@@ -1179,6 +1284,8 @@
             .post-header { padding: 10px 14px; flex-wrap: wrap; gap: 6px; }
             .post-content { padding: 10px 14px; }
             .comments-section { padding: 8px 14px 12px; }
+            .upload-section .upload-images .image-item,
+            .upload-section .upload-images .add-image-btn { width: 60px; height: 60px; }
         }
         @media (max-width: 480px) {
             .hero-banner h1 { font-size: 22px; }
@@ -1193,6 +1300,10 @@
             .category-btn i { font-size: 13px; }
             .post-actions button { font-size: 11px; padding: 4px 2px; }
             .post-actions button i { font-size: 14px; }
+            .post-slider .slide img,
+            .post-slider .slide video { max-height: 220px; }
+            .upload-section .upload-images .image-item,
+            .upload-section .upload-images .add-image-btn { width: 50px; height: 50px; }
         }
     </style>
 </head>
@@ -1222,7 +1333,7 @@
                 <div class="stats">
                     <div class="stat-item"><i class="fa-regular fa-newspaper"></i> <strong id="totalAds">0</strong> إعلان</div>
                     <div class="stat-item"><i class="fa-regular fa-user"></i> <strong id="totalAdvertisers">0</strong> معلن</div>
-                    <div class="stat-item"><i class="fa-regular fa-clock"></i> تحديث فوري</div>
+                    <div class="stat-item"><i class="fa-regular fa-clock"></i> <strong id="activeAds">0</strong> نشط</div>
                 </div>
             </div>
         </div>
@@ -1266,10 +1377,18 @@
                     <option value="أخرى">📌 أخرى</option>
                 </select>
             </div>
-            <div class="media-preview-container" id="mediaPreviewContainer">
-                <img id="mediaPreviewImg" src="" alt="معاينة" style="display:none;" />
-                <video id="mediaPreviewVideo" src="" controls style="display:none;max-height:200px;"></video>
-                <button class="remove-media" onclick="removeMedia()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="upload-duration">
+                <label><i class="fa-regular fa-calendar"></i> مدة الإعلان:</label>
+                <span class="duration-info">10 أيام</span>
+                <span class="duration-hint">⏳ ينتهي تلقائياً ويُحذف بعد 10 أيام</span>
+            </div>
+            <div class="upload-images" id="uploadImagesContainer">
+                <!-- سيتم إضافة الصور هنا بواسطة JavaScript -->
+                <button class="add-image-btn" onclick="document.getElementById('imageInput').click()">
+                    <i class="fa-regular fa-plus"></i>
+                    <span>إضافة صورة</span>
+                </button>
+                <input type="file" id="imageInput" accept="image/*" multiple hidden />
             </div>
             <div id="progressContainer">
                 <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
@@ -1277,10 +1396,9 @@
             </div>
             <div class="upload-tools">
                 <div class="tools-left">
-                    <button class="media-btn" onclick="document.getElementById('fileInput').click()">
+                    <button class="media-btn" onclick="document.getElementById('imageInput').click()">
                         <i class="fa-regular fa-image"></i> <span id="mediaBtnText">إضافة صور</span>
                     </button>
-                    <input type="file" id="fileInput" accept="image/*,video/*" hidden />
                 </div>
                 <button class="publish-btn" id="publishBtn" onclick="publishPost()">
                     <i class="fa-regular fa-paper-plane"></i> نشر الإعلان
@@ -1366,7 +1484,6 @@
             console.log('✅ Firebase initialized successfully');
         } catch (error) {
             console.error('❌ Firebase initialization error:', error);
-            // استخدام متغير مؤقت للتعامل مع الأخطاء
             database = null;
         }
 
@@ -1392,12 +1509,14 @@
         let currentUserId = '';
         let isAdmin = false;
         let allPosts = [];
-        let tempMediaFile = null;
+        let uploadedImages = []; // مصفوفة لصور الإعلان
         let confirmCallback = null;
         let isSaving = false;
         let searchQuery = '';
         let currentCategory = 'الكل';
         let currentTab = 'posts';
+        const DEFAULT_DURATION_DAYS = 10;
+        const SLIDER_INTERVAL = 3000; // 3 ثواني
 
         // ============================================================
         // ===== Pagination =====
@@ -1406,6 +1525,105 @@
         let isLoadingMore = false;
         let hasMorePosts = true;
         const POSTS_PER_PAGE = 10;
+
+        // ============================================================
+        // ===== دوال الصلاحية =====
+        // ============================================================
+        function isPostExpired(post) {
+            if (!post.expiryDate) return false;
+            const now = Date.now();
+            return now > post.expiryDate;
+        }
+
+        function getExpiryDate(durationDays) {
+            const date = new Date();
+            date.setDate(date.getDate() + durationDays);
+            return date.getTime();
+        }
+
+        // ============================================================
+        // ===== حذف الإعلانات المنتهية =====
+        // ============================================================
+        async function cleanExpiredPosts() {
+            const now = Date.now();
+            let expiredIds = [];
+            
+            allPosts.forEach(post => {
+                if (post.expiryDate && now > post.expiryDate) {
+                    expiredIds.push(post.id);
+                }
+            });
+
+            if (expiredIds.length > 0) {
+                console.log(`🗑️ حذف ${expiredIds.length} إعلان منتهي الصلاحية`);
+                allPosts = allPosts.filter(p => !expiredIds.includes(p.id));
+                await savePostsToFirebase(allPosts);
+                updateCategoryCounts();
+                updateStats();
+                applySorting();
+            }
+        }
+
+        // ============================================================
+        // ===== دوال السلايدر التلقائي =====
+        // ============================================================
+        function initSlider(sliderId) {
+            const slider = document.getElementById(sliderId);
+            if (!slider) return;
+            
+            const wrapper = slider.querySelector('.slides-wrapper');
+            const slides = slider.querySelectorAll('.slide');
+            const dots = slider.querySelectorAll('.dot');
+            const totalSlides = slides.length;
+            
+            if (totalSlides <= 1) {
+                // إذا كانت صورة واحدة فقط، لا حاجة للحركة
+                return;
+            }
+            
+            let currentIndex = 0;
+            let intervalId = null;
+            
+            function goToSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                currentIndex = index;
+                wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+            
+            function startAutoSlide() {
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, SLIDER_INTERVAL);
+            }
+            
+            function stopAutoSlide() {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+            }
+            
+            // إضافة نقاط التنقل
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    stopAutoSlide();
+                    goToSlide(index);
+                    startAutoSlide();
+                });
+            });
+            
+            // إيقاف الحركة عند تمرير الماوس
+            slider.addEventListener('mouseenter', stopAutoSlide);
+            slider.addEventListener('mouseleave', startAutoSlide);
+            
+            // بدء الحركة التلقائية
+            startAutoSlide();
+        }
 
         // ============================================================
         // ===== تهيئة التصنيفات =====
@@ -1428,6 +1646,7 @@
             const counts = {};
             CATEGORIES.forEach(cat => counts[cat.id] = 0);
             allPosts.forEach(post => {
+                if (isPostExpired(post)) return;
                 const category = post.category || 'أخرى';
                 if (counts[category] !== undefined) counts[category]++;
                 counts['الكل']++;
@@ -1512,7 +1731,6 @@
             } catch (error) {
                 console.error('❌ فشل حفظ الإعلانات:', error);
                 saveToLocalStorage({ posts: posts });
-                showToast('⚠️ تم الحفظ محلياً', 3000);
                 return false;
             } finally {
                 isSaving = false;
@@ -1534,12 +1752,14 @@
                     resetPagination();
                     allPosts = Object.values(data);
                     allPosts.sort((a, b) => b.timestamp - a.timestamp);
-                    updateCategoryCounts();
-                    applySorting();
-                    saveToLocalStorage({ posts: allPosts });
-                    if (allPosts.length < POSTS_PER_PAGE) hasMorePosts = false;
-                    else hasMorePosts = true;
-                    updateStats();
+                    cleanExpiredPosts().then(() => {
+                        updateCategoryCounts();
+                        updateStats();
+                        applySorting();
+                        saveToLocalStorage({ posts: allPosts });
+                        if (allPosts.length < POSTS_PER_PAGE) hasMorePosts = false;
+                        else hasMorePosts = true;
+                    });
                 }
             }, (error) => {
                 console.error('❌ Firebase listen error:', error);
@@ -1550,8 +1770,10 @@
         // ===== الإحصائيات =====
         // ============================================================
         function updateStats() {
-            document.getElementById('totalAds').textContent = allPosts.length;
-            const advertisers = new Set(allPosts.map(p => p.userId));
+            const activePosts = allPosts.filter(p => !isPostExpired(p));
+            document.getElementById('totalAds').textContent = activePosts.length;
+            document.getElementById('activeAds').textContent = activePosts.length;
+            const advertisers = new Set(activePosts.map(p => p.userId));
             document.getElementById('totalAdvertisers').textContent = advertisers.size;
         }
 
@@ -1586,12 +1808,14 @@
                     allPosts = newPosts;
                 }
 
+                await cleanExpiredPosts();
                 updateCategoryCounts();
                 updateStats();
                 applySorting();
 
                 if (!loadMore) {
-                    showToast(`✅ تم تحميل ${allPosts.length} إعلان`, 1500);
+                    const activeCount = allPosts.filter(p => !isPostExpired(p)).length;
+                    showToast(`✅ تم تحميل ${activeCount} إعلان`, 1500);
                     showStorageStatus();
                     if (allPosts.length === 0) {
                         document.getElementById('emptyState').style.display = 'block';
@@ -1603,6 +1827,7 @@
                 const localData = loadFromLocalStorage();
                 if (localData && localData.posts && localData.posts.length > 0) {
                     allPosts = localData.posts;
+                    await cleanExpiredPosts();
                     updateCategoryCounts();
                     updateStats();
                     applySorting();
@@ -1746,12 +1971,23 @@
         // ===== تسجيل الدخول التلقائي =====
         // ============================================================
         function autoLogin() {
-            currentUserName = 'مستخدم';
-            currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-            isAdmin = false;
-            localStorage.setItem('sila_userName', currentUserName);
-            localStorage.setItem('sila_userId', currentUserId);
-            localStorage.setItem('sila_isAdmin', 'false');
+            const savedName = localStorage.getItem('sila_userName');
+            const savedId = localStorage.getItem('sila_userId');
+            const savedAdmin = localStorage.getItem('sila_isAdmin');
+            
+            if (savedName && savedId) {
+                currentUserName = savedName;
+                currentUserId = savedId;
+                isAdmin = savedAdmin === 'true';
+            } else {
+                currentUserName = 'مستخدم';
+                currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+                isAdmin = false;
+                localStorage.setItem('sila_userName', currentUserName);
+                localStorage.setItem('sila_userId', currentUserId);
+                localStorage.setItem('sila_isAdmin', 'false');
+            }
+            
             updateUI();
             loadPosts();
         }
@@ -1851,6 +2087,61 @@
         }
 
         // ============================================================
+        // ===== إدارة الصور المرفوعة =====
+        // ============================================================
+        async function addImage(file) {
+            try {
+                const compressedDataUrl = await compressImage(file, 400, 400, 0.5);
+                const compressedFile = dataURLtoFile(compressedDataUrl, file.name);
+                uploadedImages.push(compressedFile);
+                renderUploadedImages();
+                document.getElementById('mediaBtnText').textContent = `(${uploadedImages.length} صور)`;
+            } catch (error) {
+                showToast('⚠️ حدث خطأ في معالجة الصورة', 3000);
+            }
+        }
+
+        function renderUploadedImages() {
+            const container = document.getElementById('uploadImagesContainer');
+            // حذف جميع العناصر ما عدا زر الإضافة
+            const addBtn = container.querySelector('.add-image-btn');
+            container.innerHTML = '';
+            
+            uploadedImages.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'image-item';
+                const url = URL.createObjectURL(file);
+                div.innerHTML = `
+                    <img src="${url}" alt="صورة ${index + 1}" />
+                    <button class="remove-img" onclick="removeImage(${index})"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                container.appendChild(div);
+            });
+            
+            // إعادة زر الإضافة
+            container.appendChild(addBtn);
+        }
+
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            renderUploadedImages();
+            document.getElementById('mediaBtnText').textContent = uploadedImages.length > 0 ? `(${uploadedImages.length} صور)` : 'إضافة صور';
+        }
+
+        // ============================================================
+        // ===== رفع الصور إلى Cloudinary =====
+        // ============================================================
+        async function uploadImagesToCloudinary(images) {
+            const urls = [];
+            for (let i = 0; i < images.length; i++) {
+                updateProgress(30 + (i / images.length) * 40, `⏳ جاري رفع الصورة ${i + 1}/${images.length}`);
+                const url = await uploadToCloudinary(images[i]);
+                urls.push(url);
+            }
+            return urls;
+        }
+
+        // ============================================================
         // ===== نشر إعلان =====
         // ============================================================
         async function publishPost() {
@@ -1858,10 +2149,14 @@
 
             const text = document.getElementById('postTextInput').value.trim();
             const category = document.getElementById('postCategory').value;
-            const media = tempMediaFile;
 
-            if (!text && !media) {
+            if (!text && uploadedImages.length === 0) {
                 showToast('⚠️ الرجاء كتابة تفاصيل الإعلان أو إضافة صورة', 2500);
+                return;
+            }
+
+            if (uploadedImages.length === 0) {
+                showToast('⚠️ الرجاء إضافة صورة واحدة على الأقل', 2500);
                 return;
             }
 
@@ -1874,15 +2169,17 @@
             updateProgress(0, '⏳ بدء النشر...');
 
             const tempPostId = Date.now() + '_temp';
+            const expiryDate = getExpiryDate(DEFAULT_DURATION_DAYS);
             const tempPost = {
                 id: tempPostId,
                 text: text || '',
                 category: category,
-                mediaUrl: null,
-                mediaType: null,
+                images: [],
                 userId: currentUserId,
                 userName: currentUserName,
                 timestamp: Date.now(),
+                expiryDate: expiryDate,
+                durationDays: DEFAULT_DURATION_DAYS,
                 likes: 0,
                 likedBy: [],
                 comments: [],
@@ -1893,34 +2190,22 @@
             applySorting();
 
             try {
-                let mediaUrl = null,
-                    mediaType = null;
-                if (media) {
-                    updateProgress(10, '⏳ جاري تجهيز الملف...');
-                    let fileToUpload = media.file;
-                    if (media.type === 'image' && media.file) {
-                        updateProgress(20, '⏳ جاري ضغط الصورة...');
-                        const compressed = await compressImage(media.file, 600, 600, 0.4);
-                        fileToUpload = dataURLtoFile(compressed, media.file.name);
-                    }
-                    updateProgress(40, '⏳ جاري رفع الصورة...');
-                    const url = await uploadToCloudinary(fileToUpload);
-                    mediaUrl = url;
-                    mediaType = media.type;
-                    updateProgress(70, '✅ تم رفع الصورة');
-                }
-                updateProgress(80, '⏳ جاري حفظ الإعلان...');
+                updateProgress(20, '⏳ جاري رفع الصور...');
+                const imageUrls = await uploadImagesToCloudinary(uploadedImages);
+                
+                updateProgress(70, '⏳ جاري حفظ الإعلان...');
 
                 allPosts = allPosts.filter(p => p.id !== tempPostId);
                 const realPost = {
                     id: Date.now() + '_' + Math.random().toString(36).substring(2, 6),
                     text: text || '',
                     category: category,
-                    mediaUrl: mediaUrl,
-                    mediaType: mediaType,
+                    images: imageUrls,
                     userId: currentUserId,
                     userName: currentUserName,
                     timestamp: Date.now(),
+                    expiryDate: expiryDate,
+                    durationDays: DEFAULT_DURATION_DAYS,
                     likes: 0,
                     likedBy: [],
                     comments: []
@@ -1929,9 +2214,11 @@
                 await savePostsToFirebase(allPosts);
 
                 updateProgress(100, '✅ تم نشر الإعلان! 🎉');
-                showToast('✅ تم نشر الإعلان بنجاح', 2000);
+                showToast(`✅ تم نشر الإعلان مع ${imageUrls.length} صورة`, 2500);
                 document.getElementById('postTextInput').value = '';
-                removeMedia();
+                uploadedImages = [];
+                renderUploadedImages();
+                document.getElementById('mediaBtnText').textContent = 'إضافة صور';
                 updateCategoryCounts();
                 updateStats();
                 applySorting();
@@ -1953,7 +2240,8 @@
         // ============================================================
         function applySorting() {
             if (currentTab !== 'posts') return;
-            let sortedPosts = [...allPosts];
+            const activePosts = allPosts.filter(p => !isPostExpired(p));
+            let sortedPosts = [...activePosts];
             sortedPosts.sort((a, b) => b.timestamp - a.timestamp);
 
             if (currentCategory !== 'الكل') {
@@ -1991,7 +2279,8 @@
 
             clearBtn.style.display = 'block';
             const users = {};
-            allPosts.forEach(post => {
+            const activePosts = allPosts.filter(p => !isPostExpired(p));
+            activePosts.forEach(post => {
                 const userName = post.userName || 'مستخدم';
                 const text = post.text || '';
                 if (userName.toLowerCase().includes(query.toLowerCase()) ||
@@ -2033,7 +2322,7 @@
             resultsContainer.innerHTML = resultsHTML;
             resultsContainer.classList.add('active');
 
-            let filtered = allPosts.filter(post => {
+            let filtered = activePosts.filter(post => {
                 const userName = post.userName || 'مستخدم';
                 const text = post.text || '';
                 return userName.toLowerCase().includes(query.toLowerCase()) ||
@@ -2044,7 +2333,8 @@
         }
 
         function filterByUser(userId) {
-            const filtered = allPosts.filter(post => post.userId === userId);
+            const activePosts = allPosts.filter(p => !isPostExpired(p));
+            const filtered = activePosts.filter(post => post.userId === userId);
             filtered.sort((a, b) => b.timestamp - a.timestamp);
             renderPosts(filtered);
             document.getElementById('searchResults').classList.remove('active');
@@ -2133,7 +2423,9 @@
             const loading = container.querySelector('.loading-spinner');
             if (loading) loading.style.display = 'none';
 
-            if (!posts || posts.length === 0) {
+            const activePosts = posts.filter(p => !isPostExpired(p));
+
+            if (!activePosts || activePosts.length === 0) {
                 container.innerHTML = '';
                 const moreIndicator = document.getElementById('loadingMore');
                 if (moreIndicator) container.appendChild(moreIndicator);
@@ -2146,7 +2438,7 @@
             container.innerHTML = '';
             if (moreIndicator) container.appendChild(moreIndicator);
 
-            posts.forEach((post) => {
+            activePosts.forEach((post, postIndex) => {
                 const isLiked = post.likedBy && post.likedBy.includes(currentUserId);
                 const userName = post.userName || 'مستخدم';
                 const avatarColor = getAvatarColor(post.userId);
@@ -2154,6 +2446,8 @@
                 const isOwner = post.userId === currentUserId;
                 const category = post.category || 'أخرى';
                 const categoryIcon = getCategoryIcon(category);
+                const images = post.images || [];
+                const hasImages = images.length > 0;
 
                 let deleteButtonsHTML = '';
                 if (isOwner) {
@@ -2175,17 +2469,33 @@
                     ${isLong ? `<button class="read-more-btn" onclick="toggleReadMore('${post.id}')">عرض المزيد</button>` : ''}
                 ` : '';
 
-                let mediaHTML = '';
-                const hasMedia = post.mediaUrl && post.mediaUrl !== null && post.mediaUrl !== '';
-                if (hasMedia) {
-                    const isVideo = post.mediaType === 'video';
-                    if (isVideo) {
-                        mediaHTML =
-                            `<div class="post-media-wrapper visible"><video controls src="${post.mediaUrl}" preload="metadata"></video></div>`;
-                    } else {
-                        mediaHTML =
-                            `<div class="post-media-wrapper visible" onclick="openLightbox('${post.mediaUrl}', '${userName}', '${timeAgo}', 'image')"><img src="${post.mediaUrl}" alt="صورة الإعلان" loading="lazy" /></div>`;
+                // بناء السلايدر
+                let sliderHTML = '';
+                if (hasImages && images.length > 0) {
+                    const sliderId = `slider-${post.id}`;
+                    let slidesHTML = '';
+                    images.forEach((imgUrl, idx) => {
+                        slidesHTML += `
+                            <div class="slide">
+                                <img src="${imgUrl}" alt="صورة ${idx + 1}" onclick="openLightbox('${imgUrl}', '${userName}', '${timeAgo}', 'image')" loading="lazy" />
+                            </div>
+                        `;
+                    });
+                    
+                    let dotsHTML = '';
+                    for (let i = 0; i < images.length; i++) {
+                        dotsHTML += `<button class="dot${i === 0 ? ' active' : ''}"></button>`;
                     }
+                    
+                    sliderHTML = `
+                        <div class="post-slider" id="${sliderId}">
+                            <div class="slides-wrapper">
+                                ${slidesHTML}
+                            </div>
+                            <div class="slider-counter">${images.length} صور</div>
+                            <div class="slider-dots">${dotsHTML}</div>
+                        </div>
+                    `;
                 }
 
                 let commentsHTML = '';
@@ -2230,7 +2540,7 @@
                         </div>
                     </div>
                     <div class="post-content">${textHTML}</div>
-                    ${mediaHTML}
+                    ${sliderHTML}
                     <div class="post-actions">
                         <button class="${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')" id="like-btn-${post.id}">
                             <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -2250,6 +2560,13 @@
                     </div>
                 `;
                 container.appendChild(card);
+
+                // تهيئة السلايدر التلقائي بعد إضافة العنصر للDOM
+                if (hasImages && images.length > 1) {
+                    setTimeout(() => {
+                        initSlider(`slider-${post.id}`);
+                    }, 100);
+                }
 
                 const input = card.querySelector(`#commentInput-${post.id}`);
                 if (input) {
@@ -2355,6 +2672,10 @@
                 return;
             }
             const post = allPosts[postIndex];
+            if (isPostExpired(post)) {
+                showToast('⚠️ هذا الإعلان غير متاح', 2000);
+                return;
+            }
             if (!post.likedBy) post.likedBy = [];
             if (typeof post.likes !== 'number') post.likes = 0;
             const userIndex = post.likedBy.indexOf(currentUserId);
@@ -2396,6 +2717,10 @@
                 showToast('⚠️ الإعلان غير موجود', 2000);
                 return;
             }
+            if (isPostExpired(post)) {
+                showToast('⚠️ هذا الإعلان غير متاح', 2000);
+                return;
+            }
             if (!post.comments) post.comments = [];
             post.comments.push({
                 id: Date.now() + '_' + Math.random().toString(36).substring(2, 6),
@@ -2434,9 +2759,9 @@
         // ===== باقي الدوال =====
         // ============================================================
         function openProfile(userId) {
-            const userPosts = allPosts.filter(p => p.userId === userId);
+            const activePosts = allPosts.filter(p => !isPostExpired(p) && p.userId === userId);
             const userName = userId === currentUserId ? currentUserName : 'معلن ' + userId.substring(0, 6);
-            showToast(`📢 ${userName} لديه ${userPosts.length} إعلان`, 2500);
+            showToast(`📢 ${userName} لديه ${activePosts.length} إعلان`, 2500);
         }
 
         function openLightbox(src, userName, time, type = 'image') {
@@ -2467,65 +2792,27 @@
             video.pause();
         }
 
-        document.getElementById('fileInput').onchange = async function() {
-            const file = this.files[0];
-            if (!file) return;
-            const isImage = file.type.startsWith('image/');
-            const isVideo = file.type.startsWith('video/');
-            if (!isImage && !isVideo) {
-                showToast('⚠️ الرجاء اختيار صورة أو فيديو', 3000);
+        // معالج إضافة الصور
+        document.getElementById('imageInput').onchange = async function() {
+            const files = this.files;
+            if (!files || files.length === 0) return;
+            
+            const maxImages = 10;
+            if (uploadedImages.length + files.length > maxImages) {
+                showToast(`⚠️ يمكنك إضافة ${maxImages} صور كحد أقصى`, 3000);
                 this.value = '';
                 return;
             }
-            if (isVideo && file.size > 100 * 1024 * 1024) {
-                showToast('⚠️ حجم الفيديو كبير جداً (حد أقصى 100 ميجابايت)', 3000);
-                this.value = '';
-                return;
-            }
-            try {
-                let dataUrl = null,
-                    type = 'image';
-                if (isImage) {
-                    dataUrl = await compressImage(file, 400, 400, 0.5);
-                    type = 'image';
-                } else {
-                    dataUrl = URL.createObjectURL(file);
-                    type = 'video';
+
+            for (let file of files) {
+                if (!file.type.startsWith('image/')) {
+                    showToast('⚠️ الرجاء اختيار صور فقط', 3000);
+                    continue;
                 }
-                tempMediaFile = { file, dataUrl, type };
-                const imgPreview = document.getElementById('mediaPreviewImg');
-                const videoPreview = document.getElementById('mediaPreviewVideo');
-                const container = document.getElementById('mediaPreviewContainer');
-                if (type === 'video') {
-                    imgPreview.style.display = 'none';
-                    videoPreview.style.display = 'block';
-                    videoPreview.src = dataUrl;
-                    videoPreview.load();
-                } else {
-                    videoPreview.style.display = 'none';
-                    imgPreview.style.display = 'block';
-                    imgPreview.src = dataUrl;
-                }
-                container.classList.add('visible');
-                document.querySelector('.media-btn').classList.add('has-media');
-                document.getElementById('mediaBtnText').textContent = 'تغيير الصورة';
-                showToast('✅ تم إضافة الصورة', 1500);
-            } catch (error) {
-                showToast('⚠️ حدث خطأ في معالجة الصورة', 3000);
+                await addImage(file);
             }
             this.value = '';
         };
-
-        function removeMedia() {
-            if (tempMediaFile && tempMediaFile.type === 'video') URL.revokeObjectURL(tempMediaFile.dataUrl);
-            tempMediaFile = null;
-            document.getElementById('mediaPreviewImg').style.display = 'none';
-            document.getElementById('mediaPreviewVideo').style.display = 'none';
-            document.getElementById('mediaPreviewVideo').src = '';
-            document.getElementById('mediaPreviewContainer').classList.remove('visible');
-            document.querySelector('.media-btn').classList.remove('has-media');
-            document.getElementById('mediaBtnText').textContent = 'إضافة صور';
-        }
 
         function showConfirm(title, message, onConfirm) {
             document.getElementById('confirmTitle').textContent = title;
@@ -2565,21 +2852,33 @@
         });
 
         // ============================================================
+        // ===== جدولة تنظيف الإعلانات المنتهية =====
+        // ============================================================
+        function scheduleCleanup() {
+            setInterval(async () => {
+                await cleanExpiredPosts();
+            }, 5 * 60 * 1000);
+            
+            setTimeout(async () => {
+                await cleanExpiredPosts();
+            }, 1000);
+        }
+
+        // ============================================================
         // ===== تهيئة التطبيق =====
         // ============================================================
         async function initApp() {
             renderCategories();
             
-            // تحميل البيانات المحفوظة أولاً
             const localData = loadFromLocalStorage();
             if (localData && localData.posts && localData.posts.length > 0) {
                 allPosts = localData.posts;
+                await cleanExpiredPosts();
                 updateCategoryCounts();
                 updateStats();
                 applySorting();
             }
             
-            // محاولة الاتصال بـ Firebase
             if (database) {
                 try {
                     await loadPosts(false);
@@ -2595,11 +2894,11 @@
             
             checkConnection();
             setupInfiniteScroll();
+            scheduleCleanup();
             updateStats();
             updateUI();
         }
 
-        // تشغيل التطبيق
         initApp();
     </script>
 </body>
