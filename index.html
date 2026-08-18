@@ -664,20 +664,36 @@
         }
         .delete-btn:hover {
             background: var(--bg);
-            color: var(--danger);
+            color: #E74C3C;
         }
         .admin-delete-btn {
             background: none;
             border: none;
             cursor: pointer;
-            color: var(--danger);
+            color: #E74C3C;
             font-size: 16px;
             padding: 4px 8px;
             border-radius: 8px;
             transition: all 0.3s;
         }
         .admin-delete-btn:hover {
-            background: var(--danger);
+            background: #E74C3C;
+            color: var(--white);
+        }
+        .admin-user-delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #E74C3C;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            background: #fce4ec;
+            margin-right: 4px;
+        }
+        .admin-user-delete-btn:hover {
+            background: #E74C3C;
             color: var(--white);
         }
 
@@ -780,7 +796,7 @@
             background: var(--bg);
         }
         .post-actions button.liked {
-            color: var(--danger);
+            color: #E74C3C;
         }
         .post-actions button.liked i {
             font-weight: 900;
@@ -1021,7 +1037,7 @@
         .custom-modal .modal-content .modal-icon {
             font-size: 48px;
             margin-bottom: 12px;
-            color: var(--danger);
+            color: #E74C3C;
         }
         .custom-modal .modal-content h3 {
             font-size: 22px;
@@ -1329,7 +1345,7 @@
             projectId: "tofolati-38ac4",
             storageBucket: "tofolati-38ac4.firebasestorage.app",
             messagingSenderId: "635017833018",
-            appId: "1:635017833018:web:YOUR_WEB_APP_ID"
+            appId: "1:635017833018:web:3a3b4f5c6d7e8f9a0b1c"
         };
 
         // ============================================================
@@ -1338,6 +1354,21 @@
         const CLOUD_NAME = 'demo';
         const UPLOAD_PRESET = 'ml_default';
         const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+
+        // ============================================================
+        // ===== تهيئة Firebase =====
+        // ============================================================
+        let app, database;
+
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('✅ Firebase initialized successfully');
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error);
+            // استخدام متغير مؤقت للتعامل مع الأخطاء
+            database = null;
+        }
 
         // ============================================================
         // ===== التصنيفات =====
@@ -1419,6 +1450,12 @@
         // ===== 🔥 دوال Firebase =====
         // ============================================================
         async function loadPostsFromFirebase(loadMore = false) {
+            if (!database) {
+                console.warn('⚠️ Firebase not initialized, loading from localStorage');
+                const localData = loadFromLocalStorage();
+                return localData.posts || [];
+            }
+
             try {
                 let query = database.ref('posts').orderByChild('timestamp').limitToLast(POSTS_PER_PAGE);
                 if (loadMore && lastPostTimestamp) {
@@ -1446,11 +1483,18 @@
                 return posts;
             } catch (error) {
                 console.error('❌ فشل تحميل الإعلانات:', error);
-                throw error;
+                const localData = loadFromLocalStorage();
+                return localData.posts || [];
             }
         }
 
         async function savePostsToFirebase(posts) {
+            if (!database) {
+                console.warn('⚠️ Firebase not initialized, saving to localStorage');
+                saveToLocalStorage({ posts: posts });
+                return true;
+            }
+
             if (isSaving) {
                 console.log('⏳ جاري الحفظ بالفعل...');
                 return false;
@@ -1479,6 +1523,11 @@
         // ===== الاستماع للتحديثات =====
         // ============================================================
         function listenForUpdates() {
+            if (!database) {
+                console.warn('⚠️ Firebase not initialized, skipping real-time updates');
+                return;
+            }
+
             database.ref('posts').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -1492,6 +1541,8 @@
                     else hasMorePosts = true;
                     updateStats();
                 }
+            }, (error) => {
+                console.error('❌ Firebase listen error:', error);
             });
         }
 
@@ -1628,10 +1679,10 @@
         // ============================================================
         function saveToLocalStorage(data) {
             try {
-                const existing = JSON.parse(localStorage.getItem('gallery_data') || '{}');
+                const existing = JSON.parse(localStorage.getItem('sila_data') || '{}');
                 if (data.posts) existing.posts = data.posts;
-                localStorage.setItem('gallery_data', JSON.stringify(existing));
-                localStorage.setItem('gallery_posts_count', data.posts ? data.posts.length : (existing.posts ? existing.posts
+                localStorage.setItem('sila_data', JSON.stringify(existing));
+                localStorage.setItem('sila_posts_count', data.posts ? data.posts.length : (existing.posts ? existing.posts
                     .length : 0));
                 showStorageStatus();
             } catch (e) { console.warn('⚠️ فشل حفظ البيانات محلياً:', e); }
@@ -1639,7 +1690,7 @@
 
         function loadFromLocalStorage() {
             try {
-                const data = localStorage.getItem('gallery_data');
+                const data = localStorage.getItem('sila_data');
                 if (data) return JSON.parse(data);
             } catch (e) { console.warn('⚠️ فشل تحميل البيانات المحلية:', e); }
             return {};
@@ -1698,9 +1749,9 @@
             currentUserName = 'مستخدم';
             currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
             isAdmin = false;
-            localStorage.setItem('userName', currentUserName);
-            localStorage.setItem('userId', currentUserId);
-            localStorage.setItem('isAdmin', 'false');
+            localStorage.setItem('sila_userName', currentUserName);
+            localStorage.setItem('sila_userId', currentUserId);
+            localStorage.setItem('sila_isAdmin', 'false');
             updateUI();
             loadPosts();
         }
@@ -1729,8 +1780,8 @@
                 }
                 isAdmin = isAdminName;
                 currentUserName = name;
-                localStorage.setItem('userName', currentUserName);
-                localStorage.setItem('isAdmin', isAdmin ? 'true' : 'false');
+                localStorage.setItem('sila_userName', currentUserName);
+                localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
                 updateUI();
                 showToast(isAdmin ? '🛡️ تم الترقية إلى مشرف!' : `✅ تم تغيير الاسم إلى ${currentUserName}`, 2000);
             }
@@ -2371,7 +2422,7 @@
         function sharePost(postId) {
             const post = allPosts.find(p => p.id === postId);
             const text = post?.text || 'إعلان مميز';
-            const siteUrl = 'https://hailqadasi.github.io/Schoolsite/';
+            const siteUrl = window.location.href;
             const message = `📢 ${text.substring(0, 100)}...\n\nانضم إلى منصة صلة للإعلانات: ${siteUrl}`;
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
@@ -2518,20 +2569,37 @@
         // ============================================================
         async function initApp() {
             renderCategories();
-            autoLogin();
             
-            try {
-                await loadPosts(false);
-                listenForUpdates();
-                checkConnection();
-                setupInfiniteScroll();
+            // تحميل البيانات المحفوظة أولاً
+            const localData = loadFromLocalStorage();
+            if (localData && localData.posts && localData.posts.length > 0) {
+                allPosts = localData.posts;
+                updateCategoryCounts();
                 updateStats();
-            } catch (error) {
-                console.error('❌ خطأ:', error);
-                showToast('⚠️ حدث خطأ في تهيئة المنصة', 3000);
+                applySorting();
             }
+            
+            // محاولة الاتصال بـ Firebase
+            if (database) {
+                try {
+                    await loadPosts(false);
+                    listenForUpdates();
+                    showToast('✅ تم الاتصال بالسحابة', 1500);
+                } catch (error) {
+                    console.warn('⚠️ فشل الاتصال بالسحابة، عرض البيانات المحلية', error);
+                    showToast('📱 عرض البيانات المحلية', 1500);
+                }
+            } else {
+                showToast('📱 عرض البيانات المحلية', 1500);
+            }
+            
+            checkConnection();
+            setupInfiniteScroll();
+            updateStats();
+            updateUI();
         }
 
+        // تشغيل التطبيق
         initApp();
     </script>
 </body>
