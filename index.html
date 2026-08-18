@@ -6,6 +6,7 @@
     <title>صلة - نصل المنتج بالمستهلك</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
+        /* ===== جميع التنسيقات كما هي ===== */
         * {
             margin: 0;
             padding: 0;
@@ -34,7 +35,6 @@
             margin-top: 10px;
         }
 
-        /* ===== الهيدر ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -116,7 +116,6 @@
             font-size: 18px;
         }
 
-        /* ===== اسم المستخدم ===== */
         .user-info {
             display: none;
             align-items: center;
@@ -159,7 +158,6 @@
             border-radius: 12px;
         }
 
-        /* ===== الشعار الفرعي ===== */
         .sub-brand {
             margin-bottom: 20px;
         }
@@ -176,7 +174,6 @@
             color: #1e3a5f;
         }
 
-        /* ===== مربع البحث ===== */
         .search-box {
             background: #f0f4f9;
             border-radius: 60px;
@@ -222,7 +219,6 @@
             background: #2c5a8c;
         }
 
-        /* ===== التصنيفات ===== */
         .browse-label {
             font-size: 15px;
             font-weight: 500;
@@ -285,7 +281,6 @@
             color: #fff;
         }
 
-        /* ===== فلتر النتائج ===== */
         .filter-bar {
             display: flex;
             justify-content: space-between;
@@ -344,7 +339,6 @@
             color: #6c7a8a;
         }
 
-        /* ===== زر تحميل الكل ===== */
         .load-all-btn {
             width: 100%;
             padding: 10px;
@@ -373,7 +367,6 @@
             cursor: not-allowed;
         }
 
-        /* ===== أحدث الإعلانات ===== */
         .latest-header {
             display: flex;
             justify-content: space-between;
@@ -397,7 +390,6 @@
             color: #1e3a5f;
         }
 
-        /* ===== حالة عدم وجود إعلانات ===== */
         .empty-state {
             background: #fafcff;
             border-radius: 24px;
@@ -427,7 +419,6 @@
             font-weight: 400;
         }
 
-        /* ===== بطاقة الإعلان ===== */
         .ad-card {
             background: #fff;
             border-radius: 16px;
@@ -541,7 +532,6 @@
             text-decoration: underline;
         }
 
-        /* ===== سلايدر الصور - إصلاح العرض ===== */
         .ad-slider {
             position: relative;
             overflow: hidden;
@@ -613,7 +603,6 @@
             z-index: 5;
         }
 
-        /* ===== أزرار التفاعل ===== */
         .ad-actions {
             display: flex;
             justify-content: space-around;
@@ -654,7 +643,6 @@
             font-size: 12px;
         }
 
-        /* ===== أزرار الحذف ===== */
         .delete-btn {
             background: none;
             border: none;
@@ -704,7 +692,6 @@
             color: #fff;
         }
 
-        /* ===== التعليقات ===== */
         .comments-section {
             display: none;
             padding-top: 10px;
@@ -827,7 +814,6 @@
             transform: scale(1.05);
         }
 
-        /* ===== تحميل ===== */
         .loading-spinner {
             text-align: center;
             padding: 30px;
@@ -852,7 +838,6 @@
             font-size: 14px;
         }
 
-        /* ===== حالة الاتصال ===== */
         #connectionStatus {
             display: none;
             padding: 8px 16px;
@@ -863,7 +848,6 @@
             font-weight: 500;
         }
 
-        /* ===== نافذة منبثقة ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -1103,7 +1087,6 @@
             background: #dce3ec;
         }
 
-        /* ===== نافذة التأكيد ===== */
         .confirm-modal {
             display: none;
             position: fixed;
@@ -1185,7 +1168,6 @@
             background: #dce3ec;
         }
 
-        /* ===== Lightbox ===== */
         .lightbox {
             display: none;
             position: fixed;
@@ -1242,7 +1224,6 @@
             border-radius: 20px;
         }
 
-        /* ===== رسالة إشعار ===== */
         #toast {
             position: fixed;
             bottom: 30px;
@@ -1268,7 +1249,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ===== الفوتر ===== */
         .footer {
             margin-top: 16px;
             text-align: center;
@@ -1293,7 +1273,6 @@
             color: #7a8a9e;
         }
 
-        /* ===== التجاوب ===== */
         @media (max-width: 420px) {
             .app-card {
                 padding: 16px 12px;
@@ -1443,11 +1422,12 @@
                 </select>
             </div>
             <div class="modal-images" id="modalImagesContainer">
-                <button class="add-img-btn" onclick="document.getElementById('imageInput').click()">
+                <!-- سيتم إضافة الصور هنا بواسطة JavaScript -->
+                <button class="add-img-btn" id="addImageBtn">
                     <i class="fas fa-plus"></i>
                     <span>إضافة صور</span>
                 </button>
-                <input type="file" id="imageInput" accept="image/*" multiple hidden />
+                <input type="file" id="imageInput" accept="image/*" multiple style="display:none;" />
             </div>
             <div class="modal-progress" id="progressContainer">
                 <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
@@ -1598,7 +1578,7 @@
         }
 
         // ============================================================
-        // ===== دوال السلايدر - إصلاح العرض =====
+        // ===== دوال السلايدر =====
         // ============================================================
         function initSlider(sliderId) {
             const slider = document.getElementById(sliderId);
@@ -1610,7 +1590,6 @@
             const totalSlides = slides.length;
             
             if (totalSlides <= 1) {
-                // إخفاء النقاط إذا كانت صورة واحدة
                 const dotsContainer = slider.querySelector('.slider-dots');
                 if (dotsContainer) dotsContainer.style.display = 'none';
                 const counter = slider.querySelector('.slider-counter');
@@ -1655,8 +1634,6 @@
             
             slider.addEventListener('mouseenter', stopAutoSlide);
             slider.addEventListener('mouseleave', startAutoSlide);
-            
-            // بدء الحركة التلقائية
             setTimeout(startAutoSlide, 500);
         }
 
@@ -1800,8 +1777,7 @@
         // ===== الإحصائيات =====
         // ============================================================
         function updateStats() {
-            const activeAds = allAds.filter(a => !isAdExpired(a));
-            const advertisers = new Set(activeAds.map(a => a.userId));
+            // تم استخدامها في updateCategoryCounts
         }
 
         // ============================================================
@@ -2118,8 +2094,22 @@
         }
 
         // ============================================================
-        // ===== إدارة الصور =====
+        // ===== إدارة الصور - الإصلاح =====
         // ============================================================
+        // ربط زر إضافة الصور مع input المخفي
+        document.addEventListener('DOMContentLoaded', function() {
+            const addImageBtn = document.getElementById('addImageBtn');
+            const imageInput = document.getElementById('imageInput');
+            
+            if (addImageBtn && imageInput) {
+                addImageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    imageInput.click();
+                });
+            }
+        });
+
         document.getElementById('imageInput').onchange = async function() {
             const files = this.files;
             if (!files || files.length === 0) return;
@@ -2150,9 +2140,14 @@
 
         function renderUploadedImages() {
             const container = document.getElementById('modalImagesContainer');
-            const addBtn = container.querySelector('.add-img-btn');
+            // الاحتفاظ بزر الإضافة
+            const addBtn = document.getElementById('addImageBtn');
+            const imageInput = document.getElementById('imageInput');
+            
+            // مسح المحتوى ما عدا زر الإضافة والـ input
             container.innerHTML = '';
             
+            // إضافة الصور المرفوعة
             uploadedImages.forEach((file, index) => {
                 const div = document.createElement('div');
                 div.className = 'img-item';
@@ -2164,7 +2159,9 @@
                 container.appendChild(div);
             });
             
+            // إضافة زر الإضافة والـ input
             container.appendChild(addBtn);
+            container.appendChild(imageInput);
         }
 
         function removeImage(index) {
@@ -2232,8 +2229,7 @@
                 likes: 0,
                 likedBy: [],
                 comments: [],
-                isTemp: true
-            };
+                isTemp: true            };
 
             allAds.unshift(tempAd);
             applySorting();
@@ -2316,7 +2312,7 @@
         }
 
         // ============================================================
-        // ===== عرض الإعلانات مع السلايدر =====
+        // ===== عرض الإعلانات =====
         // ============================================================
         function renderAds(ads) {
             const container = document.getElementById('adsContainer');
@@ -2368,7 +2364,6 @@
                     ${isLong ? `<button class="read-more-btn" onclick="toggleReadMore('${ad.id}')">عرض المزيد</button>` : ''}
                 ` : '';
 
-                // بناء السلايدر - مع ضمان ظهور الصور
                 let sliderHTML = '';
                 if (hasImages && images.length > 0) {
                     const sliderId = `slider-${ad.id}`;
@@ -2460,7 +2455,6 @@
                 `;
                 container.appendChild(card);
 
-                // تهيئة السلايدر بعد إضافة العنصر للDOM
                 if (hasImages && images.length > 1) {
                     setTimeout(() => {
                         initSlider(`slider-${ad.id}`);
