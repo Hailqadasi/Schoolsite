@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -1970,48 +1970,84 @@
         // ===== تسجيل الدخول =====
         // ============================================================
         function loginUser() {
+            // نطلب من المستخدم إدخال اسمه
             const name = prompt('👤 أدخل اسمك:', currentUserName);
-            if (name && name.trim() && name.trim().length >= 2) {
-                const newName = name.trim();
-                const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
-                const isAdminName = adminNames.includes(newName);
-                if (isAdminName) {
-                    const password = prompt('🔑 أدخل كلمة مرور المشرف:');
-                    if (!password || password.trim() !== 'admin123') {
-                        showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
-                        return;
-                    }
+            if (!name || !name.trim() || name.trim().length < 2) {
+                showToast('⚠️ الرجاء إدخال اسم صحيح (حرفين على الأقل)', 3000);
+                return;
+            }
+            
+            const newName = name.trim();
+            const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
+            const isAdminName = adminNames.includes(newName);
+            
+            // إذا كان الاسم من أسماء المشرفين، نطلب كلمة المرور
+            if (isAdminName) {
+                const password = prompt('🔑 أدخل كلمة مرور المشرف:');
+                if (!password || password.trim() !== 'admin123') {
+                    showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
+                    return;
                 }
-                isAdmin = isAdminName;
-                currentUserName = newName;
-                currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-                localStorage.setItem('sila_userName', currentUserName);
-                localStorage.setItem('sila_userId', currentUserId);
-                localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
-                updateUI();
-                showToast(isAdmin ? '🛡️ مرحباً أيها المشرف!' : `👋 مرحباً ${currentUserName}`, 2500);
+                // كلمة المرور صحيحة → يصبح مشرفاً
+                isAdmin = true;
+            } else {
+                // مستخدم عادي
+                isAdmin = false;
+            }
+            
+            // تحديث بيانات المستخدم
+            currentUserName = newName;
+            currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+            
+            // حفظ في التخزين المحلي
+            localStorage.setItem('sila_userName', currentUserName);
+            localStorage.setItem('sila_userId', currentUserId);
+            localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
+            
+            // تحديث الواجهة
+            updateUI();
+            
+            // رسالة ترحيب
+            if (isAdmin) {
+                showToast('🛡️ مرحباً أيها المشرف! يمكنك الآن نشر الإعلانات', 3000);
+            } else {
+                showToast(`👋 مرحباً ${currentUserName}`, 2500);
             }
         }
 
         function changeUserName() {
             const newName = prompt('✏️ أدخل اسمك الجديد:', currentUserName);
-            if (newName && newName.trim() && newName.trim().length >= 2) {
-                const name = newName.trim();
-                const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
-                const isAdminName = adminNames.includes(name);
-                if (isAdminName) {
-                    const password = prompt('🔑 أدخل كلمة مرور المشرف:');
-                    if (!password || password.trim() !== 'admin123') {
-                        showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
-                        return;
-                    }
+            if (!newName || !newName.trim() || newName.trim().length < 2) {
+                showToast('⚠️ الرجاء إدخال اسم صحيح (حرفين على الأقل)', 3000);
+                return;
+            }
+            
+            const name = newName.trim();
+            const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
+            const isAdminName = adminNames.includes(name);
+            
+            // إذا حاول تغيير اسمه إلى اسم مشرف، نطلب كلمة المرور
+            if (isAdminName) {
+                const password = prompt('🔑 أدخل كلمة مرور المشرف:');
+                if (!password || password.trim() !== 'admin123') {
+                    showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
+                    return;
                 }
-                isAdmin = isAdminName;
-                currentUserName = name;
-                localStorage.setItem('sila_userName', currentUserName);
-                localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
-                updateUI();
-                showToast(isAdmin ? '🛡️ تم الترقية إلى مشرف!' : `✅ تم تغيير الاسم إلى ${currentUserName}`, 2000);
+                isAdmin = true;
+            } else if (isAdmin && !isAdminName) {
+                // إذا كان مشرفاً وغير اسمه إلى اسم عادي، يفقد صلاحية المشرف
+                isAdmin = false;
+            }
+            
+            currentUserName = name;
+            localStorage.setItem('sila_userName', currentUserName);
+            localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
+            updateUI();
+            
+            if (isAdmin) {
+                showToast('🛡️ تم الترقية إلى مشرف!', 2500);
+            } else {
+                showToast(`✅ تم تغيير الاسم إلى ${currentUserName}`, 2000);
             }
         }
 
