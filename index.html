@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -1341,7 +1341,8 @@
                 <span class="logo-text">صلة</span>
             </div>
             <div class="header-actions">
-                <span class="add-btn" onclick="openAddModal()">
+                <!-- زر الإضافة يظهر فقط للمشرف -->
+                <span class="add-btn" id="addAdBtn" onclick="openAddModal()" style="display: none;">
                     <i class="fas fa-plus-circle"></i> أضف إعلانك
                 </span>
                 <div class="user-info" id="userInfo" onclick="changeUserName()">
@@ -2036,6 +2037,9 @@
             loadAds();
         }
 
+        // ============================================================
+        // ===== تحديث واجهة المستخدم =====
+        // ============================================================
         function updateUI() {
             const letter = currentUserName.charAt(0).toUpperCase();
             document.getElementById('userNameDisplay').textContent = currentUserName;
@@ -2049,6 +2053,10 @@
             
             const badge = document.getElementById('adminBadge');
             badge.style.display = isAdmin ? 'inline' : 'none';
+            
+            // إظهار أو إخفاء زر الإضافة حسب صلاحية المشرف
+            const addBtn = document.getElementById('addAdBtn');
+            addBtn.style.display = isAdmin ? 'flex' : 'none';
         }
 
         // ============================================================
@@ -2170,8 +2178,9 @@
         // ===== نافذة الإضافة =====
         // ============================================================
         function openAddModal() {
-            if (!currentUserId) {
-                loginUser();
+            // التحقق من أن المستخدم مشرف
+            if (!isAdmin) {
+                showToast('⛔ فقط المشرف يمكنه نشر الإعلانات', 3000);
                 return;
             }
             document.getElementById('addModal').classList.add('active');
