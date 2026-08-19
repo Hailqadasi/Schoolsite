@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -34,587 +34,625 @@
             margin-top: 10px;
         }
 
-        /* ===== الهيدر ===== */
-        ./* ============================================================
-   ✨ تصميم الهيدر الجديد - صلة
-   ============================================================ */
-
-.header {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 14px;
-    margin: -8px -8px 20px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, #1e3a5f 0%, #294f7c 100%);
-    box-shadow: 0 10px 25px rgba(30, 58, 95, 0.18);
-    overflow: hidden;
-}
-
-/* تأثير زخرفي */
-.header::before {
-    content: "";
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    top: -65px;
-    left: -35px;
-}
-
-.header::after {
-    content: "";
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.04);
-    bottom: -45px;
-    right: 30%;
-}
-
-/* ===== الشعار ===== */
-
-.logo-area {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-}
-
-.logo-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 15px;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.20);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px;
-    color: #fff;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
-}
-
-.logo-text {
-    font-size: 25px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.8px;
-}
-
-/* ===== أزرار الهيدر ===== */
-
-.header-actions {
-    position: relative;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
-
-/* زر أضف إعلانك */
-
-.header-actions .add-btn {
-    background: #fff;
-    color: #1e3a5f;
-    padding: 9px 13px;
-    min-height: 38px;
-    border-radius: 13px;
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 5px 14px rgba(0,0,0,0.12);
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.header-actions .add-btn i {
-    color: #1e3a5f;
-    font-size: 13px;
-}
-
-.header-actions .add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.16);
-}
-
-/* ===== زر الدخول ===== */
-
-.header-actions .login-btn {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.20);
-    color: #fff;
-    min-height: 38px;
-    padding: 8px 11px;
-    border-radius: 13px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: all 0.2s ease;
-}
-
-.header-actions .login-btn:hover {
-    background: rgba(255,255,255,0.22);
-}
-
-.header-actions .login-btn i {
-    color: #fff;
-    font-size: 16px;
-}
-
-/* ===== معلومات المستخدم ===== */
-
-.user-info {
-    display: none;
-    align-items: center;
-    gap: 7px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.18);
-    padding: 4px 8px 4px 5px;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    max-width: 150px;
-}
-
-.user-info:hover {
-    background: rgba(255,255,255,0.20);
-}
-
-.user-info .avatar {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border-radius: 10px;
-    background: #fff;
-    color: #1e3a5f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 14px;
-}
-
-.user-info .user-name {
-    font-size: 12px;
-    font-weight: 700;
-    color: #fff;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.user-info .admin-badge {
-    background: #e74c3c;
-    color: #fff;
-    font-size: 9px;
-    padding: 3px 6px;
-    border-radius: 7px;
-}
-
-/* ============================================================
-   ✨ الشعار الفرعي الجديد
-   ============================================================ */
-
-.sub-brand {
-    margin: 0 2px 18px;
-    padding: 0 3px;
-}
-
-.sub-brand p {
-    font-size: 14px;
-    color: #687789;
-    font-weight: 400;
-    line-height: 1.8;
-}
-
-.sub-brand p strong {
-    color: #1e3a5f;
-    font-weight: 800;
-}
-
-/* ============================================================
-   ✨ تصميم البحث الجديد
-   ============================================================ */
-
-.search-box {
-    background: #f7f9fc;
-    border: 1px solid #e5eaf0;
-    border-radius: 17px;
-    padding: 5px 5px 5px 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(30,58,95,0.04);
-    transition: all 0.2s ease;
-}
-
-.search-box:focus-within {
-    border-color: #9fb3ca;
-    box-shadow: 0 5px 18px rgba(30,58,95,0.08);
-    background: #fff;
-}
-
-.search-box input {
-    border: none;
-    background: transparent;
-    padding: 11px 0;
-    font-size: 14px;
-    flex: 1;
-    outline: none;
-    color: #1e2a3a;
-    min-width: 0;
-}
-
-.search-box input::placeholder {
-    color: #8b98a8;
-}
-
-.search-box .search-btn {
-    background: #1e3a5f;
-    border: none;
-    border-radius: 13px;
-    min-width: 48px;
-    height: 40px;
-    padding: 0 14px;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.search-box .search-btn:hover {
-    background: #294f7c;
-    transform: translateY(-1px);
-}
-
-/* ============================================================
-   ✨ التصنيفات الجديدة
-   ============================================================ */
-
-.browse-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 16px;
-    font-weight: 800;
-    color: #1e2a3a;
-    margin-bottom: 12px;
-}
-
-.browse-label::before {
-    content: "";
-    width: 4px;
-    height: 20px;
-    background: #1e3a5f;
-    border-radius: 10px;
-}
-
-/* حاوية التصنيفات */
-
-.categories {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 10px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    margin: 0 -4px 23px;
-    padding: 3px 4px 10px;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-}
-
-.categories::-webkit-scrollbar {
-    display: none;
-}
-
-/* بطاقة التصنيف */
-
-.category-item {
-    position: relative;
-    flex: 0 0 82px;
-    min-width: 82px;
-    height: 82px;
-    padding: 10px 6px;
-    border-radius: 18px;
-    background: #f7f9fc;
-    border: 1px solid #e7ebf0;
-    color: #354455;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    cursor: pointer;
-    transition: all 0.22s ease;
-    box-shadow: 0 3px 10px rgba(30,58,95,0.03);
-}
-
-.category-item:hover {
-    transform: translateY(-3px);
-    border-color: #c8d4e1;
-    box-shadow: 0 7px 18px rgba(30,58,95,0.09);
-    background: #fff;
-}
-
-/* أيقونة التصنيف */
-
-.category-item i {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-    background: #eaf0f7;
-    color: #1e3a5f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 17px;
-    transition: all 0.2s ease;
-}
-
-/* اسم التصنيف */
-
-.category-item::after {
-    content: attr(data-category);
-    font-size: 11px;
-    font-weight: 700;
-    color: #354455;
-}
-
-/* إخفاء النص الأصلي مع إبقاء العداد */
-.category-item {
-    font-size: 0;
-}
-
-.category-item .count {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    min-width: 19px;
-    height: 19px;
-    padding: 0 5px;
-    border-radius: 10px;
-    background: #e3e9f0;
-    color: #536477;
-    font-size: 9px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* التصنيف المحدد */
-
-.category-item.active {
-    background: linear-gradient(145deg, #1e3a5f, #294f7c);
-    border-color: #1e3a5f;
-    color: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 9px 20px rgba(30,58,95,0.20);
-}
-
-.category-item.active i {
-    background: rgba(255,255,255,0.16);
-    color: #fff;
-}
-
-.category-item.active::after {
-    color: #fff;
-}
-
-.category-item.active .count {
-    background: rgba(255,255,255,0.18);
-    color: #fff;
-}
-
-/* ============================================================
-   ✨ فلتر النتائج بشكل أجمل
-   ============================================================ */
-
-.filter-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    background: #f8faff;
-    padding: 10px 12px;
-    border-radius: 15px;
-    margin-bottom: 18px;
-    border: 1px solid #e8edf3;
-}
-
-.filter-bar .filter-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #435365;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-}
-
-.filter-bar .filter-label i {
-    width: 27px;
-    height: 27px;
-    border-radius: 9px;
-    background: #e8eef6;
-    color: #1e3a5f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-}
-
-.filter-options {
-    display: flex;
-    gap: 6px;
-    flex-wrap: nowrap;
-}
-
-.filter-options span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: #fff;
-    padding: 7px 10px;
-    border-radius: 10px;
-    border: 1px solid #e1e7ee;
-    color: #526174;
-    font-size: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.filter-options span:hover {
-    background: #1e3a5f;
-    border-color: #1e3a5f;
-    color: #fff;
-}
-
-.filter-options span i {
-    color: #1e3a5f;
-    font-size: 10px;
-}
-
-.filter-options span:hover i {
-    color: #fff;
-}
-
-/* ============================================================
-   📱 تحسين الهاتف
-   ============================================================ */
-
-@media (max-width: 420px) {
-
-    .app-card {
-        padding: 14px 10px 18px;
-        border-radius: 24px;
-    }
-
-    .header {
-        margin: -5px -5px 18px;
-        padding: 12px 10px;
-        border-radius: 19px;
-    }
-
-    .logo-icon {
-        width: 39px;
-        height: 39px;
-        border-radius: 12px;
-        font-size: 18px;
-    }
-
-    .logo-text {
-        font-size: 22px;
-    }
-
-    .header-actions {
-        gap: 5px;
-    }
-
-    .header-actions .add-btn {
-        padding: 8px 9px;
-        min-height: 36px;
-        font-size: 10px;
-    }
-
-    .header-actions .add-btn i {
-        font-size: 12px;
-    }
-
-    .header-actions .login-btn {
-        min-height: 36px;
-        padding: 7px 8px;
-        font-size: 10px;
-    }
-
-    .user-info {
-        max-width: 110px;
-    }
-
-    .user-info .user-name {
-        max-width: 55px;
-        font-size: 10px;
-    }
-
-    .user-info .avatar {
-        width: 29px;
-        height: 29px;
-        font-size: 12px;
-    }
-
-    .sub-brand p {
-        font-size: 13px;
-    }
-
-    .category-item {
-        flex-basis: 78px;
-        min-width: 78px;
-        height: 78px;
-    }
-
-    .filter-bar {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .filter-options {
-        width: 100%;
-        overflow-x: auto;
-        scrollbar-width: none;
-    }
-
-    .filter-options::-webkit-scrollbar {
-        display: none;
-    }
-
-    .filter-options span {
-        font-size: 10px;
-    }
-}
+        /* ============================================================
+           ✨ تصميم الهيدر الجديد - صلة
+           ============================================================ */
+
+        .header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 14px;
+            margin: -8px -8px 20px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #294f7c 100%);
+            box-shadow: 0 10px 25px rgba(30, 58, 95, 0.18);
+            overflow: hidden;
+        }
+
+        /* تأثير زخرفي */
+        .header::before {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            top: -65px;
+            left: -35px;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+            bottom: -45px;
+            right: 30%;
+        }
+
+        /* ===== الشعار ===== */
+
+        .logo-area {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.20);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            color: #fff;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .logo-text {
+            font-size: 25px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.8px;
+        }
+
+        /* ===== أزرار الهيدر ===== */
+
+        .header-actions {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        /* زر أضف إعلانك */
+
+        .header-actions .add-btn {
+            background: #fff;
+            color: #1e3a5f;
+            padding: 9px 13px;
+            min-height: 38px;
+            border-radius: 13px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.12);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .header-actions .add-btn i {
+            color: #1e3a5f;
+            font-size: 13px;
+        }
+
+        .header-actions .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+        }
+
+        /* ===== زر الدخول ===== */
+
+        .header-actions .login-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.20);
+            color: #fff;
+            min-height: 38px;
+            padding: 8px 11px;
+            border-radius: 13px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .header-actions .login-btn:hover {
+            background: rgba(255,255,255,0.22);
+        }
+
+        .header-actions .login-btn i {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        /* ===== معلومات المستخدم ===== */
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 4px 8px 4px 5px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            max-width: 150px;
+        }
+
+        .user-info:hover {
+            background: rgba(255,255,255,0.20);
+        }
+
+        .user-info .avatar {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: #fff;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .user-info .user-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-info .admin-badge {
+            background: #e74c3c;
+            color: #fff;
+            font-size: 9px;
+            padding: 3px 6px;
+            border-radius: 7px;
+        }
+
+        /* ============================================================
+           ✨ الشعار الفرعي الجديد
+           ============================================================ */
+
+        .sub-brand {
+            margin: 0 2px 18px;
+            padding: 0 3px;
+        }
+
+        .sub-brand p {
+            font-size: 14px;
+            color: #687789;
+            font-weight: 400;
+            line-height: 1.8;
+        }
+
+        .sub-brand p strong {
+            color: #1e3a5f;
+            font-weight: 800;
+        }
+
+        /* ============================================================
+           ✨ تصميم البحث الجديد
+           ============================================================ */
+
+        .search-box {
+            background: #f7f9fc;
+            border: 1px solid #e5eaf0;
+            border-radius: 17px;
+            padding: 5px 5px 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 14px rgba(30,58,95,0.04);
+            transition: all 0.2s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: #9fb3ca;
+            box-shadow: 0 5px 18px rgba(30,58,95,0.08);
+            background: #fff;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 11px 0;
+            font-size: 14px;
+            flex: 1;
+            outline: none;
+            color: #1e2a3a;
+            min-width: 0;
+        }
+
+        .search-box input::placeholder {
+            color: #8b98a8;
+        }
+
+        .search-box .search-btn {
+            background: #1e3a5f;
+            border: none;
+            border-radius: 13px;
+            min-width: 48px;
+            height: 40px;
+            padding: 0 14px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-box .search-btn:hover {
+            background: #294f7c;
+            transform: translateY(-1px);
+        }
+
+        /* ============================================================
+           ✨ التصنيفات الجديدة
+           ============================================================ */
+
+        .browse-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #1e2a3a;
+            margin-bottom: 12px;
+        }
+
+        .browse-label::before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: #1e3a5f;
+            border-radius: 10px;
+        }
+
+        /* حاوية التصنيفات */
+
+        .categories {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 10px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            margin: 0 -4px 23px;
+            padding: 3px 4px 10px;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* بطاقة التصنيف */
+
+        .category-item {
+            position: relative;
+            flex: 0 0 82px;
+            min-width: 82px;
+            height: 82px;
+            padding: 10px 6px;
+            border-radius: 18px;
+            background: #f7f9fc;
+            border: 1px solid #e7ebf0;
+            color: #354455;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            box-shadow: 0 3px 10px rgba(30,58,95,0.03);
+        }
+
+        .category-item:hover {
+            transform: translateY(-3px);
+            border-color: #c8d4e1;
+            box-shadow: 0 7px 18px rgba(30,58,95,0.09);
+            background: #fff;
+        }
+
+        /* أيقونة التصنيف */
+
+        .category-item i {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: #eaf0f7;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            transition: all 0.2s ease;
+        }
+
+        /* اسم التصنيف */
+
+        .category-item::after {
+            content: attr(data-category);
+            font-size: 11px;
+            font-weight: 700;
+            color: #354455;
+        }
+
+        /* إخفاء النص الأصلي مع إبقاء العداد */
+        .category-item {
+            font-size: 0;
+        }
+
+        .category-item .count {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 10px;
+            background: #e3e9f0;
+            color: #536477;
+            font-size: 9px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* التصنيف المحدد */
+
+        .category-item.active {
+            background: linear-gradient(145deg, #1e3a5f, #294f7c);
+            border-color: #1e3a5f;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 9px 20px rgba(30,58,95,0.20);
+        }
+
+        .category-item.active i {
+            background: rgba(255,255,255,0.16);
+            color: #fff;
+        }
+
+        .category-item.active::after {
+            color: #fff;
+        }
+
+        .category-item.active .count {
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+        }
+
+        /* ============================================================
+           ✨ فلتر النتائج بشكل أجمل
+           ============================================================ */
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: #f8faff;
+            padding: 10px 12px;
+            border-radius: 15px;
+            margin-bottom: 18px;
+            border: 1px solid #e8edf3;
+        }
+
+        .filter-bar .filter-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #435365;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .filter-bar .filter-label i {
+            width: 27px;
+            height: 27px;
+            border-radius: 9px;
+            background: #e8eef6;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+
+        .filter-options span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff;
+            padding: 7px 10px;
+            border-radius: 10px;
+            border: 1px solid #e1e7ee;
+            color: #526174;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .filter-options span:hover {
+            background: #1e3a5f;
+            border-color: #1e3a5f;
+            color: #fff;
+        }
+
+        .filter-options span i {
+            color: #1e3a5f;
+            font-size: 10px;
+        }
+
+        .filter-options span:hover i {
+            color: #fff;
+        }
+
+        /* ============================================================
+           ✨ زر تحميل جميع الإعلانات
+           ============================================================ */
+
+        .load-all-btn {
+            background: #1e3a5f;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 18px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .load-all-btn:hover {
+            background: #294f7c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30,58,95,0.2);
+        }
+
+        .load-all-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ============================================================
+           📱 تحسين الهاتف
+           ============================================================ */
+
+        @media (max-width: 420px) {
+
+            .app-card {
+                padding: 14px 10px 18px;
+                border-radius: 24px;
+            }
+
+            .header {
+                margin: -5px -5px 18px;
+                padding: 12px 10px;
+                border-radius: 19px;
+            }
+
+            .logo-icon {
+                width: 39px;
+                height: 39px;
+                border-radius: 12px;
+                font-size: 18px;
+            }
+
+            .logo-text {
+                font-size: 22px;
+            }
+
+            .header-actions {
+                gap: 5px;
+            }
+
+            .header-actions .add-btn {
+                padding: 8px 9px;
+                min-height: 36px;
+                font-size: 10px;
+            }
+
+            .header-actions .add-btn i {
+                font-size: 12px;
+            }
+
+            .header-actions .login-btn {
+                min-height: 36px;
+                padding: 7px 8px;
+                font-size: 10px;
+            }
+
+            .user-info {
+                max-width: 110px;
+            }
+
+            .user-info .user-name {
+                max-width: 55px;
+                font-size: 10px;
+            }
+
+            .user-info .avatar {
+                width: 29px;
+                height: 29px;
+                font-size: 12px;
+            }
+
+            .sub-brand p {
+                font-size: 13px;
+            }
+
+            .category-item {
+                flex-basis: 78px;
+                min-width: 78px;
+                height: 78px;
+            }
+
+            .filter-bar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .filter-options {
+                width: 100%;
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+
+            .filter-options::-webkit-scrollbar {
+                display: none;
+            }
+
+            .filter-options span {
+                font-size: 10px;
+            }
+
+            .load-all-btn {
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+        }
 
         /* ===== أحدث الإعلانات ===== */
         .latest-header {
@@ -701,6 +739,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
         }
 
         .ad-card .ad-avatar {
@@ -767,6 +806,15 @@
             right: 0;
             height: 40px;
             background: linear-gradient(transparent, #fff);
+        }
+
+        .ad-card .ad-text.expanded {
+            max-height: none;
+            overflow: visible;
+        }
+
+        .ad-card .ad-text.expanded::after {
+            display: none;
         }
 
         .ad-card .read-more-btn {
@@ -1790,7 +1838,6 @@
         let isSaving = false;
         let searchQuery = '';
         let currentCategory = 'الكل';
-        let currentTab = 'ads';
 
         // ============================================================
         // ===== Pagination =====
@@ -1822,7 +1869,7 @@
         async function cleanExpiredAds() {
             const now = Date.now();
             let expiredIds = [];
-            
+
             allAds.forEach(ad => {
                 if (ad.expiryDate && now > ad.expiryDate) {
                     expiredIds.push(ad.id);
@@ -1845,17 +1892,17 @@
         function initSlider(sliderId) {
             const slider = document.getElementById(sliderId);
             if (!slider) return;
-            
+
             const wrapper = slider.querySelector('.slides-wrapper');
             const slides = slider.querySelectorAll('.slide');
             const dots = slider.querySelectorAll('.dot');
             const totalSlides = slides.length;
-            
+
             if (totalSlides <= 1) return;
-            
+
             let currentIndex = 0;
             let intervalId = null;
-            
+
             function goToSlide(index) {
                 if (index < 0) index = totalSlides - 1;
                 if (index >= totalSlides) index = 0;
@@ -1865,21 +1912,21 @@
                     dot.classList.toggle('active', i === currentIndex);
                 });
             }
-            
+
             function startAutoSlide() {
                 if (intervalId) clearInterval(intervalId);
                 intervalId = setInterval(() => {
                     goToSlide(currentIndex + 1);
                 }, SLIDER_INTERVAL);
             }
-            
+
             function stopAutoSlide() {
                 if (intervalId) {
                     clearInterval(intervalId);
                     intervalId = null;
                 }
             }
-            
+
             dots.forEach((dot, index) => {
                 dot.addEventListener('click', () => {
                     stopAutoSlide();
@@ -1887,7 +1934,7 @@
                     startAutoSlide();
                 });
             });
-            
+
             slider.addEventListener('mouseenter', stopAutoSlide);
             slider.addEventListener('mouseleave', startAutoSlide);
             startAutoSlide();
@@ -2261,7 +2308,7 @@
             const savedName = localStorage.getItem('sila_userName');
             const savedId = localStorage.getItem('sila_userId');
             const savedAdmin = localStorage.getItem('sila_isAdmin');
-            
+
             if (savedName && savedId) {
                 currentUserName = savedName;
                 currentUserId = savedId;
@@ -2274,7 +2321,7 @@
                 localStorage.setItem('sila_userId', currentUserId);
                 localStorage.setItem('sila_isAdmin', 'false');
             }
-            
+
             updateUI();
             loadAds();
         }
@@ -2283,13 +2330,13 @@
             const letter = currentUserName.charAt(0).toUpperCase();
             document.getElementById('userNameDisplay').textContent = currentUserName;
             document.getElementById('userAvatar').textContent = letter;
-            
+
             const userInfo = document.getElementById('userInfo');
             userInfo.style.display = 'flex';
-            
+
             const loginBtn = document.getElementById('loginBtn');
             loginBtn.style.display = 'none';
-            
+
             const badge = document.getElementById('adminBadge');
             badge.style.display = isAdmin ? 'inline' : 'none';
         }
@@ -2303,9 +2350,12 @@
                 reader.onload = (e) => {
                     const img = new Image();
                     img.onload = () => {
-                        let w = img.width, h = img.height;
-                        if (w > maxWidth) { h = (h * maxWidth) / w; w = maxWidth; }
-                        if (h > maxHeight) { w = (w * maxHeight) / h; h = maxHeight; }
+                        let w = img.width,
+                            h = img.height;
+                        if (w > maxWidth) { h = (h * maxWidth) / w;
+                            w = maxWidth; }
+                        if (h > maxHeight) { w = (w * maxHeight) / h;
+                            h = maxHeight; }
                         const canvas = document.createElement('canvas');
                         canvas.width = w;
                         canvas.height = h;
@@ -2360,7 +2410,7 @@
         document.getElementById('imageInput').onchange = async function() {
             const files = this.files;
             if (!files || files.length === 0) return;
-            
+
             const maxImages = 10;
             if (uploadedImages.length + files.length > maxImages) {
                 showToast(`⚠️ يمكنك إضافة ${maxImages} صور كحد أقصى`, 3000);
@@ -2389,18 +2439,18 @@
             const container = document.getElementById('modalImagesContainer');
             const addBtn = container.querySelector('.add-img-btn');
             container.innerHTML = '';
-            
+
             uploadedImages.forEach((file, index) => {
                 const div = document.createElement('div');
                 div.className = 'img-item';
                 const url = URL.createObjectURL(file);
                 div.innerHTML = `
-                    <img src="${url}" alt="صورة ${index + 1}" />
-                    <button class="remove-img" onclick="removeImage(${index})"><i class="fas fa-times"></i></button>
-                `;
+                        <img src="${url}" alt="صورة ${index + 1}" />
+                        <button class="remove-img" onclick="removeImage(${index})"><i class="fas fa-times"></i></button>
+                    `;
                 container.appendChild(div);
             });
-            
+
             container.appendChild(addBtn);
         }
 
@@ -2479,11 +2529,12 @@
                 updateProgress(20, '⏳ جاري رفع الصور...');
                 const imageUrls = [];
                 for (let i = 0; i < uploadedImages.length; i++) {
-                    updateProgress(20 + (i / uploadedImages.length) * 50, `⏳ جاري رفع الصورة ${i + 1}/${uploadedImages.length}`);
+                    updateProgress(20 + (i / uploadedImages.length) * 50,
+                        `⏳ جاري رفع الصورة ${i + 1}/${uploadedImages.length}`);
                     const url = await uploadToCloudinary(uploadedImages[i]);
                     imageUrls.push(url);
                 }
-                
+
                 updateProgress(70, '⏳ جاري حفظ الإعلان...');
 
                 allAds = allAds.filter(a => a.id !== tempAdId);
@@ -2540,7 +2591,7 @@
                     const userName = ad.userName || 'مستخدم';
                     const text = ad.text || '';
                     return userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           text.toLowerCase().includes(searchQuery.toLowerCase());
+                        text.toLowerCase().includes(searchQuery.toLowerCase());
                 });
             }
             renderAds(sortedAds);
@@ -2549,6 +2600,9 @@
         function searchAds() {
             const query = document.getElementById('searchInput').value.trim();
             searchQuery = query;
+            if (query.length > 0) {
+                showToast(`🔍 نتائج البحث عن: "${query}"`, 1500);
+            }
             applySorting();
         }
 
@@ -2599,11 +2653,11 @@
                 const textLength = ad.text?.length || 0;
                 const isLong = textLength > 200;
                 const textHTML = hasText ? `
-                    <div class="ad-text ${isLong ? 'collapsed' : ''}" id="text-${ad.id}">
-                        ${escapeHtml(ad.text)}
-                    </div>
-                    ${isLong ? `<button class="read-more-btn" onclick="toggleReadMore('${ad.id}')">عرض المزيد</button>` : ''}
-                ` : '';
+                        <div class="ad-text ${isLong ? 'collapsed' : ''}" id="text-${ad.id}">
+                            ${escapeHtml(ad.text)}
+                        </div>
+                        ${isLong ? `<button class="read-more-btn" onclick="toggleReadMore('${ad.id}')">عرض المزيد</button>` : ''}
+                    ` : '';
 
                 // بناء السلايدر
                 let sliderHTML = '';
@@ -2612,26 +2666,26 @@
                     let slidesHTML = '';
                     images.forEach((imgUrl, idx) => {
                         slidesHTML += `
-                            <div class="slide">
-                                <img src="${imgUrl}" alt="صورة ${idx + 1}" onclick="event.stopPropagation(); openLightbox('${imgUrl}', '${userName}', '${timeAgo}')" loading="lazy" />
-                            </div>
-                        `;
+                                <div class="slide">
+                                    <img src="${imgUrl}" alt="صورة ${idx + 1}" onclick="event.stopPropagation(); openLightbox('${imgUrl}', '${userName}', '${timeAgo}')" loading="lazy" />
+                                </div>
+                            `;
                     });
-                    
+
                     let dotsHTML = '';
                     for (let i = 0; i < images.length; i++) {
                         dotsHTML += `<button class="dot${i === 0 ? ' active' : ''}"></button>`;
                     }
-                    
+
                     sliderHTML = `
-                        <div class="ad-slider" id="${sliderId}">
-                            <div class="slides-wrapper">
-                                ${slidesHTML}
+                            <div class="ad-slider" id="${sliderId}">
+                                <div class="slides-wrapper">
+                                    ${slidesHTML}
+                                </div>
+                                <div class="slider-counter">${images.length} صور</div>
+                                <div class="slider-dots">${dotsHTML}</div>
                             </div>
-                            <div class="slider-counter">${images.length} صور</div>
-                            <div class="slider-dots">${dotsHTML}</div>
-                        </div>
-                    `;
+                        `;
                 }
 
                 let commentsHTML = '';
@@ -2641,15 +2695,15 @@
                         const cColor = getAvatarColor(comment.userId);
                         const cTime = getTime(comment.timestamp);
                         commentsHTML += `
-                            <div class="comment-item">
-                                <div class="comment-avatar" style="background:${cColor};">${cUser.charAt(0).toUpperCase()}</div>
-                                <div class="comment-body">
-                                    <div class="comment-user">${cUser}</div>
-                                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                                    <div class="comment-time">${cTime}</div>
+                                <div class="comment-item">
+                                    <div class="comment-avatar" style="background:${cColor};">${cUser.charAt(0).toUpperCase()}</div>
+                                    <div class="comment-body">
+                                        <div class="comment-user">${cUser}</div>
+                                        <div class="comment-text">${escapeHtml(comment.text)}</div>
+                                        <div class="comment-time">${cTime}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
                     });
                 } else {
                     commentsHTML = `<div class="no-comments"><p>لا توجد استفسارات بعد</p></div>`;
@@ -2659,42 +2713,42 @@
                 card.className = 'ad-card';
                 card.id = `ad-${ad.id}`;
                 card.innerHTML = `
-                    <div class="ad-header">
-                        <div class="ad-user" onclick="openProfile('${ad.userId}')">
-                            <div class="ad-avatar" style="background:${avatarColor};">${userName.charAt(0).toUpperCase()}</div>
-                            <div>
-                                <div class="ad-username">
-                                    ${userName} ${isOwner ? '<span class="owner-badge">معلن</span>' : ''}
-                                    ${isAdmin && !isOwner ? `<button class="admin-user-delete-btn" onclick="adminDeleteUser('${ad.userId}', '${userName}')" title="حذف المعلن"><i class="fas fa-user-slash"></i></button>` : ''}
+                        <div class="ad-header">
+                            <div class="ad-user" onclick="openProfile('${ad.userId}')">
+                                <div class="ad-avatar" style="background:${avatarColor};">${userName.charAt(0).toUpperCase()}</div>
+                                <div>
+                                    <div class="ad-username">
+                                        ${userName} ${isOwner ? '<span class="owner-badge">معلن</span>' : ''}
+                                        ${isAdmin && !isOwner ? `<button class="admin-user-delete-btn" onclick="adminDeleteUser('${ad.userId}', '${userName}')" title="حذف المعلن"><i class="fas fa-user-slash"></i></button>` : ''}
+                                    </div>
+                                    <div class="ad-time"><i class="far fa-clock"></i> ${timeAgo}</div>
                                 </div>
-                                <div class="ad-time"><i class="far fa-clock"></i> ${timeAgo}</div>
+                            </div>
+                            <div>
+                                <span class="ad-category-badge">${categoryIcon} ${category}</span>
+                                ${deleteButtonsHTML}
                             </div>
                         </div>
-                        <div>
-                            <span class="ad-category-badge">${categoryIcon} ${category}</span>
-                            ${deleteButtonsHTML}
+                        <div>${textHTML}</div>
+                        ${sliderHTML}
+                        <div class="ad-actions">
+                            <button class="${isLiked ? 'liked' : ''}" onclick="toggleLike('${ad.id}')" id="like-btn-${ad.id}">
+                                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
+                                <span>تفاعل</span>
+                                <span class="action-count" id="like-count-${ad.id}">${ad.likes > 0 ? `(${ad.likes})` : ''}</span>
+                            </button>
+                            <button onclick="toggleComments('${ad.id}')"><i class="far fa-comment"></i> <span>استفسار</span> ${ad.comments && ad.comments.length > 0 ? `<span class="action-count">(${ad.comments.length})</span>` : ''}</button>
+                            <button onclick="shareAd('${ad.id}')"><i class="fas fa-share-alt"></i> <span>مشاركة</span></button>
                         </div>
-                    </div>
-                    <div>${textHTML}</div>
-                    ${sliderHTML}
-                    <div class="ad-actions">
-                        <button class="${isLiked ? 'liked' : ''}" onclick="toggleLike('${ad.id}')" id="like-btn-${ad.id}">
-                            <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
-                            <span>تفاعل</span>
-                            <span class="action-count" id="like-count-${ad.id}">${ad.likes > 0 ? `(${ad.likes})` : ''}</span>
-                        </button>
-                        <button onclick="toggleComments('${ad.id}')"><i class="far fa-comment"></i> <span>استفسار</span> ${ad.comments && ad.comments.length > 0 ? `<span class="action-count">(${ad.comments.length})</span>` : ''}</button>
-                        <button onclick="shareAd('${ad.id}')"><i class="fas fa-share-alt"></i> <span>مشاركة</span></button>
-                    </div>
-                    <div class="comments-section" id="comments-${ad.id}">
-                        <div class="comments-header"><h4>💬 الاستفسارات</h4><span class="comment-count">${ad.comments ? ad.comments.length : 0}</span></div>
-                        <div class="comments-list">${commentsHTML}</div>
-                        <div class="add-comment">
-                            <input type="text" id="commentInput-${ad.id}" placeholder="اسأل عن الإعلان..." />
-                            <button class="send-btn" onclick="addComment('${ad.id}')"><i class="fas fa-paper-plane"></i></button>
+                        <div class="comments-section" id="comments-${ad.id}">
+                            <div class="comments-header"><h4>💬 الاستفسارات</h4><span class="comment-count">${ad.comments ? ad.comments.length : 0}</span></div>
+                            <div class="comments-list">${commentsHTML}</div>
+                            <div class="add-comment">
+                                <input type="text" id="commentInput-${ad.id}" placeholder="اسأل عن الإعلان..." />
+                                <button class="send-btn" onclick="addComment('${ad.id}')"><i class="fas fa-paper-plane"></i></button>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
                 container.appendChild(card);
 
                 // تهيئة السلايدر
@@ -2937,8 +2991,6 @@
             }
             showConfirm('تأكيد الحذف', 'هل أنت متأكد من حذف إعلانك؟', async () => {
                 try {
-                    allAds = allAds.filter(a => a.id !== adId);
-                    await saveAdsToFirebase(allAds);
                     const card = document.getElementById(`ad-${adId}`);
                     if (card) {
                         card.style.transition = '0.3s';
@@ -2946,11 +2998,13 @@
                         card.style.transform = 'scale(0.95)';
                         setTimeout(() => {
                             card.remove();
-                            updateCategoryCounts();
-                            updateStats();
-                            if (allAds.length === 0) document.getElementById('emptyState').style.display = 'block';
                         }, 300);
                     }
+                    allAds = allAds.filter(a => a.id !== adId);
+                    await saveAdsToFirebase(allAds);
+                    updateCategoryCounts();
+                    updateStats();
+                    if (allAds.length === 0) document.getElementById('emptyState').style.display = 'block';
                     showToast('🗑️ تم حذف الإعلان', 2000);
                 } catch (error) { showToast('⚠️ فشل الحذف', 3000); }
             });
@@ -3011,7 +3065,7 @@
         async function initApp() {
             renderCategories();
             autoLogin();
-            
+
             if (database) {
                 try {
                     await loadAds(false);
@@ -3025,7 +3079,7 @@
                 showToast('⚠️ لا يوجد اتصال بالسحابة', 3000);
                 document.getElementById('emptyState').style.display = 'block';
             }
-            
+
             checkConnection();
             setupInfiniteScroll();
             scheduleCleanup();
