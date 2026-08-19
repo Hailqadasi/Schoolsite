@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -35,343 +35,586 @@
         }
 
         /* ===== الهيدر ===== */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
+        ./* ============================================================
+   ✨ تصميم الهيدر الجديد - صلة
+   ============================================================ */
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 14px;
+    margin: -8px -8px 20px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #1e3a5f 0%, #294f7c 100%);
+    box-shadow: 0 10px 25px rgba(30, 58, 95, 0.18);
+    overflow: hidden;
+}
 
-        .logo-icon {
-            font-size: 28px;
-            color: #1e3a5f;
-        }
+/* تأثير زخرفي */
+.header::before {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    top: -65px;
+    left: -35px;
+}
 
-        .logo-text {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1e3a5f;
-            letter-spacing: -0.5px;
-        }
+.header::after {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    bottom: -45px;
+    right: 30%;
+}
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+/* ===== الشعار ===== */
 
-        .header-actions .add-btn {
-            background: #eef2f7;
-            padding: 8px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #1e3a5f;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: 0.15s;
-            border: 1px solid transparent;
-        }
+.logo-area {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
 
-        .header-actions .add-btn:hover {
-            background: #1e3a5f;
-            color: #fff;
-        }
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+}
 
-        .header-actions .add-btn:hover i {
-            color: #fff;
-        }
+.logo-text {
+    font-size: 25px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.8px;
+}
 
-        .header-actions .add-btn i {
-            font-size: 13px;
-            color: #1e3a5f;
-        }
+/* ===== أزرار الهيدر ===== */
 
-        .header-actions .login-btn {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e3a5f;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            padding: 6px 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+.header-actions {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
 
-        .header-actions .login-btn:hover {
-            color: #2c5a8c;
-        }
+/* زر أضف إعلانك */
 
-        .header-actions .login-btn i {
-            font-size: 18px;
-        }
+.header-actions .add-btn {
+    background: #fff;
+    color: #1e3a5f;
+    padding: 9px 13px;
+    min-height: 38px;
+    border-radius: 13px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.12);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
 
-        /* ===== اسم المستخدم ===== */
-        .user-info {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            background: #f0f4f9;
-            padding: 6px 14px 6px 8px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+.header-actions .add-btn i {
+    color: #1e3a5f;
+    font-size: 13px;
+}
 
-        .user-info:hover {
-            background: #e4eaf2;
-        }
+.header-actions .add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+}
 
-        .user-info .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #1e3a5f;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-        }
+/* ===== زر الدخول ===== */
 
-        .user-info .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e2a3a;
-        }
+.header-actions .login-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: #fff;
+    min-height: 38px;
+    padding: 8px 11px;
+    border-radius: 13px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
 
-        .user-info .admin-badge {
-            background: #e74c3c;
-            color: #fff;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
+.header-actions .login-btn:hover {
+    background: rgba(255,255,255,0.22);
+}
 
-        /* ===== الشعار الفرعي ===== */
-        .sub-brand {
-            margin-bottom: 20px;
-        }
+.header-actions .login-btn i {
+    color: #fff;
+    font-size: 16px;
+}
 
-        .sub-brand p {
-            font-size: 15px;
-            color: #2c3e50;
-            font-weight: 400;
-            line-height: 1.6;
-        }
+/* ===== معلومات المستخدم ===== */
 
-        .sub-brand p strong {
-            font-weight: 700;
-            color: #1e3a5f;
-        }
+.user-info {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 4px 8px 4px 5px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    max-width: 150px;
+}
 
-        /* ===== مربع البحث ===== */
-        .search-box {
-            background: #f0f4f9;
-            border-radius: 60px;
-            padding: 4px 4px 4px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            border: 1px solid #e9edf2;
-        }
+.user-info:hover {
+    background: rgba(255,255,255,0.20);
+}
 
-        .search-box input {
-            border: none;
-            background: transparent;
-            padding: 12px 0;
-            font-size: 14px;
-            flex: 1;
-            outline: none;
-            color: #1e2a3a;
-        }
+.user-info .avatar {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #fff;
+    color: #1e3a5f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+}
 
-        .search-box input::placeholder {
-            color: #7e8c9e;
-            font-weight: 400;
-        }
+.user-info .user-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-        .search-box .search-btn {
-            background: #1e3a5f;
-            border: none;
-            border-radius: 60px;
-            padding: 10px 20px;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: 0.15s;
-        }
+.user-info .admin-badge {
+    background: #e74c3c;
+    color: #fff;
+    font-size: 9px;
+    padding: 3px 6px;
+    border-radius: 7px;
+}
 
-        .search-box .search-btn:hover {
-            background: #2c5a8c;
-        }
+/* ============================================================
+   ✨ الشعار الفرعي الجديد
+   ============================================================ */
 
-        /* ===== التصنيفات ===== */
-        .browse-label {
-            font-size: 15px;
-            font-weight: 500;
-            color: #1e2a3a;
-            margin-bottom: 10px;
-        }
+.sub-brand {
+    margin: 0 2px 18px;
+    padding: 0 3px;
+}
 
-        .categories {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
+.sub-brand p {
+    font-size: 14px;
+    color: #687789;
+    font-weight: 400;
+    line-height: 1.8;
+}
 
-        .category-item {
-            background: #f0f4f9;
-            padding: 10px 16px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #1e2a3a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid transparent;
-            flex: 1;
-            justify-content: center;
-            min-width: 80px;
-        }
+.sub-brand p strong {
+    color: #1e3a5f;
+    font-weight: 800;
+}
 
-        .category-item:hover {
-            background: #e4eaf2;
-        }
+/* ============================================================
+   ✨ تصميم البحث الجديد
+   ============================================================ */
 
-        .category-item.active {
-            background: #1e3a5f;
-            color: #fff;
-        }
+.search-box {
+    background: #f7f9fc;
+    border: 1px solid #e5eaf0;
+    border-radius: 17px;
+    padding: 5px 5px 5px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(30,58,95,0.04);
+    transition: all 0.2s ease;
+}
 
-        .category-item.active i {
-            color: #fff;
-        }
+.search-box:focus-within {
+    border-color: #9fb3ca;
+    box-shadow: 0 5px 18px rgba(30,58,95,0.08);
+    background: #fff;
+}
 
-        .category-item i {
-            font-size: 16px;
-            color: #1e3a5f;
-        }
+.search-box input {
+    border: none;
+    background: transparent;
+    padding: 11px 0;
+    font-size: 14px;
+    flex: 1;
+    outline: none;
+    color: #1e2a3a;
+    min-width: 0;
+}
 
-        .category-item .count {
-            background: rgba(0,0,0,0.1);
-            padding: 0 8px;
-            border-radius: 12px;
-            font-size: 11px;
-        }
+.search-box input::placeholder {
+    color: #8b98a8;
+}
 
-        .category-item.active .count {
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-        }
+.search-box .search-btn {
+    background: #1e3a5f;
+    border: none;
+    border-radius: 13px;
+    min-width: 48px;
+    height: 40px;
+    padding: 0 14px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-        /* ===== فلتر النتائج ===== */
-        .filter-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8faff;
-            padding: 10px 16px;
-            border-radius: 40px;
-            margin-bottom: 20px;
-            border: 1px solid #e9edf2;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+.search-box .search-btn:hover {
+    background: #294f7c;
+    transform: translateY(-1px);
+}
 
-        .filter-bar .filter-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e2a3a;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+/* ============================================================
+   ✨ التصنيفات الجديدة
+   ============================================================ */
 
-        .filter-bar .filter-label i {
-            color: #1e3a5f;
-            font-size: 14px;
-        }
+.browse-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e2a3a;
+    margin-bottom: 12px;
+}
 
-        .filter-options {
-            display: flex;
-            gap: 8px;
-            font-size: 13px;
-            color: #2c3e50;
-            font-weight: 500;
-            flex-wrap: wrap;
-        }
+.browse-label::before {
+    content: "";
+    width: 4px;
+    height: 20px;
+    background: #1e3a5f;
+    border-radius: 10px;
+}
 
-        .filter-options span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #ffffff;
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid #dce3ec;
-            font-size: 12px;
-            cursor: pointer;
-            transition: 0.15s;
-        }
+/* حاوية التصنيفات */
 
-        .filter-options span:hover {
-            background: #eef2f7;
-        }
+.categories {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0 -4px 23px;
+    padding: 3px 4px 10px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
 
-        .filter-options span i {
-            font-size: 11px;
-            color: #6c7a8a;
-        }
+.categories::-webkit-scrollbar {
+    display: none;
+}
 
-        /* ===== زر تحميل الكل ===== */
-        .load-all-btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 12px;
-            background: #1e3a5f;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 16px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+/* بطاقة التصنيف */
 
-        .load-all-btn:hover {
-            background: #2c5a8c;
-            transform: scale(1.01);
-        }
+.category-item {
+    position: relative;
+    flex: 0 0 82px;
+    min-width: 82px;
+    height: 82px;
+    padding: 10px 6px;
+    border-radius: 18px;
+    background: #f7f9fc;
+    border: 1px solid #e7ebf0;
+    color: #354455;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    box-shadow: 0 3px 10px rgba(30,58,95,0.03);
+}
 
-        .load-all-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+.category-item:hover {
+    transform: translateY(-3px);
+    border-color: #c8d4e1;
+    box-shadow: 0 7px 18px rgba(30,58,95,0.09);
+    background: #fff;
+}
+
+/* أيقونة التصنيف */
+
+.category-item i {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: #eaf0f7;
+    color: #1e3a5f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    transition: all 0.2s ease;
+}
+
+/* اسم التصنيف */
+
+.category-item::after {
+    content: attr(data-category);
+    font-size: 11px;
+    font-weight: 700;
+    color: #354455;
+}
+
+/* إخفاء النص الأصلي مع إبقاء العداد */
+.category-item {
+    font-size: 0;
+}
+
+.category-item .count {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: #e3e9f0;
+    color: #536477;
+    font-size: 9px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* التصنيف المحدد */
+
+.category-item.active {
+    background: linear-gradient(145deg, #1e3a5f, #294f7c);
+    border-color: #1e3a5f;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 9px 20px rgba(30,58,95,0.20);
+}
+
+.category-item.active i {
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+}
+
+.category-item.active::after {
+    color: #fff;
+}
+
+.category-item.active .count {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+}
+
+/* ============================================================
+   ✨ فلتر النتائج بشكل أجمل
+   ============================================================ */
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: #f8faff;
+    padding: 10px 12px;
+    border-radius: 15px;
+    margin-bottom: 18px;
+    border: 1px solid #e8edf3;
+}
+
+.filter-bar .filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #435365;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.filter-bar .filter-label i {
+    width: 27px;
+    height: 27px;
+    border-radius: 9px;
+    background: #e8eef6;
+    color: #1e3a5f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.filter-options {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+
+.filter-options span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #fff;
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: 1px solid #e1e7ee;
+    color: #526174;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.filter-options span:hover {
+    background: #1e3a5f;
+    border-color: #1e3a5f;
+    color: #fff;
+}
+
+.filter-options span i {
+    color: #1e3a5f;
+    font-size: 10px;
+}
+
+.filter-options span:hover i {
+    color: #fff;
+}
+
+/* ============================================================
+   📱 تحسين الهاتف
+   ============================================================ */
+
+@media (max-width: 420px) {
+
+    .app-card {
+        padding: 14px 10px 18px;
+        border-radius: 24px;
+    }
+
+    .header {
+        margin: -5px -5px 18px;
+        padding: 12px 10px;
+        border-radius: 19px;
+    }
+
+    .logo-icon {
+        width: 39px;
+        height: 39px;
+        border-radius: 12px;
+        font-size: 18px;
+    }
+
+    .logo-text {
+        font-size: 22px;
+    }
+
+    .header-actions {
+        gap: 5px;
+    }
+
+    .header-actions .add-btn {
+        padding: 8px 9px;
+        min-height: 36px;
+        font-size: 10px;
+    }
+
+    .header-actions .add-btn i {
+        font-size: 12px;
+    }
+
+    .header-actions .login-btn {
+        min-height: 36px;
+        padding: 7px 8px;
+        font-size: 10px;
+    }
+
+    .user-info {
+        max-width: 110px;
+    }
+
+    .user-info .user-name {
+        max-width: 55px;
+        font-size: 10px;
+    }
+
+    .user-info .avatar {
+        width: 29px;
+        height: 29px;
+        font-size: 12px;
+    }
+
+    .sub-brand p {
+        font-size: 13px;
+    }
+
+    .category-item {
+        flex-basis: 78px;
+        min-width: 78px;
+        height: 78px;
+    }
+
+    .filter-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .filter-options {
+        width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .filter-options::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-options span {
+        font-size: 10px;
+    }
+}
 
         /* ===== أحدث الإعلانات ===== */
         .latest-header {
@@ -1341,8 +1584,7 @@
                 <span class="logo-text">صلة</span>
             </div>
             <div class="header-actions">
-                <!-- زر الإضافة يظهر فقط للمشرف -->
-                <span class="add-btn" id="addAdBtn" onclick="openAddModal()" style="display: none;">
+                <span class="add-btn" onclick="openAddModal()">
                     <i class="fas fa-plus-circle"></i> أضف إعلانك
                 </span>
                 <div class="user-info" id="userInfo" onclick="changeUserName()">
@@ -1970,84 +2212,48 @@
         // ===== تسجيل الدخول =====
         // ============================================================
         function loginUser() {
-            // نطلب من المستخدم إدخال اسمه
             const name = prompt('👤 أدخل اسمك:', currentUserName);
-            if (!name || !name.trim() || name.trim().length < 2) {
-                showToast('⚠️ الرجاء إدخال اسم صحيح (حرفين على الأقل)', 3000);
-                return;
-            }
-            
-            const newName = name.trim();
-            const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
-            const isAdminName = adminNames.includes(newName);
-            
-            // إذا كان الاسم من أسماء المشرفين، نطلب كلمة المرور
-            if (isAdminName) {
-                const password = prompt('🔑 أدخل كلمة مرور المشرف:');
-                if (!password || password.trim() !== 'admin123') {
-                    showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
-                    return;
+            if (name && name.trim() && name.trim().length >= 2) {
+                const newName = name.trim();
+                const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
+                const isAdminName = adminNames.includes(newName);
+                if (isAdminName) {
+                    const password = prompt('🔑 أدخل كلمة مرور المشرف:');
+                    if (!password || password.trim() !== 'admin123') {
+                        showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
+                        return;
+                    }
                 }
-                // كلمة المرور صحيحة → يصبح مشرفاً
-                isAdmin = true;
-            } else {
-                // مستخدم عادي
-                isAdmin = false;
-            }
-            
-            // تحديث بيانات المستخدم
-            currentUserName = newName;
-            currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-            
-            // حفظ في التخزين المحلي
-            localStorage.setItem('sila_userName', currentUserName);
-            localStorage.setItem('sila_userId', currentUserId);
-            localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
-            
-            // تحديث الواجهة
-            updateUI();
-            
-            // رسالة ترحيب
-            if (isAdmin) {
-                showToast('🛡️ مرحباً أيها المشرف! يمكنك الآن نشر الإعلانات', 3000);
-            } else {
-                showToast(`👋 مرحباً ${currentUserName}`, 2500);
+                isAdmin = isAdminName;
+                currentUserName = newName;
+                currentUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+                localStorage.setItem('sila_userName', currentUserName);
+                localStorage.setItem('sila_userId', currentUserId);
+                localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
+                updateUI();
+                showToast(isAdmin ? '🛡️ مرحباً أيها المشرف!' : `👋 مرحباً ${currentUserName}`, 2500);
             }
         }
 
         function changeUserName() {
             const newName = prompt('✏️ أدخل اسمك الجديد:', currentUserName);
-            if (!newName || !newName.trim() || newName.trim().length < 2) {
-                showToast('⚠️ الرجاء إدخال اسم صحيح (حرفين على الأقل)', 3000);
-                return;
-            }
-            
-            const name = newName.trim();
-            const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
-            const isAdminName = adminNames.includes(name);
-            
-            // إذا حاول تغيير اسمه إلى اسم مشرف، نطلب كلمة المرور
-            if (isAdminName) {
-                const password = prompt('🔑 أدخل كلمة مرور المشرف:');
-                if (!password || password.trim() !== 'admin123') {
-                    showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
-                    return;
+            if (newName && newName.trim() && newName.trim().length >= 2) {
+                const name = newName.trim();
+                const adminNames = ['admin', 'مدير', 'مشرف', 'Admin', 'ADMIN'];
+                const isAdminName = adminNames.includes(name);
+                if (isAdminName) {
+                    const password = prompt('🔑 أدخل كلمة مرور المشرف:');
+                    if (!password || password.trim() !== 'admin123') {
+                        showToast('⚠️ كلمة مرور المشرف غير صحيحة', 3000);
+                        return;
+                    }
                 }
-                isAdmin = true;
-            } else if (isAdmin && !isAdminName) {
-                // إذا كان مشرفاً وغير اسمه إلى اسم عادي، يفقد صلاحية المشرف
-                isAdmin = false;
-            }
-            
-            currentUserName = name;
-            localStorage.setItem('sila_userName', currentUserName);
-            localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
-            updateUI();
-            
-            if (isAdmin) {
-                showToast('🛡️ تم الترقية إلى مشرف!', 2500);
-            } else {
-                showToast(`✅ تم تغيير الاسم إلى ${currentUserName}`, 2000);
+                isAdmin = isAdminName;
+                currentUserName = name;
+                localStorage.setItem('sila_userName', currentUserName);
+                localStorage.setItem('sila_isAdmin', isAdmin ? 'true' : 'false');
+                updateUI();
+                showToast(isAdmin ? '🛡️ تم الترقية إلى مشرف!' : `✅ تم تغيير الاسم إلى ${currentUserName}`, 2000);
             }
         }
 
@@ -2073,9 +2279,6 @@
             loadAds();
         }
 
-        // ============================================================
-        // ===== تحديث واجهة المستخدم =====
-        // ============================================================
         function updateUI() {
             const letter = currentUserName.charAt(0).toUpperCase();
             document.getElementById('userNameDisplay').textContent = currentUserName;
@@ -2089,10 +2292,6 @@
             
             const badge = document.getElementById('adminBadge');
             badge.style.display = isAdmin ? 'inline' : 'none';
-            
-            // إظهار أو إخفاء زر الإضافة حسب صلاحية المشرف
-            const addBtn = document.getElementById('addAdBtn');
-            addBtn.style.display = isAdmin ? 'flex' : 'none';
         }
 
         // ============================================================
@@ -2214,9 +2413,8 @@
         // ===== نافذة الإضافة =====
         // ============================================================
         function openAddModal() {
-            // التحقق من أن المستخدم مشرف
-            if (!isAdmin) {
-                showToast('⛔ فقط المشرف يمكنه نشر الإعلانات', 3000);
+            if (!currentUserId) {
+                loginUser();
                 return;
             }
             document.getElementById('addModal').classList.add('active');
