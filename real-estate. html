@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عقارات - سوقني</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-header">
+        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+        <h2>🏠 عقارات</h2>
+        <button class="add-ad-btn" onclick="toggleForm()">➕ إضافة إعلان</button>
+    </div>
+
+    <div id="addFormContainer" class="form-container hidden">
+        <h2>📝 إضافة إعلان جديد - عقارات</h2>
+        <form id="addAdForm">
+            <div class="form-group">
+                <label>العنوان</label>
+                <input type="text" id="adTitle" required placeholder="مثال: فيلا للبيع">
+            </div>
+            <div class="form-group">
+                <label>الوصف</label>
+                <textarea id="adDesc" required placeholder="تفاصيل الإعلان..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>السعر (ريال)</label>
+                <input type="number" id="adPrice" required placeholder="مثال: 500000">
+            </div>
+            <div class="form-group">
+                <label>صورة الإعلان</label>
+                <input type="file" id="adImage" accept="image/*">
+            </div>
+            <button type="submit" class="submit-btn">📤 نشر الإعلان</button>
+        </form>
+    </div>
+
+    <div class="ads-container">
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400" alt="عقار">
+            <div class="ad-content">
+                <h3>فيلا للبيع - حي النخيل</h3>
+                <p class="desc">مساحة 400م، 5 غرف، 3 حمامات</p>
+                <span class="price">950,000 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400" alt="عقار">
+            <div class="ad-content">
+                <h3>شقة للإيجار - وسط المدينة</h3>
+                <p class="desc">3 غرف، صالة، مؤثثة</p>
+                <span class="price">35,000 ريال/سنوي</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400" alt="عقار">
+            <div class="ad-content">
+                <h3>أرض سكنية - مخطط 5</h3>
+                <p class="desc">مساحة 600م، شارع 20م</p>
+                <span class="price">320,000 ريال</span>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>© 2026 سوقني - جميع الحقوق محفوظة</p></footer>
+
+    <script src="script.js"></script>
+    <script>
+        const section = 'عقارات';
+        function toggleForm() {
+            document.getElementById('addFormContainer').classList.toggle('hidden');
+        }
+        handleAddAd(section);
+    </script>
+</body>
+</html>
