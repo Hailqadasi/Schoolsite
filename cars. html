@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سيارات - سوقني</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-header">
+        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+        <h2>🚗 سيارات</h2>
+        <button class="add-ad-btn" onclick="toggleForm()">➕ إضافة إعلان</button>
+    </div>
+
+    <!-- نموذج الإضافة -->
+    <div id="addFormContainer" class="form-container hidden">
+        <h2>📝 إضافة إعلان جديد - سيارات</h2>
+        <form id="addAdForm">
+            <div class="form-group">
+                <label>العنوان</label>
+                <input type="text" id="adTitle" required placeholder="مثال: تويوتا كامري 2022">
+            </div>
+            <div class="form-group">
+                <label>الوصف</label>
+                <textarea id="adDesc" required placeholder="تفاصيل الإعلان..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>السعر (ريال)</label>
+                <input type="number" id="adPrice" required placeholder="مثال: 85000">
+            </div>
+            <div class="form-group">
+                <label>صورة الإعلان</label>
+                <input type="file" id="adImage" accept="image/*">
+            </div>
+            <button type="submit" class="submit-btn">📤 نشر الإعلان</button>
+        </form>
+    </div>
+
+    <!-- الإعلانات -->
+    <div class="ads-container">
+        <!-- إعلانات وهمية مع صور -->
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1550355291-bbee04a7a347?w=400" alt="سيارة">
+            <div class="ad-content">
+                <h3>تويوتا كامري 2022</h3>
+                <p class="desc">فل كامل، قير أوتوماتيك، 40 ألف كم</p>
+                <span class="price">85,000 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=400" alt="سيارة">
+            <div class="ad-content">
+                <h3>هيونداي أكسنت 2020</h3>
+                <p class="desc">ممتازة، صيانة وكالة</p>
+                <span class="price">32,000 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400" alt="سيارة">
+            <div class="ad-content">
+                <h3>شفروليه تاهو 2019</h3>
+                <p class="desc">دفع رباعي، 7 ركاب، نظيف</p>
+                <span class="price">110,000 ريال</span>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>© 2026 سوقني - جميع الحقوق محفوظة</p></footer>
+
+    <script src="script.js"></script>
+    <script>
+        // تعريف القسم
+        const section = 'سيارات';
+        
+        // عرض/إخفاء النموذج
+        function toggleForm() {
+            const form = document.getElementById('addFormContainer');
+            form.classList.toggle('hidden');
+        }
+
+        // تفعيل النموذج
+        handleAddAd(section);
+    </script>
+</body>
+</html>
