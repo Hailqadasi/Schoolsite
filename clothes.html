@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ملابس - سوقني</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-header">
+        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+        <h2>👕 ملابس</h2>
+        <button class="add-ad-btn" onclick="toggleForm()">➕ إضافة إعلان</button>
+    </div>
+
+    <div id="addFormContainer" class="form-container hidden">
+        <h2>📝 إضافة إعلان جديد - ملابس</h2>
+        <form id="addAdForm">
+            <div class="form-group">
+                <label>العنوان</label>
+                <input type="text" id="adTitle" required placeholder="مثال: فستان سهرة فخم">
+            </div>
+            <div class="form-group">
+                <label>الوصف</label>
+                <textarea id="adDesc" required placeholder="تفاصيل الإعلان..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>السعر (ريال)</label>
+                <input type="number" id="adPrice" required placeholder="مثال: 250">
+            </div>
+            <div class="form-group">
+                <label>صورة الإعلان</label>
+                <input type="file" id="adImage" accept="image/*">
+            </div>
+            <button type="submit" class="submit-btn">📤 نشر الإعلان</button>
+        </form>
+    </div>
+
+    <div class="ads-container">
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=400" alt="ملابس">
+            <div class="ad-content">
+                <h3>فستان سهرة فخم</h3>
+                <p class="desc">مقاس L، لون أسود، جديد بالكرتون</p>
+                <span class="price">350 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400" alt="ملابس">
+            <div class="ad-content">
+                <h3>جاكيت جلد رجالي</h3>
+                <p class="desc">مقاس XL، لون بني، استخدام خفيف</p>
+                <span class="price">280 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=400" alt="ملابس">
+            <div class="ad-content">
+                <h3>طقم رياضي ماركة</h3>
+                <p class="desc">مقاس M، لون رمادي، جديد</p>
+                <span class="price">180 ريال</span>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>© 2026 سوقني - جميع الحقوق محفوظة</p></footer>
+
+    <script src="script.js"></script>
+    <script>
+        const section = 'ملابس';
+        function toggleForm() {
+            document.getElementById('addFormContainer').classList.toggle('hidden');
+        }
+        handleAddAd(section);
+    </script>
+</body>
+</html>
