@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواد بناء - سوقني</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-header">
+        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+        <h2>🧱 مواد بناء</h2>
+        <button class="add-ad-btn" onclick="toggleForm()">➕ إضافة إعلان</button>
+    </div>
+
+    <div id="addFormContainer" class="form-container hidden">
+        <h2>📝 إضافة إعلان جديد - مواد بناء</h2>
+        <form id="addAdForm">
+            <div class="form-group">
+                <label>العنوان</label>
+                <input type="text" id="adTitle" required placeholder="مثال: أسمنت 50 كيس">
+            </div>
+            <div class="form-group">
+                <label>الوصف</label>
+                <textarea id="adDesc" required placeholder="تفاصيل الإعلان..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>السعر (ريال)</label>
+                <input type="number" id="adPrice" required placeholder="مثال: 1500">
+            </div>
+            <div class="form-group">
+                <label>صورة الإعلان</label>
+                <input type="file" id="adImage" accept="image/*">
+            </div>
+            <button type="submit" class="submit-btn">📤 نشر الإعلان</button>
+        </form>
+    </div>
+
+    <div class="ads-container">
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400" alt="بناء">
+            <div class="ad-content">
+                <h3>أسمنت بورتلاندي - 50 كيس</h3>
+                <p class="desc">جودة عالية، كيس 50 كيلو</p>
+                <span class="price">1,800 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400" alt="بناء">
+            <div class="ad-content">
+                <h3>حديد تسليح - أقطار متنوعة</h3>
+                <p class="desc">مقاسات 8-32 مم، سعودي المنشأ</p>
+                <span class="price">3,200 ريال/طن</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=400" alt="بناء">
+            <div class="ad-content">
+                <h3>بلاط سيراميك - درجة أولى</h3>
+                <p class="desc">مقاس 60×60، ألوان متنوعة</p>
+                <span class="price">45 ريال/م²</span>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>© 2026 سوقني - جميع الحقوق محفوظة</p></footer>
+
+    <script src="script.js"></script>
+    <script>
+        const section = 'مواد بناء';
+        function toggleForm() {
+            document.getElementById('addFormContainer').classList.toggle('hidden');
+        }
+        handleAddAd(section);
+    </script>
+</body>
+</html>
