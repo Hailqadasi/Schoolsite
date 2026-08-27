@@ -1,0 +1,77 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منتجات - سوقني</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-header">
+        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+        <h2>📦 منتجات عامة</h2>
+        <button class="add-ad-btn" onclick="toggleForm()">➕ إضافة إعلان</button>
+    </div>
+
+    <div id="addFormContainer" class="form-container hidden">
+        <h2>📝 إضافة إعلان جديد - منتجات</h2>
+        <form id="addAdForm">
+            <div class="form-group">
+                <label>العنوان</label>
+                <input type="text" id="adTitle" required placeholder="مثال: ساعة ذكية">
+            </div>
+            <div class="form-group">
+                <label>الوصف</label>
+                <textarea id="adDesc" required placeholder="تفاصيل الإعلان..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>السعر (ريال)</label>
+                <input type="number" id="adPrice" required placeholder="مثال: 500">
+            </div>
+            <div class="form-group">
+                <label>صورة الإعلان</label>
+                <input type="file" id="adImage" accept="image/*">
+            </div>
+            <button type="submit" class="submit-btn">📤 نشر الإعلان</button>
+        </form>
+    </div>
+
+    <div class="ads-container">
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400" alt="منتج">
+            <div class="ad-content">
+                <h3>ساعة أبل الذكية</h3>
+                <p class="desc">الإصدار 8، بحالة ممتازة</p>
+                <span class="price">1,200 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" alt="منتج">
+            <div class="ad-content">
+                <h3>سماعة لاسلكية</h3>
+                <p class="desc">عزل ضوضاء، شحن سريع</p>
+                <span class="price">350 ريال</span>
+            </div>
+        </div>
+        <div class="ad-item">
+            <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" alt="منتج">
+            <div class="ad-content">
+                <h3>نظارة شمسية ماركة</h3>
+                <p class="desc">أصلية، مع علبة</p>
+                <span class="price">450 ريال</span>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>© 2026 سوقني - جميع الحقوق محفوظة</p></footer>
+
+    <script src="script.js"></script>
+    <script>
+        const section = 'منتجات';
+        function toggleForm() {
+            document.getElementById('addFormContainer').classList.toggle('hidden');
+        }
+        handleAddAd(section);
+    </script>
+</body>
+</html>
