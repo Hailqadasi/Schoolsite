@@ -144,48 +144,46 @@
         .food { background: linear-gradient(135deg, #fa709a, #fee140); }
         .construction { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
 
-        /* ===== صور الأقسام ===== */
+        /* ===== صور الأقسام - رأسية (عمودية) ===== */
         .section-images {
             display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 15px;
-            padding: 20px 5px;
-            margin-top: 10px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
+            flex-direction: column;
+            gap: 25px;
+            padding: 25px 10px;
+            margin-top: 15px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .section-img-item {
-            flex: 0 0 auto;
-            width: 220px;
-            border-radius: 15px;
+            width: 100%;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
             transition: 0.3s;
             background: white;
         }
 
         .section-img-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.2);
         }
 
         .section-img-item img {
             width: 100%;
-            height: 150px;
+            height: 300px;  /* ضعف الحجم السابق (كان 150px) */
             object-fit: cover;
             display: block;
         }
 
         .section-img-item .img-label {
             text-align: center;
-            padding: 8px;
+            padding: 12px;
             font-weight: bold;
             color: #1a2a6c;
             background: white;
-            font-size: 14px;
+            font-size: 20px;  /* تكبير النص */
         }
 
         /* ===== FOOTER ===== */
@@ -225,11 +223,11 @@
             .card .label {
                 font-size: 11px;
             }
-            .section-img-item {
-                width: 160px;
-            }
             .section-img-item img {
-                height: 110px;
+                height: 220px;  /* ضعف الحجم في الجوال */
+            }
+            .section-img-item .img-label {
+                font-size: 17px;
             }
         }
 
@@ -245,11 +243,11 @@
             .card .label {
                 font-size: 10px;
             }
-            .section-img-item {
-                width: 130px;
-            }
             .section-img-item img {
-                height: 90px;
+                height: 180px;  /* ضعف الحجم في الجوال الصغير */
+            }
+            .section-img-item .img-label {
+                font-size: 15px;
             }
         }
     </style>
@@ -296,31 +294,31 @@
             </a>
         </div>
 
-        <!-- ===== صور الأقسام ===== -->
+        <!-- ===== صور الأقسام (رأسية - عمودية) ===== -->
         <div class="section-images">
             <div class="section-img-item">
-                <img src="https://images.unsplash.com/photo-1550355291-bbee04a7a347?w=400" alt="سيارات">
-                <div class="img-label">🚗 سيارات</div>
+                <img src="https://images.unsplash.com/photo-1550355291-bbee04a7a347?w=800&h=400&fit=crop" alt="سيارات">
+                <div class="img-label">🚗 سيارات - اكتشف أحدث العروض</div>
             </div>
             <div class="section-img-item">
-                <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=400" alt="ملابس">
-                <div class="img-label">👕 ملابس</div>
+                <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=800&h=400&fit=crop" alt="ملابس">
+                <div class="img-label">👕 ملابس - أجدد الماركات</div>
             </div>
             <div class="section-img-item">
-                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400" alt="منتجات">
-                <div class="img-label">📦 منتجات</div>
+                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&h=400&fit=crop" alt="منتجات">
+                <div class="img-label">📦 منتجات - كل ما تحتاجه</div>
             </div>
             <div class="section-img-item">
-                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400" alt="عقارات">
-                <div class="img-label">🏠 عقارات</div>
+                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=400&fit=crop" alt="عقارات">
+                <div class="img-label">🏠 عقارات - منازل ومكاتب للبيع والإيجار</div>
             </div>
             <div class="section-img-item">
-                <img src="https://images.unsplash.com/photo-1587049352851-8d4e8913398d?w=400" alt="مواد غذائية">
-                <div class="img-label">🍎 مواد غذائية</div>
+                <img src="https://images.unsplash.com/photo-1587049352851-8d4e8913398d?w=800&h=400&fit=crop" alt="مواد غذائية">
+                <div class="img-label">🍎 مواد غذائية - طازج وبجودة عالية</div>
             </div>
             <div class="section-img-item">
-                <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400" alt="مواد بناء">
-                <div class="img-label">🧱 مواد بناء</div>
+                <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=400&fit=crop" alt="مواد بناء">
+                <div class="img-label">🧱 مواد بناء - كل ما يلزم للمقاولات</div>
             </div>
         </div>
     </section>
