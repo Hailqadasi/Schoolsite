@@ -73,8 +73,8 @@ button {
 <script>
 
 /* ========== Supabase ========== */
-const SUPABASE_URL = "https://pbqkluiodqsmdtuoomas.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBicWtsdWlvZHFzbWR0dW9vbWFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1NTQxNDcsImV4cCI6MjEwNTEzMDE0N30.PS-Pz1M8s7gUGcrU3l2ucGjRR64vZksHaFWLWrmvFSk";
+const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -143,12 +143,13 @@ async function activate(){
 
   // عرض رسالة نجاح
   document.getElementById("timer").innerHTML = `
-    <div class="success-box">✅ تم التفعيل بنجاح — مفتوح دائماً</div>
+    <div class="success-box">✅ تم التفعيل بنجاح — جاري التحويل...</div>
   `;
 
+  // ✅ فتح صفحة results.html
   setTimeout(()=>{
-    window.location = "go:b";
-  },3000);
+    window.location = "results.html";
+  },1500);
 }
 
 /* ========== التحقق التلقائي من الكرت المحفوظ ========== */
@@ -176,9 +177,10 @@ window.onload = async function(){
   let device = getDeviceId();
 
   if(data.used && data.device === device){
+    // ✅ الكرت محفوظ وصحيح → فتح results.html مباشرة
     setTimeout(()=>{
-      window.location = "go:e";
-    },1000);
+      window.location = "results.html";
+    },800);
   }else{
     localStorage.removeItem("saved_card");
   }
