@@ -8,10 +8,9 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>نتائج مدرسة الفتح بطنة قدس</title>
+<title>نتائج الطلاب</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
 <style>
 
@@ -19,14 +18,12 @@
     box-sizing: border-box;
 }
 
-
 body {
     margin: 0;
     font-family: Tahoma, Arial, sans-serif;
     background: #f4f7f9;
     color: #1f2937;
 }
-
 
 /* =========================
    الرأس
@@ -49,7 +46,6 @@ header p {
     font-size: 15px;
 }
 
-
 /* =========================
    الحاوية
 ========================= */
@@ -60,7 +56,6 @@ header p {
     padding: 0 12px;
 }
 
-
 .card {
     background: white;
     border-radius: 14px;
@@ -68,7 +63,6 @@ header p {
     margin-bottom: 16px;
     box-shadow: 0 3px 12px rgba(0,0,0,.08);
 }
-
 
 /* =========================
    الحقول
@@ -79,7 +73,6 @@ label {
     font-weight: bold;
     margin-bottom: 7px;
 }
-
 
 select,
 input,
@@ -92,12 +85,10 @@ button {
     margin-bottom: 14px;
 }
 
-
 input,
 select {
     background: #fff;
 }
-
 
 button {
     background: #1e3a5f;
@@ -107,18 +98,15 @@ button {
     font-weight: bold;
 }
 
-
 button:hover {
     opacity: .92;
 }
-
 
 #status {
     text-align: center;
     padding: 10px;
     font-weight: bold;
 }
-
 
 /* =========================
    بطاقة الطالب
@@ -131,7 +119,6 @@ button:hover {
     overflow: hidden;
 }
 
-
 .student-title {
     background: #1e3a5f;
     color: white;
@@ -140,12 +127,10 @@ button:hover {
     font-weight: bold;
 }
 
-
 .info {
     padding: 12px;
     background: #f8fafc;
 }
-
 
 /* =========================
    الجداول
@@ -155,27 +140,18 @@ button:hover {
     overflow-x: auto;
 }
 
-
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-
-/* الجداول الطويلة مثل المحصلات */
-
 .aggregate-table {
     min-width: 650px;
 }
 
-
-/* جدول الشهر الواحد
-   مناسب لشاشة الهاتف */
-
 .single-table {
     overflow-x: visible;
 }
-
 
 .single-table table {
     min-width: 0;
@@ -183,18 +159,15 @@ table {
     table-layout: fixed;
 }
 
-
 .single-table th:first-child,
 .single-table td:first-child {
     width: 65%;
 }
 
-
 .single-table th:last-child,
 .single-table td:last-child {
     width: 35%;
 }
-
 
 th,
 td {
@@ -203,18 +176,15 @@ td {
     text-align: center;
 }
 
-
 th {
     background: #e5e7eb;
     font-weight: bold;
 }
 
-
 .total {
     font-weight: bold;
     background: #eef2f7;
 }
-
 
 .final-result {
     margin-top: 15px;
@@ -226,20 +196,17 @@ th {
     font-weight: bold;
 }
 
-
 .empty {
     text-align: center;
     padding: 20px;
     color: #6b7280;
 }
 
-
 .small {
     font-size: 13px;
     color: #6b7280;
     line-height: 1.8;
 }
-
 
 /* =========================
    الهاتف
@@ -251,11 +218,9 @@ th {
         font-size: 20px;
     }
 
-
     .card {
         padding: 14px;
     }
-
 
     .single-table th,
     .single-table td {
@@ -263,18 +228,15 @@ th {
         font-size: 15px;
     }
 
-
     .single-table th:first-child,
     .single-table td:first-child {
         width: 65%;
     }
 
-
     .single-table th:last-child,
     .single-table td:last-child {
         width: 35%;
     }
-
 
     .aggregate-table th,
     .aggregate-table td {
@@ -288,9 +250,7 @@ th {
 
 </head>
 
-
 <body>
-
 
 <!-- =========================
      الرأس
@@ -302,15 +262,34 @@ th {
         📊 نتائج الطلاب
     </h1>
 
-    <p>
-        مدرسة الفتح بطنة قدس
+    <p id="schoolHeader">
+        اختر المدرسة لعرض النتائج
     </p>
 
 </header>
 
 
-
 <div class="container">
+
+<!-- =========================
+     اختيار المدرسة
+========================= -->
+
+<div class="card">
+
+    <label for="schoolName">
+        🏫 اختر المدرسة
+    </label>
+
+    <select id="schoolName">
+
+        <option value="">
+            ⏳ جاري تحميل المدارس...
+        </option>
+
+    </select>
+
+</div>
 
 
 <!-- =========================
@@ -319,150 +298,123 @@ th {
 
 <div class="card">
 
-
     <label for="period">
         📅 اختر الفترة
     </label>
 
-
     <select id="period">
-
 
         <option value="9">
             سبتمبر
         </option>
 
-
         <option value="10">
             أكتوبر
         </option>
-
 
         <option value="11">
             نوفمبر
         </option>
 
-
         <option value="first_total">
             محصلة الأشهر الثلاثة الأولى
         </option>
 
+        <option value="first_final">
+            النتيجة النهائية للفصل الأول
+        </option>
 
         <option value="1">
             يناير
         </option>
 
-
         <option value="2">
             فبراير
         </option>
-
 
         <option value="3">
             مارس
         </option>
 
-
         <option value="last_total">
             محصلة الأشهر الثلاثة الأخيرة
         </option>
-
 
         <option value="first_half">
             درجة النصف الأول
         </option>
 
-
         <option value="second_half">
             درجة النصف الثاني
         </option>
-
 
         <option value="final">
             النتيجة النهائية
         </option>
 
-
     </select>
-
 
 
     <label for="className">
         📚 اختر الصف
     </label>
 
-
     <select id="className">
-
 
         <option value="الصف الأول الأساسي">
             الصف الأول الأساسي
         </option>
 
-
         <option value="الصف الثاني الأساسي">
             الصف الثاني الأساسي
         </option>
-
 
         <option value="الصف الثالث الأساسي">
             الصف الثالث الأساسي
         </option>
 
-
         <option value="الصف الرابع الأساسي">
             الصف الرابع الأساسي
         </option>
-
 
         <option value="الصف الخامس الأساسي">
             الصف الخامس الأساسي
         </option>
 
-
         <option value="الصف السادس الأساسي">
             الصف السادس الأساسي
         </option>
-
 
         <option value="الصف السابع الأساسي">
             الصف السابع الأساسي
         </option>
 
-
         <option value="الصف الثامن الأساسي">
             الصف الثامن الأساسي
         </option>
-
 
         <option value="الصف التاسع الأساسي">
             الصف التاسع الأساسي
         </option>
 
-
         <option value="الصف الأول الثانوي">
             الصف الأول الثانوي
         </option>
-
 
         <option value="الصف الثاني الثانوي">
             الصف الثاني الثانوي
         </option>
 
-
         <option value="الصف الثالث الثانوي">
             الصف الثالث الثانوي
         </option>
 
-
     </select>
-
 
 
     <label for="studentName">
         🔎 اسم الطالب
     </label>
-
 
     <input
         id="studentName"
@@ -481,22 +433,17 @@ th {
 
     <div id="status"></div>
 
-
 </div>
-
 
 
 <!-- النتائج -->
 
 <div id="results"></div>
 
-
 </div>
 
 
-
 <script>
-
 
 // =====================================================
 // إعداد Supabase
@@ -505,10 +452,8 @@ th {
 const SUPABASE_URL =
     "https://ilplwdhwsziuxynvneov.supabase.co";
 
-
 const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlscGx3ZGh3c3ppdXh5bnZuZW92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTY3MjAsImV4cCI6MjEwNDkzMjcyMH0.t7B3sFPgNhATnqbw2XGRoHWxKO0klw4Uyk83XJEt7as";
-
+    "sb_publishable_KALdRLu6_CyNGXP7RWecLQ_mN1JlrJi";
 
 const supabaseClient =
     window.supabase.createClient(
@@ -517,9 +462,166 @@ const supabaseClient =
     );
 
 
-const SCHOOL_NAME =
-    "مدرسة الفتح بطنة قدس";
+// =====================================================
+// المدرسة الحالية
+// =====================================================
 
+let SCHOOL_ID = null;
+
+let SCHOOL_NAME = "";
+
+
+// =====================================================
+// تحميل المدارس
+// =====================================================
+
+async function loadSchools() {
+
+    const schoolSelect =
+        document.getElementById("schoolName");
+
+    const schoolHeader =
+        document.getElementById("schoolHeader");
+
+
+    schoolSelect.innerHTML =
+        `<option value="">
+            ⏳ جاري تحميل المدارس...
+        </option>`;
+
+
+    const { data, error } =
+        await supabaseClient
+
+        .from("schools")
+
+        .select("id, school_name")
+
+        .order("school_name", {
+            ascending: true
+        });
+
+
+    if (error) {
+
+        console.error(
+            "Schools Error:",
+            error
+        );
+
+        schoolSelect.innerHTML =
+            `<option value="">
+                ❌ تعذر تحميل المدارس
+            </option>`;
+
+        schoolHeader.textContent =
+            "تعذر تحميل المدارس";
+
+        return;
+    }
+
+
+    schoolSelect.innerHTML =
+        `<option value="">
+            🏫 اختر المدرسة
+        </option>`;
+
+
+    if (
+        !data ||
+        data.length === 0
+    ) {
+
+        schoolSelect.innerHTML =
+            `<option value="">
+                لا توجد مدارس
+            </option>`;
+
+        return;
+    }
+
+
+    data.forEach(
+        function(school) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                school.id;
+
+            option.textContent =
+                school.school_name;
+
+            schoolSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// تغيير المدرسة
+// =====================================================
+
+document
+.getElementById("schoolName")
+.addEventListener(
+    "change",
+    function() {
+
+        const selectedId =
+            this.value;
+
+
+        const schoolHeader =
+            document.getElementById(
+                "schoolHeader"
+            );
+
+
+        if (!selectedId) {
+
+            SCHOOL_ID = null;
+
+            SCHOOL_NAME = "";
+
+            schoolHeader.textContent =
+                "اختر المدرسة لعرض النتائج";
+
+            document.getElementById(
+                "results"
+            ).innerHTML = "";
+
+            return;
+        }
+
+
+        SCHOOL_ID =
+            Number(selectedId);
+
+
+        SCHOOL_NAME =
+            this.options[
+                this.selectedIndex
+            ].textContent;
+
+
+        schoolHeader.textContent =
+            SCHOOL_NAME;
+
+
+        document.getElementById(
+            "results"
+        ).innerHTML = "";
+
+    }
+);
 
 
 // =====================================================
@@ -527,7 +629,6 @@ const SCHOOL_NAME =
 // =====================================================
 
 function getSubjects(className) {
-
 
     // الأول والثاني الأساسي
 
@@ -547,7 +648,6 @@ function getSubjects(className) {
         ];
 
     }
-
 
 
     // الثالث إلى السادس الأساسي
@@ -573,7 +673,6 @@ function getSubjects(className) {
     }
 
 
-
     // السابع إلى التاسع الأساسي
 
     if (
@@ -595,7 +694,6 @@ function getSubjects(className) {
         ];
 
     }
-
 
 
     // الأول الثانوي
@@ -621,7 +719,6 @@ function getSubjects(className) {
         ];
 
     }
-
 
 
     // الثاني والثالث الثانوي
@@ -652,13 +749,11 @@ function getSubjects(className) {
 }
 
 
-
 // =====================================================
 // تحويل JSONB إلى كائن
 // =====================================================
 
 function parseScores(data) {
-
 
     if (
         data === null ||
@@ -671,9 +766,6 @@ function parseScores(data) {
     }
 
 
-
-    // Supabase يعيد JSONB ككائن
-
     if (
         typeof data === "object"
     ) {
@@ -683,9 +775,6 @@ function parseScores(data) {
     }
 
 
-
-    // في حال عاد كنص
-
     if (
         typeof data === "string"
     ) {
@@ -694,7 +783,6 @@ function parseScores(data) {
 
             const parsed =
                 JSON.parse(data);
-
 
             if (
                 parsed &&
@@ -724,6 +812,25 @@ function parseScores(data) {
 }
 
 
+// =====================================================
+// توحيد النص
+// =====================================================
+
+function normalizeText(text) {
+
+    return String(text ?? "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/ـ/g, "")
+        .replace(/\u200f/g, "")
+        .replace(/\u200e/g, "")
+        .replace(
+            /[\u064B-\u065F\u0670]/g,
+            ""
+        );
+
+}
+
 
 // =====================================================
 // توحيد اسم المادة
@@ -731,20 +838,87 @@ function parseScores(data) {
 
 function normalizeSubject(text) {
 
-    return String(text)
+    let value =
+        normalizeText(text);
 
-        .trim()
 
-        .replace(/\s+/g, " ")
+    value =
+        value.replace(
+            /أ/g,
+            "ا"
+        );
 
-        .replace(/ـ/g, "")
+    value =
+        value.replace(
+            /إ/g,
+            "ا"
+        );
 
-        .replace(/\u200f/g, "")
+    value =
+        value.replace(
+            /آ/g,
+            "ا"
+        );
 
-        .replace(/\u200e/g, "");
+
+    if (
+        value === "عربي" ||
+        value === "العربي" ||
+        value === "لغةالعربية" ||
+        value === "اللغةالعربية"
+    ) {
+
+        return "لغة عربية";
+
+    }
+
+
+    if (
+        value === "اسلامية" ||
+        value === "إسلاميه" ||
+        value === "اسلاميه" ||
+        value === "الإسلامية"
+    ) {
+
+        return "إسلامية";
+
+    }
+
+
+    if (
+        value === "قران" ||
+        value === "القران" ||
+        value === "القرآن"
+    ) {
+
+        return "قرآن";
+
+    }
+
+
+    if (
+        value === "علوم" ||
+        value === "العلوم"
+    ) {
+
+        return "علوم";
+
+    }
+
+
+    if (
+        value === "رياضيات" ||
+        value === "الرياضيات"
+    ) {
+
+        return "رياضيات";
+
+    }
+
+
+    return value;
 
 }
-
 
 
 // =====================================================
@@ -756,7 +930,6 @@ function getSubjectScore(
     subject
 ) {
 
-
     if (
         !scores ||
         typeof scores !== "object"
@@ -766,9 +939,6 @@ function getSubjectScore(
 
     }
 
-
-
-    // البحث المباشر
 
     if (
         Object.prototype.hasOwnProperty.call(
@@ -791,9 +961,6 @@ function getSubjectScore(
 
     }
 
-
-
-    // البحث بعد توحيد الاسم
 
     const wanted =
         normalizeSubject(subject);
@@ -839,7 +1006,6 @@ function getSubjectScore(
 }
 
 
-
 // =====================================================
 // بيانات الفترة
 // =====================================================
@@ -849,11 +1015,9 @@ function getPeriodScores(
     period
 ) {
 
-
     let data = null;
 
     let title = "";
-
 
 
     if (
@@ -868,7 +1032,6 @@ function getPeriodScores(
 
     }
 
-
     else if (
         period === "10"
     ) {
@@ -880,7 +1043,6 @@ function getPeriodScores(
             "أكتوبر";
 
     }
-
 
     else if (
         period === "11"
@@ -894,7 +1056,6 @@ function getPeriodScores(
 
     }
 
-
     else if (
         period === "1"
     ) {
@@ -906,7 +1067,6 @@ function getPeriodScores(
             "يناير";
 
     }
-
 
     else if (
         period === "2"
@@ -920,7 +1080,6 @@ function getPeriodScores(
 
     }
 
-
     else if (
         period === "3"
     ) {
@@ -932,7 +1091,6 @@ function getPeriodScores(
             "مارس";
 
     }
-
 
     else if (
         period === "first_half"
@@ -946,7 +1104,6 @@ function getPeriodScores(
 
     }
 
-
     else if (
         period === "second_half"
     ) {
@@ -958,7 +1115,6 @@ function getPeriodScores(
             "درجة النصف الثاني";
 
     }
-
 
 
     return {
@@ -974,13 +1130,11 @@ function getPeriodScores(
 }
 
 
-
 // =====================================================
 // البحث عن الطالب
 // =====================================================
 
 async function searchStudent() {
-
 
     const studentName =
         document
@@ -1014,6 +1168,17 @@ async function searchStudent() {
     results.innerHTML = "";
 
 
+    if (
+        !SCHOOL_ID
+    ) {
+
+        status.innerHTML =
+            "⚠️ اختر المدرسة أولاً";
+
+        return;
+
+    }
+
 
     if (
         !studentName
@@ -1027,14 +1192,11 @@ async function searchStudent() {
     }
 
 
-
     status.innerHTML =
         "⏳ جاري البحث...";
 
 
-
     try {
-
 
         const response =
             await supabaseClient
@@ -1044,8 +1206,8 @@ async function searchStudent() {
             .select("*")
 
             .eq(
-                "school_name",
-                SCHOOL_NAME
+                "school_id",
+                SCHOOL_ID
             )
 
             .eq(
@@ -1061,7 +1223,6 @@ async function searchStudent() {
             );
 
 
-
         if (
             response.error
         ) {
@@ -1071,17 +1232,14 @@ async function searchStudent() {
         }
 
 
-
         const data =
             response.data;
-
 
 
         if (
             !data ||
             data.length === 0
         ) {
-
 
             results.innerHTML = `
 
@@ -1093,13 +1251,11 @@ async function searchStudent() {
 
             `;
 
-
             status.innerHTML = "";
 
             return;
 
         }
-
 
 
         const row =
@@ -1110,7 +1266,6 @@ async function searchStudent() {
             getSubjects(
                 className
             );
-
 
 
         // محصلة أول ثلاثة أشهر
@@ -1128,6 +1283,20 @@ async function searchStudent() {
         }
 
 
+        // النتيجة النهائية للفصل الأول
+
+        else if (
+            period === "first_final"
+        ) {
+
+            results.innerHTML =
+                buildFirstSemesterFinal(
+                    row,
+                    subjects
+                );
+
+        }
+
 
         // محصلة آخر ثلاثة أشهر
 
@@ -1142,7 +1311,6 @@ async function searchStudent() {
                 );
 
         }
-
 
 
         // النتيجة النهائية
@@ -1160,7 +1328,6 @@ async function searchStudent() {
         }
 
 
-
         // شهر أو نصف
 
         else {
@@ -1175,29 +1342,23 @@ async function searchStudent() {
         }
 
 
-
         status.innerHTML = "";
-
 
     }
 
     catch (error) {
 
-
-        console.log(
+        console.error(
             "Supabase Error:",
             error
         );
 
-
         status.innerHTML =
             "❌ حدث خطأ أثناء الاتصال بقاعدة البيانات";
-
 
     }
 
 }
-
 
 
 // =====================================================
@@ -1209,7 +1370,6 @@ function buildSingleResult(
     subjects,
     period
 ) {
-
 
     const periodData =
         getPeriodScores(
@@ -1226,11 +1386,9 @@ function buildSingleResult(
         periodData.title;
 
 
-
     let html = `
 
         <div class="card student-card">
-
 
             <div class="student-title">
 
@@ -1241,6 +1399,20 @@ function buildSingleResult(
 
             </div>
 
+
+            <div class="info">
+
+                🏫 المدرسة:
+
+                <strong>
+
+                    ${escapeHtml(
+                        SCHOOL_NAME
+                    )}
+
+                </strong>
+
+            </div>
 
 
             <div class="info">
@@ -1258,26 +1430,24 @@ function buildSingleResult(
             </div>
 
 
-
             <div class="info">
 
                 الفترة:
 
                 <strong>
 
-                    ${title}
+                    ${escapeHtml(
+                        title
+                    )}
 
                 </strong>
 
             </div>
 
 
-
             <div class="table-wrap single-table">
 
-
                 <table>
-
 
                     <thead>
 
@@ -1295,27 +1465,22 @@ function buildSingleResult(
 
                     </thead>
 
-
                     <tbody>
 
     `;
 
 
-
     let total = 0;
-
 
 
     subjects.forEach(
         function(subject) {
-
 
             const value =
                 getSubjectScore(
                     scores,
                     subject
                 );
-
 
 
             if (
@@ -1326,7 +1491,6 @@ function buildSingleResult(
                 total += value;
 
             }
-
 
 
             html += `
@@ -1340,7 +1504,6 @@ function buildSingleResult(
                         )}
 
                     </td>
-
 
                     <td>
 
@@ -1365,17 +1528,13 @@ function buildSingleResult(
     );
 
 
-
     html += `
 
                 <tr class="total">
 
                     <td>
-
                         المجموع
-
                     </td>
-
 
                     <td>
 
@@ -1387,26 +1546,20 @@ function buildSingleResult(
 
                 </tr>
 
-
                     </tbody>
-
 
                 </table>
 
-
             </div>
-
 
         </div>
 
     `;
 
 
-
     return html;
 
 }
-
 
 
 // =====================================================
@@ -1417,7 +1570,6 @@ function buildFirstTotal(
     row,
     subjects
 ) {
-
 
     const sep =
         parseScores(
@@ -1437,11 +1589,9 @@ function buildFirstTotal(
         );
 
 
-
     let html = `
 
         <div class="card student-card">
-
 
             <div class="student-title">
 
@@ -1452,6 +1602,20 @@ function buildFirstTotal(
 
             </div>
 
+
+            <div class="info">
+
+                🏫 المدرسة:
+
+                <strong>
+
+                    ${escapeHtml(
+                        SCHOOL_NAME
+                    )}
+
+                </strong>
+
+            </div>
 
 
             <div class="info">
@@ -1469,7 +1633,6 @@ function buildFirstTotal(
             </div>
 
 
-
             <div class="info">
 
                 📊 محصلة الأشهر الثلاثة الأولى
@@ -1477,12 +1640,9 @@ function buildFirstTotal(
             </div>
 
 
-
             <div class="table-wrap">
 
-
                 <table class="aggregate-table">
-
 
                     <thead>
 
@@ -1512,16 +1672,13 @@ function buildFirstTotal(
 
                     </thead>
 
-
                     <tbody>
 
     `;
 
 
-
     subjects.forEach(
         function(subject) {
-
 
             const a =
                 getSubjectScore(
@@ -1552,7 +1709,6 @@ function buildFirstTotal(
                 ) / 15;
 
 
-
             html += `
 
                 <tr>
@@ -1565,13 +1721,11 @@ function buildFirstTotal(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(a)}
 
                     </td>
-
 
                     <td>
 
@@ -1579,13 +1733,11 @@ function buildFirstTotal(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(c)}
 
                     </td>
-
 
                     <td>
 
@@ -1607,16 +1759,13 @@ function buildFirstTotal(
     );
 
 
-
     html += `
 
                     </tbody>
 
                 </table>
 
-
             </div>
-
 
 
             <p class="small">
@@ -1627,17 +1776,278 @@ function buildFirstTotal(
 
             </p>
 
-
         </div>
 
     `;
-
 
 
     return html;
 
 }
 
+
+// =====================================================
+// النتيجة النهائية للفصل الأول
+// =====================================================
+
+function buildFirstSemesterFinal(
+    row,
+    subjects
+) {
+
+    const sep =
+        parseScores(
+            row.september
+        );
+
+
+    const oct =
+        parseScores(
+            row.october
+        );
+
+
+    const nov =
+        parseScores(
+            row.november
+        );
+
+
+    const first =
+        parseScores(
+            row.first_half
+        );
+
+
+    let html = `
+
+        <div class="card student-card">
+
+            <div class="student-title">
+
+                📘 النتيجة النهائية للفصل الأول
+
+            </div>
+
+
+            <div class="info">
+
+                الطالب:
+
+                <strong>
+
+                    ${escapeHtml(
+                        row.student_name
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <div class="info">
+
+                🏫 المدرسة:
+
+                <strong>
+
+                    ${escapeHtml(
+                        SCHOOL_NAME
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <div class="info">
+
+                الصف:
+
+                <strong>
+
+                    ${escapeHtml(
+                        row.class_name
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+                <table class="aggregate-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                المادة
+                            </th>
+
+                            <th>
+                                محصلة أول 3 أشهر
+                            </th>
+
+                            <th>
+                                النصف الأول
+                            </th>
+
+                            <th>
+                                نتيجة الفصل الأول
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+    `;
+
+
+    let total = 0;
+
+
+    subjects.forEach(
+        function(subject) {
+
+            const firstTotal =
+                (
+
+                    (
+                        getSubjectScore(
+                            sep,
+                            subject
+                        ) ?? 0
+                    )
+
+                    +
+
+                    (
+                        getSubjectScore(
+                            oct,
+                            subject
+                        ) ?? 0
+                    )
+
+                    +
+
+                    (
+                        getSubjectScore(
+                            nov,
+                            subject
+                        ) ?? 0
+                    )
+
+                ) / 15;
+
+
+            const firstHalf =
+                getSubjectScore(
+                    first,
+                    subject
+                ) ?? 0;
+
+
+            const result =
+                firstTotal +
+                firstHalf;
+
+
+            total += result;
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+
+                        ${escapeHtml(
+                            subject
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        ${formatNumber(
+                            firstTotal
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        ${formatNumber(
+                            firstHalf
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        <strong>
+
+                            ${formatNumber(
+                                result
+                            )}
+
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="final-result">
+
+                📘 نتيجة الفصل الأول:
+
+                ${formatNumber(
+                    total
+                )}
+
+            </div>
+
+
+            <p class="small">
+
+                نتيجة الفصل الأول لكل مادة =
+
+                محصلة الأشهر الثلاثة الأولى
+
+                +
+
+                درجة النصف الأول
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    return html;
+
+}
 
 
 // =====================================================
@@ -1648,7 +2058,6 @@ function buildLastTotal(
     row,
     subjects
 ) {
-
 
     const jan =
         parseScores(
@@ -1668,11 +2077,9 @@ function buildLastTotal(
         );
 
 
-
     let html = `
 
         <div class="card student-card">
-
 
             <div class="student-title">
 
@@ -1683,6 +2090,20 @@ function buildLastTotal(
 
             </div>
 
+
+            <div class="info">
+
+                🏫 المدرسة:
+
+                <strong>
+
+                    ${escapeHtml(
+                        SCHOOL_NAME
+                    )}
+
+                </strong>
+
+            </div>
 
 
             <div class="info">
@@ -1700,7 +2121,6 @@ function buildLastTotal(
             </div>
 
 
-
             <div class="info">
 
                 📊 محصلة الأشهر الثلاثة الأخيرة
@@ -1708,12 +2128,9 @@ function buildLastTotal(
             </div>
 
 
-
             <div class="table-wrap">
 
-
                 <table class="aggregate-table">
-
 
                     <thead>
 
@@ -1743,16 +2160,13 @@ function buildLastTotal(
 
                     </thead>
 
-
                     <tbody>
 
     `;
 
 
-
     subjects.forEach(
         function(subject) {
-
 
             const a =
                 getSubjectScore(
@@ -1783,7 +2197,6 @@ function buildLastTotal(
                 ) / 15;
 
 
-
             html += `
 
                 <tr>
@@ -1796,13 +2209,11 @@ function buildLastTotal(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(a)}
 
                     </td>
-
 
                     <td>
 
@@ -1810,13 +2221,11 @@ function buildLastTotal(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(c)}
 
                     </td>
-
 
                     <td>
 
@@ -1838,16 +2247,13 @@ function buildLastTotal(
     );
 
 
-
     html += `
 
                     </tbody>
 
                 </table>
 
-
             </div>
-
 
 
             <p class="small">
@@ -1858,17 +2264,14 @@ function buildLastTotal(
 
             </p>
 
-
         </div>
 
     `;
 
 
-
     return html;
 
 }
-
 
 
 // =====================================================
@@ -1879,7 +2282,6 @@ function buildFinalResult(
     row,
     subjects
 ) {
-
 
     const sep =
         parseScores(
@@ -1929,18 +2331,15 @@ function buildFinalResult(
         );
 
 
-
     let html = `
 
         <div class="card student-card">
-
 
             <div class="student-title">
 
                 🏆 النتيجة النهائية
 
             </div>
-
 
 
             <div class="info">
@@ -1958,6 +2357,20 @@ function buildFinalResult(
             </div>
 
 
+            <div class="info">
+
+                🏫 المدرسة:
+
+                <strong>
+
+                    ${escapeHtml(
+                        SCHOOL_NAME
+                    )}
+
+                </strong>
+
+            </div>
+
 
             <div class="info">
 
@@ -1974,12 +2387,9 @@ function buildFinalResult(
             </div>
 
 
-
             <div class="table-wrap">
 
-
                 <table class="aggregate-table">
-
 
                     <thead>
 
@@ -2013,20 +2423,16 @@ function buildFinalResult(
 
                     </thead>
 
-
                     <tbody>
 
     `;
 
 
-
     let finalTotal = 0;
-
 
 
     subjects.forEach(
         function(subject) {
-
 
             const firstTotal =
                 (
@@ -2057,7 +2463,6 @@ function buildFinalResult(
                     )
 
                 ) / 15;
-
 
 
             const lastTotal =
@@ -2091,13 +2496,11 @@ function buildFinalResult(
                 ) / 15;
 
 
-
             const firstHalf =
                 getSubjectScore(
                     first,
                     subject
                 ) ?? 0;
-
 
 
             const secondHalf =
@@ -2107,7 +2510,6 @@ function buildFinalResult(
                 ) ?? 0;
 
 
-
             const finalResult =
                 firstTotal +
                 firstHalf +
@@ -2115,16 +2517,13 @@ function buildFinalResult(
                 secondHalf;
 
 
-
             finalTotal +=
                 finalResult;
-
 
 
             html += `
 
                 <tr>
-
 
                     <td>
 
@@ -2134,7 +2533,6 @@ function buildFinalResult(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(
@@ -2142,7 +2540,6 @@ function buildFinalResult(
                         )}
 
                     </td>
-
 
                     <td>
 
@@ -2152,7 +2549,6 @@ function buildFinalResult(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(
@@ -2161,7 +2557,6 @@ function buildFinalResult(
 
                     </td>
 
-
                     <td>
 
                         ${formatNumber(
@@ -2169,7 +2564,6 @@ function buildFinalResult(
                         )}
 
                     </td>
-
 
                     <td>
 
@@ -2183,7 +2577,6 @@ function buildFinalResult(
 
                     </td>
 
-
                 </tr>
 
             `;
@@ -2192,16 +2585,13 @@ function buildFinalResult(
     );
 
 
-
     html += `
 
                     </tbody>
 
                 </table>
 
-
             </div>
-
 
 
             <div class="final-result">
@@ -2213,7 +2603,6 @@ function buildFinalResult(
                 )}
 
             </div>
-
 
 
             <p class="small">
@@ -2236,17 +2625,14 @@ function buildFinalResult(
 
             </p>
 
-
         </div>
 
     `;
 
 
-
     return html;
 
 }
-
 
 
 // =====================================================
@@ -2260,14 +2646,13 @@ function formatNumber(number) {
 }
 
 
-
 // =====================================================
 // حماية النصوص
 // =====================================================
 
 function escapeHtml(text) {
 
-    return String(text)
+    return String(text ?? "")
 
         .replace(
             /&/g,
@@ -2297,7 +2682,6 @@ function escapeHtml(text) {
 }
 
 
-
 // =====================================================
 // البحث عند الضغط على Enter
 // =====================================================
@@ -2318,6 +2702,13 @@ document
 
     }
 );
+
+
+// =====================================================
+// تشغيل تحميل المدارس
+// =====================================================
+
+loadSchools();
 
 </script>
 
