@@ -1,0 +1,2448 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>لوحة إدارة نتائج الطلاب</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    padding:15px;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#f3f6f9;
+    color:#222
+}
+
+.container{
+    max-width:900px;
+    margin:auto
+}
+
+.header{
+    background:#1e3a5f;
+    color:white;
+    padding:20px;
+    border-radius:14px;
+    text-align:center;
+    margin-bottom:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,.12)
+}
+
+.header h1{
+    margin:0 0 8px;
+    font-size:24px
+}
+
+.header p{
+    margin:0;
+    font-size:15px
+}
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08)
+}
+
+.card h2{
+    margin-top:0;
+    color:#1e3a5f;
+    font-size:20px
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:7px
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccd4dc;
+    border-radius:9px;
+    font-size:16px;
+    background:white
+}
+
+.form-group{
+    margin-bottom:15px
+}
+
+button{
+    border:none;
+    border-radius:9px;
+    padding:12px 18px;
+    font-size:16px;
+    cursor:pointer;
+    font-family:inherit
+}
+
+.btn-primary{
+    background:#1e3a5f;
+    color:white
+}
+
+.btn-success{
+    background:#198754;
+    color:white
+}
+
+.btn-danger{
+    background:#dc3545;
+    color:white
+}
+
+.btn-secondary{
+    background:#6c757d;
+    color:white
+}
+
+button:disabled{
+    opacity:.55;
+    cursor:not-allowed
+}
+
+.full{
+    width:100%
+}
+
+.info-box{
+    background:#eef5fb;
+    border-right:5px solid #1e3a5f;
+    padding:14px;
+    border-radius:8px;
+    margin-bottom:15px
+}
+
+.subjects{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:10px
+}
+
+.subject{
+    background:#e9ecef;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:14px
+}
+
+.status{
+    padding:12px;
+    border-radius:8px;
+    margin-top:12px;
+    display:none;
+    line-height:1.7
+}
+
+.status.success{
+    display:block;
+    background:#d1e7dd;
+    color:#0f5132
+}
+
+.status.error{
+    display:block;
+    background:#f8d7da;
+    color:#842029
+}
+
+.status.info{
+    display:block;
+    background:#cff4fc;
+    color:#055160
+}
+
+.progress-container{
+    display:none;
+    margin-top:15px
+}
+
+.progress-bar{
+    width:100%;
+    height:24px;
+    background:#e9ecef;
+    border-radius:20px;
+    overflow:hidden
+}
+
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:#198754;
+    color:white;
+    text-align:center;
+    line-height:24px;
+    font-size:13px;
+    transition:width .2s
+}
+
+.student{
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:10px;
+    background:#fafafa
+}
+
+.student-name{
+    font-weight:bold;
+    font-size:17px;
+    color:#1e3a5f;
+    margin-bottom:8px
+}
+
+.student-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap
+}
+
+.small-btn{
+    padding:8px 12px;
+    font-size:14px
+}
+
+.hidden{
+    display:none!important
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px
+}
+
+.add-student-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px
+}
+
+.note{
+    font-size:13px;
+    color:#666;
+    line-height:1.7;
+    margin-top:8px
+}
+
+.logout{
+    float:left;
+    background:#dc3545;
+    color:white;
+    padding:8px 12px;
+    font-size:14px
+}
+
+.clearfix::after{
+    content:"";
+    display:block;
+    clear:both
+}
+
+.danger-box{
+    background:#fff1f1;
+    border-right:5px solid #dc3545;
+    padding:14px;
+    border-radius:8px;
+    margin-bottom:15px;
+    color:#842029;
+    line-height:1.8
+}
+
+.school-box{
+    background:#eef5fb;
+    border-right:5px solid #198754;
+    padding:14px;
+    border-radius:8px;
+    margin-bottom:15px;
+    line-height:1.8
+}
+
+@media(max-width:600px){
+    .grid,
+    .add-student-grid{
+        grid-template-columns:1fr
+    }
+
+    .header h1{
+        font-size:21px
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header clearfix">
+
+<button
+    class="logout hidden"
+    id="logoutBtn"
+    onclick="logout()">
+    خروج
+</button>
+
+<h1>لوحة إدارة نتائج الطلاب</h1>
+
+<p>إدارة نتائج المدرسة</p>
+
+</div>
+
+
+<!-- تسجيل الدخول -->
+<div class="card" id="loginCard">
+
+<h2>🔐 دخول الإدارة</h2>
+
+<div class="form-group">
+
+<label for="email">
+البريد الإلكتروني
+</label>
+
+<input
+    type="email"
+    id="email"
+    placeholder="أدخل البريد الإلكتروني"
+    autocomplete="username">
+
+</div>
+
+<div class="form-group">
+
+<label for="password">
+كلمة المرور
+</label>
+
+<input
+    type="password"
+    id="password"
+    placeholder="أدخل كلمة المرور"
+    autocomplete="current-password">
+
+</div>
+
+<button
+    class="btn-primary full"
+    id="loginBtn"
+    onclick="login()">
+
+دخول
+
+</button>
+
+<div
+    id="loginStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<!-- لوحة الإدارة -->
+<div id="adminPanel" class="hidden">
+
+<div class="card">
+
+<div class="school-box">
+
+<strong>🏫 المدرسة المرتبطة بهذا الحساب:</strong>
+
+<br>
+
+<span id="schoolNameDisplay">
+جاري التحقق...
+</span>
+
+</div>
+
+</div>
+
+
+<!-- إعدادات الاستيراد -->
+<div class="card">
+
+<h2>إعدادات الاستيراد</h2>
+
+<div class="grid">
+
+<div class="form-group">
+
+<label for="classSelect">
+الصف
+</label>
+
+<select
+    id="classSelect"
+    onchange="classChanged()">
+
+<option value="الصف الأول الأساسي">
+الصف الأول الأساسي
+</option>
+
+<option value="الصف الثاني الأساسي">
+الصف الثاني الأساسي
+</option>
+
+<option value="الصف الثالث الأساسي">
+الصف الثالث الأساسي
+</option>
+
+<option value="الصف الرابع الأساسي">
+الصف الرابع الأساسي
+</option>
+
+<option value="الصف الخامس الأساسي">
+الصف الخامس الأساسي
+</option>
+
+<option value="الصف السادس الأساسي">
+الصف السادس الأساسي
+</option>
+
+<option value="الصف السابع الأساسي">
+الصف السابع الأساسي
+</option>
+
+<option value="الصف الثامن الأساسي">
+الصف الثامن الأساسي
+</option>
+
+<option value="الصف التاسع الأساسي">
+الصف التاسع الأساسي
+</option>
+
+<option value="الصف الأول الثانوي">
+الصف الأول الثانوي
+</option>
+
+<option value="الصف الثاني الثانوي">
+الصف الثاني الثانوي
+</option>
+
+<option value="الصف الثالث الثانوي">
+الصف الثالث الثانوي
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label for="periodSelect">
+الفترة / الشهر
+</label>
+
+<select id="periodSelect">
+
+<option value="september">سبتمبر</option>
+<option value="october">أكتوبر</option>
+<option value="november">نوفمبر</option>
+<option value="january">يناير</option>
+<option value="february">فبراير</option>
+<option value="march">مارس</option>
+<option value="first_half">الفصل الأول</option>
+<option value="second_half">الفصل الثاني</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="info-box">
+
+<strong>الصف المحدد:</strong>
+
+<span id="selectedClassText">
+الصف الأول الأساسي
+</span>
+
+<br><br>
+
+<strong>المواد:</strong>
+
+<div
+    id="subjectsContainer"
+    class="subjects">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- استيراد Excel -->
+<div class="card">
+
+<h2>📊 استيراد نتائج Excel</h2>
+
+<div class="form-group">
+
+<label for="excelFile">
+اختر ملف Excel
+</label>
+
+<input
+    type="file"
+    id="excelFile"
+    accept=".xlsx,.xls,.csv">
+
+</div>
+
+<div class="note">
+
+يجب أن يحتوي ملف Excel على عمود
+<strong>الاسم</strong>
+بالإضافة إلى أعمدة المواد الخاصة بالصف المحدد.
+
+<br>
+
+مثال:
+الاسم، قرآن، إسلامية، لغة عربية، رياضيات، علوم
+
+</div>
+
+<br>
+
+<button
+    id="importBtn"
+    class="btn-success full"
+    onclick="importExcel()">
+
+استيراد النتائج
+
+</button>
+
+
+<div
+    id="progressContainer"
+    class="progress-container">
+
+<div class="progress-bar">
+
+<div
+    id="progressFill"
+    class="progress-fill">
+
+0%
+
+</div>
+
+</div>
+
+</div>
+
+<div
+    id="importStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<!-- إضافة طالب -->
+<div class="card">
+
+<h2>➕ إضافة طالب</h2>
+
+<div class="add-student-grid">
+
+<div class="form-group">
+
+<label for="newStudentName">
+اسم الطالب
+</label>
+
+<input
+    type="text"
+    id="newStudentName"
+    placeholder="أدخل اسم الطالب">
+
+</div>
+
+<div class="form-group">
+
+<label>
+الصف
+</label>
+
+<input
+    type="text"
+    id="newStudentClass"
+    readonly>
+
+</div>
+
+</div>
+
+<button
+    class="btn-primary full"
+    onclick="addStudent()">
+
+➕ إضافة الطالب
+
+</button>
+
+<div
+    id="addStudentStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<!-- الطلاب -->
+<div class="card">
+
+<h2>
+طلاب الصف المحدد
+(<span id="studentsCount">0</span>)
+</h2>
+
+<button
+    class="btn-secondary full"
+    onclick="loadStudents()">
+
+تحديث قائمة الطلاب
+
+</button>
+
+<br><br>
+
+<div id="studentsList"></div>
+
+<div
+    id="studentsStatus"
+    class="status">
+</div>
+
+</div>
+
+
+<!-- حذف جميع الطلاب -->
+<div class="card">
+
+<h2>🗑️ حذف جميع طلاب الفصل</h2>
+
+<div class="danger-box">
+
+سيتم حذف جميع طلاب
+<strong id="deleteClassText">
+الصف الأول الأساسي
+</strong>
+ونتائجهم بالكامل.
+
+<br>
+
+هذا الإجراء لا يمكن التراجع عنه.
+
+</div>
+
+<button
+    class="btn-danger full"
+    onclick="deleteAllStudentsInClass()">
+
+🗑️ حذف جميع طلاب الفصل
+
+</button>
+
+<div
+    id="deleteAllStatus"
+    class="status">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   إعدادات Supabase
+===================================================== */
+
+const SUPABASE_URL =
+"https://ilplwdhwsziuxynvneov.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_KALdRLu6_CyNGXP7RWecLQ_mN1JlrJi";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =====================================================
+   بيانات المدير والمدرسة
+===================================================== */
+
+let isLoggedIn = false;
+
+let currentUser = null;
+
+let currentSchoolId = null;
+
+let SCHOOL_NAME = "";
+
+
+/* =====================================================
+   المواد حسب الصف
+===================================================== */
+
+const CLASS_SUBJECTS = {
+
+"الصف الأول الأساسي":[
+"قرآن","إسلامية","لغة عربية","رياضيات","علوم"
+],
+
+"الصف الثاني الأساسي":[
+"قرآن","إسلامية","لغة عربية","رياضيات","علوم"
+],
+
+"الصف الثالث الأساسي":[
+"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+],
+
+"الصف الرابع الأساسي":[
+"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+],
+
+"الصف الخامس الأساسي":[
+"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+],
+
+"الصف السادس الأساسي":[
+"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+],
+
+"الصف السابع الأساسي":[
+"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات","علوم","اجتماعات"
+],
+
+"الصف الثامن الأساسي":[
+"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات","علوم","اجتماعات"
+],
+
+"الصف التاسع الأساسي":[
+"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات","علوم","اجتماعات"
+],
+
+"الصف الأول الثانوي":[
+"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات",
+"فيزياء","كيمياء","أحياء","جغرافيا","تاريخ","مجتمع"
+],
+
+"الصف الثاني الثانوي":[
+"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات",
+"فيزياء","كيمياء","أحياء"
+],
+
+"الصف الثالث الثانوي":[
+"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات",
+"فيزياء","كيمياء","أحياء"
+]
+
+};
+
+
+/* =====================================================
+   تشغيل الصفحة
+===================================================== */
+
+document.addEventListener(
+"DOMContentLoaded",
+async function(){
+
+updateSubjectsInfo();
+
+updateClassText();
+
+await checkExistingSession();
+
+}
+);
+
+
+/* =====================================================
+   تسجيل الدخول باستخدام Supabase Auth
+===================================================== */
+
+async function login(){
+
+const email =
+document.getElementById("email")
+.value
+.trim();
+
+const password =
+document.getElementById("password")
+.value;
+
+if(!email){
+
+showStatus(
+"loginStatus",
+"يرجى إدخال البريد الإلكتروني.",
+"error"
+);
+
+return;
+
+}
+
+if(!password){
+
+showStatus(
+"loginStatus",
+"يرجى إدخال كلمة المرور.",
+"error"
+);
+
+return;
+
+}
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+loginBtn.disabled = true;
+
+loginBtn.textContent =
+"جاري تسجيل الدخول...";
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient.auth.signInWithPassword({
+
+email:email,
+
+password:password
+
+});
+
+if(error){
+throw error;
+}
+
+if(!data.user){
+throw new Error(
+"لم يتم العثور على حساب المستخدم."
+);
+}
+
+currentUser =
+data.user;
+
+
+/* التحقق من ارتباط المدير بالمدرسة */
+
+const school =
+await getManagerSchool(
+data.user.id
+);
+
+if(!school){
+
+await supabaseClient.auth.signOut();
+
+throw new Error(
+"هذا الحساب غير مرتبط بأي مدرسة."
+);
+
+}
+
+currentSchoolId =
+school.id;
+
+SCHOOL_NAME =
+school.school_name;
+
+isLoggedIn = true;
+
+
+/* إظهار اللوحة */
+
+document
+.getElementById("loginCard")
+.classList
+.add("hidden");
+
+document
+.getElementById("adminPanel")
+.classList
+.remove("hidden");
+
+document
+.getElementById("logoutBtn")
+.classList
+.remove("hidden");
+
+document
+.getElementById("schoolNameDisplay")
+.textContent =
+SCHOOL_NAME;
+
+updateClassText();
+
+await loadStudents();
+
+}
+catch(error){
+
+console.error(error);
+
+showStatus(
+"loginStatus",
+"تعذر تسجيل الدخول:<br><strong>" +
+escapeHtml(
+error.message ||
+String(error)
+) +
+"</strong>",
+"error"
+);
+
+}
+finally{
+
+loginBtn.disabled = false;
+
+loginBtn.textContent =
+"دخول";
+
+}
+
+}
+
+
+/* =====================================================
+   الحصول على مدرسة المدير
+===================================================== */
+
+async function getManagerSchool(userId){
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("school_managers")
+
+.select(`
+school_id,
+schools (
+    id,
+    school_name
+)
+`)
+
+.eq(
+"user_id",
+userId
+)
+
+.maybeSingle();
+
+if(error){
+
+console.error(
+"خطأ في school_managers:",
+error
+);
+
+throw error;
+
+}
+
+if(
+!data ||
+!data.schools
+){
+
+return null;
+
+}
+
+return data.schools;
+
+}
+
+
+/* =====================================================
+   التحقق من الجلسة الموجودة
+===================================================== */
+
+async function checkExistingSession(){
+
+try{
+
+const {
+data
+} =
+await supabaseClient
+.auth
+.getSession();
+
+if(
+!data ||
+!data.session
+){
+
+return;
+
+}
+
+currentUser =
+data.session.user;
+
+const school =
+await getManagerSchool(
+currentUser.id
+);
+
+if(!school){
+
+await supabaseClient.auth.signOut();
+
+return;
+
+}
+
+currentSchoolId =
+school.id;
+
+SCHOOL_NAME =
+school.school_name;
+
+isLoggedIn = true;
+
+document
+.getElementById("loginCard")
+.classList
+.add("hidden");
+
+document
+.getElementById("adminPanel")
+.classList
+.remove("hidden");
+
+document
+.getElementById("logoutBtn")
+.classList
+.remove("hidden");
+
+document
+.getElementById("schoolNameDisplay")
+.textContent =
+SCHOOL_NAME;
+
+await loadStudents();
+
+}
+catch(error){
+
+console.error(
+"فحص الجلسة:",
+error
+);
+
+}
+
+}
+
+
+/* =====================================================
+   تسجيل الخروج
+===================================================== */
+
+async function logout(){
+
+await supabaseClient.auth.signOut();
+
+isLoggedIn = false;
+
+currentUser = null;
+
+currentSchoolId = null;
+
+SCHOOL_NAME = "";
+
+document
+.getElementById("adminPanel")
+.classList
+.add("hidden");
+
+document
+.getElementById("loginCard")
+.classList
+.remove("hidden");
+
+document
+.getElementById("logoutBtn")
+.classList
+.add("hidden");
+
+document
+.getElementById("password")
+.value = "";
+
+document
+.getElementById("schoolNameDisplay")
+.textContent = "";
+
+}
+
+
+/* =====================================================
+   تغيير الصف
+===================================================== */
+
+function classChanged(){
+
+updateSubjectsInfo();
+
+updateClassText();
+
+if(isLoggedIn){
+
+loadStudents();
+
+}
+
+}
+
+
+/* =====================================================
+   تحديث اسم الصف
+===================================================== */
+
+function updateClassText(){
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+document
+.getElementById("newStudentClass")
+.value =
+className;
+
+document
+.getElementById("deleteClassText")
+.textContent =
+className;
+
+}
+
+
+/* =====================================================
+   عرض المواد
+===================================================== */
+
+function updateSubjectsInfo(){
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+const subjects =
+CLASS_SUBJECTS[className] || [];
+
+document
+.getElementById("selectedClassText")
+.textContent =
+className;
+
+const container =
+document
+.getElementById("subjectsContainer");
+
+container.innerHTML = "";
+
+subjects.forEach(function(subject){
+
+const span =
+document.createElement("span");
+
+span.className =
+"subject";
+
+span.textContent =
+subject;
+
+container.appendChild(span);
+
+});
+
+}
+
+
+/* =====================================================
+   تطبيع النص
+===================================================== */
+
+function normalizeText(value){
+
+if(
+value === null ||
+value === undefined
+){
+
+return "";
+
+}
+
+return String(value)
+
+.replace(/\uFEFF/g,"")
+
+.replace(
+/[\u200E\u200F\u202A-\u202E]/g,
+""
+)
+
+.replace(/\u0640/g,"")
+
+.replace(/\s+/g," ")
+
+.trim()
+
+.toLowerCase();
+
+}
+
+
+/* =====================================================
+   تطبيع اسم الطالب
+===================================================== */
+
+function normalizeStudentName(value){
+
+return normalizeText(value)
+
+.replace(/[إأآ]/g,"ا")
+
+.replace(/ة/g,"ه");
+
+}
+
+
+/* =====================================================
+   تحويل الأرقام العربية
+===================================================== */
+
+function convertArabicNumbers(text){
+
+return String(text)
+
+.replace(
+/[٠-٩]/g,
+function(char){
+
+return String(
+char.charCodeAt(0)-1632
+);
+
+}
+)
+
+.replace(
+/[۰-۹]/g,
+function(char){
+
+return String(
+char.charCodeAt(0)-1776
+);
+
+}
+)
+
+.replace(/٫/g,".")
+
+.replace(/٬/g,"");
+
+}
+
+
+/* =====================================================
+   قراءة الدرجة
+===================================================== */
+
+function getNumber(value){
+
+if(
+value === null ||
+value === undefined ||
+value === ""
+){
+
+return 0;
+
+}
+
+if(typeof value === "number"){
+
+return Number.isFinite(value)
+? value
+: 0;
+
+}
+
+let text =
+convertArabicNumbers(value)
+.trim();
+
+if(!text){
+
+return 0;
+
+}
+
+text =
+text.replace(/,/g,".");
+
+const number =
+Number(text);
+
+return Number.isFinite(number)
+? number
+: 0;
+
+}
+
+
+/* =====================================================
+   حماية النصوص
+===================================================== */
+
+function escapeHtml(text){
+
+return String(text)
+
+.replace(/&/g,"&")
+
+.replace(/</g,"<")
+
+.replace(/>/g,">")
+
+.replace(/"/g,""")
+
+.replace(/'/g,"'");
+
+}
+
+
+/* =====================================================
+   إظهار رسالة
+===================================================== */
+
+function showStatus(
+elementId,
+message,
+type
+){
+
+const element =
+document.getElementById(
+elementId
+);
+
+element.innerHTML =
+message;
+
+element.className =
+"status " + type;
+
+}
+
+
+/* =====================================================
+   الحصول على قيمة Excel
+===================================================== */
+
+function getExcelValue(
+row,
+header
+){
+
+const target =
+normalizeText(header);
+
+for(
+const key of Object.keys(row)
+){
+
+if(
+normalizeText(key) === target
+){
+
+return row[key];
+
+}
+
+}
+
+return "";
+
+}
+
+
+/* =====================================================
+   التحقق من أعمدة Excel
+===================================================== */
+
+function validateExcelHeaders(
+headers,
+subjects
+){
+
+const normalizedHeaders =
+headers.map(normalizeText);
+
+const requiredHeaders = [
+"الاسم",
+...subjects
+];
+
+const missing = [];
+
+requiredHeaders.forEach(
+function(header){
+
+if(
+!normalizedHeaders.includes(
+normalizeText(header)
+)
+){
+
+missing.push(header);
+
+}
+
+});
+
+return missing;
+
+}
+
+
+/* =====================================================
+   استيراد Excel
+===================================================== */
+
+async function importExcel(){
+
+if(
+!isLoggedIn ||
+!SCHOOL_NAME ||
+!currentSchoolId
+){
+
+showStatus(
+"importStatus",
+"تعذر تحديد المدرسة المرتبطة بالحساب.",
+"error"
+);
+
+return;
+
+}
+
+const fileInput =
+document.getElementById(
+"excelFile"
+);
+
+const file =
+fileInput.files[0];
+
+if(!file){
+
+showStatus(
+"importStatus",
+"اختر ملف Excel أولاً.",
+"error"
+);
+
+return;
+
+}
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+const period =
+document
+.getElementById("periodSelect")
+.value;
+
+const subjects =
+CLASS_SUBJECTS[className] || [];
+
+const importBtn =
+document.getElementById(
+"importBtn"
+);
+
+importBtn.disabled = true;
+
+const progressContainer =
+document.getElementById(
+"progressContainer"
+);
+
+const progressFill =
+document.getElementById(
+"progressFill"
+);
+
+progressContainer.style.display =
+"block";
+
+progressFill.style.width =
+"0%";
+
+progressFill.textContent =
+"0%";
+
+try{
+
+const arrayBuffer =
+await file.arrayBuffer();
+
+const workbook =
+XLSX.read(
+arrayBuffer,
+{type:"array"}
+);
+
+const sheetName =
+workbook.SheetNames[0];
+
+const sheet =
+workbook.Sheets[sheetName];
+
+const rows =
+XLSX.utils.sheet_to_json(
+sheet,
+{defval:""}
+);
+
+if(!rows.length){
+
+throw new Error(
+"ملف Excel فارغ."
+);
+
+}
+
+const headers =
+Object.keys(rows[0]);
+
+const missing =
+validateExcelHeaders(
+headers,
+subjects
+);
+
+if(missing.length){
+
+throw new Error(
+"أعمدة Excel الناقصة: " +
+missing.join("، ")
+);
+
+}
+
+const validRows =
+rows.filter(
+function(row){
+
+const name =
+getExcelValue(
+row,
+"الاسم"
+);
+
+return normalizeStudentName(name)
+!== "";
+
+}
+);
+
+if(!validRows.length){
+
+throw new Error(
+"لم يتم العثور على أسماء طلاب."
+);
+
+}
+
+
+/* جلب طلاب المدرسة الحالية فقط */
+
+const {
+data:existingStudents,
+error:fetchError
+} =
+await supabaseClient
+
+.from("student_results")
+
+.select("*")
+
+.eq(
+"school_id",
+currentSchoolId
+)
+
+.eq(
+"class_name",
+className
+);
+
+if(fetchError){
+
+throw fetchError;
+
+}
+
+const studentMap =
+new Map();
+
+(existingStudents || [])
+.forEach(
+function(student){
+
+studentMap.set(
+normalizeStudentName(
+student.student_name
+),
+student
+);
+
+}
+);
+
+let inserted = 0;
+let updated = 0;
+let failed = 0;
+
+for(
+let i=0;
+i<validRows.length;
+i++
+){
+
+const row =
+validRows[i];
+
+const studentName =
+String(
+getExcelValue(
+row,
+"الاسم"
+)
+).trim();
+
+const normalizedName =
+normalizeStudentName(
+studentName
+);
+
+const periodResult = {};
+
+subjects.forEach(
+function(subject){
+
+const rawValue =
+getExcelValue(
+row,
+subject
+);
+
+periodResult[subject] =
+getNumber(rawValue);
+
+}
+);
+
+const existing =
+studentMap.get(
+normalizedName
+);
+
+try{
+
+if(existing){
+
+/* تحديث طالب موجود */
+
+const {
+error:updateError
+} =
+await supabaseClient
+
+.from("student_results")
+
+.update({
+[period]:periodResult
+})
+
+.eq(
+"id",
+existing.id
+)
+
+.eq(
+"school_id",
+currentSchoolId
+)
+
+.eq(
+"class_name",
+className
+);
+
+if(updateError){
+
+throw updateError;
+
+}
+
+updated++;
+
+}
+else{
+
+/* إضافة طالب جديد مع school_id */
+
+const {
+data:insertedData,
+error:insertError
+} =
+await supabaseClient
+
+.from("student_results")
+
+.insert({
+
+school_id:
+currentSchoolId,
+
+school_name:
+SCHOOL_NAME,
+
+class_name:
+className,
+
+student_name:
+studentName,
+
+[period]:
+periodResult
+
+})
+
+.select()
+.single();
+
+if(insertError){
+
+throw insertError;
+
+}
+
+inserted++;
+
+if(insertedData){
+
+studentMap.set(
+normalizedName,
+insertedData
+);
+
+}
+
+}
+
+}
+catch(rowError){
+
+console.error(
+"خطأ:",
+studentName,
+rowError
+);
+
+failed++;
+
+}
+
+const percent =
+Math.round(
+((i+1) /
+validRows.length) *
+100
+);
+
+progressFill.style.width =
+percent + "%";
+
+progressFill.textContent =
+percent + "%";
+
+}
+
+showStatus(
+"importStatus",
+
+"تم الاستيراد بنجاح ✅<br><br>" +
+
+"طلاب جدد: <strong>" +
+inserted +
+"</strong><br>" +
+
+"طلاب تم تحديثهم: <strong>" +
+updated +
+"</strong><br>" +
+
+"أخطاء: <strong>" +
+failed +
+"</strong>",
+
+failed > 0
+? "info"
+: "success"
+
+);
+
+await loadStudents();
+
+}
+catch(error){
+
+console.error(error);
+
+showStatus(
+"importStatus",
+
+"حدث خطأ أثناء الاستيراد:<br><strong>" +
+
+escapeHtml(
+error.message ||
+String(error)
+) +
+
+"</strong>",
+
+"error"
+);
+
+}
+finally{
+
+importBtn.disabled = false;
+
+}
+
+}
+
+
+/* =====================================================
+   إضافة طالب
+===================================================== */
+
+async function addStudent(){
+
+if(
+!isLoggedIn ||
+!SCHOOL_NAME ||
+!currentSchoolId
+){
+
+showStatus(
+"addStudentStatus",
+"تعذر تحديد المدرسة المرتبطة بالحساب.",
+"error"
+);
+
+return;
+
+}
+
+const nameInput =
+document.getElementById(
+"newStudentName"
+);
+
+const studentName =
+nameInput.value.trim();
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+if(!studentName){
+
+showStatus(
+"addStudentStatus",
+"يرجى إدخال اسم الطالب.",
+"error"
+);
+
+return;
+
+}
+
+try{
+
+/* البحث داخل مدرسة المدير الحالية فقط */
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+
+.from("student_results")
+
+.select("id, student_name")
+
+.eq(
+"school_id",
+currentSchoolId
+)
+
+.eq(
+"class_name",
+className
+);
+
+if(checkError){
+
+throw checkError;
+
+}
+
+const normalizedNewName =
+normalizeStudentName(
+studentName
+);
+
+const duplicate =
+(existing || [])
+.some(
+function(student){
+
+return normalizeStudentName(
+student.student_name
+) === normalizedNewName;
+
+}
+);
+
+if(duplicate){
+
+showStatus(
+"addStudentStatus",
+"الطالب موجود بالفعل في هذا الصف.",
+"error"
+);
+
+return;
+
+}
+
+
+/* إضافة الطالب مع school_id */
+
+const {
+error
+} =
+await supabaseClient
+
+.from("student_results")
+
+.insert({
+
+school_id:
+currentSchoolId,
+
+school_name:
+SCHOOL_NAME,
+
+class_name:
+className,
+
+student_name:
+studentName
+
+});
+
+if(error){
+
+throw error;
+
+}
+
+nameInput.value = "";
+
+showStatus(
+"addStudentStatus",
+"تمت إضافة الطالب بنجاح ✅",
+"success"
+);
+
+await loadStudents();
+
+}
+catch(error){
+
+console.error(error);
+
+showStatus(
+"addStudentStatus",
+
+"حدث خطأ أثناء إضافة الطالب:<br>" +
+
+escapeHtml(
+error.message ||
+String(error)
+),
+
+"error"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   تحميل الطلاب
+===================================================== */
+
+async function loadStudents(){
+
+if(
+!isLoggedIn ||
+!SCHOOL_NAME ||
+!currentSchoolId
+){
+
+return;
+
+}
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+const list =
+document.getElementById(
+"studentsList"
+);
+
+list.innerHTML =
+"جاري تحميل الطلاب...";
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+
+.from("student_results")
+
+.select(
+"id, student_name, class_name"
+)
+
+.eq(
+"school_id",
+currentSchoolId
+)
+
+.eq(
+"class_name",
+className
+)
+
+.order(
+"student_name",
+{
+ascending:true
+}
+);
+
+if(error){
+
+throw error;
+
+}
+
+const students =
+data || [];
+
+document
+.getElementById(
+"studentsCount"
+)
+.textContent =
+students.length;
+
+if(!students.length){
+
+list.innerHTML =
+'<div class="info-box">' +
+"لا يوجد طلاب في هذا الصف حاليًا." +
+"</div>";
+
+return;
+
+}
+
+list.innerHTML = "";
+
+students.forEach(
+function(student){
+
+const div =
+document.createElement(
+"div"
+);
+
+div.className =
+"student";
+
+div.innerHTML =
+
+'<div class="student-name">' +
+
+escapeHtml(
+student.student_name || ""
+) +
+
+"</div>" +
+
+'<div class="student-actions">' +
+
+'<button ' +
+
+'class="btn-danger small-btn" ' +
+
+'onclick="deleteStudent(' +
+
+JSON.stringify(
+student.id
+) +
+
+')">' +
+
+"🗑️ حذف الطالب" +
+
+"</button>" +
+
+"</div>";
+
+list.appendChild(div);
+
+}
+);
+
+}
+catch(error){
+
+console.error(error);
+
+list.innerHTML = "";
+
+showStatus(
+"studentsStatus",
+
+"تعذر تحميل الطلاب:<br>" +
+
+escapeHtml(
+error.message ||
+String(error)
+),
+
+"error"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   حذف طالب واحد
+===================================================== */
+
+async function deleteStudent(id){
+
+if(
+!isLoggedIn ||
+!SCHOOL_NAME ||
+!currentSchoolId
+){
+
+return;
+
+}
+
+const confirmed =
+confirm(
+"هل أنت متأكد من حذف هذا الطالب؟\n\n" +
+"سيتم حذف الطالب وجميع درجاته."
+);
+
+if(!confirmed){
+
+return;
+
+}
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+try{
+
+const {
+error
+} =
+await supabaseClient
+
+.from("student_results")
+
+.delete()
+
+.eq(
+"id",
+id
+)
+
+.eq(
+"school_id",
+currentSchoolId
+)
+
+.eq(
+"class_name",
+className
+);
+
+if(error){
+
+throw error;
+
+}
+
+showStatus(
+"studentsStatus",
+"تم حذف الطالب وجميع درجاته بنجاح.",
+"success"
+);
+
+await loadStudents();
+
+}
+catch(error){
+
+console.error(error);
+
+showStatus(
+"studentsStatus",
+
+"حدث خطأ أثناء حذف الطالب:<br>" +
+
+escapeHtml(
+error.message ||
+String(error)
+),
+
+"error"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   حذف جميع طلاب الفصل
+===================================================== */
+
+async function deleteAllStudentsInClass(){
+
+if(
+!isLoggedIn ||
+!SCHOOL_NAME ||
+!currentSchoolId
+){
+
+return;
+
+}
+
+const className =
+document
+.getElementById("classSelect")
+.value;
+
+const confirmed =
+confirm(
+
+"⚠️ تحذير!\n\n" +
+
+"سيتم حذف جميع طلاب " +
+className +
+" وجميع درجاتهم.\n\n" +
+
+"هل أنت متأكد؟"
+
+);
+
+if(!confirmed){
+
+return;
+
+}
+
+const finalConfirm =
+confirm(
+
+"تأكيد نهائي!\n\n" +
+
+"سيتم حذف جميع طلاب " +
+className +
+
+" من مدرسة " +
+SCHOOL_NAME +
+
+".\n\n" +
+
+"هل تريد المتابعة؟"
+
+);
+
+if(!finalConfirm){
+
+return;
+
+}
+
+try{
+
+showStatus(
+"deleteAllStatus",
+
+"جاري حذف جميع طلاب الفصل...",
+
+"info"
+);
+
+const {
+error
+} =
+await supabaseClient
+
+.from("student_results")
+
+.delete()
+
+.eq(
+"school_id",
+currentSchoolId
+)
+
+.eq(
+"class_name",
+className
+);
+
+if(error){
+
+throw error;
+
+}
+
+showStatus(
+"deleteAllStatus",
+
+"تم حذف جميع طلاب " +
+
+escapeHtml(className) +
+
+" وجميع درجاتهم بنجاح.",
+
+"success"
+);
+
+await loadStudents();
+
+}
+catch(error){
+
+console.error(error);
+
+showStatus(
+"deleteAllStatus",
+
+"حدث خطأ أثناء حذف الطلاب:<br>" +
+
+escapeHtml(
+error.message ||
+String(error)
+),
+
+"error"
+);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
