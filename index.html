@@ -179,7 +179,7 @@ window.onload = async function(){
   if(data.used && data.device === device){
     // ✅ الكرت محفوظ وصحيح → فتح results.html مباشرة
     setTimeout(()=>{
-      window.location = "results.html";
+      window.location = "mainpage.html";
     },800);
   }else{
     localStorage.removeItem("saved_card");
