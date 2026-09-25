@@ -1,0 +1,589 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>تسجيل مدرسة جديدة</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#f1f5f9;
+    color:#1e293b;
+}
+
+.header{
+    background:#1e3a5f;
+    color:white;
+    padding:25px 15px;
+    text-align:center;
+}
+
+.header h1{
+    margin:0 0 8px;
+    font-size:25px;
+}
+
+.header p{
+    margin:0;
+    font-size:15px;
+}
+
+.container{
+    width:94%;
+    max-width:500px;
+    margin:30px auto;
+}
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:25px;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    text-align:center;
+    margin-top:0;
+    color:#1e3a5f;
+}
+
+.info{
+    background:#eff6ff;
+    border-right:4px solid #1e3a5f;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:20px;
+    line-height:1.8;
+    font-size:14px;
+}
+
+label{
+    display:block;
+    margin:15px 0 7px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:16px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#1e3a5f;
+}
+
+button{
+    width:100%;
+    margin-top:22px;
+    padding:14px;
+    border:0;
+    border-radius:8px;
+    background:#1e3a5f;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.92;
+}
+
+button:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.message{
+    display:none;
+    margin-top:18px;
+    padding:13px;
+    border-radius:8px;
+    line-height:1.8;
+    text-align:center;
+}
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.loading{
+    display:none;
+    text-align:center;
+    margin-top:15px;
+    color:#475569;
+}
+
+.login-link{
+    text-align:center;
+    margin-top:20px;
+}
+
+.login-link a{
+    color:#1e3a5f;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.footer{
+    text-align:center;
+    color:#64748b;
+    font-size:13px;
+    margin:25px 0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>🏫 تسجيل مدرسة جديدة</h1>
+
+    <p>
+        إنشاء حساب مدير وربطه بالمدرسة تلقائيًا
+    </p>
+
+</div>
+
+
+<div class="container">
+
+<div class="card">
+
+    <h2>إنشاء حساب مدير مدرسة</h2>
+
+    <div class="info">
+
+        أدخل بيانات المدرسة وحساب المدير.
+        بعد التسجيل سيتم ربط الحساب بهذه المدرسة،
+        وسيتمكن المدير من إدارة نتائج طلاب مدرسته فقط.
+
+    </div>
+
+
+    <label for="schoolName">
+        اسم المدرسة
+    </label>
+
+    <input
+        type="text"
+        id="schoolName"
+        placeholder="مثال: مدرسة النور"
+        autocomplete="organization"
+    >
+
+
+    <label for="email">
+        البريد الإلكتروني
+    </label>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="example@email.com"
+        autocomplete="email"
+    >
+
+
+    <label for="password">
+        كلمة المرور
+    </label>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="أدخل كلمة المرور"
+        autocomplete="new-password"
+    >
+
+
+    <label for="confirmPassword">
+        تأكيد كلمة المرور
+    </label>
+
+    <input
+        type="password"
+        id="confirmPassword"
+        placeholder="أعد كتابة كلمة المرور"
+        autocomplete="new-password"
+    >
+
+
+    <button
+        id="registerBtn"
+        onclick="registerManager()"
+    >
+        إنشاء المدرسة والحساب
+    </button>
+
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        جاري إنشاء الحساب والمدرسة...
+    </div>
+
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+
+    <div class="login-link">
+
+        لديك حساب بالفعل؟
+
+        <br>
+
+        <a href="manager.html">
+            الدخول إلى لوحة المدير
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="footer">
+
+    نظام نتائج الطلاب
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   إعداد Supabase
+========================================= */
+
+const SUPABASE_URL =
+"https://ilplwdhwsziuxynvneov.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_KALdRLu6_CyNGXP7RWecLQ_mN1JlrJi";
+
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =========================================
+   إظهار رسالة
+========================================= */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+/* =========================================
+   إنشاء الحساب والمدرسة
+========================================= */
+
+async function registerManager(){
+
+    const schoolName =
+        document.getElementById("schoolName")
+        .value
+        .trim();
+
+    const email =
+        document.getElementById("email")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("password")
+        .value;
+
+    const confirmPassword =
+        document.getElementById("confirmPassword")
+        .value;
+
+
+    const button =
+        document.getElementById("registerBtn");
+
+    const loading =
+        document.getElementById("loading");
+
+
+    /* إخفاء الرسالة السابقة */
+
+    document.getElementById("message")
+        .className = "message";
+
+
+    /* =====================================
+       التحقق من البيانات
+    ===================================== */
+
+    if(!schoolName){
+
+        showMessage(
+            "يرجى إدخال اسم المدرسة",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!email){
+
+        showMessage(
+            "يرجى إدخال البريد الإلكتروني",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!password){
+
+        showMessage(
+            "يرجى إدخال كلمة المرور",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        showMessage(
+            "كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password !== confirmPassword){
+
+        showMessage(
+            "كلمتا المرور غير متطابقتين",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* =====================================
+       تعطيل الزر أثناء العملية
+    ===================================== */
+
+    button.disabled = true;
+
+    loading.style.display = "block";
+
+
+    try{
+
+
+        /* =================================
+           إنشاء حساب Supabase
+        ================================= */
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient.auth.signUp({
+
+            email: email,
+
+            password: password
+
+        });
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        /* =================================
+           التأكد من وجود المستخدم
+        ================================= */
+
+        if(!data.user){
+
+            throw new Error(
+                "لم يتم إنشاء حساب المستخدم"
+            );
+
+        }
+
+
+        /* =================================
+           هل تم تسجيل الدخول مباشرة؟
+           
+           إذا كان تأكيد البريد الإلكتروني
+           غير مفعّل، ستكون هناك جلسة.
+        ================================= */
+
+        if(data.session){
+
+            const {
+                data:school,
+                error:schoolError
+            } =
+            await supabaseClient.rpc(
+                "register_school_manager",
+                {
+                    p_school_name: schoolName
+                }
+            );
+
+
+            if(schoolError){
+
+                throw schoolError;
+
+            }
+
+
+            showMessage(
+                "تم إنشاء الحساب والمدرسة بنجاح. سيتم نقلك إلى لوحة المدير.",
+                "success"
+            );
+
+
+            setTimeout(function(){
+
+                window.location.href =
+                    "manager.html";
+
+            },2000);
+
+
+            return;
+
+        }
+
+
+        /* =================================
+           إذا كان تأكيد البريد الإلكتروني
+           مفعلاً
+        ================================= */
+
+        localStorage.setItem(
+            "pending_school_name",
+            schoolName
+        );
+
+
+        localStorage.setItem(
+            "pending_manager_email",
+            email
+        );
+
+
+        showMessage(
+            "تم إنشاء الحساب بنجاح. يرجى فتح بريدك الإلكتروني وتأكيد الحساب، ثم الدخول إلى لوحة المدير لإكمال تسجيل المدرسة.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        let message =
+            error.message || "حدث خطأ غير معروف";
+
+
+        /* رسائل أوضح لبعض أخطاء Supabase */
+
+        if(
+            message.includes(
+                "User already registered"
+            )
+        ){
+
+            message =
+                "هذا البريد الإلكتروني مسجل بالفعل.";
+
+        }
+
+
+        if(
+            message.includes(
+                "اسم المدرسة موجود مسبقاً"
+            )
+        ){
+
+            message =
+                "اسم المدرسة موجود مسبقاً. يرجى استخدام اسم آخر.";
+
+        }
+
+
+        showMessage(
+            message,
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled = false;
+
+        loading.style.display = "none";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
