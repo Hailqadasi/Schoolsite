@@ -1,28 +1,37 @@
  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>لوحة إدارة نتائج الطلاب</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
+
 <style>
-*{box-sizing:border-box}
+
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
     padding:15px;
     font-family:Tahoma,Arial,sans-serif;
     background:#f3f6f9;
-    color:#222
+    color:#222;
 }
 
 .container{
     max-width:900px;
-    margin:auto
+    margin:auto;
 }
 
 .header{
@@ -32,17 +41,17 @@ body{
     border-radius:14px;
     text-align:center;
     margin-bottom:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,.12)
+    box-shadow:0 3px 10px rgba(0,0,0,.12);
 }
 
 .header h1{
     margin:0 0 8px;
-    font-size:24px
+    font-size:24px;
 }
 
 .header p{
     margin:0;
-    font-size:15px
+    font-size:15px;
 }
 
 .card{
@@ -50,32 +59,33 @@ body{
     border-radius:14px;
     padding:18px;
     margin-bottom:15px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08)
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
 .card h2{
     margin-top:0;
     color:#1e3a5f;
-    font-size:20px
+    font-size:20px;
 }
 
 label{
     display:block;
     font-weight:bold;
-    margin-bottom:7px
+    margin-bottom:7px;
 }
 
-input,select{
+input,
+select{
     width:100%;
     padding:12px;
     border:1px solid #ccd4dc;
     border-radius:9px;
     font-size:16px;
-    background:white
+    background:white;
 }
 
 .form-group{
-    margin-bottom:15px
+    margin-bottom:15px;
 }
 
 button{
@@ -84,36 +94,36 @@ button{
     padding:12px 18px;
     font-size:16px;
     cursor:pointer;
-    font-family:inherit
-}
-
-.btn-primary{
-    background:#1e3a5f;
-    color:white
-}
-
-.btn-success{
-    background:#198754;
-    color:white
-}
-
-.btn-danger{
-    background:#dc3545;
-    color:white
-}
-
-.btn-secondary{
-    background:#6c757d;
-    color:white
+    font-family:inherit;
 }
 
 button:disabled{
     opacity:.55;
-    cursor:not-allowed
+    cursor:not-allowed;
+}
+
+.btn-primary{
+    background:#1e3a5f;
+    color:white;
+}
+
+.btn-success{
+    background:#198754;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc3545;
+    color:white;
+}
+
+.btn-secondary{
+    background:#6c757d;
+    color:white;
 }
 
 .full{
-    width:100%
+    width:100%;
 }
 
 .info-box{
@@ -121,21 +131,40 @@ button:disabled{
     border-right:5px solid #1e3a5f;
     padding:14px;
     border-radius:8px;
-    margin-bottom:15px
+    margin-bottom:15px;
+}
+
+.school-box{
+    background:#eef5fb;
+    border-right:5px solid #198754;
+    padding:14px;
+    border-radius:8px;
+    margin-bottom:15px;
+    line-height:1.8;
+}
+
+.danger-box{
+    background:#fff1f1;
+    border-right:5px solid #dc3545;
+    padding:14px;
+    border-radius:8px;
+    margin-bottom:15px;
+    color:#842029;
+    line-height:1.8;
 }
 
 .subjects{
     display:flex;
     flex-wrap:wrap;
     gap:7px;
-    margin-top:10px
+    margin-top:10px;
 }
 
 .subject{
     background:#e9ecef;
     padding:7px 12px;
     border-radius:20px;
-    font-size:14px
+    font-size:14px;
 }
 
 .status{
@@ -143,30 +172,30 @@ button:disabled{
     border-radius:8px;
     margin-top:12px;
     display:none;
-    line-height:1.7
+    line-height:1.7;
 }
 
 .status.success{
     display:block;
     background:#d1e7dd;
-    color:#0f5132
+    color:#0f5132;
 }
 
 .status.error{
     display:block;
     background:#f8d7da;
-    color:#842029
+    color:#842029;
 }
 
 .status.info{
     display:block;
     background:#cff4fc;
-    color:#055160
+    color:#055160;
 }
 
 .progress-container{
     display:none;
-    margin-top:15px
+    margin-top:15px;
 }
 
 .progress-bar{
@@ -174,7 +203,7 @@ button:disabled{
     height:24px;
     background:#e9ecef;
     border-radius:20px;
-    overflow:hidden
+    overflow:hidden;
 }
 
 .progress-fill{
@@ -185,7 +214,7 @@ button:disabled{
     text-align:center;
     line-height:24px;
     font-size:13px;
-    transition:width .2s
+    transition:width .2s;
 }
 
 .student{
@@ -193,48 +222,48 @@ button:disabled{
     border-radius:10px;
     padding:12px;
     margin-bottom:10px;
-    background:#fafafa
+    background:#fafafa;
 }
 
 .student-name{
     font-weight:bold;
     font-size:17px;
     color:#1e3a5f;
-    margin-bottom:8px
+    margin-bottom:8px;
 }
 
 .student-actions{
     display:flex;
     gap:8px;
-    flex-wrap:wrap
+    flex-wrap:wrap;
 }
 
 .small-btn{
     padding:8px 12px;
-    font-size:14px
+    font-size:14px;
 }
 
 .hidden{
-    display:none!important
+    display:none!important;
 }
 
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px
+    gap:12px;
 }
 
 .add-student-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px
+    gap:12px;
 }
 
 .note{
     font-size:13px;
     color:#666;
     line-height:1.7;
-    margin-top:8px
+    margin-top:8px;
 }
 
 .logout{
@@ -242,50 +271,42 @@ button:disabled{
     background:#dc3545;
     color:white;
     padding:8px 12px;
-    font-size:14px
+    font-size:14px;
 }
 
 .clearfix::after{
     content:"";
     display:block;
-    clear:both
-}
-
-.danger-box{
-    background:#fff1f1;
-    border-right:5px solid #dc3545;
-    padding:14px;
-    border-radius:8px;
-    margin-bottom:15px;
-    color:#842029;
-    line-height:1.8
-}
-
-.school-box{
-    background:#eef5fb;
-    border-right:5px solid #198754;
-    padding:14px;
-    border-radius:8px;
-    margin-bottom:15px;
-    line-height:1.8
+    clear:both;
 }
 
 @media(max-width:600px){
+
     .grid,
     .add-student-grid{
-        grid-template-columns:1fr
+        grid-template-columns:1fr;
     }
 
     .header h1{
-        font-size:21px
+        font-size:21px;
     }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
+
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <div class="header clearfix">
 
@@ -293,25 +314,38 @@ button:disabled{
     class="logout hidden"
     id="logoutBtn"
     onclick="logout()">
+
     خروج
+
 </button>
 
-<h1>لوحة إدارة نتائج الطلاب</h1>
+<h1>
+    لوحة إدارة نتائج الطلاب
+</h1>
 
-<p>إدارة نتائج المدرسة</p>
+<p>
+    إدارة نتائج المدرسة
+</p>
 
 </div>
 
 
-<!-- تسجيل الدخول -->
-<div class="card" id="loginCard">
+<!-- =========================
+     LOGIN
+========================= -->
 
-<h2>🔐 دخول الإدارة</h2>
+<div class="card"
+     id="loginCard">
+
+<h2>
+    🔐 دخول الإدارة
+</h2>
+
 
 <div class="form-group">
 
 <label for="email">
-البريد الإلكتروني
+    البريد الإلكتروني
 </label>
 
 <input
@@ -322,10 +356,11 @@ button:disabled{
 
 </div>
 
+
 <div class="form-group">
 
 <label for="password">
-كلمة المرور
+    كلمة المرور
 </label>
 
 <input
@@ -336,36 +371,48 @@ button:disabled{
 
 </div>
 
+
 <button
     class="btn-primary full"
     id="loginBtn"
     onclick="login()">
 
-دخول
+    دخول
 
 </button>
+
 
 <div
     id="loginStatus"
     class="status">
-</div>
 
 </div>
 
+</div>
 
-<!-- لوحة الإدارة -->
-<div id="adminPanel" class="hidden">
+
+<!-- =========================
+     ADMIN PANEL
+========================= -->
+
+<div id="adminPanel"
+     class="hidden">
+
+
+<!-- المدرسة -->
 
 <div class="card">
 
 <div class="school-box">
 
-<strong>🏫 المدرسة المرتبطة بهذا الحساب:</strong>
+<strong>
+    🏫 المدرسة المرتبطة بهذا الحساب:
+</strong>
 
 <br>
 
 <span id="schoolNameDisplay">
-جاري التحقق...
+    جاري التحقق...
 </span>
 
 </div>
@@ -373,17 +420,24 @@ button:disabled{
 </div>
 
 
-<!-- إعدادات الاستيراد -->
+<!-- =========================
+     SETTINGS
+========================= -->
+
 <div class="card">
 
-<h2>إعدادات الاستيراد</h2>
+<h2>
+    إعدادات الاستيراد
+</h2>
+
 
 <div class="grid">
+
 
 <div class="form-group">
 
 <label for="classSelect">
-الصف
+    الصف
 </label>
 
 <select
@@ -391,51 +445,51 @@ button:disabled{
     onchange="classChanged()">
 
 <option value="الصف الأول الأساسي">
-الصف الأول الأساسي
+    الصف الأول الأساسي
 </option>
 
 <option value="الصف الثاني الأساسي">
-الصف الثاني الأساسي
+    الصف الثاني الأساسي
 </option>
 
 <option value="الصف الثالث الأساسي">
-الصف الثالث الأساسي
+    الصف الثالث الأساسي
 </option>
 
 <option value="الصف الرابع الأساسي">
-الصف الرابع الأساسي
+    الصف الرابع الأساسي
 </option>
 
 <option value="الصف الخامس الأساسي">
-الصف الخامس الأساسي
+    الصف الخامس الأساسي
 </option>
 
 <option value="الصف السادس الأساسي">
-الصف السادس الأساسي
+    الصف السادس الأساسي
 </option>
 
 <option value="الصف السابع الأساسي">
-الصف السابع الأساسي
+    الصف السابع الأساسي
 </option>
 
 <option value="الصف الثامن الأساسي">
-الصف الثامن الأساسي
+    الصف الثامن الأساسي
 </option>
 
 <option value="الصف التاسع الأساسي">
-الصف التاسع الأساسي
+    الصف التاسع الأساسي
 </option>
 
 <option value="الصف الأول الثانوي">
-الصف الأول الثانوي
+    الصف الأول الثانوي
 </option>
 
 <option value="الصف الثاني الثانوي">
-الصف الثاني الثانوي
+    الصف الثاني الثانوي
 </option>
 
 <option value="الصف الثالث الثانوي">
-الصف الثالث الثانوي
+    الصف الثالث الثانوي
 </option>
 
 </select>
@@ -446,19 +500,42 @@ button:disabled{
 <div class="form-group">
 
 <label for="periodSelect">
-الفترة / الشهر
+    الفترة / الشهر
 </label>
 
 <select id="periodSelect">
 
-<option value="september">سبتمبر</option>
-<option value="october">أكتوبر</option>
-<option value="november">نوفمبر</option>
-<option value="january">يناير</option>
-<option value="february">فبراير</option>
-<option value="march">مارس</option>
-<option value="first_half">الفصل الأول</option>
-<option value="second_half">الفصل الثاني</option>
+<option value="september">
+    سبتمبر
+</option>
+
+<option value="october">
+    أكتوبر
+</option>
+
+<option value="november">
+    نوفمبر
+</option>
+
+<option value="january">
+    يناير
+</option>
+
+<option value="february">
+    فبراير
+</option>
+
+<option value="march">
+    مارس
+</option>
+
+<option value="first_half">
+    الفصل الأول
+</option>
+
+<option value="second_half">
+    الفصل الثاني
+</option>
 
 </select>
 
@@ -469,35 +546,46 @@ button:disabled{
 
 <div class="info-box">
 
-<strong>الصف المحدد:</strong>
+<strong>
+    الصف المحدد:
+</strong>
 
 <span id="selectedClassText">
-الصف الأول الأساسي
+    الصف الأول الأساسي
 </span>
 
 <br><br>
 
-<strong>المواد:</strong>
+<strong>
+    المواد:
+</strong>
 
 <div
     id="subjectsContainer"
     class="subjects">
-</div>
 
 </div>
 
 </div>
 
+</div>
 
-<!-- استيراد Excel -->
+
+<!-- =========================
+     EXCEL
+========================= -->
+
 <div class="card">
 
-<h2>📊 استيراد نتائج Excel</h2>
+<h2>
+    📊 استيراد نتائج Excel
+</h2>
+
 
 <div class="form-group">
 
 <label for="excelFile">
-اختر ملف Excel
+    اختر ملف Excel
 </label>
 
 <input
@@ -506,6 +594,7 @@ button:disabled{
     accept=".xlsx,.xls,.csv">
 
 </div>
+
 
 <div class="note">
 
@@ -516,18 +605,21 @@ button:disabled{
 <br>
 
 مثال:
+
 الاسم، قرآن، إسلامية، لغة عربية، رياضيات، علوم
 
 </div>
 
+
 <br>
+
 
 <button
     id="importBtn"
     class="btn-success full"
     onclick="importExcel()">
 
-استيراد النتائج
+    استيراد النتائج
 
 </button>
 
@@ -542,33 +634,42 @@ button:disabled{
     id="progressFill"
     class="progress-fill">
 
-0%
+    0%
 
 </div>
 
 </div>
 
 </div>
+
 
 <div
     id="importStatus"
     class="status">
-</div>
 
 </div>
 
+</div>
 
-<!-- إضافة طالب -->
+
+<!-- =========================
+     ADD STUDENT
+========================= -->
+
 <div class="card">
 
-<h2>➕ إضافة طالب</h2>
+<h2>
+    ➕ إضافة طالب
+</h2>
+
 
 <div class="add-student-grid">
+
 
 <div class="form-group">
 
 <label for="newStudentName">
-اسم الطالب
+    اسم الطالب
 </label>
 
 <input
@@ -578,10 +679,11 @@ button:disabled{
 
 </div>
 
+
 <div class="form-group">
 
 <label>
-الصف
+    الصف
 </label>
 
 <input
@@ -593,60 +695,87 @@ button:disabled{
 
 </div>
 
+
 <button
     class="btn-primary full"
     onclick="addStudent()">
 
-➕ إضافة الطالب
+    ➕ إضافة الطالب
 
 </button>
+
 
 <div
     id="addStudentStatus"
     class="status">
-</div>
 
 </div>
 
+</div>
 
-<!-- الطلاب -->
+
+<!-- =========================
+     STUDENTS
+========================= -->
+
 <div class="card">
 
 <h2>
+
 طلاب الصف المحدد
-(<span id="studentsCount">0</span>)
+
+(
+<span id="studentsCount">
+    0
+</span>
+)
+
 </h2>
+
 
 <button
     class="btn-secondary full"
     onclick="loadStudents()">
 
-تحديث قائمة الطلاب
+    🔄 تحديث قائمة الطلاب
 
 </button>
 
-<br><br>
 
-<div id="studentsList"></div>
+<br>
+<br>
+
+
+<div id="studentsList">
+
+</div>
+
 
 <div
     id="studentsStatus"
     class="status">
-</div>
 
 </div>
 
+</div>
 
-<!-- حذف جميع الطلاب -->
+
+<!-- =========================
+     DELETE ALL
+========================= -->
+
 <div class="card">
 
-<h2>🗑️ حذف جميع طلاب الفصل</h2>
+<h2>
+    🗑️ حذف جميع طلاب الفصل
+</h2>
+
 
 <div class="danger-box">
 
 سيتم حذف جميع طلاب
 <strong id="deleteClassText">
-الصف الأول الأساسي
+    الصف الأول الأساسي
 </strong>
 ونتائجهم بالكامل.
 
@@ -656,20 +785,24 @@ button:disabled{
 
 </div>
 
+
 <button
     class="btn-danger full"
     onclick="deleteAllStudentsInClass()">
 
-🗑️ حذف جميع طلاب الفصل
+    🗑️ حذف جميع طلاب الفصل
 
 </button>
+
 
 <div
     id="deleteAllStatus"
     class="status">
+
 </div>
 
 </div>
+
 
 </div>
 
@@ -679,7 +812,7 @@ button:disabled{
 <script>
 
 /* =====================================================
-   إعدادات Supabase
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -687,6 +820,7 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_KALdRLu6_CyNGXP7RWecLQ_mN1JlrJi";
+
 
 const supabaseClient =
 window.supabase.createClient(
@@ -696,7 +830,7 @@ window.supabase.createClient(
 
 
 /* =====================================================
-   بيانات المدير والمدرسة
+   بيانات المستخدم والمدرسة
 ===================================================== */
 
 let isLoggedIn = false;
@@ -709,235 +843,308 @@ let SCHOOL_NAME = "";
 
 
 /* =====================================================
-   المواد حسب الصف
+   المواد
 ===================================================== */
 
 const CLASS_SUBJECTS = {
 
 "الصف الأول الأساسي":[
-"قرآن","إسلامية","لغة عربية","رياضيات","علوم"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "رياضيات",
+    "علوم"
 ],
 
 "الصف الثاني الأساسي":[
-"قرآن","إسلامية","لغة عربية","رياضيات","علوم"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "رياضيات",
+    "علوم"
 ],
 
 "الصف الثالث الأساسي":[
-"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف الرابع الأساسي":[
-"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف الخامس الأساسي":[
-"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف السادس الأساسي":[
-"قرآن","إسلامية","لغة عربية","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف السابع الأساسي":[
-"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "انجليزي",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف الثامن الأساسي":[
-"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "انجليزي",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف التاسع الأساسي":[
-"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات","علوم","اجتماعات"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "انجليزي",
+    "رياضيات",
+    "علوم",
+    "اجتماعات"
 ],
 
 "الصف الأول الثانوي":[
-"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات",
-"فيزياء","كيمياء","أحياء","جغرافيا","تاريخ","مجتمع"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "انجليزي",
+    "رياضيات",
+    "فيزياء",
+    "كيمياء",
+    "أحياء",
+    "جغرافيا",
+    "تاريخ",
+    "مجتمع"
 ],
 
 "الصف الثاني الثانوي":[
-"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات",
-"فيزياء","كيمياء","أحياء"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "انجليزي",
+    "رياضيات",
+    "فيزياء",
+    "كيمياء",
+    "أحياء"
 ],
 
 "الصف الثالث الثانوي":[
-"قرآن","إسلامية","لغة عربية","انجليزي","رياضيات",
-"فيزياء","كيمياء","أحياء"
+    "قرآن",
+    "إسلامية",
+    "لغة عربية",
+    "انجليزي",
+    "رياضيات",
+    "فيزياء",
+    "كيمياء",
+    "أحياء"
 ]
 
 };
 
 
 /* =====================================================
-   تشغيل الصفحة
+   عند فتح الصفحة
 ===================================================== */
 
 document.addEventListener(
-"DOMContentLoaded",
-async function(){
+    "DOMContentLoaded",
+    async function(){
 
-updateSubjectsInfo();
+        updateSubjectsInfo();
 
-updateClassText();
+        updateClassText();
 
-await checkExistingSession();
+        await checkExistingSession();
 
-}
+    }
 );
 
 
 /* =====================================================
-   تسجيل الدخول باستخدام Supabase Auth
+   تسجيل الدخول
 ===================================================== */
 
 async function login(){
 
-const email =
-document.getElementById("email")
-.value
-.trim();
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim();
 
-const password =
-document.getElementById("password")
-.value;
-
-if(!email){
-
-showStatus(
-"loginStatus",
-"يرجى إدخال البريد الإلكتروني.",
-"error"
-);
-
-return;
-
-}
-
-if(!password){
-
-showStatus(
-"loginStatus",
-"يرجى إدخال كلمة المرور.",
-"error"
-);
-
-return;
-
-}
-
-const loginBtn =
-document.getElementById("loginBtn");
-
-loginBtn.disabled = true;
-
-loginBtn.textContent =
-"جاري تسجيل الدخول...";
-
-try{
-
-const {
-data,
-error
-} =
-await supabaseClient.auth.signInWithPassword({
-
-email:email,
-
-password:password
-
-});
-
-if(error){
-throw error;
-}
-
-if(!data.user){
-throw new Error(
-"لم يتم العثور على حساب المستخدم."
-);
-}
-
-currentUser =
-data.user;
+    const password =
+        document
+        .getElementById("password")
+        .value;
 
 
-/* التحقق من ارتباط المدير بالمدرسة */
+    if(!email){
 
-const school =
-await getManagerSchool(
-data.user.id
-);
+        showStatus(
+            "loginStatus",
+            "يرجى إدخال البريد الإلكتروني.",
+            "error"
+        );
 
-if(!school){
+        return;
 
-await supabaseClient.auth.signOut();
-
-throw new Error(
-"هذا الحساب غير مرتبط بأي مدرسة."
-);
-
-}
-
-currentSchoolId =
-school.id;
-
-SCHOOL_NAME =
-school.school_name;
-
-isLoggedIn = true;
+    }
 
 
-/* إظهار اللوحة */
+    if(!password){
 
-document
-.getElementById("loginCard")
-.classList
-.add("hidden");
+        showStatus(
+            "loginStatus",
+            "يرجى إدخال كلمة المرور.",
+            "error"
+        );
 
-document
-.getElementById("adminPanel")
-.classList
-.remove("hidden");
+        return;
 
-document
-.getElementById("logoutBtn")
-.classList
-.remove("hidden");
+    }
 
-document
-.getElementById("schoolNameDisplay")
-.textContent =
-SCHOOL_NAME;
 
-updateClassText();
+    const loginBtn =
+        document.getElementById("loginBtn");
 
-await loadStudents();
 
-}
-catch(error){
+    loginBtn.disabled = true;
 
-console.error(error);
+    loginBtn.textContent =
+        "جاري تسجيل الدخول...";
 
-showStatus(
-"loginStatus",
-"تعذر تسجيل الدخول:<br><strong>" +
-escapeHtml(
-error.message ||
-String(error)
-) +
-"</strong>",
-"error"
-);
 
-}
-finally{
+    try{
 
-loginBtn.disabled = false;
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .auth
+        .signInWithPassword({
 
-loginBtn.textContent =
-"دخول";
+            email:email,
 
-}
+            password:password
+
+        });
+
+
+        if(error){
+            throw error;
+        }
+
+
+        if(!data || !data.user){
+
+            throw new Error(
+                "لم يتم العثور على حساب المستخدم."
+            );
+
+        }
+
+
+        currentUser =
+            data.user;
+
+
+        const school =
+            await getManagerSchool(
+                data.user.id
+            );
+
+
+        if(!school){
+
+            await supabaseClient
+            .auth
+            .signOut();
+
+            throw new Error(
+                "هذا الحساب غير مرتبط بأي مدرسة."
+            );
+
+        }
+
+
+        currentSchoolId =
+            school.id;
+
+        SCHOOL_NAME =
+            school.school_name;
+
+        isLoggedIn = true;
+
+
+        showAdminPanel();
+
+
+        await loadStudents();
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+
+        showStatus(
+            "loginStatus",
+
+            "تعذر تسجيل الدخول:<br>" +
+
+            "<strong>" +
+
+            escapeHtml(
+                error.message ||
+                String(error)
+            ) +
+
+            "</strong>",
+
+            "error"
+        );
+
+    }
+    finally{
+
+        loginBtn.disabled = false;
+
+        loginBtn.textContent =
+            "دخول";
+
+    }
 
 }
 
@@ -946,135 +1153,173 @@ loginBtn.textContent =
    الحصول على مدرسة المدير
 ===================================================== */
 
-async function getManagerSchool(userId){
-
-const {
-data,
-error
-} =
-await supabaseClient
-
-.from("school_managers")
-
-.select(`
-school_id,
-schools (
-    id,
-    school_name
-)
-`)
-
-.eq(
-"user_id",
-userId
-)
-
-.maybeSingle();
-
-if(error){
-
-console.error(
-"خطأ في school_managers:",
-error
-);
-
-throw error;
-
-}
-
-if(
-!data ||
-!data.schools
+async function getManagerSchool(
+    userId
 ){
 
-return null;
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
 
-}
+    .from("school_managers")
 
-return data.schools;
+    .select(`
+        school_id,
+        schools (
+            id,
+            school_name
+        )
+    `)
+
+    .eq(
+        "user_id",
+        userId
+    )
+
+    .maybeSingle();
+
+
+    if(error){
+
+        console.error(
+            "school_managers error:",
+            error
+        );
+
+        throw error;
+
+    }
+
+
+    if(
+        !data ||
+        !data.schools
+    ){
+
+        return null;
+
+    }
+
+
+    return data.schools;
 
 }
 
 
 /* =====================================================
-   التحقق من الجلسة الموجودة
+   فحص الجلسة الموجودة
 ===================================================== */
 
 async function checkExistingSession(){
 
-try{
+    try{
 
-const {
-data
-} =
-await supabaseClient
-.auth
-.getSession();
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
 
-if(
-!data ||
-!data.session
-){
 
-return;
+        if(error){
+
+            console.error(error);
+
+            return;
+
+        }
+
+
+        if(
+            !data ||
+            !data.session
+        ){
+
+            return;
+
+        }
+
+
+        currentUser =
+            data.session.user;
+
+
+        const school =
+            await getManagerSchool(
+                currentUser.id
+            );
+
+
+        if(!school){
+
+            await supabaseClient
+            .auth
+            .signOut();
+
+            return;
+
+        }
+
+
+        currentSchoolId =
+            school.id;
+
+        SCHOOL_NAME =
+            school.school_name;
+
+        isLoggedIn = true;
+
+
+        showAdminPanel();
+
+
+        await loadStudents();
+
+    }
+    catch(error){
+
+        console.error(
+            "Session error:",
+            error
+        );
+
+    }
 
 }
 
-currentUser =
-data.session.user;
 
-const school =
-await getManagerSchool(
-currentUser.id
-);
+/* =====================================================
+   إظهار لوحة الإدارة
+===================================================== */
 
-if(!school){
+function showAdminPanel(){
 
-await supabaseClient.auth.signOut();
+    document
+    .getElementById("loginCard")
+    .classList
+    .add("hidden");
 
-return;
 
-}
+    document
+    .getElementById("adminPanel")
+    .classList
+    .remove("hidden");
 
-currentSchoolId =
-school.id;
 
-SCHOOL_NAME =
-school.school_name;
+    document
+    .getElementById("logoutBtn")
+    .classList
+    .remove("hidden");
 
-isLoggedIn = true;
 
-document
-.getElementById("loginCard")
-.classList
-.add("hidden");
-
-document
-.getElementById("adminPanel")
-.classList
-.remove("hidden");
-
-document
-.getElementById("logoutBtn")
-.classList
-.remove("hidden");
-
-document
-.getElementById("schoolNameDisplay")
-.textContent =
-SCHOOL_NAME;
-
-await loadStudents();
-
-}
-catch(error){
-
-console.error(
-"فحص الجلسة:",
-error
-);
-
-}
+    document
+    .getElementById("schoolNameDisplay")
+    .textContent =
+        SCHOOL_NAME;
 
 }
 
@@ -1085,38 +1330,55 @@ error
 
 async function logout(){
 
-await supabaseClient.auth.signOut();
+    try{
 
-isLoggedIn = false;
+        await supabaseClient
+        .auth
+        .signOut();
 
-currentUser = null;
+    }
+    catch(error){
 
-currentSchoolId = null;
+        console.error(error);
 
-SCHOOL_NAME = "";
+    }
 
-document
-.getElementById("adminPanel")
-.classList
-.add("hidden");
 
-document
-.getElementById("loginCard")
-.classList
-.remove("hidden");
+    isLoggedIn = false;
 
-document
-.getElementById("logoutBtn")
-.classList
-.add("hidden");
+    currentUser = null;
 
-document
-.getElementById("password")
-.value = "";
+    currentSchoolId = null;
 
-document
-.getElementById("schoolNameDisplay")
-.textContent = "";
+    SCHOOL_NAME = "";
+
+
+    document
+    .getElementById("adminPanel")
+    .classList
+    .add("hidden");
+
+
+    document
+    .getElementById("loginCard")
+    .classList
+    .remove("hidden");
+
+
+    document
+    .getElementById("logoutBtn")
+    .classList
+    .add("hidden");
+
+
+    document
+    .getElementById("password")
+    .value = "";
+
+
+    document
+    .getElementById("schoolNameDisplay")
+    .textContent = "";
 
 }
 
@@ -1127,15 +1389,16 @@ document
 
 function classChanged(){
 
-updateSubjectsInfo();
+    updateSubjectsInfo();
 
-updateClassText();
+    updateClassText();
 
-if(isLoggedIn){
 
-loadStudents();
+    if(isLoggedIn){
 
-}
+        loadStudents();
+
+    }
 
 }
 
@@ -1146,20 +1409,22 @@ loadStudents();
 
 function updateClassText(){
 
-const className =
-document
-.getElementById("classSelect")
-.value;
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-document
-.getElementById("newStudentClass")
-.value =
-className;
 
-document
-.getElementById("deleteClassText")
-.textContent =
-className;
+    document
+    .getElementById("newStudentClass")
+    .value =
+        className;
+
+
+    document
+    .getElementById("deleteClassText")
+    .textContent =
+        className;
 
 }
 
@@ -1170,39 +1435,53 @@ className;
 
 function updateSubjectsInfo(){
 
-const className =
-document
-.getElementById("classSelect")
-.value;
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-const subjects =
-CLASS_SUBJECTS[className] || [];
 
-document
-.getElementById("selectedClassText")
-.textContent =
-className;
+    const subjects =
+        CLASS_SUBJECTS[className] || [];
 
-const container =
-document
-.getElementById("subjectsContainer");
 
-container.innerHTML = "";
+    document
+    .getElementById("selectedClassText")
+    .textContent =
+        className;
 
-subjects.forEach(function(subject){
 
-const span =
-document.createElement("span");
+    const container =
+        document
+        .getElementById("subjectsContainer");
 
-span.className =
-"subject";
 
-span.textContent =
-subject;
+    container.innerHTML = "";
 
-container.appendChild(span);
 
-});
+    subjects.forEach(
+        function(subject){
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.className =
+                "subject";
+
+
+            span.textContent =
+                subject;
+
+
+            container.appendChild(
+                span
+            );
+
+        }
+    );
 
 }
 
@@ -1213,31 +1492,32 @@ container.appendChild(span);
 
 function normalizeText(value){
 
-if(
-value === null ||
-value === undefined
-){
+    if(
+        value === null ||
+        value === undefined
+    ){
 
-return "";
+        return "";
 
-}
+    }
 
-return String(value)
 
-.replace(/\uFEFF/g,"")
+    return String(value)
 
-.replace(
-/[\u200E\u200F\u202A-\u202E]/g,
-""
-)
+    .replace(/\uFEFF/g,"")
 
-.replace(/\u0640/g,"")
+    .replace(
+        /[\u200E\u200F\u202A-\u202E]/g,
+        ""
+    )
 
-.replace(/\s+/g," ")
+    .replace(/\u0640/g,"")
 
-.trim()
+    .replace(/\s+/g," ")
 
-.toLowerCase();
+    .trim()
+
+    .toLowerCase();
 
 }
 
@@ -1248,11 +1528,11 @@ return String(value)
 
 function normalizeStudentName(value){
 
-return normalizeText(value)
+    return normalizeText(value)
 
-.replace(/[إأآ]/g,"ا")
+    .replace(/[إأآ]/g,"ا")
 
-.replace(/ة/g,"ه");
+    .replace(/ة/g,"ه");
 
 }
 
@@ -1263,80 +1543,86 @@ return normalizeText(value)
 
 function convertArabicNumbers(text){
 
-return String(text)
+    return String(text)
 
-.replace(
-/[٠-٩]/g,
-function(char){
+    .replace(
+        /[٠-٩]/g,
+        function(char){
 
-return String(
-char.charCodeAt(0)-1632
-);
+            return String(
+                char.charCodeAt(0) - 1632
+            );
 
-}
-)
+        }
+    )
 
-.replace(
-/[۰-۹]/g,
-function(char){
+    .replace(
+        /[۰-۹]/g,
+        function(char){
 
-return String(
-char.charCodeAt(0)-1776
-);
+            return String(
+                char.charCodeAt(0) - 1776
+            );
 
-}
-)
+        }
+    )
 
-.replace(/٫/g,".")
+    .replace(/٫/g,".")
 
-.replace(/٬/g,"");
+    .replace(/٬/g,"");
 
 }
 
 
 /* =====================================================
-   قراءة الدرجة
+   تحويل الدرجة إلى رقم
 ===================================================== */
 
 function getNumber(value){
 
-if(
-value === null ||
-value === undefined ||
-value === ""
-){
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
 
-return 0;
+        return 0;
 
-}
+    }
 
-if(typeof value === "number"){
 
-return Number.isFinite(value)
-? value
-: 0;
+    if(typeof value === "number"){
 
-}
+        return Number.isFinite(value)
+            ? value
+            : 0;
 
-let text =
-convertArabicNumbers(value)
-.trim();
+    }
 
-if(!text){
 
-return 0;
+    let text =
+        convertArabicNumbers(value)
+        .trim();
 
-}
 
-text =
-text.replace(/,/g,".");
+    if(!text){
 
-const number =
-Number(text);
+        return 0;
 
-return Number.isFinite(number)
-? number
-: 0;
+    }
+
+
+    text =
+        text.replace(/,/g,".");
+
+
+    const number =
+        Number(text);
+
+
+    return Number.isFinite(number)
+        ? number
+        : 0;
 
 }
 
@@ -1347,72 +1633,77 @@ return Number.isFinite(number)
 
 function escapeHtml(text){
 
-return String(text)
+    return String(text)
 
-.replace(/&/g,"&")
+    .replace(/&/g,"&amp;")
 
-.replace(/</g,"<")
+    .replace(/</g,"&lt;")
 
-.replace(/>/g,">")
+    .replace(/>/g,"&gt;")
 
-.replace(/"/g,""")
+    .replace(/"/g,"&quot;")
 
-.replace(/'/g,"'");
+    .replace(/'/g,"&#039;");
 
 }
 
 
 /* =====================================================
-   إظهار رسالة
+   الرسائل
 ===================================================== */
 
 function showStatus(
-elementId,
-message,
-type
+    elementId,
+    message,
+    type
 ){
 
-const element =
-document.getElementById(
-elementId
-);
+    const element =
+        document.getElementById(
+            elementId
+        );
 
-element.innerHTML =
-message;
 
-element.className =
-"status " + type;
+    element.innerHTML =
+        message;
+
+
+    element.className =
+        "status " + type;
 
 }
 
 
 /* =====================================================
-   الحصول على قيمة Excel
+   قراءة قيمة من Excel
 ===================================================== */
 
 function getExcelValue(
-row,
-header
+    row,
+    header
 ){
 
-const target =
-normalizeText(header);
+    const target =
+        normalizeText(header);
 
-for(
-const key of Object.keys(row)
-){
 
-if(
-normalizeText(key) === target
-){
+    for(
+        const key of Object.keys(row)
+    ){
 
-return row[key];
+        if(
+            normalizeText(key) ===
+            target
+        ){
 
-}
+            return row[key];
 
-}
+        }
 
-return "";
+    }
+
+
+    return "";
 
 }
 
@@ -1422,36 +1713,41 @@ return "";
 ===================================================== */
 
 function validateExcelHeaders(
-headers,
-subjects
+    headers,
+    subjects
 ){
 
-const normalizedHeaders =
-headers.map(normalizeText);
+    const normalizedHeaders =
+        headers.map(normalizeText);
 
-const requiredHeaders = [
-"الاسم",
-...subjects
-];
 
-const missing = [];
+    const requiredHeaders = [
+        "الاسم",
+        ...subjects
+    ];
 
-requiredHeaders.forEach(
-function(header){
 
-if(
-!normalizedHeaders.includes(
-normalizeText(header)
-)
-){
+    const missing = [];
 
-missing.push(header);
 
-}
+    requiredHeaders.forEach(
+        function(header){
 
-});
+            if(
+                !normalizedHeaders.includes(
+                    normalizeText(header)
+                )
+            ){
 
-return missing;
+                missing.push(header);
+
+            }
+
+        }
+    );
+
+
+    return missing;
 
 }
 
@@ -1462,421 +1758,492 @@ return missing;
 
 async function importExcel(){
 
-if(
-!isLoggedIn ||
-!SCHOOL_NAME ||
-!currentSchoolId
-){
+    if(
+        !isLoggedIn ||
+        !SCHOOL_NAME ||
+        !currentSchoolId
+    ){
 
-showStatus(
-"importStatus",
-"تعذر تحديد المدرسة المرتبطة بالحساب.",
-"error"
-);
+        showStatus(
+            "importStatus",
+            "تعذر تحديد المدرسة المرتبطة بالحساب.",
+            "error"
+        );
 
-return;
+        return;
 
-}
+    }
 
-const fileInput =
-document.getElementById(
-"excelFile"
-);
 
-const file =
-fileInput.files[0];
+    const fileInput =
+        document.getElementById(
+            "excelFile"
+        );
 
-if(!file){
 
-showStatus(
-"importStatus",
-"اختر ملف Excel أولاً.",
-"error"
-);
+    const file =
+        fileInput.files[0];
 
-return;
 
-}
+    if(!file){
 
-const className =
-document
-.getElementById("classSelect")
-.value;
+        showStatus(
+            "importStatus",
+            "اختر ملف Excel أولاً.",
+            "error"
+        );
 
-const period =
-document
-.getElementById("periodSelect")
-.value;
+        return;
 
-const subjects =
-CLASS_SUBJECTS[className] || [];
+    }
 
-const importBtn =
-document.getElementById(
-"importBtn"
-);
 
-importBtn.disabled = true;
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-const progressContainer =
-document.getElementById(
-"progressContainer"
-);
 
-const progressFill =
-document.getElementById(
-"progressFill"
-);
+    const period =
+        document
+        .getElementById("periodSelect")
+        .value;
 
-progressContainer.style.display =
-"block";
 
-progressFill.style.width =
-"0%";
+    const subjects =
+        CLASS_SUBJECTS[className] || [];
 
-progressFill.textContent =
-"0%";
 
-try{
+    const importBtn =
+        document.getElementById(
+            "importBtn"
+        );
 
-const arrayBuffer =
-await file.arrayBuffer();
 
-const workbook =
-XLSX.read(
-arrayBuffer,
-{type:"array"}
-);
+    importBtn.disabled = true;
 
-const sheetName =
-workbook.SheetNames[0];
 
-const sheet =
-workbook.Sheets[sheetName];
+    const progressContainer =
+        document.getElementById(
+            "progressContainer"
+        );
 
-const rows =
-XLSX.utils.sheet_to_json(
-sheet,
-{defval:""}
-);
 
-if(!rows.length){
+    const progressFill =
+        document.getElementById(
+            "progressFill"
+        );
 
-throw new Error(
-"ملف Excel فارغ."
-);
 
-}
+    progressContainer.style.display =
+        "block";
 
-const headers =
-Object.keys(rows[0]);
 
-const missing =
-validateExcelHeaders(
-headers,
-subjects
-);
+    progressFill.style.width =
+        "0%";
 
-if(missing.length){
 
-throw new Error(
-"أعمدة Excel الناقصة: " +
-missing.join("، ")
-);
+    progressFill.textContent =
+        "0%";
 
-}
 
-const validRows =
-rows.filter(
-function(row){
+    try{
 
-const name =
-getExcelValue(
-row,
-"الاسم"
-);
+        const arrayBuffer =
+            await file.arrayBuffer();
 
-return normalizeStudentName(name)
-!== "";
 
-}
-);
+        const workbook =
+            XLSX.read(
+                arrayBuffer,
+                {
+                    type:"array"
+                }
+            );
 
-if(!validRows.length){
 
-throw new Error(
-"لم يتم العثور على أسماء طلاب."
-);
+        const sheetName =
+            workbook.SheetNames[0];
 
-}
 
+        const sheet =
+            workbook.Sheets[
+                sheetName
+            ];
 
-/* جلب طلاب المدرسة الحالية فقط */
 
-const {
-data:existingStudents,
-error:fetchError
-} =
-await supabaseClient
+        const rows =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                {
+                    defval:""
+                }
+            );
 
-.from("student_results")
 
-.select("*")
+        if(!rows.length){
 
-.eq(
-"school_id",
-currentSchoolId
-)
+            throw new Error(
+                "ملف Excel فارغ."
+            );
 
-.eq(
-"class_name",
-className
-);
+        }
 
-if(fetchError){
 
-throw fetchError;
+        const headers =
+            Object.keys(rows[0]);
 
-}
 
-const studentMap =
-new Map();
+        const missing =
+            validateExcelHeaders(
+                headers,
+                subjects
+            );
 
-(existingStudents || [])
-.forEach(
-function(student){
 
-studentMap.set(
-normalizeStudentName(
-student.student_name
-),
-student
-);
+        if(missing.length){
 
-}
-);
+            throw new Error(
+                "أعمدة Excel الناقصة: " +
+                missing.join("، ")
+            );
 
-let inserted = 0;
-let updated = 0;
-let failed = 0;
+        }
 
-for(
-let i=0;
-i<validRows.length;
-i++
-){
 
-const row =
-validRows[i];
+        const validRows =
+            rows.filter(
+                function(row){
 
-const studentName =
-String(
-getExcelValue(
-row,
-"الاسم"
-)
-).trim();
+                    const name =
+                        getExcelValue(
+                            row,
+                            "الاسم"
+                        );
 
-const normalizedName =
-normalizeStudentName(
-studentName
-);
 
-const periodResult = {};
+                    return (
+                        normalizeStudentName(
+                            name
+                        ) !== ""
+                    );
 
-subjects.forEach(
-function(subject){
+                }
+            );
 
-const rawValue =
-getExcelValue(
-row,
-subject
-);
 
-periodResult[subject] =
-getNumber(rawValue);
+        if(!validRows.length){
 
-}
-);
+            throw new Error(
+                "لم يتم العثور على أسماء طلاب."
+            );
 
-const existing =
-studentMap.get(
-normalizedName
-);
+        }
 
-try{
 
-if(existing){
+        /* جلب طلاب المدرسة والصف الحالي */
 
-/* تحديث طالب موجود */
+        const {
+            data:existingStudents,
+            error:fetchError
+        } =
+        await supabaseClient
 
-const {
-error:updateError
-} =
-await supabaseClient
+        .from("student_results")
 
-.from("student_results")
+        .select(
+            "id, student_name, class_name"
+        )
 
-.update({
-[period]:periodResult
-})
+        .eq(
+            "school_id",
+            currentSchoolId
+        )
 
-.eq(
-"id",
-existing.id
-)
+        .eq(
+            "class_name",
+            className
+        );
 
-.eq(
-"school_id",
-currentSchoolId
-)
 
-.eq(
-"class_name",
-className
-);
+        if(fetchError){
 
-if(updateError){
+            throw fetchError;
 
-throw updateError;
+        }
 
-}
 
-updated++;
+        const studentMap =
+            new Map();
 
-}
-else{
 
-/* إضافة طالب جديد مع school_id */
+        (
+            existingStudents || []
+        )
+        .forEach(
+            function(student){
 
-const {
-data:insertedData,
-error:insertError
-} =
-await supabaseClient
+                studentMap.set(
+                    normalizeStudentName(
+                        student.student_name
+                    ),
+                    student
+                );
 
-.from("student_results")
+            }
+        );
 
-.insert({
 
-school_id:
-currentSchoolId,
+        let inserted = 0;
 
-school_name:
-SCHOOL_NAME,
+        let updated = 0;
 
-class_name:
-className,
+        let failed = 0;
 
-student_name:
-studentName,
 
-[period]:
-periodResult
+        for(
+            let i = 0;
+            i < validRows.length;
+            i++
+        ){
 
-})
+            const row =
+                validRows[i];
 
-.select()
-.single();
 
-if(insertError){
+            const studentName =
+                String(
+                    getExcelValue(
+                        row,
+                        "الاسم"
+                    )
+                ).trim();
 
-throw insertError;
 
-}
+            const normalizedName =
+                normalizeStudentName(
+                    studentName
+                );
 
-inserted++;
 
-if(insertedData){
+            const periodResult = {};
 
-studentMap.set(
-normalizedName,
-insertedData
-);
 
-}
+            subjects.forEach(
+                function(subject){
 
-}
+                    const rawValue =
+                        getExcelValue(
+                            row,
+                            subject
+                        );
 
-}
-catch(rowError){
 
-console.error(
-"خطأ:",
-studentName,
-rowError
-);
+                    periodResult[subject] =
+                        getNumber(
+                            rawValue
+                        );
 
-failed++;
+                }
+            );
 
-}
 
-const percent =
-Math.round(
-((i+1) /
-validRows.length) *
-100
-);
+            const existing =
+                studentMap.get(
+                    normalizedName
+                );
 
-progressFill.style.width =
-percent + "%";
 
-progressFill.textContent =
-percent + "%";
+            try{
 
-}
+                if(existing){
 
-showStatus(
-"importStatus",
+                    const {
+                        error:updateError
+                    } =
+                    await supabaseClient
 
-"تم الاستيراد بنجاح ✅<br><br>" +
+                    .from("student_results")
 
-"طلاب جدد: <strong>" +
-inserted +
-"</strong><br>" +
+                    .update({
 
-"طلاب تم تحديثهم: <strong>" +
-updated +
-"</strong><br>" +
+                        [period]:
+                            periodResult
 
-"أخطاء: <strong>" +
-failed +
-"</strong>",
+                    })
 
-failed > 0
-? "info"
-: "success"
+                    .eq(
+                        "id",
+                        existing.id
+                    )
 
-);
+                    .eq(
+                        "school_id",
+                        currentSchoolId
+                    )
 
-await loadStudents();
+                    .eq(
+                        "class_name",
+                        className
+                    );
 
-}
-catch(error){
 
-console.error(error);
+                    if(updateError){
 
-showStatus(
-"importStatus",
+                        throw updateError;
 
-"حدث خطأ أثناء الاستيراد:<br><strong>" +
+                    }
 
-escapeHtml(
-error.message ||
-String(error)
-) +
 
-"</strong>",
+                    updated++;
 
-"error"
-);
+                }
+                else{
 
-}
-finally{
+                    const {
+                        data:insertedData,
+                        error:insertError
+                    } =
+                    await supabaseClient
 
-importBtn.disabled = false;
+                    .from("student_results")
 
-}
+                    .insert({
+
+                        school_id:
+                            currentSchoolId,
+
+                        school_name:
+                            SCHOOL_NAME,
+
+                        class_name:
+                            className,
+
+                        student_name:
+                            studentName,
+
+                        [period]:
+                            periodResult
+
+                    })
+
+                    .select(
+                        "id, student_name, class_name"
+                    )
+
+                    .single();
+
+
+                    if(insertError){
+
+                        throw insertError;
+
+                    }
+
+
+                    inserted++;
+
+
+                    if(insertedData){
+
+                        studentMap.set(
+                            normalizedName,
+                            insertedData
+                        );
+
+                    }
+
+                }
+
+            }
+            catch(rowError){
+
+                console.error(
+                    "خطأ في الطالب:",
+                    studentName,
+                    rowError
+                );
+
+                failed++;
+
+            }
+
+
+            const percent =
+                Math.round(
+                    ((i + 1) /
+                    validRows.length) *
+                    100
+                );
+
+
+            progressFill.style.width =
+                percent + "%";
+
+
+            progressFill.textContent =
+                percent + "%";
+
+        }
+
+
+        showStatus(
+            "importStatus",
+
+            "تم الاستيراد بنجاح ✅<br><br>" +
+
+            "طلاب جدد: <strong>" +
+            inserted +
+            "</strong><br>" +
+
+            "طلاب تم تحديثهم: <strong>" +
+            updated +
+            "</strong><br>" +
+
+            "أخطاء: <strong>" +
+            failed +
+            "</strong>",
+
+            failed > 0
+                ? "info"
+                : "success"
+        );
+
+
+        await loadStudents();
+
+    }
+    catch(error){
+
+        console.error(
+            "Import error:",
+            error
+        );
+
+
+        showStatus(
+            "importStatus",
+
+            "حدث خطأ أثناء الاستيراد:<br>" +
+
+            "<strong>" +
+
+            escapeHtml(
+                error.message ||
+                String(error)
+            ) +
+
+            "</strong>",
+
+            "error"
+        );
+
+    }
+    finally{
+
+        importBtn.disabled = false;
+
+    }
 
 }
 
@@ -1887,167 +2254,182 @@ importBtn.disabled = false;
 
 async function addStudent(){
 
-if(
-!isLoggedIn ||
-!SCHOOL_NAME ||
-!currentSchoolId
-){
+    if(
+        !isLoggedIn ||
+        !SCHOOL_NAME ||
+        !currentSchoolId
+    ){
 
-showStatus(
-"addStudentStatus",
-"تعذر تحديد المدرسة المرتبطة بالحساب.",
-"error"
-);
+        showStatus(
+            "addStudentStatus",
+            "تعذر تحديد المدرسة المرتبطة بالحساب.",
+            "error"
+        );
 
-return;
+        return;
 
-}
-
-const nameInput =
-document.getElementById(
-"newStudentName"
-);
-
-const studentName =
-nameInput.value.trim();
-
-const className =
-document
-.getElementById("classSelect")
-.value;
-
-if(!studentName){
-
-showStatus(
-"addStudentStatus",
-"يرجى إدخال اسم الطالب.",
-"error"
-);
-
-return;
-
-}
-
-try{
-
-/* البحث داخل مدرسة المدير الحالية فقط */
-
-const {
-data:existing,
-error:checkError
-} =
-await supabaseClient
-
-.from("student_results")
-
-.select("id, student_name")
-
-.eq(
-"school_id",
-currentSchoolId
-)
-
-.eq(
-"class_name",
-className
-);
-
-if(checkError){
-
-throw checkError;
-
-}
-
-const normalizedNewName =
-normalizeStudentName(
-studentName
-);
-
-const duplicate =
-(existing || [])
-.some(
-function(student){
-
-return normalizeStudentName(
-student.student_name
-) === normalizedNewName;
-
-}
-);
-
-if(duplicate){
-
-showStatus(
-"addStudentStatus",
-"الطالب موجود بالفعل في هذا الصف.",
-"error"
-);
-
-return;
-
-}
+    }
 
 
-/* إضافة الطالب مع school_id */
+    const nameInput =
+        document.getElementById(
+            "newStudentName"
+        );
 
-const {
-error
-} =
-await supabaseClient
 
-.from("student_results")
+    const studentName =
+        nameInput.value.trim();
 
-.insert({
 
-school_id:
-currentSchoolId,
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-school_name:
-SCHOOL_NAME,
 
-class_name:
-className,
+    if(!studentName){
 
-student_name:
-studentName
+        showStatus(
+            "addStudentStatus",
+            "يرجى إدخال اسم الطالب.",
+            "error"
+        );
 
-});
+        return;
 
-if(error){
+    }
 
-throw error;
 
-}
+    try{
 
-nameInput.value = "";
+        const {
+            data:existing,
+            error:checkError
+        } =
+        await supabaseClient
 
-showStatus(
-"addStudentStatus",
-"تمت إضافة الطالب بنجاح ✅",
-"success"
-);
+        .from("student_results")
 
-await loadStudents();
+        .select(
+            "id, student_name"
+        )
 
-}
-catch(error){
+        .eq(
+            "school_id",
+            currentSchoolId
+        )
 
-console.error(error);
+        .eq(
+            "class_name",
+            className
+        );
 
-showStatus(
-"addStudentStatus",
 
-"حدث خطأ أثناء إضافة الطالب:<br>" +
+        if(checkError){
 
-escapeHtml(
-error.message ||
-String(error)
-),
+            throw checkError;
 
-"error"
-);
+        }
 
-}
+
+        const normalizedNewName =
+            normalizeStudentName(
+                studentName
+            );
+
+
+        const duplicate =
+            (existing || [])
+            .some(
+                function(student){
+
+                    return (
+                        normalizeStudentName(
+                            student.student_name
+                        ) ===
+                        normalizedNewName
+                    );
+
+                }
+            );
+
+
+        if(duplicate){
+
+            showStatus(
+                "addStudentStatus",
+                "الطالب موجود بالفعل في هذا الصف.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const {
+            error
+        } =
+        await supabaseClient
+
+        .from("student_results")
+
+        .insert({
+
+            school_id:
+                currentSchoolId,
+
+            school_name:
+                SCHOOL_NAME,
+
+            class_name:
+                className,
+
+            student_name:
+                studentName
+
+        });
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        nameInput.value = "";
+
+
+        showStatus(
+            "addStudentStatus",
+            "تمت إضافة الطالب بنجاح ✅",
+            "success"
+        );
+
+
+        await loadStudents();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showStatus(
+            "addStudentStatus",
+
+            "حدث خطأ أثناء إضافة الطالب:<br>" +
+
+            escapeHtml(
+                error.message ||
+                String(error)
+            ),
+
+            "error"
+        );
+
+    }
 
 }
 
@@ -2058,252 +2440,311 @@ String(error)
 
 async function loadStudents(){
 
-if(
-!isLoggedIn ||
-!SCHOOL_NAME ||
-!currentSchoolId
-){
+    if(
+        !isLoggedIn ||
+        !SCHOOL_NAME ||
+        !currentSchoolId
+    ){
 
-return;
+        return;
 
-}
+    }
 
-const className =
-document
-.getElementById("classSelect")
-.value;
 
-const list =
-document.getElementById(
-"studentsList"
-);
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-list.innerHTML =
-"جاري تحميل الطلاب...";
 
-try{
+    const list =
+        document.getElementById(
+            "studentsList"
+        );
 
-const {
-data,
-error
-} =
-await supabaseClient
 
-.from("student_results")
+    list.innerHTML =
+        "جاري تحميل الطلاب...";
 
-.select(
-"id, student_name, class_name"
-)
 
-.eq(
-"school_id",
-currentSchoolId
-)
+    try{
 
-.eq(
-"class_name",
-className
-)
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
 
-.order(
-"student_name",
-{
-ascending:true
-}
-);
+        .from("student_results")
 
-if(error){
+        .select(
+            "id, student_name, class_name"
+        )
 
-throw error;
+        .eq(
+            "school_id",
+            currentSchoolId
+        )
 
-}
+        .eq(
+            "class_name",
+            className
+        )
 
-const students =
-data || [];
+        .order(
+            "student_name",
+            {
+                ascending:true
+            }
+        );
 
-document
-.getElementById(
-"studentsCount"
-)
-.textContent =
-students.length;
 
-if(!students.length){
+        if(error){
 
-list.innerHTML =
-'<div class="info-box">' +
-"لا يوجد طلاب في هذا الصف حاليًا." +
-"</div>";
+            throw error;
 
-return;
+        }
 
-}
 
-list.innerHTML = "";
+        const students =
+            data || [];
 
-students.forEach(
-function(student){
 
-const div =
-document.createElement(
-"div"
-);
+        document
+        .getElementById(
+            "studentsCount"
+        )
+        .textContent =
+            students.length;
 
-div.className =
-"student";
 
-div.innerHTML =
+        if(!students.length){
 
-'<div class="student-name">' +
+            list.innerHTML =
+                '<div class="info-box">' +
+                'لا يوجد طلاب في هذا الصف حاليًا.' +
+                '</div>';
 
-escapeHtml(
-student.student_name || ""
-) +
+            return;
 
-"</div>" +
+        }
 
-'<div class="student-actions">' +
 
-'<button ' +
+        list.innerHTML = "";
 
-'class="btn-danger small-btn" ' +
 
-'onclick="deleteStudent(' +
+        students.forEach(
+            function(student){
 
-JSON.stringify(
-student.id
-) +
+                const div =
+                    document.createElement(
+                        "div"
+                    );
 
-')">' +
 
-"🗑️ حذف الطالب" +
+                div.className =
+                    "student";
 
-"</button>" +
 
-"</div>";
+                const nameDiv =
+                    document.createElement(
+                        "div"
+                    );
 
-list.appendChild(div);
 
-}
-);
+                nameDiv.className =
+                    "student-name";
 
-}
-catch(error){
 
-console.error(error);
+                nameDiv.textContent =
+                    student.student_name || "";
 
-list.innerHTML = "";
 
-showStatus(
-"studentsStatus",
+                const actions =
+                    document.createElement(
+                        "div"
+                    );
 
-"تعذر تحميل الطلاب:<br>" +
 
-escapeHtml(
-error.message ||
-String(error)
-),
+                actions.className =
+                    "student-actions";
 
-"error"
-);
 
-}
+                const deleteBtn =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                deleteBtn.className =
+                    "btn-danger small-btn";
+
+
+                deleteBtn.textContent =
+                    "🗑️ حذف الطالب";
+
+
+                deleteBtn.onclick =
+                    function(){
+
+                        deleteStudent(
+                            student.id
+                        );
+
+                    };
+
+
+                actions.appendChild(
+                    deleteBtn
+                );
+
+
+                div.appendChild(
+                    nameDiv
+                );
+
+
+                div.appendChild(
+                    actions
+                );
+
+
+                list.appendChild(
+                    div
+                );
+
+            }
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Load students error:",
+            error
+        );
+
+
+        list.innerHTML = "";
+
+
+        showStatus(
+            "studentsStatus",
+
+            "تعذر تحميل الطلاب:<br>" +
+
+            escapeHtml(
+                error.message ||
+                String(error)
+            ),
+
+            "error"
+        );
+
+    }
 
 }
 
 
 /* =====================================================
-   حذف طالب واحد
+   حذف طالب
 ===================================================== */
 
 async function deleteStudent(id){
 
-if(
-!isLoggedIn ||
-!SCHOOL_NAME ||
-!currentSchoolId
-){
+    if(
+        !isLoggedIn ||
+        !currentSchoolId
+    ){
 
-return;
+        return;
 
-}
+    }
 
-const confirmed =
-confirm(
-"هل أنت متأكد من حذف هذا الطالب؟\n\n" +
-"سيتم حذف الطالب وجميع درجاته."
-);
 
-if(!confirmed){
+    const confirmed =
+        confirm(
+            "هل أنت متأكد من حذف هذا الطالب؟\n\n" +
+            "سيتم حذف الطالب وجميع درجاته."
+        );
 
-return;
 
-}
+    if(!confirmed){
 
-const className =
-document
-.getElementById("classSelect")
-.value;
+        return;
 
-try{
+    }
 
-const {
-error
-} =
-await supabaseClient
 
-.from("student_results")
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-.delete()
 
-.eq(
-"id",
-id
-)
+    try{
 
-.eq(
-"school_id",
-currentSchoolId
-)
+        const {
+            error
+        } =
+        await supabaseClient
 
-.eq(
-"class_name",
-className
-);
+        .from("student_results")
 
-if(error){
+        .delete()
 
-throw error;
+        .eq(
+            "id",
+            id
+        )
 
-}
+        .eq(
+            "school_id",
+            currentSchoolId
+        )
 
-showStatus(
-"studentsStatus",
-"تم حذف الطالب وجميع درجاته بنجاح.",
-"success"
-);
+        .eq(
+            "class_name",
+            className
+        );
 
-await loadStudents();
 
-}
-catch(error){
+        if(error){
 
-console.error(error);
+            throw error;
 
-showStatus(
-"studentsStatus",
+        }
 
-"حدث خطأ أثناء حذف الطالب:<br>" +
 
-escapeHtml(
-error.message ||
-String(error)
-),
+        showStatus(
+            "studentsStatus",
+            "تم حذف الطالب وجميع درجاته بنجاح.",
+            "success"
+        );
 
-"error"
-);
 
-}
+        await loadStudents();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showStatus(
+            "studentsStatus",
+
+            "حدث خطأ أثناء حذف الطالب:<br>" +
+
+            escapeHtml(
+                error.message ||
+                String(error)
+            ),
+
+            "error"
+        );
+
+    }
 
 }
 
@@ -2314,131 +2755,141 @@ String(error)
 
 async function deleteAllStudentsInClass(){
 
-if(
-!isLoggedIn ||
-!SCHOOL_NAME ||
-!currentSchoolId
-){
+    if(
+        !isLoggedIn ||
+        !currentSchoolId
+    ){
 
-return;
+        return;
 
-}
+    }
 
-const className =
-document
-.getElementById("classSelect")
-.value;
 
-const confirmed =
-confirm(
+    const className =
+        document
+        .getElementById("classSelect")
+        .value;
 
-"⚠️ تحذير!\n\n" +
 
-"سيتم حذف جميع طلاب " +
-className +
-" وجميع درجاتهم.\n\n" +
+    const confirmed =
+        confirm(
 
-"هل أنت متأكد؟"
+            "⚠️ تحذير!\n\n" +
 
-);
+            "سيتم حذف جميع طلاب " +
+            className +
+            " وجميع درجاتهم.\n\n" +
 
-if(!confirmed){
+            "هل أنت متأكد؟"
 
-return;
+        );
 
-}
 
-const finalConfirm =
-confirm(
+    if(!confirmed){
 
-"تأكيد نهائي!\n\n" +
+        return;
 
-"سيتم حذف جميع طلاب " +
-className +
+    }
 
-" من مدرسة " +
-SCHOOL_NAME +
 
-".\n\n" +
+    const finalConfirm =
+        confirm(
 
-"هل تريد المتابعة؟"
+            "تأكيد نهائي!\n\n" +
 
-);
+            "سيتم حذف جميع طلاب " +
+            className +
 
-if(!finalConfirm){
+            " من مدرسة " +
+            SCHOOL_NAME +
 
-return;
+            ".\n\n" +
 
-}
+            "هل تريد المتابعة؟"
 
-try{
+        );
 
-showStatus(
-"deleteAllStatus",
 
-"جاري حذف جميع طلاب الفصل...",
+    if(!finalConfirm){
 
-"info"
-);
+        return;
 
-const {
-error
-} =
-await supabaseClient
+    }
 
-.from("student_results")
 
-.delete()
+    try{
 
-.eq(
-"school_id",
-currentSchoolId
-)
+        showStatus(
+            "deleteAllStatus",
+            "جاري حذف جميع طلاب الفصل...",
+            "info"
+        );
 
-.eq(
-"class_name",
-className
-);
 
-if(error){
+        const {
+            error
+        } =
+        await supabaseClient
 
-throw error;
+        .from("student_results")
 
-}
+        .delete()
 
-showStatus(
-"deleteAllStatus",
+        .eq(
+            "school_id",
+            currentSchoolId
+        )
 
-"تم حذف جميع طلاب " +
+        .eq(
+            "class_name",
+            className
+        );
 
-escapeHtml(className) +
 
-" وجميع درجاتهم بنجاح.",
+        if(error){
 
-"success"
-);
+            throw error;
 
-await loadStudents();
+        }
 
-}
-catch(error){
 
-console.error(error);
+        showStatus(
+            "deleteAllStatus",
 
-showStatus(
-"deleteAllStatus",
+            "تم حذف جميع طلاب " +
 
-"حدث خطأ أثناء حذف الطلاب:<br>" +
+            escapeHtml(
+                className
+            ) +
 
-escapeHtml(
-error.message ||
-String(error)
-),
+            " وجميع درجاتهم بنجاح.",
 
-"error"
-);
+            "success"
+        );
 
-}
+
+        await loadStudents();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showStatus(
+            "deleteAllStatus",
+
+            "حدث خطأ أثناء حذف الطلاب:<br>" +
+
+            escapeHtml(
+                error.message ||
+                String(error)
+            ),
+
+            "error"
+        );
+
+    }
 
 }
 
