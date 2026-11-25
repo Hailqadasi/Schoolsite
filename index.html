@@ -31,6 +31,16 @@ nav button span{display:block;font-size:22px;margin-bottom:3px}
 nav button.active{color:#f4c84a}
 .notice{margin-top:12px;padding:10px;background:#fff;border-radius:12px;color:#49617f;font-size:13px;text-align:center}
 @media(min-width:600px){.grade strong{font-size:20px}.grade{padding:14px 18px}}
+
+.reader-tools{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.reader-tools input{flex:1;min-width:130px;border:1px solid #c7d8ee;border-radius:12px;padding:10px;font-size:15px}
+.reader-tools button{border:0;border-radius:12px;padding:10px 13px;background:#e1ecfa;color:#12345e;font-weight:bold}
+.reader-match{background:#ffe58c;border-radius:3px;padding:0 2px}
+.reader-page{min-height:55vh;background:#fff;border:1px solid #d6e2f2;border-radius:16px;padding:18px;line-height:2;font-size:18px;color:#213d60;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 3px 10px #163c6710}
+.page-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}
+.page-controls button{border:0;border-radius:12px;padding:11px 16px;background:#0b3769;color:#fff;font-weight:bold}
+.page-controls button:disabled{opacity:.4}
+.page-number{background:#e1ecfa;color:#12345e;padding:8px 12px;border-radius:12px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -38,23 +48,51 @@ nav button.active{color:#f4c84a}
   <div class="brand"><div class="logo">📚</div><div><h1>المكتبة المدرسية اليمنية</h1><p>مناهج التعليم اليمني</p></div><div class="logo">🇾🇪</div></div>
 </header>
 <main>
-  <label class="search" aria-label="بحث في الصفوف"><span>🔎</span><input id="search" placeholder="ابحث عن صف دراسي..." autocomplete="off"></label>
-  <section class="grades" id="grades">
-    <button class="grade" data-grade="الثالث الثانوي"><span class="book">🎓📚</span><span class="details"><strong>الثالث الثانوي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الثاني الثانوي"><span class="book">🎓📚</span><span class="details"><strong>الثاني الثانوي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الأول الثانوي"><span class="book">🎓📚</span><span class="details"><strong>الأول الثانوي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="التاسع الأساسي"><span class="book">📚</span><span class="details"><strong>التاسع الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الثامن الأساسي"><span class="book">📚</span><span class="details"><strong>الثامن الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="السابع الأساسي"><span class="book">📚</span><span class="details"><strong>السابع الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="السادس الأساسي"><span class="book">📚</span><span class="details"><strong>السادس الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الخامس الأساسي"><span class="book">📚</span><span class="details"><strong>الخامس الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الرابع الأساسي"><span class="book">📚</span><span class="details"><strong>الرابع الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الثالث الأساسي"><span class="book">📚</span><span class="details"><strong>الثالث الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الثاني الأساسي"><span class="book">📚</span><span class="details"><strong>الثاني الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-    <button class="grade" data-grade="الأول الأساسي"><span class="book">📚</span><span class="details"><strong>الأول الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
-  </section>
-  <div class="empty" id="empty">لا توجد صفوف مطابقة للبحث.</div>
-  <div class="notice">نسخة واجهة تجريبية — سيتم ربط الكتب والمواد بقاعدة Firebase لاحقًا.</div>
+  <div id="homePage">
+    <label class="search" aria-label="بحث في الصفوف"><span>🔎</span><input id="search" placeholder="ابحث عن صف دراسي..." autocomplete="off"></label>
+    <section class="grades" id="grades">
+      <button class="grade" data-grade="الثالث الثانوي"><span class="book">🎓📚</span><span class="details"><strong>الثالث الثانوي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الثاني الثانوي"><span class="book">🎓📚</span><span class="details"><strong>الثاني الثانوي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الأول الثانوي"><span class="book">🎓📚</span><span class="details"><strong>الأول الثانوي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="التاسع الأساسي"><span class="book">📚</span><span class="details"><strong>التاسع الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الثامن الأساسي"><span class="book">📚</span><span class="details"><strong>الثامن الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="السابع الأساسي"><span class="book">📚</span><span class="details"><strong>السابع الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="السادس الأساسي"><span class="book">📚</span><span class="details"><strong>السادس الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الخامس الأساسي"><span class="book">📚</span><span class="details"><strong>الخامس الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الرابع الأساسي"><span class="book">📚</span><span class="details"><strong>الرابع الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الثالث الأساسي"><span class="book">📚</span><span class="details"><strong>الثالث الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الثاني الأساسي"><span class="book">📚</span><span class="details"><strong>الثاني الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+      <button class="grade" data-grade="الأول الأساسي"><span class="book">📚</span><span class="details"><strong>الأول الأساسي</strong><small>الكتب والمقررات الدراسية</small></span><span class="arrow">‹</span></button>
+    </section>
+    <div class="empty" id="empty">لا توجد صفوف مطابقة للبحث.</div>
+  </div>
+  <div id="subjectsPage" style="display:none">
+    <button id="backButton" style="border:0;background:#e1ecfa;color:#12345e;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:16px;cursor:pointer">← العودة للصفوف</button>
+    <h2 id="pageTitle" style="margin:4px 0 14px;font-size:22px"></h2>
+    <p style="color:#536b89;margin:0 0 12px">اختر المادة لعرض الكتب والدروس</p>
+    <section class="grades" id="subjectsList"></section>
+    <div class="notice">سيتم إضافة الكتب إلى كل مادة في الخطوة القادمة.</div>
+  </div>
+
+  <div id="booksPage" style="display:none">
+    <button id="backBooks" style="border:0;background:#e1ecfa;color:#12345e;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:16px;cursor:pointer">← العودة للمواد</button>
+    <h2 id="booksTitle" style="margin:4px 0 14px;font-size:22px"></h2>
+    <p style="color:#536b89;margin:0 0 12px">الكتب المتاحة لهذه المادة</p>
+    <section class="grades" id="booksList"></section>
+    <div class="notice">هذه كتب تجريبية لعرض شكل المكتبة. سنستبدلها بكتب المناهج الفعلية عند إدخال المحتوى.</div>
+  </div>
+  <div id="readerPage" style="display:none">
+    <button id="backReader" style="border:0;background:#e1ecfa;color:#12345e;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:16px;cursor:pointer">← العودة للكتب</button>
+    <h2 id="readerTitle" style="margin:4px 0 14px;font-size:22px"></h2>
+    <div class="reader-tools"><input id="findInBook" placeholder="ابحث داخل الكتاب..." aria-label="بحث داخل الكتاب"><button id="findNext">بحث</button><button id="fontDown">A−</button><button id="fontUp">A+</button></div><div class="page-controls"><button id="prevPage">← السابقة</button><span class="page-number" id="pageNumber">صفحة 1 / 1</span><button id="nextPage">التالية →</button></div><div class="reader-page" id="readerContent"></div><div class="page-controls"><button id="prevPageBottom">← السابقة</button><span class="page-number" id="pageNumberBottom">صفحة 1 / 1</span><button id="nextPageBottom">التالية →</button></div><div class="notice" id="readingSaved">يتم حفظ آخر صفحة قراءة على هذا الجهاز.</div>
+    <button id="downloadText" style="margin-top:12px;width:100%;border:0;background:#0b3769;color:white;border-radius:14px;padding:13px;font-size:16px">📥 حفظ داخل المكتبة</button>
+  </div>
+  <div id="downloadsPage" style="display:none">
+    <h2 style="margin:4px 0 14px;font-size:22px">📥 تنزيلاتي</h2>
+    <p style="color:#536b89;margin:0 0 12px">الكتب المحفوظة على هذا الجهاز للقراءة دون إنترنت</p>
+    <section class="grades" id="downloadsList"></section>
+    <div class="notice">الكتب هنا محفوظة داخل المكتبة على هذا الجهاز. لا تحتاج إلى الإنترنت لفتح كتاب محفوظ، بشرط توفر صفحة المكتبة نفسها.</div>
+  </div>
 </main>
 <nav>
   <button data-tab="settings"><span>⚙️</span>الإعدادات</button>
@@ -62,28 +100,131 @@ nav button.active{color:#f4c84a}
   <button class="active" data-tab="home"><span>⌂</span>الرئيسية</button>
   <button data-tab="favorites"><span>☆</span>المفضلة</button>
 </nav>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
-const search = document.getElementById('search');
-const cards = [...document.querySelectorAll('.grade')];
-const empty = document.getElementById('empty');
-search.addEventListener('input', () => {
-  const q = search.value.trim();
-  let visible = 0;
-  cards.forEach(card => {
-    const match = card.dataset.grade.includes(q);
-    card.style.display = match ? 'flex' : 'none';
-    if(match) visible++;
+const firebaseConfig = {
+  apiKey: "AIzaSyAyKHc1meJy2F3iq8tW2W8Gh5_BgRHbJVs",
+  authDomain: "school-library-78094.firebaseapp.com",
+  projectId: "school-library-78094",
+  storageBucket: "school-library-78094.firebasestorage.app",
+  messagingSenderId: "193396490821",
+  appId: "1:193396490821:web:59b7c9f399ce24f28d592c",
+  measurementId: "G-C26NGP97HX"
+};
+let db=null;
+try{if(typeof firebase!=='undefined'){if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);db=firebase.firestore();}}catch(firebaseInitError){console.warn('Firebase unavailable; offline downloads remain accessible.',firebaseInitError);}
+
+// Offline books are stored locally in IndexedDB.
+const OFFLINE_DB_NAME='yemen_school_library_offline', OFFLINE_STORE='savedBooks';
+function openOfflineDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(OFFLINE_DB_NAME,1);req.onupgradeneeded=()=>{const database=req.result;if(!database.objectStoreNames.contains(OFFLINE_STORE))database.createObjectStore(OFFLINE_STORE,{keyPath:'id'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
+async function offlinePut(book){const database=await openOfflineDB();return new Promise((resolve,reject)=>{const tx=database.transaction(OFFLINE_STORE,'readwrite');tx.objectStore(OFFLINE_STORE).put({...book,offlineSavedAt:Date.now()});tx.oncomplete=()=>{database.close();resolve(true);};tx.onerror=()=>{database.close();reject(tx.error);};});}
+async function offlineGet(id){const database=await openOfflineDB();return new Promise((resolve,reject)=>{const req=database.transaction(OFFLINE_STORE,'readonly').objectStore(OFFLINE_STORE).get(id);req.onsuccess=()=>{database.close();resolve(req.result||null);};req.onerror=()=>{database.close();reject(req.error);};});}
+async function offlineAll(){const database=await openOfflineDB();return new Promise((resolve,reject)=>{const req=database.transaction(OFFLINE_STORE,'readonly').objectStore(OFFLINE_STORE).getAll();req.onsuccess=()=>{database.close();resolve(req.result||[]);};req.onerror=()=>{database.close();reject(req.error);};});}
+async function offlineDelete(id){const database=await openOfflineDB();return new Promise((resolve,reject)=>{const tx=database.transaction(OFFLINE_STORE,'readwrite');tx.objectStore(OFFLINE_STORE).delete(id);tx.oncomplete=()=>{database.close();resolve();};tx.onerror=()=>{database.close();reject(tx.error);};});}
+const subjectSets = {
+  'الثالث الثانوي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','اللغة الإنجليزية','الرياضيات','الفيزياء','الكيمياء','الأحياء'],
+  'الثاني الثانوي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','اللغة الإنجليزية','الرياضيات','الفيزياء','الكيمياء','الأحياء'],
+  'الأول الثانوي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','اللغة الإنجليزية','الرياضيات','الفيزياء','الكيمياء','الأحياء','الجغرافيا','التاريخ'],
+  'التاسع الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','اللغة الإنجليزية','الرياضيات','العلوم','الاجتماعيات'],
+  'الثامن الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','اللغة الإنجليزية','الرياضيات','العلوم','الاجتماعيات'],
+  'السابع الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','اللغة الإنجليزية','الرياضيات','العلوم','الاجتماعيات'],
+  'السادس الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','الرياضيات','العلوم','الاجتماعيات'],
+  'الخامس الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','الرياضيات','العلوم','الاجتماعيات'],
+  'الرابع الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','الرياضيات','العلوم','الاجتماعيات'],
+  'الثالث الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','الرياضيات','العلوم'],
+  'الثاني الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','الرياضيات'],
+  'الأول الأساسي':['القرآن الكريم','التربية الإسلامية','اللغة العربية','الرياضيات']
+};
+let currentBooks = [];
+let currentBookData = null;
+let bookPages = [];
+let currentPageIndex = 0;
+const sampleText = `بسم الله الرحمن الرحيم
+
+هذا قارئ تجريبي للمكتبة المدرسية.
+
+سيتم لاحقًا استبدال هذا المحتوى بنص الكتاب الحقيقي، بعد إدخال ملفات المناهج.
+
+ميزات القارئ القادمة:
+• حفظ آخر موضع قراءة
+• البحث داخل الكتاب
+• تكبير وتصغير الخط
+• تنزيل الكتاب للقراءة دون إنترنت`;
+const homePage=document.getElementById('homePage'), subjectsPage=document.getElementById('subjectsPage'), booksPage=document.getElementById('booksPage'), readerPage=document.getElementById('readerPage'), downloadsPage=document.getElementById('downloadsPage');
+const search=document.getElementById('search'), cards=[...document.querySelectorAll('#grades .grade')], empty=document.getElementById('empty');
+search.addEventListener('input',()=>{const q=search.value.trim();let visible=0;cards.forEach(c=>{const ok=c.dataset.grade.includes(q);c.style.display=ok?'flex':'none';if(ok)visible++;});empty.style.display=visible?'none':'block';});
+function showOnly(page){[homePage,subjectsPage,booksPage,readerPage,downloadsPage].forEach(x=>x.style.display='none');page.style.display='block';window.scrollTo(0,0);}
+let currentGrade='', currentSubject='', currentBook='';
+function openGrade(grade){currentGrade=grade;document.getElementById('pageTitle').textContent='مواد '+grade;const list=document.getElementById('subjectsList');list.innerHTML='';(subjectSets[grade]||[]).forEach(subject=>{const b=document.createElement('button');b.className='grade';b.innerHTML='<span class="book">📘</span><span class="details"><strong></strong><small>الكتب والدروس</small></span><span class="arrow">‹</span>';b.querySelector('strong').textContent=subject;b.addEventListener('click',()=>openSubject(subject));list.appendChild(b);});showOnly(subjectsPage);}
+async function openSubject(subject){currentSubject=subject;document.getElementById('booksTitle').textContent=subject+' — '+currentGrade;const list=document.getElementById('booksList');list.innerHTML='';const loading=document.createElement('div');loading.className='notice';loading.textContent='جارٍ تحميل الكتب من المكتبة...';list.appendChild(loading);showOnly(booksPage);try{const snap=await db.collection('books').where('published','==',true).get();currentBooks=snap.docs.map(doc=>({id:doc.id,...doc.data()})).filter(book=>book.grade===currentGrade&&book.subject===currentSubject);list.innerHTML='';if(!currentBooks.length){const emptyBook=document.createElement('div');emptyBook.className='notice';emptyBook.textContent='لا توجد كتب منشورة لهذه المادة حتى الآن.';list.appendChild(emptyBook);return;}currentBooks.forEach(book=>{const b=document.createElement('button');b.className='grade';b.innerHTML='<span class=\"book\">📖</span><span class=\"details\"><strong></strong><small>كتاب نصي · TXT</small></span><span class=\"arrow\">‹</span>';b.querySelector('strong').textContent=book.title||'كتاب بدون عنوان';b.addEventListener('click',()=>openBook(book));list.appendChild(b);});}catch(err){list.innerHTML='';const msg=document.createElement('div');msg.className='notice';msg.textContent='تعذر تحميل الكتب. تحقق من الإنترنت أو قواعد Firestore.';list.appendChild(msg);console.error(err);}}
+async function openBook(book){currentBookData=book;currentBook=book.title||'كتاب';currentSubject=book.subject||currentSubject;currentGrade=book.grade||currentGrade;document.getElementById('readerTitle').textContent=currentBook+' — '+currentSubject;paginateBook(book.content||'لا يوجد محتوى لهذا الكتاب.');currentPageIndex=0;renderPage();const saveBtn=document.getElementById('downloadText');saveBtn.textContent='📥 حفظ داخل المكتبة';try{if(await offlineGet(book.id))saveBtn.textContent='✅ محفوظ — حفظ مجددًا';}catch(e){}showOnly(readerPage);restoreScroll();findIndex=0;}
+cards.forEach(card=>card.addEventListener('click',()=>openGrade(card.dataset.grade)));
+document.getElementById('backButton').addEventListener('click',()=>showOnly(homePage));
+document.getElementById('backBooks').addEventListener('click',()=>showOnly(subjectsPage));
+document.getElementById('backReader').addEventListener('click',()=>showOnly(booksPage));
+
+const readerBox=document.getElementById('readerContent');
+let readerFont=18, findIndex=0;
+function paginateBook(text){
+  const maxChars=Math.max(850,Math.floor(1450*(18/readerFont)));
+  const paragraphs=String(text).split(/\n+/);
+  bookPages=[];let page='';
+  paragraphs.forEach(par=>{
+    const chunks=[];let part=par;
+    while(part.length>maxChars){let cut=part.lastIndexOf(' ',maxChars);if(cut<maxChars*.5)cut=maxChars;chunks.push(part.slice(0,cut));part=part.slice(cut).trim();}
+    if(part)chunks.push(part);else if(!par)chunks.push('');
+    chunks.forEach(chunk=>{if(page && page.length+chunk.length+2>maxChars){bookPages.push(page);page='';}page+=(page?'\n\n':'')+chunk;});
   });
-  empty.style.display = visible ? 'none' : 'block';
+  if(page||!bookPages.length)bookPages.push(page);
+}
+function renderPage(){
+  currentPageIndex=Math.max(0,Math.min(currentPageIndex,bookPages.length-1));
+  readerBox.textContent=bookPages[currentPageIndex]||'';
+  readerBox.style.fontSize=readerFont+'px';
+  const label='صفحة '+(currentPageIndex+1)+' / '+bookPages.length;
+  document.getElementById('pageNumber').textContent=label;
+  document.getElementById('pageNumberBottom').textContent=label;
+  ['prevPage','prevPageBottom'].forEach(id=>document.getElementById(id).disabled=currentPageIndex===0);
+  ['nextPage','nextPageBottom'].forEach(id=>document.getElementById(id).disabled=currentPageIndex>=bookPages.length-1);
+  readerBox.scrollIntoView({behavior:'smooth',block:'start'});
+  const key='school_library_page_'+currentGrade+'_'+currentSubject+'_'+currentBook;
+  localStorage.setItem(key,String(currentPageIndex));
+}
+function changePage(delta){currentPageIndex+=delta;renderPage();}
+['prevPage','prevPageBottom'].forEach(id=>document.getElementById(id).addEventListener('click',()=>changePage(-1)));
+['nextPage','nextPageBottom'].forEach(id=>document.getElementById(id).addEventListener('click',()=>changePage(1)));
+function restoreScroll(){
+  readerBox.style.fontSize=readerFont+'px';
+  const key='school_library_page_'+currentGrade+'_'+currentSubject+'_'+currentBook;
+  const saved=localStorage.getItem(key);
+  if(saved!==null){currentPageIndex=Math.min(Math.max(0,Number(saved)||0),bookPages.length-1);renderPage();}
+}
+document.getElementById('fontUp').addEventListener('click',()=>{readerFont=Math.min(30,readerFont+2);if(currentBookData){paginateBook(currentBookData.content||'');renderPage();}else readerBox.style.fontSize=readerFont+'px';});
+document.getElementById('fontDown').addEventListener('click',()=>{readerFont=Math.max(14,readerFont-2);if(currentBookData){paginateBook(currentBookData.content||'');renderPage();}else readerBox.style.fontSize=readerFont+'px';});
+document.getElementById('findNext').addEventListener('click',()=>{
+  const q=document.getElementById('findInBook').value.trim();
+  if(!q){alert('اكتب كلمة للبحث عنها داخل الكتاب.');return;}
+  const fullText=String((currentBookData&&currentBookData.content)||'');
+  const pos=fullText.indexOf(q,findIndex);
+  if(pos<0){findIndex=0;alert('لا توجد نتائج أخرى.');return;}
+  let charOffset=0,pageIndex=0;
+  for(let i=0;i<bookPages.length;i++){const end=charOffset+bookPages[i].length;if(pos<=end){pageIndex=i;break;}charOffset=end+2;}
+  currentPageIndex=pageIndex;renderPage();
+  const localPos=pos-charOffset;const range=document.createRange();const walker=document.createTreeWalker(readerBox,NodeFilter.SHOW_TEXT);let node,offset=0;
+  while((node=walker.nextNode())){const n=node.textContent.length;if(localPos>=offset&&localPos<offset+n){range.setStart(node,localPos-offset);range.setEnd(node,Math.min(localPos-offset+q.length,n));break;}offset+=n;}
+  const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);range.startContainer.parentElement.scrollIntoView({behavior:'smooth',block:'center'});findIndex=pos+q.length;
 });
-cards.forEach(card => card.addEventListener('click', () => {
-  alert('تم اختيار: ' + card.dataset.grade + '\\nسنضيف صفحة المواد لهذا الصف في الخطوة القادمة.');
-}));
-document.querySelectorAll('nav button').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if(btn.dataset.tab !== 'home') alert('قسم ' + btn.textContent.trim() + ' سنفعّله في مرحلة لاحقة.');
-}));
+document.getElementById('downloadText').addEventListener('click',async()=>{if(!currentBookData)return;const btn=document.getElementById('downloadText');btn.disabled=true;btn.textContent='جارٍ الحفظ...';try{await offlinePut({id:currentBookData.id||('local_'+currentGrade+'_'+currentSubject+'_'+currentBook),title:currentBookData.title||currentBook,grade:currentBookData.grade||currentGrade,subject:currentBookData.subject||currentSubject,content:currentBookData.content||''});btn.textContent='✅ تم حفظ الكتاب داخل المكتبة';alert('تم حفظ الكتاب داخل المكتبة. يمكنك قراءته الآن دون إنترنت من قسم تنزيلاتي.');}catch(err){console.error(err);btn.textContent='تعذر الحفظ';alert('تعذر حفظ الكتاب على هذا الجهاز. قد تكون مساحة التخزين غير كافية.');}finally{btn.disabled=false;}});
+async function showDownloads(){const list=document.getElementById('downloadsList');list.innerHTML='';showOnly(downloadsPage);try{const books=await offlineAll();if(!books.length){const emptyMsg=document.createElement('div');emptyMsg.className='notice';emptyMsg.textContent='لم تحفظ أي كتب بعد. افتح كتابًا واضغط «حفظ داخل المكتبة».';list.appendChild(emptyMsg);return;}books.sort((a,b)=>(a.title||'').localeCompare(b.title||'','ar'));books.forEach(book=>{const row=document.createElement('div');row.style.display='flex';row.style.gap='8px';row.style.alignItems='stretch';const open=document.createElement('button');open.className='grade';open.style.flex='1';open.innerHTML='<span class=\"book\">📚</span><span class=\"details\"><strong></strong><small></small></span><span class=\"arrow\">‹</span>';open.querySelector('strong').textContent=book.title||'كتاب';open.querySelector('small').textContent=(book.grade||'')+' · '+(book.subject||'');open.addEventListener('click',()=>openBook(book));const del=document.createElement('button');del.textContent='🗑️';del.title='حذف الكتاب من تنزيلاتي';del.style.cssText='border:0;border-radius:14px;background:#ffe8e8;color:#8a2525;padding:10px 14px;font-size:18px';del.addEventListener('click',async()=>{if(confirm('هل تريد حذف هذا الكتاب من تنزيلاتي؟')){await offlineDelete(book.id);showDownloads();}});row.append(open,del);list.appendChild(row);});}catch(err){console.error(err);const msg=document.createElement('div');msg.className='notice';msg.textContent='تعذر فتح التنزيلات على هذا الجهاز.';list.appendChild(msg);}}
+document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(btn.dataset.tab==='downloads')showDownloads();else if(btn.dataset.tab==='home')showOnly(homePage);else alert('قسم '+btn.textContent.trim()+' سنفعّله لاحقًا.');}));
+
+// Cache the library page for offline reopening on supported HTTPS hosting.
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./library-sw.js').catch(err => console.warn('Offline shell setup failed:', err));
+  });
+}
 </script>
 </body>
 </html>
