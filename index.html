@@ -226,5 +226,17 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./library-sw.js")
+      .then(function (registration) {
+        console.log("تم تشغيل المكتبة دون إنترنت بنجاح", registration.scope);
+      })
+      .catch(function (error) {
+        console.log("فشل تشغيل المكتبة دون إنترنت", error);
+      });
+  });
+}
+</script>
 </body>
 </html>
