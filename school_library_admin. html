@@ -1,0 +1,51 @@
+ <!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#082c5c">
+<title>إدارة المكتبة المدرسية</title>
+<style>
+:root{--n:#1e3a5f;--g:#c49a42;--bg:#f3f6fa}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial;color:#203047}header{background:var(--n);color:white;text-align:center;padding:23px 12px;border-bottom:4px solid var(--g)}header h1{font-size:22px;margin:0 0 8px}main{max-width:700px;margin:20px auto;padding:0 13px 30px}.card{background:white;border-radius:15px;padding:17px;margin-bottom:14px;box-shadow:0 3px 14px #142c4710}h2{font-size:18px;color:var(--n);margin:0 0 14px}label{display:block;font-weight:bold;margin:13px 0 7px}input,select,textarea{width:100%;padding:12px;border:1px solid #ccd5df;border-radius:9px;font:inherit;background:white}textarea{min-height:180px;line-height:1.8}button{border:0;border-radius:9px;padding:12px 15px;font:inherit;font-weight:bold;cursor:pointer}.primary{background:var(--n);color:white;width:100%;margin-top:14px}.primary:disabled{opacity:.6;cursor:wait}.secondary{background:#edf1f6;color:var(--n)}.row,.top{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:10px}.row button{flex:1}.hint{font-size:12px;color:#68798b;line-height:1.8}.status{display:none;margin-top:12px;padding:11px;border-radius:9px;background:#eef5ee;color:#28613a;overflow-wrap:anywhere}.error{background:#fff0f0;color:#9b2929}.preview{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;max-height:240px;overflow:auto;background:#f7f9fc;padding:12px;border-radius:9px;margin-top:12px}.book{padding:11px 0;border-bottom:1px solid #e6ebf0}.book small{display:block;color:#68798b;margin-top:4px}.hidden{display:none!important}footer{text-align:center;color:#718096;font-size:12px;padding:12px}
+</style></head>
+<body>
+<header><h1>📚 إدارة المكتبة المدرسية</h1><div>المكتبة المدرسية اليمنية — لوحة مسؤول الكتب</div></header>
+<main>
+<section class="card" id="loginCard"><h2>دخول المسؤول</h2>
+<label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" placeholder="بريد المسؤول">
+<label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+<button class="primary" id="loginBtn">تسجيل الدخول</button><div id="loginStatus" class="status"></div>
+<p class="hint">استخدم الحساب الذي أنشأته في Firebase Authentication.</p></section>
+<section class="card hidden" id="adminCard"><div class="top"><h2>إدارة الكتب</h2><button class="secondary" id="logoutBtn">تسجيل الخروج</button></div><p class="hint">تم التحقق من حساب المسؤول.</p></section>
+<section class="card hidden" id="addCard"><h2>إضافة كتاب جديد</h2>
+<label>اسم الكتاب</label><input id="title" placeholder="مثلاً: كتاب الرياضيات">
+<label>الصف الدراسي</label><select id="grade"><option value="">اختر الصف</option><option>الثالث الثانوي</option><option>الثاني الثانوي</option><option>الأول الثانوي</option><option>التاسع الأساسي</option><option>الثامن الأساسي</option><option>السابع الأساسي</option><option>السادس الأساسي</option><option>الخامس الأساسي</option><option>الرابع الأساسي</option><option>الثالث الأساسي</option><option>الثاني الأساسي</option><option>الأول الأساسي</option></select>
+<label>المادة</label><select id="subject"><option value="">اختر المادة</option><option>القرآن الكريم</option><option>التربية الإسلامية</option><option>اللغة العربية</option><option>اللغة الإنجليزية</option><option>الرياضيات</option><option>العلوم</option><option>الاجتماعيات</option><option>الفيزياء</option><option>الكيمياء</option><option>الأحياء</option><option>الجغرافيا</option><option>التاريخ</option></select>
+<label>استيراد ملف TXT</label><input id="file" type="file" accept=".txt,text/plain"><p class="hint">للتجربة الأولى استخدم ملفًا أصغر من 700 كيلوبايت. Firestore لا يناسب تخزين الكتب النصية الكبيرة في مستند واحد.</p>
+<label>محتوى الكتاب</label><textarea id="content" placeholder="استورد ملف TXT أو الصق النص هنا..."></textarea>
+<div class="row"><button class="secondary" id="previewBtn">معاينة المحتوى</button><button class="secondary" id="clearBtn">مسح النموذج</button></div>
+<div class="preview" id="preview">لم تتم إضافة محتويات بعد.</div>
+<button class="primary" id="saveBtn">حفظ الكتاب في Firebase</button><div id="saveStatus" class="status"></div></section>
+<section class="card hidden" id="booksCard"><div class="top"><h2>الكتب في قاعدة البيانات</h2><button class="secondary" id="refreshBtn">تحديث</button></div><div id="booksList" class="hint">بانتظار تسجيل الدخول...</div></section>
+</main><footer>المكتبة المدرسية اليمنية</footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyAyKHc1meJy2F3iq8tW2W8Gh5_BgRHbJVs",authDomain:"school-library-78094.firebaseapp.com",projectId:"school-library-78094",storageBucket:"school-library-78094.firebasestorage.app",messagingSenderId:"193396490821",appId:"1:193396490821:web:59b7c9f399ce24f28d592c",measurementId:"G-C26NGP97HX"};
+const ADMIN_UID="fEm2UxBupVXLbu9BW1TO6AMLgJt1";
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore(),$=id=>document.getElementById(id);let fileName="";
+function status(id,msg,error=false){let e=$(id);e.textContent=msg;e.style.display="block";e.classList.toggle("error",error)}
+function errMsg(e){let c=e&&e.code||"";if(/invalid-credential|wrong-password|user-not-found|invalid-email/.test(c))return"البريد أو كلمة المرور غير صحيحة.";if(c==="auth/network-request-failed")return"تعذر الاتصال. تحقق من الإنترنت ثم حاول مرة أخرى.";if(c==="auth/too-many-requests")return"تكررت محاولات الدخول. انتظر قليلًا ثم أعد المحاولة.";if(c==="permission-denied")return"ليس لديك صلاحية للوصول إلى البيانات.";return(e&&e.message)||"حدث خطأ غير معروف."}
+function adminOn(){["adminCard","addCard","booksCard"].forEach(x=>$(x).classList.remove("hidden"));$("loginCard").classList.add("hidden");loadBooks()}
+function adminOff(){["adminCard","addCard","booksCard"].forEach(x=>$(x).classList.add("hidden"));$("loginCard").classList.remove("hidden")}
+status("loginStatus","الصفحة جاهزة. أدخل بيانات المسؤول.");auth.onAuthStateChanged(u=>{if(u&&u.uid===ADMIN_UID){adminOn()}else{if(u)auth.signOut().catch(()=>{});adminOff();if(u)status("loginStatus","هذا الحساب ليس حساب مسؤول المكتبة.",true)}},e=>{adminOff();status("loginStatus","تعذر التحقق من جلسة الدخول: "+errMsg(e),true)});
+$("loginBtn").onclick=async()=>{let email=$("email").value.trim(),password=$("password").value,btn=$("loginBtn");if(!email||!password){status("loginStatus","أدخل البريد وكلمة المرور.",true);return}btn.disabled=true;btn.textContent="جارٍ التحقق من بيانات الدخول...";status("loginStatus","يتم الاتصال بـ Firebase والتحقق من الحساب...");try{let r=await auth.signInWithEmailAndPassword(email,password);if(r.user.uid!==ADMIN_UID){await auth.signOut();status("loginStatus","تم الدخول بحساب غير مخصص لإدارة المكتبة.",true)}else{status("loginStatus","تم التحقق بنجاح. جارٍ فتح لوحة الإدارة...")}}catch(e){status("loginStatus","تعذر الدخول: "+errMsg(e),true)}finally{btn.disabled=false;btn.textContent="تسجيل الدخول"}};
+$("logoutBtn").onclick=()=>auth.signOut().then(()=>{status("loginStatus","تم تسجيل الخروج.")}).catch(e=>status("loginStatus","تعذر تسجيل الخروج: "+errMsg(e),true));
+$("file").onchange=async e=>{let f=e.target.files[0];if(!f)return;if(f.size>700*1024){alert("اختر ملفًا أصغر من 700 كيلوبايت لهذه التجربة.");e.target.value="";return}fileName=f.name;try{$("content").value=await f.text();$("preview").textContent=$("content").value;status("saveStatus","تم استيراد الملف. عاينه ثم احفظه.")}catch(err){status("saveStatus","تعذر قراءة الملف.",true)}};
+$("previewBtn").onclick=()=>$("preview").textContent=$("content").value.trim()||"لا يوجد محتوى.";
+$("clearBtn").onclick=()=>{["title","content"].forEach(x=>$(x).value="");["grade","subject","file"].forEach(x=>$(x).value="");fileName="";$("preview").textContent="لم تتم إضافة محتويات بعد.";$("saveStatus").style.display="none"};
+$("saveBtn").onclick=async()=>{let u=auth.currentUser,title=$("title").value.trim(),grade=$("grade").value,subject=$("subject").value,content=$("content").value.trim();if(!u||u.uid!==ADMIN_UID){status("saveStatus","سجل الدخول بحساب المسؤول.",true);return}if(!title||!grade||!subject||!content){status("saveStatus","أكمل اسم الكتاب والصف والمادة والمحتوى.",true);return}if(new Blob([content]).size>700*1024){status("saveStatus","الكتاب أكبر من 700 كيلوبايت. قسّمه إلى أجزاء أصغر.",true);return}let b=$("saveBtn");b.disabled=true;try{await db.collection("books").add({title,grade,subject,content,fileType:"txt",fileName:fileName||"نص مدخل يدويًا",published:true,createdAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:u.uid});status("saveStatus","تم حفظ الكتاب بنجاح في Firebase.");$("title").value="";$("content").value="";$("grade").value="";$("subject").value="";$("file").value="";fileName="";$("preview").textContent="لم تتم إضافة محتويات بعد.";loadBooks()}catch(e){status("saveStatus","تعذر الحفظ: "+errMsg(e),true)}finally{b.disabled=false}};
+async function loadBooks(){if(!auth.currentUser||auth.currentUser.uid!==ADMIN_UID)return;let box=$("booksList");box.textContent="جارٍ تحميل الكتب...";try{let s=await db.collection("books").get();box.innerHTML="";if(s.empty){box.textContent="لا توجد كتب محفوظة بعد.";return}s.forEach(d=>{let x=d.data(),div=document.createElement("div"),strong=document.createElement("strong"),small=document.createElement("small");div.className="book";strong.textContent=x.title||"كتاب بلا عنوان";small.textContent=(x.grade||"")+(x.subject?" — "+x.subject:"")+(x.published?" — منشور":" — غير منشور");div.append(strong,small);box.append(div)})}catch(e){box.textContent="تعذر تحميل الكتب: "+errMsg(e);console.warn("Firestore books query:",e)}}
+$("refreshBtn").onclick=loadBooks;
+</script></body></html>
